@@ -7,6 +7,11 @@ namespace Debut
 
 	}
 
+	Application::~Application()
+	{
+
+	}
+
 	void Application::Run()
 	{
 

@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Core.h"
+
 namespace Debut
 {
-	class _declspec(dllexport) Application
+	class DBT_API Application
 	{
 	public:
 		Application();
@@ -11,4 +13,6 @@ namespace Debut
 
 		void Run();
 	};
+
+	Application* CreateApplication();
 }
