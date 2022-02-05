@@ -1,0 +1,16 @@
+# Binaries
+**/bin/
+bin-int/
+
+# Debut files
+*.log
+
+# Visual Studio files and folder
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+
+# Directories
+Debut /vendor/VulkanSDK
