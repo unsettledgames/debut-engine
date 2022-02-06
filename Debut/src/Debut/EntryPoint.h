@@ -12,9 +12,6 @@ int main(int argc, char** argv)
 	
 	// Initialize the logging system
 	Debut::Log::Init();
-
-	DBT_CORE_WARN("Initialized log");
-	DBT_CORE_INFO("Info log");
 	
 	app->Run();
 

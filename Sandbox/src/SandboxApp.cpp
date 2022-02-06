@@ -13,10 +13,14 @@ public:
 	{
 
 	}
+
+	void Run () override
+	{
+		DBT_INFO("Game started\n");
+	}
 private:
 
 };
-
 
 Debut::Application* Debut::CreateApplication()
 {

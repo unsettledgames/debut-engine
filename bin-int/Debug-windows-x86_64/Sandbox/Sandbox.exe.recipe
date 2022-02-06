@@ -2,10 +2,10 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\dev\Debut\bin\Debug-x64\Debut\Debut.dll</FullPath>
+      <FullPath>C:\dev\Debut\bin\Debug-windows-x86_64\Debut\Debut.dll</FullPath>
     </ProjectOutput>
     <ProjectOutput>
-      <FullPath>C:\dev\Debut\bin\Debug-x64\Sandbox\Sandbox.exe</FullPath>
+      <FullPath>C:\dev\Debut\bin\Debug-windows-x86_64\Sandbox\Sandbox.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

@@ -19,5 +19,7 @@ namespace Debut
 
 		s_ClientLogger = spdlog::stdout_color_mt("APP");
 		s_CoreLogger->set_level(spdlog::level::trace);
+
+		DBT_CORE_INFO("Initialized logger\n");
 	}
 }

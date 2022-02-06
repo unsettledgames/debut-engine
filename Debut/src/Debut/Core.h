@@ -11,3 +11,5 @@
 #else
 	#error Debut only supports Windows atm
 #endif
+
+#define BIT(x) (1 << x)

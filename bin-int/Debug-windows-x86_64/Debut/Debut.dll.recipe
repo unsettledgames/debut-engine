@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\dev\Debut\bin\Debug-x64\Debut\Debut.dll</FullPath>
+      <FullPath>C:\dev\Debut\bin\Debug-windows-x86_64\Debut\Debut.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

@@ -11,7 +11,7 @@ namespace Debut
 		
 		virtual ~Application();
 
-		void Run();
+		virtual void Run();
 	};
 
 	Application* CreateApplication();

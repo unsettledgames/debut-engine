@@ -1,42 +1,46 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Debut">
+      <UniqueIdentifier>{1995060D-85A9-2EBE-4E2B-D21DBAFE2AEF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Debut\Events">
+      <UniqueIdentifier>{DD6A1099-C9CD-9F3D-7253-D8F35E956BC0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Debut\Core.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClInclude Include="src\Debut.h" />
     <ClInclude Include="src\Debut\Application.h">
-      <Filter>Header Files</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Debut\Core.h">
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\EntryPoint.h">
-      <Filter>Header Files</Filter>
+      <Filter>Debut</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\Events\ApplicationEvent.h">
+      <Filter>Debut\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\Events\Event.h">
+      <Filter>Debut\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\Events\KeyEvent.h">
+      <Filter>Debut\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\Events\MouseEvent.h">
+      <Filter>Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Log.h">
-      <Filter>Header Files</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Application.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Log.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Debut</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
