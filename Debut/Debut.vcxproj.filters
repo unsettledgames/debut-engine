@@ -1,46 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Debut">
-      <UniqueIdentifier>{1995060D-85A9-2EBE-4E2B-D21DBAFE2AEF}</UniqueIdentifier>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Debut\Events">
-      <UniqueIdentifier>{DD6A1099-C9CD-9F3D-7253-D8F35E956BC0}</UniqueIdentifier>
+    <Filter Include="src\Debut">
+      <UniqueIdentifier>{70A3C3B2-DC0D-7829-254C-29CF91F5557E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Debut\Events">
+      <UniqueIdentifier>{541131AC-400A-50FE-693C-358355942F0A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor">
+      <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\GLFW">
+      <UniqueIdentifier>{D27667C1-3E2C-E0B6-C720-DA8D33D5D6BA}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Debut.h" />
+    <ClInclude Include="src\Debut.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\Debut\Application.h">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Core.h">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\EntryPoint.h">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\ApplicationEvent.h">
-      <Filter>Debut\Events</Filter>
+      <Filter>src\Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\Event.h">
-      <Filter>Debut\Events</Filter>
+      <Filter>src\Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\KeyEvent.h">
-      <Filter>Debut\Events</Filter>
+      <Filter>src\Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\MouseEvent.h">
-      <Filter>Debut\Events</Filter>
+      <Filter>src\Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Log.h">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\dbtpch.h">
+      <Filter>src\Debut</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Application.cpp">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Log.cpp">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClCompile>
+    <ClCompile Include="src\Debut\dbtpch.cpp">
+      <Filter>src\Debut</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vendor\GLFW\include">
+      <Filter>vendor\GLFW</Filter>
+    </None>
   </ItemGroup>
 </Project>

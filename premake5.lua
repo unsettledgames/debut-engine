@@ -12,6 +12,11 @@ workspace "Debut"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+IncludeDir = {}
+IncludeDir["GLFW"] = "Debut/vendor/GLFW/include"
+
+include "Debut/vendor/GLFW"
+
 project "Debut"
 	location "Debut"
 	kind "SharedLib"
@@ -20,15 +25,25 @@ project "Debut"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+	pchheader "dbtpch.h"
+	pchsource "Debut/src/Debut/dbtpch.cpp"
+
 	files 
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{IncludeDir.GLFW}"
 	}
 
 	includedirs
 	{
 		"%{prj.name}/vendor/spdlog/include"
+	}
+
+	links
+	{
+		"GLFW",
+		"opengl32"
 	}
 
 	filter "system:windows"

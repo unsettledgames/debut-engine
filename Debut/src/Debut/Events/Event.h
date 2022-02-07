@@ -2,10 +2,6 @@
 
 #include "../Core.h"
 
-#include <string>
-#include <sstream>
-#include <functional>
-
 namespace Debut
 {
 	// At the moment, Events are totally synchronous, that means that events are immediately dispatched as soon as
@@ -14,7 +10,7 @@ namespace Debut
 	{
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
-		AppTick, AppUpdate, AppRenderer,
+		AppTick, AppUpdate, AppRender,
 		KeyPressed, KeyReleased,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
@@ -57,7 +53,25 @@ namespace Debut
 
 	class EventDispatcher
 	{
-	private:
+		template <typename T>
+		using EventFn = std::function<bool(T&)>;
+
 	public:
+		EventDispatcher(Event& event) : m_Event(event) {}
+
+		template<typename T>
+		bool Dispatch(EventFn<T> func)
+		{
+			if (m_Event.GetEventType() == T::GetStaticType())
+			{
+				m_Event.m_Handled = func(*(T*)&m_Event);
+				return true;
+			}
+
+			return false;
+		}
+
+	private:
+		Event& m_Event;
 	};
 }

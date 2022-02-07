@@ -1,5 +1,4 @@
 #pragma once
-#include <stdio.h>
 
 #ifdef DBT_PLATFORM_WINDOWS
 
