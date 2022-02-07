@@ -8,11 +8,12 @@ int main(int argc, char** argv)
 {
 	// Create the application
 	auto app = Debut::CreateApplication();
-	
+
 	// Initialize the logging system
 	Debut::Log::Init();
 	
 	app->Run();
+
 
 	delete app;
 

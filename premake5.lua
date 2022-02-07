@@ -1,5 +1,5 @@
 workspace "Debut"
-	architecture "x64"
+	architecture "x86_64"
 
 	configurations
 	{
@@ -13,9 +13,9 @@ workspace "Debut"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
-IncludeDir["GLFW"] = "Debut/vendor/GLFW/include"
+IncludeDir["GLFW"] = "Debut/vendor/glfw/include"
 
-include "Debut/vendor/GLFW"
+include "Debut/vendor/glfw"
 
 project "Debut"
 	location "Debut"
@@ -25,19 +25,20 @@ project "Debut"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-	pchheader "dbtpch.h"
+	pchheader "Debut/dbtpch.h"
 	pchsource "Debut/src/Debut/dbtpch.cpp"
 
 	files 
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
-		"%{IncludeDir.GLFW}"
+		"%{prj.name}/src/**.cpp"
 	}
 
 	includedirs
 	{
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/src",
+		"%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}"
 	}
 
 	links
@@ -48,7 +49,7 @@ project "Debut"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
+		staticruntime "Off"
 		systemversion "latest"
 
 		defines 
@@ -59,18 +60,23 @@ project "Debut"
 
 		postbuildcommands
 		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox"),
+			("{COPY} ../bin/" .. outputdir .. "/Debut/Debut.pdb" .. " ../bin/" .. outputdir .. "/Sandbox")
 		}
 
 	filter "configurations:Debug"
-		defines "DBT_DEBUG"
+		staticruntime "off"
+		runtime "Debug"
+		defines {"DBT_DEBUG", "DBT_ASSERTS"}
 		symbols "On"
 
-	filter "configurations:Debug"
+	filter "configurations:Release"
+		runtime "Release"
 		defines "DBT_RELEASE"
 		optimize "On"
 
-	filter "configurations:Debug"
+	filter "configurations:Dist"
+		runtime "Release"
 		defines "DBT_DIST"
 		optimize "On"
 

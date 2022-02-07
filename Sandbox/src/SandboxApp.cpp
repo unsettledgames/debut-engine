@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 #include <Debut.h>
 
 class Sandbox : public Debut::Application
@@ -16,7 +16,15 @@ public:
 
 	void Run () override
 	{
-		DBT_INFO("Game started\n");
+		Debut::Log::CoreInfo();
+		Debut::Log::CoreInfo();
+		Debut::Log::CoreInfo();
+		Debut::Log::CoreInfo();
+
+		while (true)
+		{
+
+		}
 	}
 private:
 
