@@ -16,10 +16,7 @@ public:
 
 	void Run () override
 	{
-		Debut::Log::CoreInfo();
-		Debut::Log::CoreInfo();
-		Debut::Log::CoreInfo();
-		Debut::Log::CoreInfo();
+		DBT_INFO("Info {0}", 87);
 
 		while (true)
 		{
