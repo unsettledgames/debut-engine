@@ -48,7 +48,7 @@ project "Debut"
 	}
 
 	filter "system:windows"
-		cppdialect "C++20"
+		cppdialect "C++17"
 		staticruntime "Off"
 		systemversion "latest"
 
@@ -61,7 +61,6 @@ project "Debut"
 		postbuildcommands
 		{
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox"),
-			("{COPY} ../bin/" .. outputdir .. "/Debut/Debut.pdb" .. " ../bin/" .. outputdir .. "/Sandbox")
 		}
 
 	filter "configurations:Debug"
@@ -91,7 +90,7 @@ project "Sandbox"
 	files 
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
 	}
 
 	includedirs
