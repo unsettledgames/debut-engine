@@ -14,6 +14,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <loguru.hpp>
+
 #ifdef DBT_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif

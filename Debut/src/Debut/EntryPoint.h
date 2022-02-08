@@ -1,5 +1,6 @@
 #pragma once
 
+#include "dbtpch.h"
 #include "Debut.h"
 
 #ifdef DBT_PLATFORM_WINDOWS
@@ -12,9 +13,7 @@ int main(int argc, char** argv)
 	Debut::Log.Init();
 	// Create the application
 	auto app = Debut::CreateApplication();
-
-	DBT_INFO("TRY\n");
-	DBT_CORE_INFO("TRY 2\n");
+	Debut::Log.CoreInfo("Created application");
 	
 	app->Run();
 

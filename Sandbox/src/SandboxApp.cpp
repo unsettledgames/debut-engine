@@ -16,8 +16,7 @@ public:
 
 	void Run () override
 	{
-		DBT_INFO("Info {0}", 87);
-
+		Debut::Log.AppInfo("Started running game");
 		while (true)
 		{
 

@@ -7,20 +7,7 @@ namespace Debut
 
 	void _Log::Init()
 	{
-		// Set the format of log messages (https://github.com/gabime/spdlog/wiki/3.-Custom-formatting)
-		// Timestamp, name of the logger, message, coloured depending on the severity
-
-		m_CoreLogger = el::Loggers::getLogger("default");
-		m_ClientLogger = el::Loggers::getLogger("app");
-
-		DBT_CORE_INFO("Initialized logger\n");
-		DBT_INFO("Client\n");
-		DBT_CORE_INFO("Initialized logger\n");
-		DBT_INFO("Client\n");
-		DBT_CORE_INFO("Initialized logger\n");
-		DBT_INFO("Client\n");
-		DBT_CORE_INFO("Initialized logger\n");
-		DBT_INFO("Client\n");
+		Log.CoreInfo("Initialized log");
 	}
 
 	void _Log::Shutdown()

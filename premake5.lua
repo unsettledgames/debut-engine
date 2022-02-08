@@ -31,13 +31,15 @@ project "Debut"
 	files 
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/loguru/loguru.cpp"
 	}
 
 	includedirs
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
+		"%{prj.name}/vendor/loguru",
 		"%{IncludeDir.GLFW}"
 	}
 
@@ -78,6 +80,8 @@ project "Debut"
 		runtime "Release"
 		defines "DBT_DIST"
 		optimize "On"
+	filter "files:%{prj.name}/vendor/loguru/loguru.cpp"
+		flags {"NoPCH"}
 
 project "Sandbox"
 	location "Sandbox"
@@ -91,11 +95,13 @@ project "Sandbox"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"Debut/vendor/loguru/loguru.cpp"
 	}
 
 	includedirs
 	{
 		"Debut/vendor/spdlog/include",
+		"Debut/vendor/loguru",
 		"Debut/src"
 	}
 

@@ -1,67 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Debut">
-      <UniqueIdentifier>{1995060D-85A9-2EBE-4E2B-D21DBAFE2AEF}</UniqueIdentifier>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Debut\Events">
-      <UniqueIdentifier>{DD6A1099-C9CD-9F3D-7253-D8F35E956BC0}</UniqueIdentifier>
+    <Filter Include="src\Debut">
+      <UniqueIdentifier>{70A3C3B2-DC0D-7829-254C-29CF91F5557E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Platform">
-      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    <Filter Include="src\Debut\Events">
+      <UniqueIdentifier>{541131AC-400A-50FE-693C-358355942F0A}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Platform\Windows">
-      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
+    <Filter Include="src\Platform">
+      <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\Windows">
+      <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor">
+      <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\loguru">
+      <UniqueIdentifier>{8053FB11-EC13-7748-B54E-C0C521CEBB24}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Debut.h" />
+    <ClInclude Include="src\Debut.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\Debut\Application.h">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Core.h">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\EntryPoint.h">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\ApplicationEvent.h">
-      <Filter>Debut\Events</Filter>
+      <Filter>src\Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\Event.h">
-      <Filter>Debut\Events</Filter>
+      <Filter>src\Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\KeyEvent.h">
-      <Filter>Debut\Events</Filter>
+      <Filter>src\Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\MouseEvent.h">
-      <Filter>Debut\Events</Filter>
+      <Filter>src\Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Log.h">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Window.h">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\dbtpch.h">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
-      <Filter>Platform\Windows</Filter>
+      <Filter>src\Platform\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Application.cpp">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Log.cpp">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\dbtpch.cpp">
-      <Filter>Debut</Filter>
+      <Filter>src\Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
-      <Filter>Platform\Windows</Filter>
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\loguru\loguru.cpp">
+      <Filter>vendor\loguru</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

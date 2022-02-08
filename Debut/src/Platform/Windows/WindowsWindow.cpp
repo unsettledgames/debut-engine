@@ -23,12 +23,9 @@ namespace Debut
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
 
-		DBT_CORE_INFO("Creating Window {0} ({1}, {2})", props.Title, props.Width, props.Height);
-
 		if (!s_GLFWInitialized)
 		{
 			int success = glfwInit();
-			DBT_CORE_ASSERT(success, "Couldn't initialize GLFW");
 
 			s_GLFWInitialized = true;
 		}

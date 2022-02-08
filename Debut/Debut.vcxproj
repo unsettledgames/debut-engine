@@ -80,11 +80,11 @@
       <PrecompiledHeaderFile>Debut/dbtpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_BUILD_DLL;DBT_DEBUG;DBT_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\easyloggingpp\src;vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\loguru;vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -93,8 +93,7 @@
       <ImportLibrary>..\bin\Debug-windows-x86_64\Debut\Debut.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Debug-windows-x86_64\Debut\Debut.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Debut\Debut.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Debut\Debut.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)
-IF EXIST ..\bin\Debug-windows-x86_64\Debut\Debut.pdb\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Debut\Debut.pdb ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Debut\Debut.pdb ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Debug-windows-x86_64\Debut\Debut.dll\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Debut\Debut.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Debut\Debut.dll ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -103,14 +102,14 @@ IF EXIST ..\bin\Debug-windows-x86_64\Debut\Debut.pdb\ (xcopy /Q /E /Y /I ..\bin\
       <PrecompiledHeaderFile>Debut/dbtpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_BUILD_DLL;DBT_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\easyloggingpp\src;vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\loguru;vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -120,8 +119,7 @@ IF EXIST ..\bin\Debug-windows-x86_64\Debut\Debut.pdb\ (xcopy /Q /E /Y /I ..\bin\
       <ImportLibrary>..\bin\Release-windows-x86_64\Debut\Debut.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Release-windows-x86_64\Debut\Debut.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Debut\Debut.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Debut\Debut.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul)
-IF EXIST ..\bin\Release-windows-x86_64\Debut\Debut.pdb\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Debut\Debut.pdb ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Debut\Debut.pdb ..\bin\Release-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Release-windows-x86_64\Debut\Debut.dll\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Debut\Debut.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Debut\Debut.dll ..\bin\Release-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -130,14 +128,14 @@ IF EXIST ..\bin\Release-windows-x86_64\Debut\Debut.pdb\ (xcopy /Q /E /Y /I ..\bi
       <PrecompiledHeaderFile>Debut/dbtpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_BUILD_DLL;DBT_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\easyloggingpp\src;vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\loguru;vendor\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,8 +145,7 @@ IF EXIST ..\bin\Release-windows-x86_64\Debut\Debut.pdb\ (xcopy /Q /E /Y /I ..\bi
       <ImportLibrary>..\bin\Dist-windows-x86_64\Debut\Debut.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Dist-windows-x86_64\Debut\Debut.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Debut\Debut.dll ..\bin\Dist-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Debut\Debut.dll ..\bin\Dist-windows-x86_64\Sandbox &gt; nul)
-IF EXIST ..\bin\Dist-windows-x86_64\Debut\Debut.pdb\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Debut\Debut.pdb ..\bin\Dist-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Debut\Debut.pdb ..\bin\Dist-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF EXIST ..\bin\Dist-windows-x86_64\Debut\Debut.dll\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Debut\Debut.dll ..\bin\Dist-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Debut\Debut.dll ..\bin\Dist-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -172,6 +169,9 @@ IF EXIST ..\bin\Dist-windows-x86_64\Debut\Debut.pdb\ (xcopy /Q /E /Y /I ..\bin\D
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="vendor\loguru\loguru.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\glfw\GLFW.vcxproj">
