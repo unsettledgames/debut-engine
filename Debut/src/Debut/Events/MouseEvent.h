@@ -4,7 +4,7 @@
 
 namespace Debut
 {
-	class DBT_API MouseMovedEvent : public Event
+	class MouseMovedEvent : public Event
 	{
 	public:
 		MouseMovedEvent(float x, float y) : m_MouseX(x), m_MouseY(y) {}
@@ -19,15 +19,15 @@ namespace Debut
 		inline float GetX() { return m_MouseX; }
 		inline float GetY() { return m_MouseY; }
 
-		EVENT_CLASS_CATEGORY(Mouse | Input)
-			EVENT_CLASS_TYPE(MouseMoved)
+		EVENT_CLASS_CATEGORY(MouseEvent | InputEvent)
+		EVENT_CLASS_TYPE(MouseMoved)
 	private:
 		float m_MouseX;
 		float m_MouseY;
 
 	};
 
-	class DBT_API MouseScrollEvent : public Event
+	class MouseScrollEvent : public Event
 	{
 	public:
 		MouseScrollEvent(float offsetX, float offsetY) : m_OffsetX(offsetX), m_OffsetY(offsetY) {}
@@ -42,7 +42,7 @@ namespace Debut
 		inline float GetOffsetX() { return m_OffsetX; }
 		inline float GetOffsetY() { return m_OffsetY; }
 
-		EVENT_CLASS_CATEGORY(Mouse | Input)
+		EVENT_CLASS_CATEGORY(MouseEvent | InputEvent)
 		EVENT_CLASS_TYPE(MouseScrolled)
 	private:
 		float m_OffsetX;
@@ -50,19 +50,19 @@ namespace Debut
 
 	};
 
-	class DBT_API MouseButtonEvent : public Event
+	class MouseButtonEvent : public Event
 	{
 	public:
 		inline int GetMouseButton() { return m_Button; }
 
-		EVENT_CLASS_CATEGORY(Mouse | Input)
+		EVENT_CLASS_CATEGORY(MouseEvent | InputEvent)
 	protected:
 		int m_Button;
 
 		MouseButtonEvent(int mousebutton) : m_Button(mousebutton) {}
 	};
 
-	class DBT_API MouseButtonPressedEvent : public MouseButtonEvent
+	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonPressedEvent(int mousebutton) : MouseButtonEvent(mousebutton) {}
@@ -75,10 +75,9 @@ namespace Debut
 		}
 
 		EVENT_CLASS_TYPE(MouseButtonPressed)
-		
 	};
 
-	class DBT_API MouseButtonReleasedEvent : public MouseButtonEvent
+	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonReleasedEvent(int mousebutton) : MouseButtonEvent(mousebutton) {}

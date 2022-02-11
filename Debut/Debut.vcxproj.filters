@@ -48,6 +48,12 @@
     <ClInclude Include="src\Debut\Events\MouseEvent.h">
       <Filter>src\Debut\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Debut\Layer.h">
+      <Filter>src\Debut</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\LayerStack.h">
+      <Filter>src\Debut</Filter>
+    </ClInclude>
     <ClInclude Include="src\Debut\Log.h">
       <Filter>src\Debut</Filter>
     </ClInclude>
@@ -60,9 +66,16 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="src\Debut\ImGui\ImGuiLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Application.cpp">
+      <Filter>src\Debut</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debut\Layer.cpp">
+      <Filter>src\Debut</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debut\LayerStack.cpp">
       <Filter>src\Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Log.cpp">
@@ -77,5 +90,6 @@
     <ClCompile Include="vendor\loguru\loguru.cpp">
       <Filter>vendor\loguru</Filter>
     </ClCompile>
+    <ClCompile Include="src\Debut\ImGui\ImGuiLayer.cpp" />
   </ItemGroup>
 </Project>

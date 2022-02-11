@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Debut/dbtpch.h"
 #include "../Core.h"
 
 namespace Debut
@@ -19,16 +20,16 @@ namespace Debut
 	enum EventCategory
 	{
 		None = 0,
-		Application =	BIT(0),
-		Input =			BIT(1),
-		Keyboard =		BIT(2),
-		Mouse =			BIT(3),
-		MouseButton =	BIT(4)
+		ApplicationEvent =		BIT(0),
+		InputEvent =			BIT(1),
+		KeyboardEvent =			BIT(2),
+		MouseEvent =			BIT(3),
+		MouseButtonEvent =		BIT(4)
 	};
 
-#define EVENT_CLASS_TYPE(type)	static EventType GetStaticType() { return EventType::##type; } \
-								virtual EventType GetEventType() { return GetStaticType(); } \
-								virtual const char* GetName() const override { return #type;}
+#define EVENT_CLASS_TYPE(type)	static EventType GetStaticType()				{ return EventType::##type; } \
+								virtual EventType GetEventType() const override { return GetStaticType(); } \
+								virtual const char* GetName() const override	{ return #type;}
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override {return category;}
 
@@ -42,10 +43,8 @@ namespace Debut
 		virtual int GetCategoryFlags() const = 0;
 		virtual std::string ToString() const { return GetName(); }
 
-		inline bool IsInCategory(EventCategory category)
-		{
-			return GetCategoryFlags() & category;
-		}
+		inline bool IsInCategory(EventCategory category) const { return GetCategoryFlags() & category; }
+		inline bool Handled() const { return m_Handled; }
 	protected:
 		// A layer may stop event propagation
 		bool m_Handled = false;

@@ -8,3 +8,6 @@
 
 // Entry point
 #include "Debut/EntryPoint.h"
+
+// Layers
+#include "Debut/Layer.h"

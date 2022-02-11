@@ -4,3 +4,6 @@
 [submodule "Debut/vendor/loguru"]
 	path = Debut/vendor/loguru
 	url = https://github.com/emilk/loguru
+[submodule "Debut/vendor/imgui"]
+	path = Debut/vendor/imgui
+	url = https://github.com/TheCherno/imgui

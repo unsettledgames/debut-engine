@@ -1,5 +1,5 @@
 workspace "Debut"
-	architecture "x86_64"
+	architecture "x64"
 
 	configurations
 	{
@@ -14,8 +14,12 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "Debut/vendor/glfw/include"
+IncludeDir["Glad"] = "Debut/vendor/glad/include"
+IncludeDir["imgui"] = "Debut/vendor/imgui"
 
 include "Debut/vendor/glfw"
+include "Debut/vendor/glad"
+include "Debut/vendor/imgui"
 
 project "Debut"
 	location "Debut"
@@ -28,7 +32,7 @@ project "Debut"
 	pchheader "Debut/dbtpch.h"
 	pchsource "Debut/src/Debut/dbtpch.cpp"
 
-	files 
+	files
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
@@ -40,24 +44,29 @@ project "Debut"
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{prj.name}/vendor/loguru",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.imgui}"
 	}
 
 	links
 	{
 		"GLFW",
+		"Glad",
+		"ImGui",
 		"opengl32"
 	}
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "Off"
+		staticruntime "On"
 		systemversion "latest"
 
 		defines 
 		{
 			"DBT_PLATFORM_WINDOWS",
-			"DBT_BUILD_DLL"
+			"DBT_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands
@@ -66,21 +75,20 @@ project "Debut"
 		}
 
 	filter "configurations:Debug"
-		staticruntime "off"
-		runtime "Debug"
+		buildoptions "/MDd"
 		defines {"DBT_DEBUG", "DBT_ASSERTS"}
 		symbols "On"
 
 	filter "configurations:Release"
-		runtime "Release"
+		buildoptions "/MD"
 		defines "DBT_RELEASE"
 		optimize "On"
 
 	filter "configurations:Dist"
-		runtime "Release"
+		buildoptions "/MD"
 		defines "DBT_DIST"
 		optimize "On"
-	filter "files:%{prj.name}/vendor/loguru/loguru.cpp"
+	filter {"files:%{prj.name}/vendor/loguru/loguru.cpp"}
 		flags {"NoPCH"}
 
 project "Sandbox"
@@ -121,13 +129,16 @@ project "Sandbox"
 		}
 
 	filter "configurations:Debug"
+		buildoptions "/MDd"
 		defines "DBT_DEBUG"
 		symbols "On"
 
-	filter "configurations:Debug"
+	filter "configurations:Release"
+		buildoptions "/MD"
 		defines "DBT_RELEASE"
 		optimize "On"
 
-	filter "configurations:Debug"
+	filter "configurations:Dis"
+		buildoptions "/MD"
 		defines "DBT_DIST"
 		optimize "On"

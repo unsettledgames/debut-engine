@@ -17,11 +17,11 @@ namespace Debut
 			return ss.str();
 		}
 
-		inline float GetWidth() const { return m_Width; }
-		inline float GetHeight() const { return m_Height; }
+		inline int GetWidth() const { return m_Width; }
+		inline int GetHeight() const { return m_Height; }
 
-		EVENT_CLASS_CATEGORY(Application)
-			EVENT_CLASS_TYPE(WindowResize)
+		EVENT_CLASS_CATEGORY(ApplicationEvent)
+		EVENT_CLASS_TYPE(WindowResize)
 
 	private:
 		unsigned int m_Width;
@@ -40,10 +40,10 @@ namespace Debut
 			return ss.str();
 		}
 
-		inline float GetX() const { return m_x; }
-		inline float GetY() const { return m_y; }
+		inline int GetX() const { return m_x; }
+		inline int GetY() const { return m_y; }
 
-		EVENT_CLASS_CATEGORY(Application)
+		EVENT_CLASS_CATEGORY(ApplicationEvent)
 		EVENT_CLASS_TYPE(WindowMoved)
 
 	private:
@@ -64,8 +64,8 @@ namespace Debut
 		}
 
 
-		EVENT_CLASS_CATEGORY(Application)
-			EVENT_CLASS_TYPE(WindowFocus)
+		EVENT_CLASS_CATEGORY(ApplicationEvent)
+		EVENT_CLASS_TYPE(WindowFocus)
 	};
 
 	class WindowLostFocusEvent : public Event
@@ -81,8 +81,8 @@ namespace Debut
 		}
 
 
-		EVENT_CLASS_CATEGORY(Application)
-			EVENT_CLASS_TYPE(WindowLostFocus)
+		EVENT_CLASS_CATEGORY(ApplicationEvent)
+		EVENT_CLASS_TYPE(WindowLostFocus)
 	};
 
 	class WindowCloseEvent : public Event
@@ -98,8 +98,8 @@ namespace Debut
 		}
 
 
-		EVENT_CLASS_CATEGORY(Application)
-			EVENT_CLASS_TYPE(WindowClose)
+		EVENT_CLASS_CATEGORY(ApplicationEvent)
+		EVENT_CLASS_TYPE(WindowClose)
 	};
 
 	class AppTickEvent : public Event
@@ -115,7 +115,7 @@ namespace Debut
 		}
 
 
-		EVENT_CLASS_CATEGORY(Application)
+		EVENT_CLASS_CATEGORY(ApplicationEvent)
 		EVENT_CLASS_TYPE(AppTick)
 	};
 
@@ -132,8 +132,8 @@ namespace Debut
 		}
 
 
-		EVENT_CLASS_CATEGORY(Application)
-			EVENT_CLASS_TYPE(AppUpdate)
+		EVENT_CLASS_CATEGORY(ApplicationEvent)
+		EVENT_CLASS_TYPE(AppUpdate)
 	};
 
 	class AppRenderEvent : public Event
@@ -149,7 +149,7 @@ namespace Debut
 		}
 
 
-		EVENT_CLASS_CATEGORY(Application)
+		EVENT_CLASS_CATEGORY(ApplicationEvent)
 		EVENT_CLASS_TYPE(AppRender)
 	};
 }

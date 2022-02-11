@@ -1,12 +1,18 @@
 #include "Debut/dbtpch.h"
 #include "Application.h"
 
+#include "Log.h"
+#include <glad/glad.h>
 
 namespace Debut
 {
 	Application::Application()
 	{
+		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window->SetEventCallback(BIND_EVENT(Application::OnEvent));
 
+		unsigned int id;
+		glGenVertexArrays(1, &id);
 	}
 
 	Application::~Application()
@@ -16,6 +22,48 @@ namespace Debut
 
 	void Application::Run()
 	{
+		while (m_Running)
+		{
+			glClearColor(1, 0, 1, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
 
+			m_Window->OnUpdate();
+
+			// Propagate update to the stack
+			for (Layer* layer : m_LayerStack)
+				layer->OnUpdate();
+		}
+	}
+
+	void Application::OnEvent(Event& e)
+	{
+		EventDispatcher dispatcher(e);
+
+		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT(OnWindowClosed));
+		Debut::Log.CoreInfo("%s", e.ToString().c_str());
+
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
+		{
+			// Propagate the event until it's not handled
+			(*--it)->OnEvent(e);
+			if (e.Handled())
+				break;
+		}
+	}
+
+	bool Application::OnWindowClosed(WindowCloseEvent& e)
+	{
+		m_Running = false;
+		return true;
+	}
+
+	void Application::PushLayer(Layer* layer)
+	{
+		m_LayerStack.PushLayer(layer);
+	}
+
+	void Application::PushOverlay(Layer* layer)
+	{
+		m_LayerStack.PushLayer(layer);
 	}
 }

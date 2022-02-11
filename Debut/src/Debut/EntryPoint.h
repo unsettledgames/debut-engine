@@ -19,8 +19,6 @@ int main(int argc, char** argv)
 
 	Debut::Log.Shutdown();
 
-	delete app;
-
 	return 0;
 }
 

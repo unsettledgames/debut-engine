@@ -1,5 +1,4 @@
 #pragma once
-
 #ifdef DBT_PLATFORM_WINDOWS
 	// Export names if you're building the dll
 	#ifdef DBT_BUILD_DLL
@@ -21,3 +20,5 @@
 #endif
 
 #define BIT(x) (1 << x)
+
+#define BIND_EVENT(x) std::bind(&Application::x, this, std::placeholders::_1)
