@@ -50,8 +50,6 @@ namespace Debut
 
 		void Init();
 
-		void Shutdown();
-
 		template<typename ...Args>
 		void CoreInfo(const char* fmt, Args &&... args)
 		{

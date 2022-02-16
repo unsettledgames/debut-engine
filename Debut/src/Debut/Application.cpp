@@ -6,10 +6,15 @@
 
 namespace Debut
 {
+	Application* Application::s_Instance = nullptr;
+
 	Application::Application()
 	{
+		DBT_ASSERT(!s_Instance, "Application already exists.");
+
+		s_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::Create());
-		m_Window->SetEventCallback(BIND_EVENT(Application::OnEvent));
+		m_Window->SetEventCallback(DBT_BIND(Application::OnEvent));
 
 		unsigned int id;
 		glGenVertexArrays(1, &id);
@@ -27,11 +32,11 @@ namespace Debut
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			m_Window->OnUpdate();
-
 			// Propagate update to the stack
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
+
+			m_Window->OnUpdate();
 		}
 	}
 
@@ -39,7 +44,7 @@ namespace Debut
 	{
 		EventDispatcher dispatcher(e);
 
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT(OnWindowClosed));
+		dispatcher.Dispatch<WindowCloseEvent>(DBT_BIND(Application::OnWindowClosed));
 		Debut::Log.CoreInfo("%s", e.ToString().c_str());
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )

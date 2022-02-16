@@ -27,10 +27,10 @@ namespace Debut
 
 	};
 
-	class MouseScrollEvent : public Event
+	class MouseScrolledEvent : public Event
 	{
 	public:
-		MouseScrollEvent(float offsetX, float offsetY) : m_OffsetX(offsetX), m_OffsetY(offsetY) {}
+		MouseScrolledEvent(float offsetX, float offsetY) : m_OffsetX(offsetX), m_OffsetY(offsetY) {}
 
 		std::string ToString() const override
 		{

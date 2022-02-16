@@ -59,7 +59,7 @@ project "Debut"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
+		staticruntime "off"
 		systemversion "latest"
 
 		defines 
@@ -75,17 +75,17 @@ project "Debut"
 		}
 
 	filter "configurations:Debug"
-		buildoptions "/MDd"
+		runtime "Debug"
 		defines {"DBT_DEBUG", "DBT_ASSERTS"}
 		symbols "On"
 
 	filter "configurations:Release"
-		buildoptions "/MD"
+		runtime "Release"
 		defines "DBT_RELEASE"
 		optimize "On"
 
 	filter "configurations:Dist"
-		buildoptions "/MD"
+		runtime "Release"
 		defines "DBT_DIST"
 		optimize "On"
 	filter {"files:%{prj.name}/vendor/loguru/loguru.cpp"}
@@ -95,6 +95,7 @@ project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -120,7 +121,6 @@ project "Sandbox"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines 
@@ -129,16 +129,13 @@ project "Sandbox"
 		}
 
 	filter "configurations:Debug"
-		buildoptions "/MDd"
 		defines "DBT_DEBUG"
 		symbols "On"
 
 	filter "configurations:Release"
-		buildoptions "/MD"
 		defines "DBT_RELEASE"
 		optimize "On"
 
-	filter "configurations:Dis"
-		buildoptions "/MD"
+	filter "configurations:Dist"
 		defines "DBT_DIST"
 		optimize "On"

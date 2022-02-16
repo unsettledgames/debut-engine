@@ -5,10 +5,10 @@
 
 namespace Debut
 {
-	class WindowResizeEvent : public Event
+	class WindowResizedEvent : public Event
 	{
 	public:
-		WindowResizeEvent(unsigned int width, unsigned int height) : m_Width(width), m_Height(height) {}
+		WindowResizedEvent(unsigned int width, unsigned int height) : m_Width(width), m_Height(height) {}
 
 		std::string ToString() const override
 		{

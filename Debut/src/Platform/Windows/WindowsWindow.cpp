@@ -60,7 +60,7 @@ namespace Debut
 				data.Width = width;
 				data.Height = height;
 
-				WindowResizeEvent wndwEvent(width, height);
+				WindowResizedEvent wndwEvent(width, height);
 				data.EventCallback(wndwEvent);
 			});
 
@@ -102,6 +102,14 @@ namespace Debut
 				}
 			});
 
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				KeyTypedEvent e(keycode);
+
+				data.EventCallback(e);
+			});	 
+
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -128,7 +136,7 @@ namespace Debut
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-				MouseScrollEvent scrollEvent(xOffset, yOffset);
+				MouseScrolledEvent scrollEvent(xOffset, yOffset);
 				data.EventCallback(scrollEvent);
 			});
 

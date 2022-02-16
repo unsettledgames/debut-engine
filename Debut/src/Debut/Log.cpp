@@ -9,8 +9,4 @@ namespace Debut
 	{
 		Log.CoreInfo("Initialized log");
 	}
-
-	void _Log::Shutdown()
-	{
-	}
 }

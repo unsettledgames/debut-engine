@@ -21,12 +21,16 @@ namespace Debut
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
+
+		inline Window& GetWindow() { return *m_Window; }
+		static inline Application& Get() { return *s_Instance; }
 	private:
 		bool OnWindowClosed(WindowCloseEvent& e);
 
 		bool m_Running = true;
 		std::unique_ptr<Window> m_Window;
 		LayerStack m_LayerStack;
+		static Application* s_Instance;
 	};
 
 	Application* CreateApplication();

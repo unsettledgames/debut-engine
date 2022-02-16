@@ -11,6 +11,10 @@
 	#error Debut only supports Windows atm
 #endif
 
+#ifdef DBT_DEBUG
+	#define DBT_ASSERTS
+#endif 
+
 #ifdef DBT_ASSERTS
 	#define DBT_ASSERT(x, ...) { if(!(x)) { DBT_ERROR("Assertion failed. {0}", __VA_ARGS__); __debugbreak(); }}
 	#define DBT_CORE_ASSERT(x, ...) { if(!(x)) { DBT_CORE_ERROR("Assertion failed. {0}", __VA_ARGS__); __debugbreak(); }}
@@ -21,4 +25,4 @@
 
 #define BIT(x) (1 << x)
 
-#define BIND_EVENT(x) std::bind(&Application::x, this, std::placeholders::_1)
+#define DBT_BIND(x) std::bind(&x, this, std::placeholders::_1)
