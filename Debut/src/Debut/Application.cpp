@@ -1,5 +1,6 @@
 #include "Debut/dbtpch.h"
 #include "Application.h"
+#include "Input.h"
 
 #include "Log.h"
 #include <glad/glad.h>
@@ -45,7 +46,6 @@ namespace Debut
 		EventDispatcher dispatcher(e);
 
 		dispatcher.Dispatch<WindowCloseEvent>(DBT_BIND(Application::OnWindowClosed));
-		Debut::Log.CoreInfo("%s", e.ToString().c_str());
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{

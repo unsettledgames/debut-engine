@@ -1,6 +1,7 @@
 #include <iostream>
 #include <Debut/dbtpch.h>
 #include <Debut.h>
+#include <glm/glm.hpp>
 
 class ExampleLayer : public Debut::Layer
 {
@@ -9,12 +10,10 @@ public:
 
 	void OnUpdate() override
 	{
-		Debut::Log.AppInfo("%s layer update", m_DebugName.c_str());
 	}
 
 	void OnEvent(Debut::Event& e) override
 	{
-		Debut::Log.AppInfo("%s layer event: %s", m_DebugName.c_str(), e.ToString().c_str());
 	}
 };
 
@@ -29,6 +28,8 @@ public:
 
 		PushLayer(new ExampleLayer());
 		PushOverlay(new Debut::ImGuiLayer());
+
+		glm::vec2(45.0f, 23.0f);
 	}
 
 	~Sandbox()

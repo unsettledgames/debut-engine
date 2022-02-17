@@ -16,6 +16,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Debut/vendor/glfw/include"
 IncludeDir["Glad"] = "Debut/vendor/glad/include"
 IncludeDir["imgui"] = "Debut/vendor/imgui"
+IncludeDir["glm"] = "Debut/vendor/glm"
 
 include "Debut/vendor/glfw"
 include "Debut/vendor/glad"
@@ -46,7 +47,8 @@ project "Debut"
 		"%{prj.name}/vendor/loguru",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.imgui}"
+		"%{IncludeDir.imgui}",
+		"%{IncludeDir.glm}"
 	}
 
 	links
@@ -74,6 +76,8 @@ project "Debut"
 			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox"),
 		}
 
+	filter "files:%{prj.name}/vendor/loguru/loguru.cpp"
+		flags "NoPCH"
 	filter "configurations:Debug"
 		runtime "Debug"
 		defines {"DBT_DEBUG", "DBT_ASSERTS"}
@@ -88,8 +92,7 @@ project "Debut"
 		runtime "Release"
 		defines "DBT_DIST"
 		optimize "On"
-	filter {"files:%{prj.name}/vendor/loguru/loguru.cpp"}
-		flags {"NoPCH"}
+	
 
 project "Sandbox"
 	location "Sandbox"
@@ -111,7 +114,8 @@ project "Sandbox"
 	{
 		"Debut/vendor/spdlog/include",
 		"Debut/vendor/loguru",
-		"Debut/src"
+		"Debut/src",
+		"Debut/vendor/glm"
 	}
 
 	links

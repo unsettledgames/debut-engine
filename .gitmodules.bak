@@ -1,9 +1,0 @@
-[submodule "Debut/vendor/glfw"]
-	path = Debut/vendor/glfw
-	url = https://github.com/TheCherno/glfw/
-[submodule "Debut/vendor/spdlog"]
-	path = Debut/vendor/spdlog
-	url = https://github.com/gabime/spdlog
-[submodule "Debut/vendor/loguru"]
-	path = Debut/vendor/loguru
-	url = https://github.com/emilk/loguru

@@ -22,8 +22,6 @@ namespace Debut
 
 	void ImGuiLayer::OnUpdate()
 	{
-		Debut::Log.AppInfo("%s layer update", m_DebugName.c_str());
-
 		// Display size
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
