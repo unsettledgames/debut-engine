@@ -81,9 +81,6 @@
     <ClInclude Include="src\Debut\dbtpch.h">
       <Filter>src\Debut</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsInput.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
@@ -110,9 +107,6 @@
     <ClCompile Include="src\Debut\dbtpch.cpp">
       <Filter>src\Debut</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp">
-      <Filter>src\Platform\OpenGL</Filter>
-    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -122,5 +116,6 @@
     <ClCompile Include="vendor\loguru\loguru.cpp">
       <Filter>vendor\loguru</Filter>
     </ClCompile>
+    <ClCompile Include="src\Debut\ImGui\ImGuiBuild.cpp" />
   </ItemGroup>
 </Project>

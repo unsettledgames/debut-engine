@@ -166,12 +166,12 @@
     <ClInclude Include="src\Debut\MouseButtonCodes.h" />
     <ClInclude Include="src\Debut\Window.h" />
     <ClInclude Include="src\Debut\dbtpch.h" />
-    <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Application.cpp" />
+    <ClCompile Include="src\Debut\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Debut\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Debut\Layer.cpp" />
     <ClCompile Include="src\Debut\LayerStack.cpp" />
@@ -179,7 +179,6 @@
     <ClCompile Include="src\Debut\dbtpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="vendor\loguru\loguru.cpp">

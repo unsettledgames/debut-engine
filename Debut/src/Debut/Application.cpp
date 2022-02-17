@@ -17,8 +17,8 @@ namespace Debut
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(DBT_BIND(Application::OnEvent));
 
-		unsigned int id;
-		glGenVertexArrays(1, &id);
+		m_ImGuiLayer = new ImGuiLayer();
+		m_LayerStack.PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
@@ -36,6 +36,12 @@ namespace Debut
 			// Propagate update to the stack
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
+
+			// Render ImGui
+			m_ImGuiLayer->Begin();
+			for (Layer* layer : m_LayerStack)
+				layer->OnImGuiRender();
+			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
 		}

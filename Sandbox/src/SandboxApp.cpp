@@ -22,14 +22,7 @@ class Sandbox : public Debut::Application
 public:
 	Sandbox()
 	{
-		int a = 0;
-
-		ExampleLayer* layer = new ExampleLayer();
-
 		PushLayer(new ExampleLayer());
-		PushOverlay(new Debut::ImGuiLayer());
-
-		glm::vec2(45.0f, 23.0f);
 	}
 
 	~Sandbox()
