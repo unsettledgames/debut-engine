@@ -2,6 +2,7 @@
 #include <Debut/dbtpch.h>
 #include <Debut.h>
 #include <glm/glm.hpp>
+#include "imgui.h"
 
 class ExampleLayer : public Debut::Layer
 {
@@ -10,6 +11,13 @@ public:
 
 	void OnUpdate() override
 	{
+	}
+
+	void OnImGuiRender() override
+	{
+		ImGui::Begin("Test");
+		ImGui::Text("Test text");
+		ImGui::End();
 	}
 
 	void OnEvent(Debut::Event& e) override

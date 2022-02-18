@@ -136,14 +136,14 @@ namespace Debut
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-				MouseScrolledEvent scrollEvent(xOffset, yOffset);
+				MouseScrolledEvent scrollEvent((float)xOffset, (float)yOffset);
 				data.EventCallback(scrollEvent);
 			});
 
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-				MouseMovedEvent moveEvent(xPos, yPos);
+				MouseMovedEvent moveEvent((float)xPos, (float)yPos);
 				data.EventCallback(moveEvent);
 			});
 	}

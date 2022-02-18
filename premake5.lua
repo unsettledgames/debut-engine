@@ -24,8 +24,10 @@ include "Debut/vendor/imgui"
 
 project "Debut"
 	location "Debut"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -36,8 +38,7 @@ project "Debut"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/vendor/loguru/loguru.cpp"
+		"%{prj.name}/src/**.cpp"
 	}
 
 	includedirs
@@ -60,8 +61,6 @@ project "Debut"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
-		staticruntime "off"
 		systemversion "latest"
 
 		defines 
@@ -71,34 +70,30 @@ project "Debut"
 			"GLFW_INCLUDE_NONE"
 		}
 
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox"),
-		}
-
 	filter "files:%{prj.name}/vendor/loguru/loguru.cpp"
 		flags "NoPCH"
 	filter "configurations:Debug"
 		runtime "Debug"
-		defines {"DBT_DEBUG", "DBT_ASSERTS"}
-		symbols "On"
+		defines {"DBT_DEBUG"}
+		symbols "on"
 
 	filter "configurations:Release"
 		runtime "Release"
 		defines "DBT_RELEASE"
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		runtime "Release"
 		defines "DBT_DIST"
-		optimize "On"
+		optimize "on"
 	
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
-	staticruntime "off"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -115,6 +110,7 @@ project "Sandbox"
 		"Debut/vendor/spdlog/include",
 		"Debut/vendor/loguru",
 		"Debut/src",
+		"%{IncludeDir.imgui}",
 		"Debut/vendor/glm"
 	}
 
@@ -124,7 +120,6 @@ project "Sandbox"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
 		systemversion "latest"
 
 		defines 
@@ -134,12 +129,12 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "DBT_DEBUG"
-		symbols "On"
+		symbols "on"
 
 	filter "configurations:Release"
 		defines "DBT_RELEASE"
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "DBT_DIST"
-		optimize "On"
+		optimize "on"

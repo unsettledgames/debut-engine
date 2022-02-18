@@ -1,121 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="src">
-      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    <Filter Include="Debut">
+      <UniqueIdentifier>{1995060D-85A9-2EBE-4E2B-D21DBAFE2AEF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Debut">
-      <UniqueIdentifier>{70A3C3B2-DC0D-7829-254C-29CF91F5557E}</UniqueIdentifier>
+    <Filter Include="Debut\Events">
+      <UniqueIdentifier>{DD6A1099-C9CD-9F3D-7253-D8F35E956BC0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Debut\Events">
-      <UniqueIdentifier>{541131AC-400A-50FE-693C-358355942F0A}</UniqueIdentifier>
+    <Filter Include="Debut\ImGui">
+      <UniqueIdentifier>{03B95AD6-6F6E-D3CB-F862-CDA26417CACF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Debut\ImGui">
-      <UniqueIdentifier>{9AEC34EE-0678-A2B2-0F89-25A77B93FEB2}</UniqueIdentifier>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Platform">
-      <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Platform\OpenGL">
-      <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Platform\Windows">
-      <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="vendor">
-      <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="vendor\loguru">
-      <UniqueIdentifier>{8053FB11-EC13-7748-B54E-C0C521CEBB24}</UniqueIdentifier>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Debut.h">
-      <Filter>src</Filter>
-    </ClInclude>
+    <ClInclude Include="src\Debut.h" />
     <ClInclude Include="src\Debut\Application.h">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Core.h">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\EntryPoint.h">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\ApplicationEvent.h">
-      <Filter>src\Debut\Events</Filter>
+      <Filter>Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\Event.h">
-      <Filter>src\Debut\Events</Filter>
+      <Filter>Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\KeyEvent.h">
-      <Filter>src\Debut\Events</Filter>
+      <Filter>Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Events\MouseEvent.h">
-      <Filter>src\Debut\Events</Filter>
+      <Filter>Debut\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\ImGui\ImGuiLayer.h">
-      <Filter>src\Debut\ImGui</Filter>
+      <Filter>Debut\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Input.h">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\KeyCodes.h">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Layer.h">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\LayerStack.h">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Log.h">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\MouseButtonCodes.h">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Window.h">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\dbtpch.h">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsInput.h">
-      <Filter>src\Platform\Windows</Filter>
+      <Filter>Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
-      <Filter>src\Platform\Windows</Filter>
+      <Filter>Platform\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Application.cpp">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debut\ImGui\ImGuiBuild.cpp">
+      <Filter>Debut\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\ImGui\ImGuiLayer.cpp">
-      <Filter>src\Debut\ImGui</Filter>
+      <Filter>Debut\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Layer.cpp">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\LayerStack.cpp">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Log.cpp">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\dbtpch.cpp">
-      <Filter>src\Debut</Filter>
+      <Filter>Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
-      <Filter>src\Platform\Windows</Filter>
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
-      <Filter>src\Platform\Windows</Filter>
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="vendor\loguru\loguru.cpp">
-      <Filter>vendor\loguru</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Debut\ImGui\ImGuiBuild.cpp" />
   </ItemGroup>
 </Project>
