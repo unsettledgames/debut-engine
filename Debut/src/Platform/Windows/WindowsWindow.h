@@ -2,6 +2,7 @@
 
 #include "Debut/Window.h"
 #include "GLFW/glfw3.h"
+#include "Renderer/GraphicsContext.h"
 
 namespace Debut
 {
@@ -40,6 +41,7 @@ namespace Debut
 			EventCallbackFn EventCallback;
 		};
 
+		GraphicsContext* m_Context;
 		WindowData m_Data;
 	};
 }

@@ -140,6 +140,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Debut.h" />
     <ClInclude Include="src\Debut\Application.h" />
     <ClInclude Include="src\Debut\Core.h" />
@@ -159,8 +160,10 @@
     <ClInclude Include="src\Debut\dbtpch.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="src\Renderer\GraphicsContext.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Debut\Application.cpp" />
     <ClCompile Include="src\Debut\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Debut\ImGui\ImGuiLayer.cpp" />

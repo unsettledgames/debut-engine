@@ -2,6 +2,7 @@
 #include "Debut/Log.h"
 #include "Debut/Core.h"
 #include "WindowsWindow.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 #include "Debut/Events/KeyEvent.h"
 #include "Debut/Events/MouseEvent.h"
@@ -32,6 +33,7 @@ namespace Debut
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
+		
 
 		if (!s_GLFWInitialized)
 		{
@@ -44,10 +46,8 @@ namespace Debut
 		}
 
 		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		
-		int success = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		DBT_ASSERT(success, "Failed to initialize Glad");
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
@@ -157,7 +157,7 @@ namespace Debut
 	void WindowsWindow::OnUpdate() const
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::Shutdown()
