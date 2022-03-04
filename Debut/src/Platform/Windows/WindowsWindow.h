@@ -2,7 +2,7 @@
 
 #include "Debut/Window.h"
 #include "GLFW/glfw3.h"
-#include "Renderer/GraphicsContext.h"
+#include "Debut/Renderer/GraphicsContext.h"
 
 namespace Debut
 {

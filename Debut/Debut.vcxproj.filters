@@ -73,8 +73,9 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\Debut\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\Debut\Renderer\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Application.cpp">
@@ -105,5 +106,6 @@
       <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\Debut\Renderer\Shader.cpp" />
   </ItemGroup>
 </Project>
