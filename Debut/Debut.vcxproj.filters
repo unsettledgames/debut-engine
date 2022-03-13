@@ -76,6 +76,15 @@
     <ClInclude Include="src\Debut\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Debut\Renderer\Shader.h" />
+    <ClInclude Include="src\Debut\Renderer\Buffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
+    <ClInclude Include="src\Debut\Renderer\Renderer.h" />
+    <ClInclude Include="src\Debut\Renderer\VertexArray.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
+    <ClInclude Include="src\Debut\Renderer\RendererAPI.h" />
+    <ClInclude Include="src\Debut\Renderer\RenderCommand.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\Debut\Renderer\OrthographicCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Application.cpp">
@@ -107,5 +116,14 @@
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Debut\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Debut\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
+    <ClCompile Include="src\Debut\Renderer\Renderer.cpp" />
+    <ClCompile Include="src\Debut\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
+    <ClCompile Include="src\Debut\Renderer\RendererAPI.cpp" />
+    <ClCompile Include="src\Debut\Renderer\RenderCommand.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="src\Debut\Renderer\OrthographicCamera.cpp" />
   </ItemGroup>
 </Project>

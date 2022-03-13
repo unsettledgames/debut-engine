@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <glm/glm.hpp>
 
 namespace Debut
 {
@@ -12,6 +12,8 @@ namespace Debut
 
 		void Bind() const;
 		void Unbind() const;
+
+		void UploadUniformMat4(const std::string& name, const glm::mat4& mat);
 
 	private:
 		void CheckCompileError(unsigned int shader);

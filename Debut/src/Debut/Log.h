@@ -39,6 +39,15 @@
 #define DBT_INFO(fmt, ...)						\
 	{ADD_PREFIX(fmt, APP)						\
 	LOG_F(INFO, ss.str().c_str(), __VA_ARGS__);}
+
+#ifdef DBT_ASSERTS
+	#define DBT_ASSERT(x, ...) { if(!(x)) { DBT_ERROR("Assertion failed. %s", __VA_ARGS__); __debugbreak(); }}
+	#define DBT_CORE_ASSERT(x, ...) { if(!(x)) { DBT_CORE_ERROR("Assertion failed. %s", __VA_ARGS__); __debugbreak(); }}
+#else
+	#define DBT_ASSERT(x, ...)
+	#define DBT_CORE_ASSERT(x, ...)
+#endif
+
 	
 
 namespace Debut

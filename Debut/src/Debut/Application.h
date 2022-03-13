@@ -5,7 +5,10 @@
 #include "LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
 #include "Events/ApplicationEvent.h"
+#include "Renderer/VertexArray.h"
+#include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"
+#include "Renderer/OrthographicCamera.h"
 
 
 namespace Debut
@@ -37,8 +40,8 @@ namespace Debut
 		LayerStack m_LayerStack;
 		static Application* s_Instance;
 
-		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
-		std::unique_ptr<Shader> m_Shader;
+		std::shared_ptr<VertexBuffer> m_VertexBuffer;
+		std::shared_ptr<IndexBuffer> m_IndexBuffer;		
 	};
 
 	Application* CreateApplication();
