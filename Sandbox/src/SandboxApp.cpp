@@ -68,25 +68,26 @@ public:
 		m_Shader.reset(new Debut::Shader(vertSrc, fragSrc));
 
 		m_CameraPosition = glm::vec3(0, 0, 0);
-		m_CameraMovementSpeed = 0.02f;
 	}
 
-	void OnUpdate() override
+	void OnUpdate(Debut::Timestep ts) override
 	{
+		Debut::Log.AppInfo("Delta time: %f", (float)ts);
+
 		if (Debut::Input::IsKeyPressed(DBT_KEY_LEFT))
-			m_CameraPosition.x -= m_CameraMovementSpeed;
+			m_CameraPosition.x -= m_CameraMovementSpeed * ts;
 		if (Debut::Input::IsKeyPressed(DBT_KEY_RIGHT))
-			m_CameraPosition.x += m_CameraMovementSpeed;
+			m_CameraPosition.x += m_CameraMovementSpeed * ts;
 
 		if (Debut::Input::IsKeyPressed(DBT_KEY_DOWN))
-			m_CameraPosition.y -= m_CameraMovementSpeed;
+			m_CameraPosition.y -= m_CameraMovementSpeed * ts;
 		if (Debut::Input::IsKeyPressed(DBT_KEY_UP))
-			m_CameraPosition.y += m_CameraMovementSpeed;
+			m_CameraPosition.y += m_CameraMovementSpeed * ts;
 
 		if (Debut::Input::IsKeyPressed(DBT_KEY_D))
-			m_CameraRotation += m_CameraRotationSpeed;
+			m_CameraRotation += m_CameraRotationSpeed * ts;
 		if (Debut::Input::IsKeyPressed(DBT_KEY_A))
-			m_CameraRotation -= m_CameraRotationSpeed;
+			m_CameraRotation -= m_CameraRotationSpeed * ts;
 
 		m_Camera.SetPosition(m_CameraPosition);
 		m_Camera.SetRotation(m_CameraRotation);
@@ -123,9 +124,9 @@ private:
 	
 	Debut::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
-	float m_CameraMovementSpeed = 0.02;
+	float m_CameraMovementSpeed = 5;
 	float m_CameraRotation = 0;
-	float m_CameraRotationSpeed = 1;
+	float m_CameraRotationSpeed = 40;
 };
 
 class Sandbox : public Debut::Application

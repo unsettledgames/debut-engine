@@ -2,6 +2,9 @@
 /***************Externals**************/
 #include "glm/glm.hpp"
 
+/************Core**************/
+#include "Debut/Core/Time.h"
+
 // Input
 #include "Debut/KeyCodes.h"
 #include "Debut/MouseButtonCodes.h"

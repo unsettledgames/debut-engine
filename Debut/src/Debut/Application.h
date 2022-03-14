@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core.h"
+#include "Debut/Core/Time.h"
 #include "Window.h"
 #include "LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
@@ -40,8 +41,8 @@ namespace Debut
 		LayerStack m_LayerStack;
 		static Application* s_Instance;
 
-		std::shared_ptr<VertexBuffer> m_VertexBuffer;
-		std::shared_ptr<IndexBuffer> m_IndexBuffer;		
+		float m_LastFrameTime = 0.0f;
+		Timestep m_Timestep;
 	};
 
 	Application* CreateApplication();

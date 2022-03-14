@@ -1,4 +1,5 @@
 #include "Debut/dbtpch.h"
+#include "GLFW/glfw3.h"
 #include "Application.h"
 #include "Input.h"
 
@@ -31,9 +32,13 @@ namespace Debut
 	{
 		while (m_Running)
 		{
+			float time = (float)glfwGetTime();
+			Timestep timestep = time - m_LastFrameTime;
+			m_LastFrameTime = time;
+
 			// Propagate update to the stack
 			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(timestep);
 
 			// Render ImGui
 			m_ImGuiLayer->Begin();

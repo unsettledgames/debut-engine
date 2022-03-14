@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Debut/Core.h"
+#include "Debut/Core/Time.h"
 #include "Events/Event.h"
 
 namespace Debut
@@ -13,7 +14,7 @@ namespace Debut
 
 		virtual void OnAttach() {};
 		virtual void OnDetach() {};
-		virtual void OnUpdate() {};
+		virtual void OnUpdate(Timestep ts) {};
 		virtual void OnEvent(Event& e) {};
 		virtual void OnImGuiRender() {};
 
