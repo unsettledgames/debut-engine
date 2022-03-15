@@ -2,6 +2,7 @@
 #include <Debut/dbtpch.h>
 #include <Debut.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "imgui.h"
 
 class ExampleLayer : public Debut::Layer
@@ -40,6 +41,7 @@ public:
 			layout(location = 1) in vec4 a_Color;
 
 			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
 
 			out vec3 v_Position;
 			out vec4 v_Color;
@@ -48,7 +50,7 @@ public:
 			{
 				v_Position = a_Position;
 				v_Color = a_Color;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -84,11 +86,6 @@ public:
 		if (Debut::Input::IsKeyPressed(DBT_KEY_UP))
 			m_CameraPosition.y += m_CameraMovementSpeed * ts;
 
-		if (Debut::Input::IsKeyPressed(DBT_KEY_D))
-			m_CameraRotation += m_CameraRotationSpeed * ts;
-		if (Debut::Input::IsKeyPressed(DBT_KEY_A))
-			m_CameraRotation -= m_CameraRotationSpeed * ts;
-
 		m_Camera.SetPosition(m_CameraPosition);
 		m_Camera.SetRotation(m_CameraRotation);
 
@@ -98,7 +95,18 @@ public:
 		Debut::Renderer::BeginScene(m_Camera/*camera, lights, environment*/);
 
 		m_Shader->Bind();
-		Debut::Renderer::Submit(m_VertexArray, m_Shader);
+		glm::vec3 startPos(0.0f);
+		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+		for (int i = 0; i < 10; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				startPos = glm::vec3(i * 0.1f, j * 0.1f, 0.0f);
+				Debut::Renderer::Submit(m_VertexArray, m_Shader, glm::translate(glm::mat4(1.0f), startPos) * scale);
+			}
+		}
+		
 
 		Debut::Renderer::EndScene();
 	}
@@ -124,7 +132,7 @@ private:
 	
 	Debut::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
-	float m_CameraMovementSpeed = 5;
+	float m_CameraMovementSpeed = 1;
 	float m_CameraRotation = 0;
 	float m_CameraRotationSpeed = 40;
 };

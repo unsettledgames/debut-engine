@@ -10,7 +10,8 @@ namespace Debut
 	{
 	public:
 		static void BeginScene(OrthographicCamera& camera/*Cameras, lights*/);
-		static void Submit(const std::shared_ptr<VertexArray>& va, const std::shared_ptr<Shader>& shader);
+		static void Submit(const std::shared_ptr<VertexArray>& va, const std::shared_ptr<Shader>& shader, 
+			const glm::mat4 transform = glm::mat4(1.0f));
 		static void EndScene();
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
