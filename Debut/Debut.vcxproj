@@ -140,6 +140,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Debut\Core\Time.h" />
     <ClInclude Include="src\Debut\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Debut\Renderer\RenderCommand.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="src\Debut\Renderer\GraphicsContext.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Debut\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Debut\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Debut\Renderer\RendererAPI.cpp" />

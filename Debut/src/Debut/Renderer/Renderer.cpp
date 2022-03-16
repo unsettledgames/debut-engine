@@ -1,6 +1,7 @@
 #include "Debut/dbtpch.h"
 #include "Renderer.h"
 #include "RenderCommand.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Debut
 {
@@ -16,8 +17,8 @@ namespace Debut
 		shader->Bind();
 		va->Bind();
 
-		shader->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
-		shader->UploadUniformMat4("u_Transform", transform);
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_Transform", transform);
 
 		RenderCommand::DrawIndexed(va);
 	}

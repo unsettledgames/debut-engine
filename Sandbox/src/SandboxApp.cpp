@@ -3,7 +3,9 @@
 #include <Debut.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "imgui.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 class ExampleLayer : public Debut::Layer
 {
@@ -44,12 +46,10 @@ public:
 			uniform mat4 u_Transform;
 
 			out vec3 v_Position;
-			out vec4 v_Color;
 
 			void main()
 			{
 				v_Position = a_Position;
-				v_Color = a_Color;
 				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
 			}
 		)";
@@ -59,15 +59,15 @@ public:
 			
 			layout(location = 0) out vec4 color;
 
-			in vec4 v_Color;
+			uniform vec4 u_Color;
 
 			void main()
 			{
-				color = v_Color;
+				color = u_Color;
 			}
 		)";
 
-		m_Shader.reset(new Debut::Shader(vertSrc, fragSrc));
+		m_Shader.reset(Debut::Shader::Create(vertSrc, fragSrc));
 
 		m_CameraPosition = glm::vec3(0, 0, 0);
 	}
@@ -102,6 +102,9 @@ public:
 		{
 			for (int j = 0; j < 10; j++)
 			{
+				m_Shader->Bind();
+				std::dynamic_pointer_cast<Debut::OpenGLShader>(m_Shader)->UploadUniformFloat4("u_Color", m_TriangleColor);
+
 				startPos = glm::vec3(i * 0.1f, j * 0.1f, 0.0f);
 				Debut::Renderer::Submit(m_VertexArray, m_Shader, glm::translate(glm::mat4(1.0f), startPos) * scale);
 			}
@@ -113,6 +116,9 @@ public:
 
 	void OnImGuiRender() override
 	{
+		ImGui::Begin("Settings");
+		ImGui::ColorEdit3("Triangle color: ", glm::value_ptr(m_TriangleColor));
+		ImGui::End();
 	}
 
 	void OnEvent(Debut::Event& e) override
@@ -135,6 +141,8 @@ private:
 	float m_CameraMovementSpeed = 1;
 	float m_CameraRotation = 0;
 	float m_CameraRotationSpeed = 40;
+
+	glm::vec4 m_TriangleColor;
 };
 
 class Sandbox : public Debut::Application

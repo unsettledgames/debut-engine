@@ -7,19 +7,18 @@ namespace Debut
 	class Shader
 	{
 	public:
-		Shader(const std::string& vertSource, const std::string& fragSource);
-		~Shader();
+		virtual ~Shader() = default;
 
-		void Bind() const;
-		void Unbind() const;
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
 
-		void UploadUniformMat4(const std::string& name, const glm::mat4& mat);
+		static Shader* Create(const std::string& vertSrc, const std::string& fragSrc);
 
 	private:
 		void CheckCompileError(unsigned int shader);
 		void CheckLinkingError(unsigned int program, unsigned int vert, unsigned int frag, const std::string& programName);
 
-	private:
+	protected:
 		unsigned int m_ProgramID;
 	};
 }
