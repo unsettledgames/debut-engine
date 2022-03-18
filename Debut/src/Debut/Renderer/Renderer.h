@@ -9,6 +9,7 @@ namespace Debut
 	class Renderer
 	{
 	public:
+		static void Init();
 		static void BeginScene(OrthographicCamera& camera/*Cameras, lights*/);
 		static void Submit(const Ref<VertexArray>& va, const Ref<Shader>& shader,
 			const glm::mat4 transform = glm::mat4(1.0f));

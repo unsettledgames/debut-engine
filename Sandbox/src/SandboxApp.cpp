@@ -127,7 +127,7 @@ public:
 		m_Shader = Debut::Shader::Create(vertSrc, fragSrc);
 		m_SquareShader = Debut::Shader::Create(squareVert, squareFrag);
 
-		m_Texture = Debut::Texture2D::Create("C:/dev/Debut/Debut/assets/textures/penguin.png");
+		m_Texture = Debut::Texture2D::Create("C:/dev/Debut/Debut/assets/textures/akita.png");
 		m_SquareShader->Bind();
 		std::dynamic_pointer_cast<Debut::OpenGLShader>(m_SquareShader)->UploadUniformInt("u_Texture", 0);
 
@@ -166,6 +166,7 @@ public:
 			{
 				m_Shader->Bind();
 				std::dynamic_pointer_cast<Debut::OpenGLShader>(m_Shader)->UploadUniformFloat4("u_Color", m_TriangleColor);
+				m_TriangleColor.a = 1.0f;
 
 				startPos = glm::vec3(i * 0.1f, j * 0.1f, 0.0f);
 				Debut::Renderer::Submit(m_VertexArray, m_Shader, glm::translate(glm::mat4(1.0f), startPos) * scale);
