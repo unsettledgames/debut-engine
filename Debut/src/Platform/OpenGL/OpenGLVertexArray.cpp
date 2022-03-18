@@ -52,7 +52,7 @@ namespace Debut
 		glBindVertexArray(0);
 	}
 
-	void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& buffer)
+	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& buffer)
 	{
 		glBindVertexArray(m_RendererID);
 		buffer->Bind();
@@ -70,7 +70,7 @@ namespace Debut
 		
 	}
 	
-	void OpenGLVertexArray::AddIndexBuffer(const std::shared_ptr<IndexBuffer>& buffer)
+	void OpenGLVertexArray::AddIndexBuffer(const Ref<IndexBuffer>& buffer)
 	{
 		glBindVertexArray(m_RendererID);
 

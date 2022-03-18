@@ -17,6 +17,7 @@ IncludeDir["GLFW"] = "Debut/vendor/glfw/include"
 IncludeDir["Glad"] = "Debut/vendor/glad/include"
 IncludeDir["imgui"] = "Debut/vendor/imgui"
 IncludeDir["glm"] = "Debut/vendor/glm"
+IncludeDir["stb_image"] = "Debut/vendor/stb_image"
 
 include "Debut/vendor/glfw"
 include "Debut/vendor/glad"
@@ -38,7 +39,11 @@ project "Debut"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/glm/glm/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.h"
 	}
 
 	includedirs
@@ -49,7 +54,8 @@ project "Debut"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.imgui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links
@@ -86,6 +92,9 @@ project "Debut"
 		runtime "Release"
 		defines "DBT_DIST"
 		optimize "on"
+
+	filter "files:Debut/vendor/**.cpp"
+		flags {NoPCH}
 	
 
 project "Sandbox"

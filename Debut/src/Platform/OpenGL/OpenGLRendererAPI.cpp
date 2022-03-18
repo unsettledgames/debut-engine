@@ -14,7 +14,7 @@ namespace Debut
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
-	void OpenGLRendererAPI::DrawIndexed(const std::shared_ptr<VertexArray>& va)
+	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& va)
 	{
 		glDrawElements(GL_TRIANGLES, va->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}

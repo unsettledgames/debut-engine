@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Debut/Core.h"
 #include "Debut/Log.h"
 
 namespace Debut
@@ -127,7 +128,7 @@ namespace Debut
 		virtual inline void SetLayout(const BufferLayout& layout) = 0;
 		virtual inline BufferLayout& GetLayout() = 0;
 
-		static VertexBuffer* Create(float* vertices, unsigned int count);
+		static Ref<VertexBuffer> Create(float* vertices, unsigned int count);
 	private:
 	};
 
@@ -142,7 +143,7 @@ namespace Debut
 		
 		virtual uint32_t GetCount() const = 0;
 
-		static IndexBuffer* Create(int* indices, unsigned int count);
+		static Ref<IndexBuffer> Create(int* indices, unsigned int count);
 	private:
 	};
 }

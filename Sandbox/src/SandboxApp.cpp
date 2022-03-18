@@ -17,24 +17,48 @@ public:
 			0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
 			0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 		};
+		float textureVertices[5 * 4] = {
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			-0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+			0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 
+			0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+		};
+
 		int indices[3] = { 0, 1, 2 };
+		int textIndices[6] = { 0, 1, 2, 0, 2, 3};
 
-		std::shared_ptr<Debut::VertexBuffer> vertexBuffer;
-		std::shared_ptr<Debut::IndexBuffer> indexBuffer;
+		Debut::Ref<Debut::VertexBuffer> textBuffer;
+		Debut::Ref<Debut::IndexBuffer> textIndBuffer;
+		
+		textBuffer = Debut::VertexBuffer::Create(textureVertices, 5 * 4);
+		textIndBuffer = Debut::IndexBuffer::Create(textIndices, 6);
+		m_TextureVA = Debut::VertexArray::Create();
 
-		vertexBuffer.reset(Debut::VertexBuffer::Create(vertices, 3 * 7));
-		indexBuffer.reset(Debut::IndexBuffer::Create(indices, 3));
-		m_VertexArray.reset(Debut::VertexArray::Create());
+		Debut::Ref<Debut::VertexBuffer> vertexBuffer;
+		Debut::Ref<Debut::IndexBuffer> indexBuffer;
 
-		Debut::BufferLayout bufferLayout = {
+		vertexBuffer = Debut::VertexBuffer::Create(vertices, 3 * 7);
+		indexBuffer = Debut::IndexBuffer::Create(indices, 3);
+		m_VertexArray = Debut::VertexArray::Create();
+
+		Debut::BufferLayout bufferLayout = { 
 			{ Debut::ShaderDataType::Float3, "a_Position", false},
 			{Debut::ShaderDataType::Float4, "a_Color", false}
 		};
 
+		Debut::BufferLayout squareLayout = {
+			{Debut::ShaderDataType::Float3, "a_Position", false},
+			{Debut::ShaderDataType::Float2, "a_UV", false}
+		};
+
 		vertexBuffer->SetLayout(bufferLayout);
+		textBuffer->SetLayout(squareLayout);
 
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
 		m_VertexArray->AddIndexBuffer(indexBuffer);
+
+		m_TextureVA->AddVertexBuffer(textBuffer);
+		m_TextureVA->AddIndexBuffer(textIndBuffer);
 
 		std::string vertSrc = R"(
 			#version 410
@@ -67,7 +91,45 @@ public:
 			}
 		)";
 
-		m_Shader.reset(Debut::Shader::Create(vertSrc, fragSrc));
+		std::string squareVert = R"(
+			#version 410
+			
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec2 a_UV;
+
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
+
+			out vec2 v_UV;
+
+			void main()
+			{
+				v_UV = a_UV;
+
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+			}
+		)";
+
+		std::string squareFrag = R"(
+			#version 410
+			
+			layout(location = 0) out vec4 color;
+			layout(location = 1) in vec2 v_UV;
+
+			uniform sampler2D u_Texture;
+
+			void main()
+			{
+				color = texture(u_Texture, v_UV);
+			}
+		)";
+
+		m_Shader = Debut::Shader::Create(vertSrc, fragSrc);
+		m_SquareShader = Debut::Shader::Create(squareVert, squareFrag);
+
+		m_Texture = Debut::Texture2D::Create("C:/dev/Debut/Debut/assets/textures/penguin.png");
+		m_SquareShader->Bind();
+		std::dynamic_pointer_cast<Debut::OpenGLShader>(m_SquareShader)->UploadUniformInt("u_Texture", 0);
 
 		m_CameraPosition = glm::vec3(0, 0, 0);
 	}
@@ -110,6 +172,9 @@ public:
 			}
 		}
 		
+		m_Texture->Bind();
+		Debut::Renderer::Submit(m_TextureVA, m_SquareShader, glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)));
+		
 
 		Debut::Renderer::EndScene();
 	}
@@ -133,8 +198,11 @@ public:
 		return false;
 	}
 private:
-	std::shared_ptr<Debut::Shader> m_Shader;
-	std::shared_ptr<Debut::VertexArray> m_VertexArray;
+	Debut::Ref<Debut::Texture2D> m_Texture;
+	Debut::Ref<Debut::Shader> m_Shader;
+	Debut::Ref<Debut::Shader> m_SquareShader;
+	Debut::Ref<Debut::VertexArray> m_VertexArray;
+	Debut::Ref<Debut::VertexArray> m_TextureVA;
 	
 	Debut::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;

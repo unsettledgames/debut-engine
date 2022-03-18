@@ -1,5 +1,7 @@
 #pragma once
 
+
+#include <Debut/Core.h>
 #include <glm/glm.hpp>
 
 namespace Debut
@@ -12,11 +14,7 @@ namespace Debut
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
-		static Shader* Create(const std::string& vertSrc, const std::string& fragSrc);
-
-	private:
-		void CheckCompileError(unsigned int shader);
-		void CheckLinkingError(unsigned int program, unsigned int vert, unsigned int frag, const std::string& programName);
+		static Ref<Shader> Create(const std::string& vertSrc, const std::string& fragSrc);
 
 	protected:
 		unsigned int m_ProgramID;

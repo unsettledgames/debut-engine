@@ -17,7 +17,7 @@ namespace Debut
 			s_RendererAPI->Clear(); 
 		}
 
-		static void DrawIndexed(const std::shared_ptr<VertexArray>& va) 
+		static void DrawIndexed(const Ref<VertexArray>& va) 
 		{ 
 			s_RendererAPI->DrawIndexed(va); 
 		}

@@ -8,7 +8,7 @@
 
 namespace Debut
 {
-	Shader* Shader::Create(const std::string& vertSrc, const std::string& fragSrc)
+	Ref<Shader> Shader::Create(const std::string& vertSrc, const std::string& fragSrc)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -16,7 +16,7 @@ namespace Debut
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new OpenGLShader(vertSrc, fragSrc);
+			return std::make_shared<OpenGLShader>(vertSrc, fragSrc);
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
