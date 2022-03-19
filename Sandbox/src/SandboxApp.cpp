@@ -90,42 +90,10 @@ public:
 				color = u_Color;
 			}
 		)";
-
-		std::string squareVert = R"(
-			#version 410
-			
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec2 a_UV;
-
-			uniform mat4 u_ViewProjection;
-			uniform mat4 u_Transform;
-
-			out vec2 v_UV;
-
-			void main()
-			{
-				v_UV = a_UV;
-
-				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-			}
-		)";
-
-		std::string squareFrag = R"(
-			#version 410
-			
-			layout(location = 0) out vec4 color;
-			layout(location = 1) in vec2 v_UV;
-
-			uniform sampler2D u_Texture;
-
-			void main()
-			{
-				color = texture(u_Texture, v_UV);
-			}
-		)";
+		
 
 		m_Shader = Debut::Shader::Create(vertSrc, fragSrc);
-		m_SquareShader = Debut::Shader::Create(squareVert, squareFrag);
+		m_SquareShader = Debut::Shader::Create("C:/dev/Debut/Debut/assets/shaders/texture.glsl");
 
 		m_Texture = Debut::Texture2D::Create("C:/dev/Debut/Debut/assets/textures/akita.png");
 		m_SquareShader->Bind();

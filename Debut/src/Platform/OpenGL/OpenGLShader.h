@@ -3,11 +3,14 @@
 #include "Debut/Renderer/Shader.h"
 #include <glm/glm.hpp>
 
+typedef unsigned int GLenum;
+
 namespace Debut
 {
 	class OpenGLShader : public Shader
 	{
 	public:
+		OpenGLShader(const std::string& filePath);
 		OpenGLShader(const std::string& vertSource, const std::string& fragSource);
 		virtual ~OpenGLShader();
 
@@ -28,8 +31,14 @@ namespace Debut
 		void UploadUniformInt4(const std::string& name, const glm::ivec4& vec);
 
 	private:
+		std::string ReadFile(const std::string& path);
+		std::unordered_map<GLenum, std::string> PreProcess(const std::string& src);
+
+		void Compile(std::unordered_map<GLenum, std::string>& sources);
+		void Link();
+
 		void CheckCompileError(unsigned int shader);
-		void CheckLinkingError(unsigned int program, unsigned int vert, unsigned int frag, const std::string& programName);
+		void CheckLinkingError(unsigned int program);
 
 	private:
 		unsigned int m_ProgramID;

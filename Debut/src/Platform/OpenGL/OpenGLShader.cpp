@@ -1,48 +1,127 @@
 #include "Debut/dbtpch.h"
 #include "OpenGLShader.h"
 #include "Debut/Log.h"
-#include "glad/glad.h"
 #include "glm/gtc/type_ptr.hpp"
+#include <glad/glad.h>
 
 namespace Debut
 {
-	OpenGLShader::OpenGLShader(const std::string& vertSource, const std::string& fragSource)
+	static GLenum ShaderTypeFromString(const std::string& type)
 	{
-		unsigned int vertShader = glCreateShader(GL_VERTEX_SHADER);
-		unsigned int fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+		if (type == "vertex") return GL_VERTEX_SHADER;
+		if (type == "fragment" || type == "pixel") return GL_FRAGMENT_SHADER;
 
-		const char* srcVert = vertSource.c_str();
-		const char* srcFrag = fragSource.c_str();
+		DBT_CORE_ASSERT(false, "Unknown shader type");
+		return -1;
+	}
 
-		glShaderSource(vertShader, 1, &srcVert, nullptr);
-		glShaderSource(fragShader, 1, &srcFrag, nullptr);
+	OpenGLShader::OpenGLShader(const std::string& filePath)
+	{
+		std::string src = ReadFile(filePath);
+		auto shaderSources = PreProcess(src);
 
-		glCompileShader(vertShader);
-		glCompileShader(fragShader);
+		Compile(shaderSources);
+		Link();
+	}
+
+	void OpenGLShader::Compile(std::unordered_map<GLenum, std::string>& sources)
+	{
+		GLuint program = glCreateProgram();
+		std::vector<GLenum> shaderIDs(sources.size());
+
+		// Compile each shader and attach it to the program
+		for (auto& kv : sources)
+		{
+			GLenum type = kv.first;
+			const std::string& src = kv.second;
+			const GLchar* glSource = src.c_str();
+
+			GLuint shader = glCreateShader(type);
+			glShaderSource(shader, 1, &glSource, nullptr);
+			glCompileShader(shader);
 
 #ifdef DBT_DEBUG
-		CheckCompileError(vertShader);
-		CheckCompileError(fragShader);
+			CheckCompileError(shader);
 #endif
+			glAttachShader(program, shader);
+			shaderIDs.push_back(shader);
+		}
 
-		m_ProgramID = glCreateProgram();
+		m_ProgramID = program;
 
-		glAttachShader(m_ProgramID, vertShader);
-		glAttachShader(m_ProgramID, fragShader);
+		// Clear shaders
+		for (GLenum id : shaderIDs)
+			glDeleteShader(id);
+	}
 
+	void OpenGLShader::Link()
+	{
 		glLinkProgram(m_ProgramID);
 
 #ifdef DBT_DEBUG
-		CheckLinkingError(m_ProgramID, vertShader, fragShader, "default");
+		CheckLinkingError(m_ProgramID);
 #endif
-		// Clean everything
-		glDeleteShader(vertShader);
-		glDeleteShader(fragShader);
+	}
+
+	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& src)
+	{
+		std::unordered_map<GLenum, std::string> ret;
+		const char* typeToken = "#type";
+		size_t typeTokenLength = strlen(typeToken);
+		size_t pos = src.find(typeToken, 0);
+
+		while (pos != std::string::npos)
+		{
+			size_t eol = src.find_first_of("\r\n", pos);
+			DBT_CORE_ASSERT(eol != std::string::npos, "Shader syntax error");
+			size_t begin = pos + typeTokenLength + 1;
+			
+			std::string type = src.substr(begin, eol - begin);
+			DBT_CORE_ASSERT(type == "vertex" || type == "fragment" || type == "pixel", "Invalid or unsupported shader type");
+			size_t nextLinePos = src.find_first_not_of("\r\n", eol);
+			pos = src.find(typeToken, nextLinePos);
+
+			ret[ShaderTypeFromString(type)] = src.substr(nextLinePos, pos - (nextLinePos == std::string::npos ?
+				src.size() - 1 : nextLinePos));
+		}
+
+		return ret;
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& vertSource, const std::string& fragSource)
+	{
+		std::unordered_map<GLenum, std::string> shaderSources;
+
+		shaderSources[GL_VERTEX_SHADER] = vertSource;
+		shaderSources[GL_FRAGMENT_SHADER] = fragSource;
+
+		Compile(shaderSources);
+		Link();
 	}
 
 	OpenGLShader::~OpenGLShader()
 	{
 		glDeleteProgram(m_ProgramID);
+	}
+
+	std::string OpenGLShader::ReadFile(const std::string& path)
+	{
+		std::string fileContent;
+		std::ifstream inFile(path, std::ios::in, std::ios::binary);
+
+		if (inFile)
+		{
+			inFile.seekg(0, std::ios::end);
+			fileContent.resize(inFile.tellg());
+			inFile.seekg(0, std::ios::beg);
+
+			inFile.read(&fileContent[0], fileContent.size());
+			inFile.close();
+		}
+		else
+			DBT_CORE_ERROR("Couldn't open file %s", path.c_str());
+
+		return fileContent;
 	}
 
 	void OpenGLShader::Bind() const
@@ -138,7 +217,7 @@ namespace Debut
 		}
 	}
 
-	void OpenGLShader::CheckLinkingError(unsigned int program, unsigned int vert, unsigned int frag, const std::string& programName)
+	void OpenGLShader::CheckLinkingError(unsigned int program)
 	{
 		// Note the different functions here: glGetProgram* instead of glGetShader*.
 		GLint isLinked = 0;
@@ -154,12 +233,9 @@ namespace Debut
 
 			// We don't need the program anymore.
 			glDeleteProgram(program);
-			// Don't leak shaders either.
-			glDeleteShader(vert);
-			glDeleteShader(frag);
 
 			// Use the infoLog as you see fit.
-			Log.CoreError("%s", programName, infoLog.data());
+			Log.CoreError("Shader program failed to link: %s", infoLog.data());
 			DBT_ASSERT(false, "Program failed to link");
 
 			// In this simple program, we'll just leave

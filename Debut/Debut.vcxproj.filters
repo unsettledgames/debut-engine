@@ -219,4 +219,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\texture.glsl" />
+  </ItemGroup>
 </Project>

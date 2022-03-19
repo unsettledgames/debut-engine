@@ -8,6 +8,20 @@
 
 namespace Debut
 {
+	Ref<Shader> Shader::Create(const std::string& filePath)
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:
+			DBT_ASSERT(false, "The renderer doesn't have an API set.");
+			return nullptr;
+		case RendererAPI::API::OpenGL:
+			return std::make_shared<OpenGLShader>(filePath);
+		}
+
+		DBT_ASSERT(false, "Unsupported renderer API");
+	}
+
 	Ref<Shader> Shader::Create(const std::string& vertSrc, const std::string& fragSrc)
 	{
 		switch (Renderer::GetAPI())
