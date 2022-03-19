@@ -11,11 +11,13 @@ namespace Debut
 	{
 	public:
 		OpenGLShader(const std::string& filePath);
-		OpenGLShader(const std::string& vertSource, const std::string& fragSource);
+		OpenGLShader(const std::string& name, const std::string& vertSource, const std::string& fragSource);
 		virtual ~OpenGLShader();
 
 		void Bind() const override;
 		void Unbind() const override;
+
+		const std::string& GetName() const override { return m_Name; }
 
 		void UploadUniformMat3(const std::string& name, const glm::mat3& mat);
 		void UploadUniformMat4(const std::string& name, const glm::mat4& mat);
@@ -42,5 +44,6 @@ namespace Debut
 
 	private:
 		unsigned int m_ProgramID;
+		std::string m_Name;
 	};
 }

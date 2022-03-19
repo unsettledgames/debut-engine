@@ -2,6 +2,7 @@
 #include "OpenGLShader.h"
 #include "Debut/Log.h"
 #include "glm/gtc/type_ptr.hpp"
+#include <array>
 #include <glad/glad.h>
 
 namespace Debut
@@ -22,12 +23,23 @@ namespace Debut
 
 		Compile(shaderSources);
 		Link();
+
+		// Extract shader name from the file path
+		auto last = filePath.find_last_of("/\\");
+		auto dot = filePath.rfind(".");
+		last = last == std::string::npos ? last : last + 1;
+		auto count = dot == std::string::npos ? filePath.size() - last : dot - last;
+
+		m_Name = filePath.substr(last, count);
 	}
 
 	void OpenGLShader::Compile(std::unordered_map<GLenum, std::string>& sources)
 	{
+		DBT_CORE_ASSERT(sources.size() <= 3, "Only 3 shaders per file are supported at the moment.");
+
 		GLuint program = glCreateProgram();
-		std::vector<GLenum> shaderIDs(sources.size());
+		std::array<GLenum, 3> shaderIDs;
+		int shaderIdx = 0;
 
 		// Compile each shader and attach it to the program
 		for (auto& kv : sources)
@@ -44,7 +56,7 @@ namespace Debut
 			CheckCompileError(shader);
 #endif
 			glAttachShader(program, shader);
-			shaderIDs.push_back(shader);
+			shaderIDs[shaderIdx++] = shader;
 		}
 
 		m_ProgramID = program;
@@ -88,8 +100,9 @@ namespace Debut
 		return ret;
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& vertSource, const std::string& fragSource)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertSource, const std::string& fragSource)
 	{
+		m_Name = name;
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		shaderSources[GL_VERTEX_SHADER] = vertSource;
@@ -107,7 +120,7 @@ namespace Debut
 	std::string OpenGLShader::ReadFile(const std::string& path)
 	{
 		std::string fileContent;
-		std::ifstream inFile(path, std::ios::in, std::ios::binary);
+		std::ifstream inFile(path, std::ios::in | std::ios::binary);
 
 		if (inFile)
 		{

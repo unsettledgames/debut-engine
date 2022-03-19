@@ -59,45 +59,13 @@ public:
 
 		m_TextureVA->AddVertexBuffer(textBuffer);
 		m_TextureVA->AddIndexBuffer(textIndBuffer);
-
-		std::string vertSrc = R"(
-			#version 410
-			
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec4 a_Color;
-
-			uniform mat4 u_ViewProjection;
-			uniform mat4 u_Transform;
-
-			out vec3 v_Position;
-
-			void main()
-			{
-				v_Position = a_Position;
-				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-			}
-		)";
-
-		std::string fragSrc = R"(
-			#version 410
-			
-			layout(location = 0) out vec4 color;
-
-			uniform vec4 u_Color;
-
-			void main()
-			{
-				color = u_Color;
-			}
-		)";
-		
-
-		m_Shader = Debut::Shader::Create(vertSrc, fragSrc);
-		m_SquareShader = Debut::Shader::Create("C:/dev/Debut/Debut/assets/shaders/texture.glsl");
+		 
+		m_ShaderLibrary.Load("Unlit", "C:/dev/Debut/Debut/assets/shaders/unlit.glsl");
+		m_ShaderLibrary.Load("Texture", "C:/dev/Debut/Debut/assets/shaders/texture.glsl");
 
 		m_Texture = Debut::Texture2D::Create("C:/dev/Debut/Debut/assets/textures/akita.png");
-		m_SquareShader->Bind();
-		std::dynamic_pointer_cast<Debut::OpenGLShader>(m_SquareShader)->UploadUniformInt("u_Texture", 0);
+		m_ShaderLibrary.Get("Texture")->Bind();
+		std::dynamic_pointer_cast<Debut::OpenGLShader>(m_ShaderLibrary.Get("Texture"))->UploadUniformInt("u_Texture", 0);
 
 		m_CameraPosition = glm::vec3(0, 0, 0);
 	}
@@ -124,7 +92,6 @@ public:
 
 		Debut::Renderer::BeginScene(m_Camera/*camera, lights, environment*/);
 
-		m_Shader->Bind();
 		glm::vec3 startPos(0.0f);
 		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -132,17 +99,16 @@ public:
 		{
 			for (int j = 0; j < 10; j++)
 			{
-				m_Shader->Bind();
-				std::dynamic_pointer_cast<Debut::OpenGLShader>(m_Shader)->UploadUniformFloat4("u_Color", m_TriangleColor);
+				std::dynamic_pointer_cast<Debut::OpenGLShader>(m_ShaderLibrary.Get("Unlit"))->UploadUniformFloat4("u_Color", m_TriangleColor);
 				m_TriangleColor.a = 1.0f;
 
 				startPos = glm::vec3(i * 0.1f, j * 0.1f, 0.0f);
-				Debut::Renderer::Submit(m_VertexArray, m_Shader, glm::translate(glm::mat4(1.0f), startPos) * scale);
+				Debut::Renderer::Submit(m_VertexArray, m_ShaderLibrary.Get("Unlit"), glm::translate(glm::mat4(1.0f), startPos) * scale);
 			}
 		}
 		
 		m_Texture->Bind();
-		Debut::Renderer::Submit(m_TextureVA, m_SquareShader, glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)));
+		Debut::Renderer::Submit(m_TextureVA, m_ShaderLibrary.Get("Texture"), glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)));
 		
 
 		Debut::Renderer::EndScene();
@@ -167,9 +133,9 @@ public:
 		return false;
 	}
 private:
+	Debut::ShaderLibrary m_ShaderLibrary;
 	Debut::Ref<Debut::Texture2D> m_Texture;
-	Debut::Ref<Debut::Shader> m_Shader;
-	Debut::Ref<Debut::Shader> m_SquareShader;
+
 	Debut::Ref<Debut::VertexArray> m_VertexArray;
 	Debut::Ref<Debut::VertexArray> m_TextureVA;
 	

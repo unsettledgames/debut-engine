@@ -221,5 +221,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\texture.glsl" />
+    <None Include="assets\shaders\unlit.glsl" />
   </ItemGroup>
 </Project>
