@@ -147,6 +147,21 @@ namespace Debut
 		glUseProgram(0);
 	}
 
+	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& uniform)
+	{
+		UploadUniformMat4(name, uniform);
+	}
+
+	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& uniform)
+	{
+		UploadUniformFloat3(name, uniform);
+	}
+
+	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& uniform)
+	{
+		UploadUniformFloat4(name, uniform);
+	}
+
 	void OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& mat)
 	{
 		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());

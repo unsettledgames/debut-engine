@@ -8,27 +8,7 @@
 
 void Sandbox2D::OnAttach()
 {
-	float textureVertices[3 * 4] = {
-			-0.5f, -0.5f, 0.0f, 
-			-0.5f, 0.5f, 0.0f, 
-			0.5f, 0.5f, 0.0f, 
-			0.5f, -0.5f, 0.0f
-	};
-	int textIndices[6] = { 0, 1, 2, 0, 2, 3 };
-
-	Debut::Ref<Debut::VertexBuffer> textBuffer = Debut::VertexBuffer::Create(textureVertices, 3 * 4);
-	Debut::Ref<Debut::IndexBuffer> textIndBuffer = Debut::IndexBuffer::Create(textIndices, 6);
-	m_TextureVA = Debut::VertexArray::Create();
-
-	Debut::BufferLayout squareLayout = {
-			{Debut::ShaderDataType::Float3, "a_Position", false}
-	};
-
-	textBuffer->SetLayout(squareLayout);
-	m_TextureVA->AddVertexBuffer(textBuffer);
-	m_TextureVA->AddIndexBuffer(textIndBuffer);
-
-	m_ShaderLibrary.Load("Unlit", "C:/dev/Debut/Debut/assets/shaders/unlit.glsl");
+	
 }
 
 void Sandbox2D::OnDetach()
@@ -43,16 +23,14 @@ void Sandbox2D::OnUpdate(Debut::Timestep ts)
 	Debut::RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
 	Debut::RenderCommand::Clear();
 
-	Debut::Renderer::BeginScene(m_CameraController.GetCamera()/*camera, lights, environment*/);
-
-	glm::vec3 startPos(0.0f);
-
-	m_ShaderLibrary.Get("Unlit")->Bind();
-	std::dynamic_pointer_cast<Debut::OpenGLShader>(m_ShaderLibrary.Get("Unlit"))->UploadUniformFloat4("u_Color", m_TriangleColor);
-
-	Debut::Renderer::Submit(m_TextureVA, m_ShaderLibrary.Get("Unlit"), glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)));
-
-	Debut::Renderer::EndScene();
+	Debut::Renderer2D::BeginScene(m_CameraController.GetCamera()/*camera, lights, environment*/);
+	
+	Debut::Renderer2D::DrawQuad(glm::vec2(0, 0), glm::vec2(1, 1), glm::vec4(0.2, 0.2, 0.8, 1));
+	
+	Debut::Renderer2D::DrawQuad(glm::vec2(0, -1.5), glm::vec2(2, 1), glm::vec4(0.2, 0.8, 0.2, 1));
+	Debut::Renderer2D::DrawQuad(glm::vec2(1.5, 0), glm::vec2(1, 2), glm::vec4(0.8, 0.2, 0.2, 1));
+	
+	Debut::Renderer2D::EndScene();
 }
 
 void Sandbox2D::OnEvent(Debut::Event& e)

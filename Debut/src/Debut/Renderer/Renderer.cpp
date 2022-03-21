@@ -1,6 +1,7 @@
 #include "Debut/dbtpch.h"
 #include "Renderer.h"
 #include "RenderCommand.h"
+#include "Renderer2D.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Debut
@@ -10,6 +11,7 @@ namespace Debut
 	void Renderer::Init()
 	{
 		RenderCommand::Init();
+		Renderer2D::Init();
 	}
 
 	void Renderer::BeginScene(OrthographicCamera& camera)

@@ -17,6 +17,10 @@ namespace Debut
 		void Bind() const override;
 		void Unbind() const override;
 
+		virtual void SetMat4(const std::string& name, const glm::mat4& uniform) override;
+		virtual void SetFloat3(const std::string& name, const glm::vec3& uniform) override;
+		virtual void SetFloat4(const std::string& name, const glm::vec4& uniform) override;
+
 		const std::string& GetName() const override { return m_Name; }
 
 		void UploadUniformMat3(const std::string& name, const glm::mat3& mat);
