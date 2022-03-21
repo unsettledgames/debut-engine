@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Debut/dbtpch.h"
-#include "../Core.h"
+#include "Debut/Core/Core.h"
 
 namespace Debut
 {

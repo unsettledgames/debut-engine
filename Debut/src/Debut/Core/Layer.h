@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Debut/Core.h"
+#include "Debut/Core/Core.h"
 #include "Debut/Core/Time.h"
-#include "Events/Event.h"
+#include "Debut/Events/Event.h"
 
 namespace Debut
 {

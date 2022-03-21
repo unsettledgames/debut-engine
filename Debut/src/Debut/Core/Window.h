@@ -1,9 +1,9 @@
 #pragma once
 
-#include "dbtpch.h"
+#include "Debut/dbtpch.h"
 
-#include "Core.h"
-#include "Events/Event.h"
+#include "Debut/Core/Core.h"
+#include "Debut/Events/Event.h"
 
 namespace Debut
 {

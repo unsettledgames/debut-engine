@@ -2,7 +2,7 @@
 #include "OpenGLTexture.h"
 #include <glad/glad.h>
 #include <stb_image.h>
-#include <Debut/Log.h>
+#include <Debut/Core/Log.h>
 
 namespace Debut
 {

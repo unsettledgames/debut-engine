@@ -1,7 +1,7 @@
 #include "Debut/dbtpch.h"
 #include "OpenGLContext.h"
-#include "Debut/Core.h"
-#include "Debut/Log.h"
+#include "Debut/Core/Core.h"
+#include "Debut/Core/Log.h"
 
 #include <glad/glad.h>
 

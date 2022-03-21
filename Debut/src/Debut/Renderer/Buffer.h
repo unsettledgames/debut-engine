@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Debut/Core.h"
-#include "Debut/Log.h"
+#include "Debut/Core/Core.h"
+#include "Debut/Core/Log.h"
 
 namespace Debut
 {

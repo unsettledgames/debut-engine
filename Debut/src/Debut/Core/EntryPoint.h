@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dbtpch.h"
+#include "Debut/dbtpch.h"
 #include "Debut.h"
 
 #ifdef DBT_PLATFORM_WINDOWS

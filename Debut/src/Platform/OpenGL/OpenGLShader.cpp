@@ -1,6 +1,6 @@
 #include "Debut/dbtpch.h"
 #include "OpenGLShader.h"
-#include "Debut/Log.h"
+#include "Debut/Core/Log.h"
 #include "glm/gtc/type_ptr.hpp"
 #include <array>
 #include <glad/glad.h>

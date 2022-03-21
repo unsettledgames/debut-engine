@@ -4,12 +4,12 @@
 #include "Debut/Core/Time.h"
 #include "Window.h"
 #include "LayerStack.h"
-#include "ImGui/ImGuiLayer.h"
-#include "Events/ApplicationEvent.h"
-#include "Renderer/VertexArray.h"
-#include "Renderer/Buffer.h"
-#include "Renderer/Shader.h"
-#include "Renderer/OrthographicCamera.h"
+#include "Debut/ImGui/ImGuiLayer.h"
+#include "Debut/Events/ApplicationEvent.h"
+#include "Debut/Renderer/VertexArray.h"
+#include "Debut/Renderer/Buffer.h"
+#include "Debut/Renderer/Shader.h"
+#include "Debut/Renderer/OrthographicCamera.h"
 
 
 namespace Debut

@@ -1,6 +1,6 @@
 #include "Debut/dbtpch.h"
 #include "WindowsInput.h"
-#include "Debut/Application.h"
+#include "Debut/Core/Application.h"
 #include "GLFW/glfw3.h"
 
 namespace Debut

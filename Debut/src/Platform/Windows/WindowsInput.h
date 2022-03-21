@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Debut/Input.h"
-#include "Debut/Core.h"
+#include "Debut/Core/Input.h"
+#include "Debut/Core/Core.h"
 
 namespace Debut
 {

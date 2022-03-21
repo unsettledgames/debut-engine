@@ -1,8 +1,8 @@
 #pragma once
 #include <Debut/dbtpch.h>
 
-#include "Debut/Log.h"
-#include "Debut/Core.h"
+#include "Debut/Core/Log.h"
+#include "Debut/Core/Core.h"
 #include "Renderer.h"
 #include "RendererAPI.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"

@@ -1,6 +1,6 @@
 #include "Debut/dbtpch.h"
-#include "Input.h"
-#include "KeyCodes.h"
+#include "Core/Input.h"
+#include "Core/KeyCodes.h"
 #include "OrthographicCameraController.h"
 
 namespace Debut

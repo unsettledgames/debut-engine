@@ -26,19 +26,19 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -140,23 +140,24 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Debut\OrthographicCameraController.h" />
     <ClInclude Include="src\Debut.h" />
-    <ClInclude Include="src\Debut\Application.h" />
-    <ClInclude Include="src\Debut\Core.h" />
+    <ClInclude Include="src\Debut\Core\Application.h" />
+    <ClInclude Include="src\Debut\Core\Core.h" />
+    <ClInclude Include="src\Debut\Core\EntryPoint.h" />
+    <ClInclude Include="src\Debut\Core\Input.h" />
+    <ClInclude Include="src\Debut\Core\KeyCodes.h" />
+    <ClInclude Include="src\Debut\Core\Layer.h" />
+    <ClInclude Include="src\Debut\Core\LayerStack.h" />
+    <ClInclude Include="src\Debut\Core\Log.h" />
+    <ClInclude Include="src\Debut\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\Debut\Core\Time.h" />
-    <ClInclude Include="src\Debut\EntryPoint.h" />
+    <ClInclude Include="src\Debut\Core\Window.h" />
     <ClInclude Include="src\Debut\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Debut\Events\Event.h" />
     <ClInclude Include="src\Debut\Events\KeyEvent.h" />
     <ClInclude Include="src\Debut\Events\MouseEvent.h" />
     <ClInclude Include="src\Debut\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\Debut\Input.h" />
-    <ClInclude Include="src\Debut\KeyCodes.h" />
-    <ClInclude Include="src\Debut\Layer.h" />
-    <ClInclude Include="src\Debut\LayerStack.h" />
-    <ClInclude Include="src\Debut\Log.h" />
-    <ClInclude Include="src\Debut\MouseButtonCodes.h" />
+    <ClInclude Include="src\Debut\OrthographicCameraController.h" />
     <ClInclude Include="src\Debut\Renderer\Buffer.h" />
     <ClInclude Include="src\Debut\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Debut\Renderer\OrthographicCamera.h" />
@@ -166,7 +167,6 @@
     <ClInclude Include="src\Debut\Renderer\Shader.h" />
     <ClInclude Include="src\Debut\Renderer\Texture.h" />
     <ClInclude Include="src\Debut\Renderer\VertexArray.h" />
-    <ClInclude Include="src\Debut\Window.h" />
     <ClInclude Include="src\Debut\dbtpch.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
@@ -179,13 +179,13 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Debut\OrthographicCameraController.cpp" />
-    <ClCompile Include="src\Debut\Application.cpp" />
+    <ClCompile Include="src\Debut\Core\Application.cpp" />
+    <ClCompile Include="src\Debut\Core\Layer.cpp" />
+    <ClCompile Include="src\Debut\Core\LayerStack.cpp" />
+    <ClCompile Include="src\Debut\Core\Log.cpp" />
     <ClCompile Include="src\Debut\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Debut\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\Debut\Layer.cpp" />
-    <ClCompile Include="src\Debut\LayerStack.cpp" />
-    <ClCompile Include="src\Debut\Log.cpp" />
+    <ClCompile Include="src\Debut\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Debut\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Debut\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Debut\Renderer\RenderCommand.cpp" />
@@ -205,9 +205,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="vendor\stb_image\stb_image.cpp">
-      <DisableSpecificWarnings>;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-    </ClCompile>
+    <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\glfw\GLFW.vcxproj">
@@ -219,10 +217,6 @@
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\shaders\texture.glsl" />
-    <None Include="assets\shaders\unlit.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

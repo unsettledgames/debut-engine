@@ -1,11 +1,15 @@
 #include <iostream>
+// Entry point
+#include "Debut/Core/EntryPoint.h"
 #include <Debut/dbtpch.h>
 #include <Debut.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "imgui.h"
+#include "Sandbox2D.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+
 
 class ExampleLayer : public Debut::Layer
 {
@@ -129,7 +133,8 @@ class Sandbox : public Debut::Application
 public:
 	Sandbox()
 	{
-		PushLayer(new ExampleLayer());
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox()

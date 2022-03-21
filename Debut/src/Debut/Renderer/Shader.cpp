@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Debut/dbtpch.h>
-#include <Debut/Log.h>
+#include <Debut/Core/Log.h>
 #include <Debut/Renderer/Renderer.h>
 #include <Debut/Renderer/Shader.h>
 #include <Platform/OpenGL/OpenGLShader.h>

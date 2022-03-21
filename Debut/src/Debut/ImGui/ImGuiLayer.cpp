@@ -3,11 +3,11 @@
 #include "imgui.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
-#include "Debut/Application.h"
+#include "Debut/Core/Application.h"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
-#include "Debut/Log.h"
-#include "Debut/Core.h"
+#include "Debut/Core/Log.h"
+#include "Debut/Core/Core.h"
 
 namespace Debut
 {

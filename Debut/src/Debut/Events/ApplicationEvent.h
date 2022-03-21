@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core.h"
+#include "Debut/Core/Core.h"
 #include "Event.h"
 
 namespace Debut

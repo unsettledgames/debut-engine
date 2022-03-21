@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "Layer.h"
-#include "Debut/Core.h"
+#include "Debut/Core/Layer.h"
+#include "Debut/Core/Core.h"
 
 namespace Debut
 {
