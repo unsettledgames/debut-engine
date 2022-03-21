@@ -26,6 +26,7 @@
 /*********** Render ****************/
 #include "Debut/Renderer/Renderer.h"
 #include "Debut/Renderer/RenderCommand.h"
+#include "Debut/OrthographicCameraController.h"
 
 /******** Rendering components *************/
 #include "Debut/Renderer/Shader.h"

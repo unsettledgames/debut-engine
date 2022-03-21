@@ -15,6 +15,8 @@ namespace Debut
 			const glm::mat4 transform = glm::mat4(1.0f));
 		static void EndScene();
 
+		static void OnWindowResized(uint32_t width, uint32_t height);
+
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		inline static void SetApi(RendererAPI::API val) { RendererAPI::SetAPI(val); }
 	private:

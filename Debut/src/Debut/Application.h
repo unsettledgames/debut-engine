@@ -25,15 +25,20 @@ namespace Debut
 
 		void OnEvent(Event& e);
 
+
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
 		inline Window& GetWindow() { return *m_Window; }
 		static inline Application& Get() { return *s_Instance; }
+
 	private:
 		bool OnWindowClosed(WindowCloseEvent& e);
+		bool OnWindowResized(WindowResizedEvent& e);
 
+	private:
 		bool m_Running = true;
+		bool m_Minimized = false;
 
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;

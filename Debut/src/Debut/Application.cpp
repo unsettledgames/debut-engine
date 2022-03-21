@@ -38,10 +38,13 @@ namespace Debut
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			// Propagate update to the stack
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(timestep);
-
+			if (!m_Minimized)
+			{
+				// Propagate update to the stack
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(timestep);
+			}
+			
 			// Render ImGui
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)
@@ -57,6 +60,7 @@ namespace Debut
 		EventDispatcher dispatcher(e);
 
 		dispatcher.Dispatch<WindowCloseEvent>(DBT_BIND(Application::OnWindowClosed));
+		dispatcher.Dispatch<WindowResizedEvent>(DBT_BIND(Application::OnWindowResized));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
@@ -71,6 +75,19 @@ namespace Debut
 	{
 		m_Running = false;
 		return true;
+	}
+
+	bool Application::OnWindowResized(WindowResizedEvent& e)
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+
+		Renderer::OnWindowResized(e.GetWidth(), e.GetHeight());
+		m_Minimized = false;
+		return false;
 	}
 
 	void Application::PushLayer(Layer* layer)

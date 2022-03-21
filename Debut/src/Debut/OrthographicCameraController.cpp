@@ -1,0 +1,62 @@
+#include "Debut/dbtpch.h"
+#include "Input.h"
+#include "KeyCodes.h"
+#include "OrthographicCameraController.h"
+
+namespace Debut
+{
+	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotate) : 
+		m_AspectRatio(aspectRatio), m_Rotate(rotate),
+		m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel)
+	{
+
+	}
+
+	void OrthographicCameraController::OnUpdate(Timestep ts)
+	{
+		if (Input::IsKeyPressed(DBT_KEY_A))
+			m_CameraPosition.x -= m_CameraMovementSpeed * ts;
+		if (Input::IsKeyPressed(DBT_KEY_D))
+			m_CameraPosition.x += m_CameraMovementSpeed * ts;
+
+		if (Input::IsKeyPressed(DBT_KEY_S))
+			m_CameraPosition.y -= m_CameraMovementSpeed * ts;
+		if (Input::IsKeyPressed(DBT_KEY_W))
+			m_CameraPosition.y += m_CameraMovementSpeed * ts;
+
+		if (m_Rotate)
+		{
+			if (Input::IsKeyPressed(DBT_KEY_Q))
+				m_CameraRotation -= m_CameraRotationSpeed * ts;
+			if (Input::IsKeyPressed(DBT_KEY_E))
+				m_CameraRotation += m_CameraRotationSpeed * ts;
+		}
+
+		m_Camera.SetPosition(m_CameraPosition);
+		m_Camera.SetRotation(m_CameraRotation);
+	}
+
+	void OrthographicCameraController::OnEvent(Event& e)
+	{
+		EventDispatcher dispatcher(e);
+
+		dispatcher.Dispatch<MouseScrolledEvent>(DBT_BIND(OrthographicCameraController::OnMouseScrolled));
+		dispatcher.Dispatch<WindowResizedEvent>(DBT_BIND(OrthographicCameraController::OnWindowResized));
+	}
+
+	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
+	{
+		m_ZoomLevel -= e.GetOffsetY() * 0.15f;
+		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
+		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_CameraMovementSpeed = m_ZoomLevel * 2;
+		return false;
+	}
+
+	bool OrthographicCameraController::OnWindowResized(WindowResizedEvent& e)
+	{
+		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
+		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		return false;
+	}
+}

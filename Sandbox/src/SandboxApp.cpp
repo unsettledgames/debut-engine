@@ -10,7 +10,7 @@
 class ExampleLayer : public Debut::Layer
 {
 public:
-	ExampleLayer() : Layer("Example"), m_Camera(-1.6, 1.6f, -0.9f, 0.9f) 
+	ExampleLayer() : Layer("Example"), m_CameraController(1.77f, true)
 	{
 		float vertices[7 * 3] = {
 			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
@@ -66,31 +66,17 @@ public:
 		m_Texture = Debut::Texture2D::Create("C:/dev/Debut/Debut/assets/textures/akita.png");
 		m_ShaderLibrary.Get("Texture")->Bind();
 		std::dynamic_pointer_cast<Debut::OpenGLShader>(m_ShaderLibrary.Get("Texture"))->UploadUniformInt("u_Texture", 0);
-
-		m_CameraPosition = glm::vec3(0, 0, 0);
 	}
 
 	void OnUpdate(Debut::Timestep ts) override
 	{
+		m_CameraController.OnUpdate(ts);
 		Debut::Log.AppInfo("Delta time: %f", (float)ts);
-
-		if (Debut::Input::IsKeyPressed(DBT_KEY_LEFT))
-			m_CameraPosition.x -= m_CameraMovementSpeed * ts;
-		if (Debut::Input::IsKeyPressed(DBT_KEY_RIGHT))
-			m_CameraPosition.x += m_CameraMovementSpeed * ts;
-
-		if (Debut::Input::IsKeyPressed(DBT_KEY_DOWN))
-			m_CameraPosition.y -= m_CameraMovementSpeed * ts;
-		if (Debut::Input::IsKeyPressed(DBT_KEY_UP))
-			m_CameraPosition.y += m_CameraMovementSpeed * ts;
-
-		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetRotation(m_CameraRotation);
 
 		Debut::RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
 		Debut::RenderCommand::Clear();
 
-		Debut::Renderer::BeginScene(m_Camera/*camera, lights, environment*/);
+		Debut::Renderer::BeginScene(m_CameraController.GetCamera()/*camera, lights, environment*/);
 
 		glm::vec3 startPos(0.0f);
 		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
@@ -123,27 +109,17 @@ public:
 
 	void OnEvent(Debut::Event& e) override
 	{
+		m_CameraController.OnEvent(e);
 		Debut::EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<Debut::KeyPressedEvent>(DBT_BIND(ExampleLayer::OnKeyPressed));
 	}
 
-	bool OnKeyPressed(Debut::KeyPressedEvent& e)
-	{
-
-		return false;
-	}
 private:
 	Debut::ShaderLibrary m_ShaderLibrary;
 	Debut::Ref<Debut::Texture2D> m_Texture;
+	Debut::OrthographicCameraController m_CameraController;
 
 	Debut::Ref<Debut::VertexArray> m_VertexArray;
 	Debut::Ref<Debut::VertexArray> m_TextureVA;
-	
-	Debut::OrthographicCamera m_Camera;
-	glm::vec3 m_CameraPosition;
-	float m_CameraMovementSpeed = 1;
-	float m_CameraRotation = 0;
-	float m_CameraRotationSpeed = 40;
 
 	glm::vec4 m_TriangleColor;
 };
