@@ -21,4 +21,11 @@ private:
 
 	Debut::Ref<Debut::VertexArray> m_TextureVA;
 	glm::vec4 m_TriangleColor = glm::vec4(0.3, 0.3, 1, 1);
+
+	struct ProfileResult
+	{
+		const char* Name;
+		float Time;
+	};
+	std::vector<ProfileResult> m_ProfileResults;
 };

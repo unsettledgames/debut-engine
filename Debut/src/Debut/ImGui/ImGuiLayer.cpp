@@ -64,8 +64,8 @@ namespace Debut
 
 	void ImGuiLayer::OnImGuiRender()
 	{
-		static bool showDemo = true;
-		ImGui::ShowDemoWindow(&showDemo);
+		//static bool showDemo = true;
+		//ImGui::ShowDemoWindow(&showDemo);
 	}
 
 	void ImGuiLayer::End()

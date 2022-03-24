@@ -147,6 +147,11 @@ namespace Debut
 		glUseProgram(0);
 	}
 
+	void OpenGLShader::SetInt(const std::string& name, int uniform)
+	{
+		UploadUniformInt(name, uniform);
+	}
+
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& uniform)
 	{
 		UploadUniformMat4(name, uniform);

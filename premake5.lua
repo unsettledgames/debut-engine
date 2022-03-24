@@ -73,7 +73,8 @@ project "Debut"
 		{
 			"DBT_PLATFORM_WINDOWS",
 			"DBT_BUILD_DLL",
-			"GLFW_INCLUDE_NONE"
+			"GLFW_INCLUDE_NONE",
+			"_CRT_SECURE_NO_WARNINGS"
 		}
 
 	filter "files:%{prj.name}/vendor/loguru/loguru.cpp"

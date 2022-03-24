@@ -13,7 +13,21 @@ namespace Debut
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLTexture2D>(path);
+			return CreateRef<OpenGLTexture2D>(path);
+		}
+
+		DBT_ASSERT(false, "Unsupported renderer API");
+	}
+
+	Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:
+			DBT_ASSERT(false, "The renderer doesn't have an API set.");
+			return nullptr;
+		case RendererAPI::API::OpenGL:
+			return CreateRef<OpenGLTexture2D>(width, height);
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
