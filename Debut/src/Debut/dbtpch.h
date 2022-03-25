@@ -19,6 +19,9 @@
 
 #include <loguru.hpp>
 
+#include <Debut/Core/Log.h>
+#include <Debut/Core/Instrumentor.h>
+
 #ifdef DBT_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif

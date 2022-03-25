@@ -145,6 +145,7 @@
     <ClInclude Include="src\Debut\Core\Core.h" />
     <ClInclude Include="src\Debut\Core\EntryPoint.h" />
     <ClInclude Include="src\Debut\Core\Input.h" />
+    <ClInclude Include="src\Debut\Core\Instrumentor.h" />
     <ClInclude Include="src\Debut\Core\KeyCodes.h" />
     <ClInclude Include="src\Debut\Core\Layer.h" />
     <ClInclude Include="src\Debut\Core\LayerStack.h" />
