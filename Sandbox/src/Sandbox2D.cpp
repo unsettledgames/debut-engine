@@ -19,7 +19,6 @@ void Sandbox2D::OnDetach()
 
 void Sandbox2D::OnUpdate(Debut::Timestep ts)
 {
-	DBT_PROFILE_FUNCTION();
 	m_CameraController.OnUpdate(ts);
 
 	{
@@ -34,13 +33,23 @@ void Sandbox2D::OnUpdate(Debut::Timestep ts)
 	{
 		DBT_PROFILE_SCOPE("Sandbox2D::Rendering");
 
-		Debut::Renderer2D::DrawQuad(glm::vec2(0, -1), glm::vec2(1, 1), glm::vec4(0.2, 0.8, 0.2, 1));
-		Debut::Renderer2D::DrawQuad(glm::vec2(1, 0), glm::vec2(1, 1), glm::vec4(0.8, 0.2, 0.2, 1));
-
-		Debut::Renderer2D::DrawQuad(glm::vec3(0, 0, -0.1), glm::vec2(10, 10), m_Texture);
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				if ((i + j) % 3 > 0)
+					Debut::Renderer2D::DrawQuad(glm::vec2(i, j), glm::vec2(1, 1), (i + j) % 2 == 0 ? glm::vec4(0.2, 0.8, 0.2, 1) : glm::vec4(0.8, 0.2, 0.2, 1));
+				else
+					Debut::Renderer2D::DrawQuad(glm::vec2(i, j), glm::vec2(1, 1), m_Texture);
+			}
+		}
+		
+		Debut::Renderer2D::DrawQuad(glm::vec3(0, 0, -0.1), glm::vec2(10, 10), m_Texture, 2);
 
 		Debut::Renderer2D::EndScene();
 	}
+
+	Debut::Log.AppInfo("Frame time: %f", (1.0f / ts));
 }
 
 void Sandbox2D::OnEvent(Debut::Event& e)
@@ -50,6 +59,7 @@ void Sandbox2D::OnEvent(Debut::Event& e)
 
 void Sandbox2D::OnImGuiRender()
 {
+	DBT_PROFILE_FUNCTION();
 	ImGui::Begin("Settings");
 	ImGui::ColorEdit4("Triangle color: ", glm::value_ptr(m_TriangleColor));
 	ImGui::End();

@@ -18,6 +18,7 @@ namespace Debut
 
 	OpenGLShader::OpenGLShader(const std::string& filePath)
 	{
+		DBT_PROFILE_FUNCTION();
 		std::string src = ReadFile(filePath);
 		auto shaderSources = PreProcess(src);
 
@@ -35,6 +36,7 @@ namespace Debut
 
 	void OpenGLShader::Compile(std::unordered_map<GLenum, std::string>& sources)
 	{
+		DBT_PROFILE_FUNCTION();
 		DBT_CORE_ASSERT(sources.size() <= 3, "Only 3 shaders per file are supported at the moment.");
 
 		GLuint program = glCreateProgram();
@@ -68,6 +70,7 @@ namespace Debut
 
 	void OpenGLShader::Link()
 	{
+		DBT_PROFILE_FUNCTION();
 		glLinkProgram(m_ProgramID);
 
 #ifdef DBT_DEBUG
@@ -77,6 +80,7 @@ namespace Debut
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& src)
 	{
+		DBT_PROFILE_FUNCTION();
 		std::unordered_map<GLenum, std::string> ret;
 		const char* typeToken = "#type";
 		size_t typeTokenLength = strlen(typeToken);
@@ -102,6 +106,7 @@ namespace Debut
 
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertSource, const std::string& fragSource)
 	{
+		DBT_PROFILE_FUNCTION();
 		m_Name = name;
 		std::unordered_map<GLenum, std::string> shaderSources;
 
@@ -114,11 +119,13 @@ namespace Debut
 
 	OpenGLShader::~OpenGLShader()
 	{
+		DBT_PROFILE_FUNCTION();
 		glDeleteProgram(m_ProgramID);
 	}
 
 	std::string OpenGLShader::ReadFile(const std::string& path)
 	{
+		DBT_PROFILE_FUNCTION();
 		std::string fileContent;
 		std::ifstream inFile(path, std::ios::in | std::ios::binary);
 
@@ -139,6 +146,7 @@ namespace Debut
 
 	void OpenGLShader::Bind() const
 	{
+		DBT_PROFILE_FUNCTION();
 		glUseProgram(m_ProgramID);
 	}
 
@@ -152,9 +160,19 @@ namespace Debut
 		UploadUniformInt(name, uniform);
 	}
 
+	void OpenGLShader::SetIntArray(const std::string& name, int* data, uint32_t count)
+	{
+		UploadUniformIntArray(name, data, count);
+	}
+
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& uniform)
 	{
 		UploadUniformMat4(name, uniform);
+	}
+
+	void OpenGLShader::SetFloat(const std::string& name, float uniform)
+	{
+		UploadUniformFloat(name, uniform);
 	}
 
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& uniform)
@@ -226,6 +244,12 @@ namespace Debut
 	{
 		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
 		glUniform4i(location, vec.x, vec.y, vec.z, vec.w);
+	}
+
+	void OpenGLShader::UploadUniformIntArray(const std::string& name, int* data, uint32_t count)
+	{
+		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
+		glUniform1iv(location, count, data);
 	}
 
 	void OpenGLShader::CheckCompileError(unsigned int shader)

@@ -7,9 +7,16 @@ namespace Debut
 {
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path) : m_Path(path)
 	{
+		DBT_PROFILE_FUNCTION();
+
 		int width, height, channels;
+		stbi_uc* data = nullptr;
 		stbi_set_flip_vertically_on_load(1);
-		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+
+		{
+			DBT_PROFILE_SCOPE("OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
+			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		}
 
 		DBT_CORE_ASSERT(data, "Failed to load png image");
 
@@ -27,7 +34,7 @@ namespace Debut
 			m_Format = GL_RGB;
 		}
 
-		DBT_CORE_ASSERT(dataFormat != 0 && internalFormat != 0, "Png texture format not supported");
+		DBT_CORE_ASSERT(m_Format != 0 && m_InternalFormat != 0, "Png texture format not supported");
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
@@ -45,6 +52,7 @@ namespace Debut
 
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_Width(width), m_Height(height)
 	{
+		DBT_PROFILE_FUNCTION();
 		m_InternalFormat = GL_RGBA8, m_Format = GL_RGBA;
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
@@ -64,11 +72,15 @@ namespace Debut
 
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	{
+		DBT_PROFILE_FUNCTION();
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_Format, GL_UNSIGNED_BYTE, data);
 	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
-		glBindTextureUnit(0, m_RendererID);
+		DBT_PROFILE_FUNCTION();
+		glActiveTexture(GL_TEXTURE0 + slot);
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
 	}
+
 }

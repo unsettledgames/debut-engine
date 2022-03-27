@@ -25,11 +25,14 @@ namespace Debut
 
 	WindowsWindow::~WindowsWindow()
 	{
+		DBT_PROFILE_FUNCTION();
 		Shutdown();
 	}
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{
+		DBT_PROFILE_FUNCTION();
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -156,17 +159,20 @@ namespace Debut
 
 	void WindowsWindow::OnUpdate() const
 	{
+		DBT_PROFILE_FUNCTION();
 		glfwPollEvents();
 		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::Shutdown()
 	{
+		DBT_PROFILE_FUNCTION();
 		glfwDestroyWindow(m_Window);
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
+		DBT_PROFILE_FUNCTION();
 		if (enabled)
 			glfwSwapInterval(1);
 		else

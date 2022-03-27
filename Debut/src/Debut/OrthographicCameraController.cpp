@@ -14,6 +14,7 @@ namespace Debut
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
+		DBT_PROFILE_FUNCTION();
 		if (Input::IsKeyPressed(DBT_KEY_A))
 			m_CameraPosition.x -= m_CameraMovementSpeed * ts;
 		if (Input::IsKeyPressed(DBT_KEY_D))
@@ -38,6 +39,7 @@ namespace Debut
 
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
+		DBT_PROFILE_FUNCTION();
 		EventDispatcher dispatcher(e);
 
 		dispatcher.Dispatch<MouseScrolledEvent>(DBT_BIND(OrthographicCameraController::OnMouseScrolled));

@@ -39,11 +39,13 @@ namespace Debut
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
+		DBT_PROFILE_FUNCTION();
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 
 	void OpenGLVertexArray::Bind() const
 	{
+		DBT_PROFILE_FUNCTION();
 		glBindVertexArray(m_RendererID);
 	}
 

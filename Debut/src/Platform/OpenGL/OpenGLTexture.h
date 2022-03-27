@@ -14,9 +14,13 @@ namespace Debut
 
 		uint32_t GetWidth() const override { return m_Width; }
 		uint32_t GetHeight() const override { return m_Height; }
+		uint32_t GetRendererID() const { return m_RendererID; }
+
 		virtual void SetData(void* data, uint32_t size) override;
 
 		virtual void Bind(uint32_t slot = 0) const override;
+
+		virtual bool operator==(const Texture& other) const override{ return ((OpenGLTexture2D&)other).GetRendererID() == m_RendererID; }
 
 	private:
 		std::string m_Path;

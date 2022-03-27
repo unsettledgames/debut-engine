@@ -8,11 +8,14 @@ namespace Debut
 	class OpenGLVertexBuffer : public VertexBuffer
 	{
 	public:
+		OpenGLVertexBuffer(uint32_t size);
 		OpenGLVertexBuffer(float* vertices, unsigned int size);
 		virtual ~OpenGLVertexBuffer();
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
+
+		virtual void SetData(const void* data, uint32_t size) override;
 
 		virtual inline void SetLayout(const BufferLayout& layout) override { m_Layout = layout; }
 		virtual inline BufferLayout& GetLayout() override { return m_Layout; }

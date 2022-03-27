@@ -22,9 +22,9 @@ namespace Debut
 			s_RendererAPI->Clear(); 
 		}
 
-		inline static void DrawIndexed(const Ref<VertexArray>& va) 
+		inline static void DrawIndexed(const Ref<VertexArray>& va, uint32_t indexCount = 0)
 		{ 
-			s_RendererAPI->DrawIndexed(va); 
+			s_RendererAPI->DrawIndexed(va, indexCount); 
 		}
 
 		inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

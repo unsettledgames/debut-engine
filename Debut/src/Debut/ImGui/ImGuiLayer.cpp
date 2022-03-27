@@ -23,6 +23,7 @@ namespace Debut
 
 	void ImGuiLayer::OnAttach()
 	{
+		DBT_PROFILE_FUNCTION();
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 
@@ -50,6 +51,7 @@ namespace Debut
 
 	void ImGuiLayer::OnDetach()
 	{
+		DBT_PROFILE_FUNCTION();
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
@@ -57,6 +59,7 @@ namespace Debut
 
 	void ImGuiLayer::Begin()
 	{
+		DBT_PROFILE_FUNCTION();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -70,6 +73,7 @@ namespace Debut
 
 	void ImGuiLayer::End()
 	{
+		DBT_PROFILE_FUNCTION();
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 

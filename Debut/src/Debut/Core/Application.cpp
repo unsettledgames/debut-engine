@@ -13,6 +13,7 @@ namespace Debut
 
 	Application::Application()
 	{
+		DBT_PROFILE_FUNCTION();
 		DBT_ASSERT(!s_Instance, "Application already exists.")
 
 		s_Instance = this;
@@ -32,31 +33,45 @@ namespace Debut
 
 	void Application::Run()
 	{
-		while (m_Running)
+		DBT_PROFILE_SCOPE("Application::Run");
 		{
-			float time = (float)glfwGetTime();
-			Timestep timestep = time - m_LastFrameTime;
-			m_LastFrameTime = time;
-
-			if (!m_Minimized)
+			while (m_Running)
 			{
-				// Propagate update to the stack
-				for (Layer* layer : m_LayerStack)
-					layer->OnUpdate(timestep);
-			}
-			
-			// Render ImGui
-			m_ImGuiLayer->Begin();
-			for (Layer* layer : m_LayerStack)
-				layer->OnImGuiRender();
-			m_ImGuiLayer->End();
+				DBT_PROFILE_SCOPE("Application Loop Frame");
 
-			m_Window->OnUpdate();
+				float time = (float)glfwGetTime();
+				Timestep timestep = time - m_LastFrameTime;
+				m_LastFrameTime = time;
+
+				if (!m_Minimized)
+				{
+					DBT_PROFILE_SCOPE("Layer updates")
+					// Propagate update to the stack
+					for (Layer* layer : m_LayerStack)
+						layer->OnUpdate(timestep);
+				}
+				
+				{
+					DBT_PROFILE_SCOPE("ImGui");
+					// Render ImGui
+					m_ImGuiLayer->Begin();
+					for (Layer* layer : m_LayerStack)
+						layer->OnImGuiRender();
+					m_ImGuiLayer->End();
+				}
+
+				{
+					DBT_PROFILE_SCOPE("Window Update");
+					m_Window->OnUpdate();
+				}
+				
+			}
 		}
 	}
 
 	void Application::OnEvent(Event& e)
 	{
+		DBT_PROFILE_FUNCTION();
 		EventDispatcher dispatcher(e);
 
 		dispatcher.Dispatch<WindowCloseEvent>(DBT_BIND(Application::OnWindowClosed));
@@ -79,6 +94,7 @@ namespace Debut
 
 	bool Application::OnWindowResized(WindowResizedEvent& e)
 	{
+		DBT_PROFILE_FUNCTION();
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{
 			m_Minimized = true;

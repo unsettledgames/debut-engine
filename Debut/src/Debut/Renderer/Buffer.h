@@ -128,6 +128,9 @@ namespace Debut
 		virtual inline void SetLayout(const BufferLayout& layout) = 0;
 		virtual inline BufferLayout& GetLayout() = 0;
 
+		virtual void SetData(const void* data, uint32_t size) = 0;
+
+		static Ref<VertexBuffer> Create(uint32_t size);
 		static Ref<VertexBuffer> Create(float* vertices, unsigned int count);
 	private:
 	};

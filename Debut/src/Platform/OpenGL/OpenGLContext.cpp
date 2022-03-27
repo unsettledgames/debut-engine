@@ -11,6 +11,7 @@ namespace Debut
 
 	void OpenGLContext::Init()
 	{
+		DBT_PROFILE_FUNCTION();
 		glfwMakeContextCurrent(m_WindowHandle);
 
 		int success = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -23,6 +24,7 @@ namespace Debut
 
 	void OpenGLContext::SwapBuffers()
 	{
+		DBT_PROFILE_FUNCTION();
 		glfwSwapBuffers(m_WindowHandle);
 	}
 }
