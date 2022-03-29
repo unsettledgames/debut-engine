@@ -86,7 +86,7 @@ project "Debut"
 
 	filter "configurations:Release"
 		runtime "Release"
-		defines "DBT_RELEASE"
+		defines {"DBT_RELEASE", "DBT_PROFILE"}
 		optimize "on"
 
 	filter "configurations:Dist"

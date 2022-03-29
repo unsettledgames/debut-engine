@@ -20,10 +20,10 @@ void Sandbox2D::OnDetach()
 void Sandbox2D::OnUpdate(Debut::Timestep ts)
 {
 	static float rotation = 0.0f;
-	//rotation += 500 * ts;
+	rotation += 50 * ts;
 
 	m_CameraController.OnUpdate(ts);
-
+	Debut::Renderer2D::ResetStats();
 	{
 		DBT_PROFILE_SCOPE("Sandbox2D::RendererSetup");
 
@@ -36,9 +36,9 @@ void Sandbox2D::OnUpdate(Debut::Timestep ts)
 	{
 		DBT_PROFILE_SCOPE("Sandbox2D::Rendering");
 
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 100; i++)
 		{
-			for (int j = 0; j < 20; j++)
+			for (int j = 0; j < 100; j++)
 			{
 				if ((i + j) % 3 > 0)
 					Debut::Renderer2D::DrawQuad(glm::vec3(i, j, -0.1), glm::vec2(1, 1), i+j+ rotation, (i + j) % 2 == 0 ? glm::vec4(0.2, 0.8, 0.2, 1) : glm::vec4(0.8, 0.2, 0.2, 1));
@@ -62,7 +62,17 @@ void Sandbox2D::OnEvent(Debut::Event& e)
 void Sandbox2D::OnImGuiRender()
 {
 	DBT_PROFILE_FUNCTION();
+	auto stats = Debut::Renderer2D::GetStats();
+
 	ImGui::Begin("Settings");
 	ImGui::ColorEdit4("Triangle color: ", glm::value_ptr(m_TriangleColor));
+
+	// Renderer2D stats
+	ImGui::Text("Renderer2D Stats:");
+	ImGui::Text("Draw calls: %d", stats.DrawCalls);
+	ImGui::Text("Quads: %d", stats.QuadCount);
+	ImGui::Text("Vertex count: %d", stats.GetTotalVertexCount());
+	ImGui::Text("Index count: %d", stats.GetIndexCount());
+
 	ImGui::End();
 }

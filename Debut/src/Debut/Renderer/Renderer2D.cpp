@@ -4,44 +4,10 @@
 #include "Debut/Renderer/Shader.h"
 #include "Renderer2D.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include <array>
 
 namespace Debut
 {
-	struct QuadVertex
-	{
-		glm::vec3 Position;
-		glm::vec2 TexCoord;
-		glm::vec4 Color;
-		float TexIndex;
-		float TilingFactor;
-	};
-
-	struct Renderer2DStorage
-	{
-		const uint32_t MaxQuads = 10000;
-		const uint32_t MaxVertices = MaxQuads * 4;
-		const uint32_t MaxIndices = MaxQuads * 6;
-		// TODO: RenderCapabilities
-		static const uint32_t MaxTextureSlots = 32;
-
-		Ref<VertexArray> VertexArray;
-		Ref<VertexBuffer> QuadVertexBuffer;
-		Ref<Shader> TextureShader;
-		Ref<Texture> WhiteTexture;
-
-		uint32_t QuadIndexCount = 0;
-		QuadVertex* QuadVertexBufferBase = nullptr;
-		QuadVertex* QuadVertexBufferPtr = nullptr;
-
-		std::array<Ref<Texture>, MaxTextureSlots> TextureSlots;
-		uint32_t TextureSlotIndex = 1; // 0 = white texture
-
-		glm::vec4 QuadVertexPositions[4];
-	};
-	
-
-	static Renderer2DStorage s_Data;
+	Renderer2DStorage Renderer2D::s_Data;
 
 	void Renderer2D::Init()
 	{
@@ -131,6 +97,14 @@ namespace Debut
 		Flush();
 	}
 
+	void Renderer2D::FlushAndReset()
+	{
+		EndScene();
+
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+	}
+
 	void Renderer2D::Flush()
 	{
 		// Bind textures
@@ -139,12 +113,17 @@ namespace Debut
 
 		// Draw call
 		RenderCommand::DrawIndexed(s_Data.VertexArray, s_Data.QuadIndexCount);
+		s_Data.Stats.DrawCalls++;
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const glm::vec4 color)
 	{
 		DBT_PROFILE_FUNCTION();
 
+		// If we have drawn too many quads, we start a new batch
+		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
+			FlushAndReset();
+		
 		// Use the white texture
 		const float texIndex = 0;
 
@@ -177,11 +156,17 @@ namespace Debut
 		s_Data.QuadVertexBufferPtr++;
 
 		s_Data.QuadIndexCount += 6;
+
+		s_Data.Stats.QuadCount++;
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<Texture>& texture, float tilingFactor)
 	{
 		DBT_PROFILE_FUNCTION();
+
+		// If we have drawn too many quads, we start a new batch
+		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
+			FlushAndReset();
 
 		//s_Data.TextureSlots[1] = texture;
 		const glm::vec4 color = glm::vec4(1.0, 1.0, 1.0, 1.0);
@@ -235,5 +220,12 @@ namespace Debut
 		s_Data.QuadVertexBufferPtr++;
 
 		s_Data.QuadIndexCount += 6;
+
+		s_Data.Stats.QuadCount++;
+	}
+
+	void Renderer2D::ResetStats()
+	{
+		memset(&s_Data.Stats, 0, sizeof(Render2DStats));
 	}
 }

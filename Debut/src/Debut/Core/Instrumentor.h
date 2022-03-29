@@ -122,9 +122,8 @@ namespace Debut
     };
 }
 
-#define DBT_PROFILE 1
 
-#if DBT_PROFILE
+#ifdef DBT_PROFILE
     #define DBT_PROFILE_BEGIN_SESSION(name, filepath) ::Debut::Instrumentor::Get().BeginSession(name,filepath)
     #define DBT_PROFILE_END_SESSION() ::Debut::Instrumentor::Get().EndSession()
     #define DBT_PROFILE_SCOPE(name) ::Debut::InstrumentationTimer timer##__LINE__(name);
