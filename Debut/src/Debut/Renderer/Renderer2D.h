@@ -17,10 +17,8 @@ namespace Debut
 		static void Flush();
 
 		// Primitives
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4 color);
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4 color);
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture>& texture, float tilingFactor = 1);
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture>& texture, float tilingFactor = 1);
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const glm::vec4 color);
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<Texture>& texture, float tilingFactor = 1);
 
 
 	};

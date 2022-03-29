@@ -151,6 +151,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Core\Instrumentor.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLError.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Core\Application.cpp">

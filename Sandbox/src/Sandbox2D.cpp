@@ -19,6 +19,9 @@ void Sandbox2D::OnDetach()
 
 void Sandbox2D::OnUpdate(Debut::Timestep ts)
 {
+	static float rotation = 0.0f;
+	//rotation += 500 * ts;
+
 	m_CameraController.OnUpdate(ts);
 
 	{
@@ -33,20 +36,19 @@ void Sandbox2D::OnUpdate(Debut::Timestep ts)
 	{
 		DBT_PROFILE_SCOPE("Sandbox2D::Rendering");
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 20; i++)
 		{
-			for (int j = 0; j < 4; j++)
+			for (int j = 0; j < 20; j++)
 			{
 				if ((i + j) % 3 > 0)
-					Debut::Renderer2D::DrawQuad(glm::vec2(i, j), glm::vec2(1, 1), (i + j) % 2 == 0 ? glm::vec4(0.2, 0.8, 0.2, 1) : glm::vec4(0.8, 0.2, 0.2, 1));
+					Debut::Renderer2D::DrawQuad(glm::vec3(i, j, -0.1), glm::vec2(1, 1), i+j+ rotation, (i + j) % 2 == 0 ? glm::vec4(0.2, 0.8, 0.2, 1) : glm::vec4(0.8, 0.2, 0.2, 1));
 				else
-					Debut::Renderer2D::DrawQuad(glm::vec2(i, j), glm::vec2(1, 1), m_Texture);
+					Debut::Renderer2D::DrawQuad(glm::vec3(i, j, -0.1), glm::vec2(1, 1), 45+ rotation, m_Texture);
 			}
 		}
-		
-		Debut::Renderer2D::DrawQuad(glm::vec3(0, 0, -0.1), glm::vec2(10, 10), m_Texture, 2);
 
 		Debut::Renderer2D::EndScene();
+		
 	}
 
 	Debut::Log.AppInfo("Frame time: %f", (1.0f / ts));

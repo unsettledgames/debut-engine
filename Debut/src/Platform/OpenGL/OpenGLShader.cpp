@@ -1,5 +1,6 @@
 #include "Debut/dbtpch.h"
 #include "OpenGLShader.h"
+#include "OpenGLError.h"
 #include "Debut/Core/Log.h"
 #include "glm/gtc/type_ptr.hpp"
 #include <array>
@@ -187,38 +188,38 @@ namespace Debut
 
 	void OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& mat)
 	{
-		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
-		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
+		GLCall(glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(mat)));
 	}
 
 	void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& mat)
 	{
-		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
-		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
+		GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat)));
 	}
 
 	void OpenGLShader::UploadUniformFloat(const std::string& name, float val)
 	{
-		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
-		glUniform1f(location, val);
+		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
+		GLCall(glUniform1f(location, val));
 	}
 
 	void OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& vec)
 	{
-		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
-		glUniform2f(location, vec.x, vec.y);
+		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
+		GLCall(glUniform2f(location, vec.x, vec.y));
 	}
 
 	void OpenGLShader::UploadUniformFloat3(const std::string& name, const glm::vec3& vec)
 	{
-		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
-		glUniform3f(location, vec.x, vec.y, vec.z);
+		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
+		GLCall(glUniform3f(location, vec.x, vec.y, vec.z));
 	}
 
 	void OpenGLShader::UploadUniformFloat4(const std::string& name, const glm::vec4& vec)
 	{
-		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
-		glUniform4f(location, vec.x, vec.y, vec.z, vec.w);
+		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
+		GLCall(glUniform4f(location, vec.x, vec.y, vec.z, vec.w));
 	}
 	
 
@@ -230,26 +231,26 @@ namespace Debut
 
 	void OpenGLShader::UploadUniformInt2(const std::string& name, const glm::ivec2& vec)
 	{
-		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
-		glUniform2i(location, vec.x, vec.y);
+		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
+		GLCall(glUniform2i(location, vec.x, vec.y));
 	}
 
 	void OpenGLShader::UploadUniformInt3(const std::string& name, const glm::ivec3& vec)
 	{
-		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
-		glUniform3i(location, vec.x, vec.y, vec.z);
+		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
+		GLCall(glUniform3i(location, vec.x, vec.y, vec.z));
 	}
 
 	void OpenGLShader::UploadUniformInt4(const std::string& name, const glm::ivec4& vec)
 	{
-		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
-		glUniform4i(location, vec.x, vec.y, vec.z, vec.w);
+		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
+		GLCall(glUniform4i(location, vec.x, vec.y, vec.z, vec.w));
 	}
 
 	void OpenGLShader::UploadUniformIntArray(const std::string& name, int* data, uint32_t count)
 	{
-		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
-		glUniform1iv(location, count, data);
+		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
+		GLCall(glUniform1iv(location, count, data));
 	}
 
 	void OpenGLShader::CheckCompileError(unsigned int shader)

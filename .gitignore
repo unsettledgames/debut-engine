@@ -234,3 +234,8 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+# Profiling logs
+Sandbox/DebutProfile-Runtime.json
+Sandbox/DebutProfile-Shutdown.json
+Sandbox/DebutProfile-Startup.json

@@ -30,7 +30,7 @@ namespace Debut
 		}
 		else if (channels == 3)
 		{
-			m_InternalFormat = GL_RGBA8;
+			m_InternalFormat = GL_RGB8;
 			m_Format = GL_RGB;
 		}
 
@@ -79,8 +79,7 @@ namespace Debut
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
 		DBT_PROFILE_FUNCTION();
-		glActiveTexture(GL_TEXTURE0 + slot);
-		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+		glBindTextureUnit(slot, m_RendererID);
 	}
 
 }
