@@ -30,6 +30,7 @@ namespace Debut
 		glm::mat4 m_ViewProjectionMatrix;
 
 		glm::vec3 m_Position;
+		glm::vec4 m_Bounds;
 		float m_Rotation = 0.0f;
 	};
 }

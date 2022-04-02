@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <Debut/Renderer/Texture.h>
+#include <Debut/Renderer/SubTexture2D.h>
 #include <Debut/Renderer/OrthographicCamera.h>
 #include <array>
 
@@ -62,6 +63,7 @@ namespace Debut
 		// Primitives
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const glm::vec4 color);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<Texture>& texture, float tilingFactor = 1);
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<SubTexture2D>& texture, float tilingFactor = 1);
 
 		static void ResetStats();
 		static Render2DStats GetStats() { return s_Data.Stats; }

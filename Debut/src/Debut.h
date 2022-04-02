@@ -29,6 +29,7 @@
 /******** Rendering components *************/
 #include "Debut/Renderer/Shader.h"
 #include "Debut/Renderer/Texture.h"
+#include "Debut/Renderer/SubTexture2D.h"
 #include "Debut/Renderer/Buffer.h"
 #include "Debut/Renderer/VertexArray.h"
 #include "Debut/Renderer/OrthographicCamera.h"

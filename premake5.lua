@@ -81,12 +81,12 @@ project "Debut"
 		flags "NoPCH"
 	filter "configurations:Debug"
 		runtime "Debug"
-		defines {"DBT_DEBUG"}
+		defines {"DBT_DEBUG", "DBT_PROFILE"}
 		symbols "on"
 
 	filter "configurations:Release"
 		runtime "Release"
-		defines {"DBT_RELEASE", "DBT_PROFILE"}
+		defines {"DBT_RELEASE"}
 		optimize "on"
 
 	filter "configurations:Dist"
@@ -117,6 +117,7 @@ project "Sandbox"
 
 	includedirs
 	{
+		"%{prj.name}/src/",
 		"Debut/vendor/spdlog/include",
 		"Debut/vendor/loguru",
 		"Debut/src",
