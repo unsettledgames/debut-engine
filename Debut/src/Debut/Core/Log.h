@@ -52,7 +52,7 @@
 
 namespace Debut
 {
-	class DBT_API _Log
+	class _Log
 	{
 	public:
 		_Log() {}

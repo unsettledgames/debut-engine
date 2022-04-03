@@ -1,6 +1,7 @@
 [submodule "Debut/vendor/glfw"]
 	path = Debut/vendor/glfw
 	url = https://github.com/TheCherno/glfw/
+	url = https://github.com/emilk/loguru
 [submodule "Debut/vendor/imgui"]
 	path = Debut/vendor/imgui
 	url = https://github.com/TheCherno/imgui
