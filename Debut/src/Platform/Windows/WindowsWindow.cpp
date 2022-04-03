@@ -15,7 +15,7 @@ namespace Debut
 
 	static void GLFWErrorCallback(int errCode, const char* errMsg)
 	{
-		Debut::Log.CoreError("Error %d: %s", errCode, errMsg);
+		Debut::Log.CoreError("Error {0}: {1}", errCode, errMsg);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props) 
@@ -153,7 +153,7 @@ namespace Debut
 
 	Window* Window::Create(const WindowProps& props)
 	{
-		Debut::Log.CoreInfo("Created window %s: %d, %d", props.Title.c_str(), props.Width, props.Height);
+		Debut::Log.CoreInfo("Created window {0}: {1}, {2}", props.Title.c_str(), props.Width, props.Height);
 		return new WindowsWindow(props);
 	}
 

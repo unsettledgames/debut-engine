@@ -17,8 +17,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include <loguru.hpp>
-
 #include <Debut/Core/Log.h>
 #include <Debut/Core/Instrumentor.h>
 

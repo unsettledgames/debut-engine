@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Debut\vendor\spdlog\include;..\Debut\vendor\loguru;..\Debut\src;..\Debut\vendor\imgui;..\Debut\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\Debut\vendor\glfw\include;..\Debut\vendor\glad\include;..\Debut\vendor\imgui;..\Debut\vendor\glm;..\Debut\vendor\stb_image;..\Debut\vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -95,7 +95,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Debut\vendor\spdlog\include;..\Debut\vendor\loguru;..\Debut\src;..\Debut\vendor\imgui;..\Debut\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\Debut\vendor\glfw\include;..\Debut\vendor\glad\include;..\Debut\vendor\imgui;..\Debut\vendor\glm;..\Debut\vendor\stb_image;..\Debut\vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -115,7 +115,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Debut\vendor\spdlog\include;..\Debut\vendor\loguru;..\Debut\src;..\Debut\vendor\imgui;..\Debut\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\Debut\vendor\glfw\include;..\Debut\vendor\glad\include;..\Debut\vendor\imgui;..\Debut\vendor\glm;..\Debut\vendor\stb_image;..\Debut\vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -134,9 +134,9 @@
     <ClInclude Include="src\DebutantLayer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Debut\vendor\loguru\loguru.cpp" />
     <ClCompile Include="src\DebutantApp.cpp" />
     <ClCompile Include="src\DebutantLayer.cpp" />
+    <ClCompile Include="src\loguru.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Debut\Debut.vcxproj">

@@ -18,8 +18,8 @@ namespace Debut
 		DBT_ASSERT(success, "Failed to initialize Glad");
 
 		Log.CoreInfo("OPENGL INFO:");
-		Log.CoreInfo("OpenGL renderer: %s", glGetString(GL_RENDERER));
-		Log.CoreInfo("OpenGL version: %s", glGetString(GL_VERSION));
+		Log.CoreInfo("OpenGL renderer: {0}", glGetString(GL_RENDERER));
+		Log.CoreInfo("OpenGL version: {0}", glGetString(GL_VERSION));
 	}
 
 	void OpenGLContext::SwapBuffers()

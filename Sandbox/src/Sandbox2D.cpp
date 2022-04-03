@@ -79,7 +79,7 @@ void Sandbox2D::OnUpdate(Debut::Timestep ts)
 
 	Debut::Renderer2D::EndScene();
 
-	Debut::Log.AppInfo("Frame time: %f", (1.0f / ts));
+	Debut::Log.AppInfo("Frame time: {0}", (1.0f / ts));
     m_FrameBuffer->Unbind();
 }
 

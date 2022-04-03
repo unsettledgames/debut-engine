@@ -18,6 +18,7 @@ IncludeDir["Glad"] = "Debut/vendor/glad/include"
 IncludeDir["imgui"] = "Debut/vendor/imgui"
 IncludeDir["glm"] = "Debut/vendor/glm"
 IncludeDir["stb_image"] = "Debut/vendor/stb_image"
+IncludeDir["spdlog"] = "Debut/vendor/spdlog/include"
 
 include "Debut/vendor/glfw"
 include "Debut/vendor/glad"
@@ -49,13 +50,12 @@ project "Debut"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include",
-		"%{prj.name}/vendor/loguru",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.spdlog}"
 	}
 
 	links
@@ -77,8 +77,6 @@ project "Debut"
 			"_CRT_SECURE_NO_WARNINGS"
 		}
 
-	filter "files:%{prj.name}/vendor/loguru/loguru.cpp"
-		flags "NoPCH"
 	filter "configurations:Debug"
 		runtime "Debug"
 		defines {"DBT_DEBUG", "DBT_PROFILE"}
@@ -108,18 +106,68 @@ project "Debutant"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+
+	includedirs
+	{
+		"%{prj.name}/src",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.imgui}",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.spdlog}"
+	}
+
+	links
+	{
+		"Debut"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+		defines 
+		{
+			"DBT_PLATFORM_WINDOWS"
+		}
+
+	filter "configurations:Debug"
+		defines "DBT_DEBUG"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "DBT_RELEASE"
+		optimize "on"
+
+	filter "configurations:Dist"
+		defines "DBT_DIST"
+		optimize "on"
+
+project "Sandbox"
+	location "Sandbox"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
 	files 
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
-		"Debut/vendor/loguru/loguru.cpp"
 	}
 
 	includedirs
 	{
 		"%{prj.name}/src/",
-		"Debut/vendor/spdlog/include",
-		"Debut/vendor/loguru",
+		"%{IncludeDir.spdlog}",
 		"Debut/src",
 		"%{IncludeDir.imgui}",
 		"Debut/vendor/glm"
@@ -149,55 +197,3 @@ project "Debutant"
 	filter "configurations:Dist"
 		defines "DBT_DIST"
 		optimize "on"
-
-		project "Sandbox"
-		location "Sandbox"
-		kind "ConsoleApp"
-		language "C++"
-		cppdialect "C++17"
-		staticruntime "on"
-
-		targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-		objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-		files 
-		{
-			"%{prj.name}/src/**.h",
-			"%{prj.name}/src/**.cpp",
-			"Debut/vendor/loguru/loguru.cpp"
-		}
-
-		includedirs
-		{
-			"%{prj.name}/src/",
-			"Debut/vendor/spdlog/include",
-			"Debut/vendor/loguru",
-			"Debut/src",
-			"%{IncludeDir.imgui}",
-			"Debut/vendor/glm"
-		}
-
-		links
-		{
-			"Debut"
-		}
-
-		filter "system:windows"
-			systemversion "latest"
-
-			defines 
-			{
-				"DBT_PLATFORM_WINDOWS"
-			}
-
-		filter "configurations:Debug"
-			defines "DBT_DEBUG"
-			symbols "on"
-
-		filter "configurations:Release"
-			defines "DBT_RELEASE"
-			optimize "on"
-
-		filter "configurations:Dist"
-			defines "DBT_DIST"
-			optimize "on"

@@ -24,8 +24,7 @@ namespace Debut
     {
         while (GLenum error = glGetError())
         {
-            Log.CoreError("[OpenGL Error] in %s: %d in function %s (ERROR CODE 0x%x)", file, line, function, error);
-            std::cout << "[OpenGL Error] in " << file << ": " << line << " in " << function << " (" << error << ")" << std::endl;
+            Log.CoreError("[OpenGL Error] in {0}: {1} in function {2} (ERROR CODE 0x{3})", file, line, function, error);
             return false;
         }
 

@@ -140,7 +140,7 @@ namespace Debut
 			inFile.close();
 		}
 		else
-			DBT_CORE_ERROR("Couldn't open file %s", path.c_str());
+			Log.CoreError("Couldn't open file {0}", path.c_str());
 
 		return fileContent;
 	}
@@ -267,7 +267,7 @@ namespace Debut
 			glGetShaderInfoLog(shader, maxLength, &maxLength, &errorLog[0]);
 
 			// Provide the infolog in whatever manor you deem best.
-			Log.CoreError("%s", errorLog.data());
+			Log.CoreError("Shader compile error: {0}", errorLog.data());
 			DBT_CORE_ASSERT(false, "Shader failed to compile");
 			// Exit with failure.
 			glDeleteShader(shader); // Don't leak the shader.
@@ -293,7 +293,7 @@ namespace Debut
 			glDeleteProgram(program);
 
 			// Use the infoLog as you see fit.
-			Log.CoreError("Shader program failed to link: %s", infoLog.data());
+			Log.CoreError("Shader program failed to link: {0}", infoLog.data());
 			DBT_ASSERT(false, "Program failed to link");
 
 			// In this simple program, we'll just leave
