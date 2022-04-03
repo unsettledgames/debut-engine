@@ -120,7 +120,8 @@ project "Debutant"
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.spdlog}"
+		"%{IncludeDir.spdlog}",
+		"Debut/src",
 	}
 
 	links

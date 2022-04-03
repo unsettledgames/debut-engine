@@ -22,7 +22,6 @@ private:
 	Debut::Ref<Debut::Texture2D> m_Checkerboard;
 	Debut::Ref<Debut::SubTexture2D> m_BushTexture;
 
-	Debut::Ref<Debut::FrameBuffer> m_FrameBuffer;
 	glm::vec4 m_TriangleColor = glm::vec4(0.3, 0.3, 1, 1);
 
 	ParticleSystem m_ParticleSystem;

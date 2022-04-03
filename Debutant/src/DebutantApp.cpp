@@ -10,7 +10,7 @@ namespace Debut
 	class Debutant : public Application
 	{
 	public:
-		Debutant()
+		Debutant() : Application("Debutant")
 		{
 			PushLayer(new DebutantLayer());
 		}

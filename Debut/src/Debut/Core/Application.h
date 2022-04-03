@@ -17,7 +17,7 @@ namespace Debut
 	class DBT_API Application
 	{
 	public:
-		Application();
+		Application(const std::string& name = "Debut Application");
 		
 		virtual ~Application();
 

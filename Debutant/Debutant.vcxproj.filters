@@ -20,9 +20,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Debut\vendor\loguru\loguru.cpp">
-      <Filter>Debut\vendor\loguru</Filter>
-    </ClCompile>
     <ClCompile Include="src\DebutantApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
