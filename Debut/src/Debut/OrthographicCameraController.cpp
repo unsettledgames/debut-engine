@@ -56,11 +56,16 @@ namespace Debut
 		return false;
 	}
 
+	void OrthographicCameraController::Resize(uint32_t width, uint32_t height)
+	{
+		m_AspectRatio = (float)width / height;
+		m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
+		m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
+	}
+
 	bool OrthographicCameraController::OnWindowResized(WindowResizedEvent& e)
 	{
-		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-
-		CalculateView();
+		Resize(e.GetWidth(), e.GetHeight());
 		return false;
 	}
 

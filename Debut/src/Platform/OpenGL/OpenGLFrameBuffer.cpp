@@ -12,6 +12,13 @@ namespace Debut
 
 	void OpenGLFrameBuffer::Invalidate()
 	{
+		if (m_RendererID)
+		{
+			glDeleteFramebuffers(1, &m_RendererID);
+			glDeleteTextures(1, &m_ColorAttachment);
+			glDeleteTextures(1, &m_DepthAttachment);
+		}
+
 		GLCall(glCreateFramebuffers(1, &m_RendererID));
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
 
@@ -27,28 +34,35 @@ namespace Debut
 		GLCall(glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment));
 		GLCall(glBindTexture(GL_TEXTURE_2D, m_DepthAttachment));
 		GLCall(glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_Specs.Width, m_Specs.Height));
-		//GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_Specs.Width, m_Specs.Height, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL));
-		
+
 		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0));
 		DBT_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Frame buffer is incomplete");
 		
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	}
 
+	void OpenGLFrameBuffer::Resize(uint32_t x, uint32_t y)
+	{
+		m_Specs.Width = x;
+		m_Specs.Height = y;
+		Invalidate();
+	}
+
 	OpenGLFrameBuffer::~OpenGLFrameBuffer()
 	{
 		glDeleteFramebuffers(1, &m_RendererID);
+		glDeleteTextures(1, &m_ColorAttachment);
+		glDeleteTextures(1, &m_DepthAttachment);
 	}
 
 	void OpenGLFrameBuffer::Bind() const
 	{
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
+		GLCall(glViewport(0, 0, m_Specs.Width, m_Specs.Height));
 	}
 
 	void OpenGLFrameBuffer::Unbind() const
 	{
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	}
-
-		
 }

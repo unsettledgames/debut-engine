@@ -9,7 +9,8 @@ namespace Debut
 		OpenGLFrameBuffer(const FrameBufferSpecs& specs);
 		virtual ~OpenGLFrameBuffer();
 
-		void Invalidate();
+		virtual void Invalidate() override;
+		virtual void Resize(uint32_t x, uint32_t y) override;
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
@@ -19,9 +20,9 @@ namespace Debut
 		inline virtual FrameBufferSpecs& GetSpecs() override { return m_Specs; }
 
 	private:
-		uint32_t m_RendererID;
-		uint32_t m_ColorAttachment;
-		uint32_t m_DepthAttachment;
+		uint32_t m_RendererID = 0;
+		uint32_t m_DepthAttachment = 0;
+		uint32_t m_ColorAttachment = 0;
 
 		FrameBufferSpecs m_Specs;
 	};

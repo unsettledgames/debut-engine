@@ -31,6 +31,7 @@ namespace Debut
     void DebutantLayer::OnUpdate(Timestep ts)
     {
         m_CameraController.OnUpdate(ts);
+
         Renderer2D::ResetStats();
         {
             DBT_PROFILE_SCOPE("Sandbox2D::RendererSetup");
@@ -55,7 +56,7 @@ namespace Debut
 
         Renderer2D::EndScene();
 
-        Log.AppInfo("Frame time: %f", (1.0f / ts));
+        Log.AppInfo("Frame time: {0}", (1.0f / ts));
         m_FrameBuffer->Unbind();
     }
 
@@ -132,18 +133,30 @@ namespace Debut
         }
 
         ImGui::Begin("Settings");
-        ImGui::ColorEdit4("Triangle color: ", glm::value_ptr(m_TriangleColor));
+            ImGui::ColorEdit4("Triangle color: ", glm::value_ptr(m_TriangleColor));
 
-        // Renderer2D stats
-        ImGui::Text("Renderer2D Stats:");
-        ImGui::Text("Draw calls: %d", stats.DrawCalls);
-        ImGui::Text("Quads: %d", stats.QuadCount);
-        ImGui::Text("Vertex count: %d", stats.GetTotalVertexCount());
-        ImGui::Text("Index count: %d", stats.GetIndexCount());
+            // Renderer2D stats
+            ImGui::Text("Renderer2D Stats:");
+            ImGui::Text("Draw calls: %d", stats.DrawCalls);
+            ImGui::Text("Quads: %d", stats.QuadCount);
+            ImGui::Text("Vertex count: %d", stats.GetTotalVertexCount());
+            ImGui::Text("Index count: %d", stats.GetIndexCount());
+        ImGui::End();
 
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+        ImGui::Begin("Scene view");
+            
+        ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+        if (m_ViewportSize.x != viewportSize.x || m_ViewportSize.y != viewportSize.y)
+        {
+            m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+            m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
+            m_CameraController.Resize(m_ViewportSize.x, m_ViewportSize.y);
+        }
         uint32_t texId = m_FrameBuffer->GetColorAttachment();
-        ImGui::Image((void*)texId, ImVec2(320, 180), ImVec2{ 0,1 }, ImVec2{ 1,0 });
+        ImGui::Image((void*)texId, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
 
+        ImGui::PopStyleVar();
         ImGui::End();
 
         ImGui::End();

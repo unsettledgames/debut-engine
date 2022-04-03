@@ -18,6 +18,9 @@ namespace Debut
 	private:
 		OrthographicCameraController m_CameraController;
 
+		glm::vec2 m_ViewportSize;
+
+		// Kinda placeholderish
 		Ref<Texture2D> m_Texture;
 		Ref<Texture2D> m_Checkerboard;
 		Ref<SubTexture2D> m_BushTexture;

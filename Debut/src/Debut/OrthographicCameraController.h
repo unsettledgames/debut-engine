@@ -25,6 +25,7 @@ namespace Debut
 		void OnEvent(Event& e);
 
 		void SetZoomLevel(float zoom) { m_ZoomLevel = zoom; CalculateView(); }
+		void Resize(uint32_t width, uint32_t height);
 
 		OrthographicCamera& GetCamera() { return m_Camera; }
 		const OrthographicCamera& GetCamera() const { return m_Camera; }
