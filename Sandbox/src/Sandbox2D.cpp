@@ -9,9 +9,16 @@
 
 void Sandbox2D::OnAttach()
 {
+    Debut::FrameBufferSpecs fbSpecs;
+
+    fbSpecs.Width = Debut::Application::Get().GetWindow().GetWidth();
+    fbSpecs.Height = Debut::Application::Get().GetWindow().GetHeight();
+
 	m_Texture = Debut::Texture2D::Create("C:/dev/Debut/Sandbox/assets/tileset.png");
+    m_Checkerboard = Debut::Texture2D::Create("C:/dev/Debut/Debut/assets/textures/checkerboard.png");
 	m_CameraController.SetZoomLevel(2);
 	m_BushTexture = Debut::SubTexture2D::CreateFromCoords(m_Texture, glm::vec2(0, 4), glm::vec2(5, 6), glm::vec2(16, 16));
+    m_FrameBuffer = Debut::FrameBuffer::Create(fbSpecs);
 
 	m_Particle.ColorBegin = glm::vec4( 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f );
 	m_Particle.ColorEnd = glm::vec4(0 / 255.0f, 40 / 255.0f, 255 / 255.0f, 1.0f );
@@ -33,6 +40,7 @@ void Sandbox2D::OnUpdate(Debut::Timestep ts)
 	Debut::Renderer2D::ResetStats();
 	{
 		DBT_PROFILE_SCOPE("Sandbox2D::RendererSetup");
+        m_FrameBuffer->Bind();
 
 		Debut::RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
 		Debut::RenderCommand::Clear();
@@ -72,6 +80,7 @@ void Sandbox2D::OnUpdate(Debut::Timestep ts)
 	Debut::Renderer2D::EndScene();
 
 	Debut::Log.AppInfo("Frame time: %f", (1.0f / ts));
+    m_FrameBuffer->Unbind();
 }
 
 void Sandbox2D::OnEvent(Debut::Event& e)
@@ -83,18 +92,6 @@ void Sandbox2D::OnImGuiRender()
 {
 	DBT_PROFILE_FUNCTION();
 	auto stats = Debut::Renderer2D::GetStats();
-
-	ImGui::Begin("Settings");
-	ImGui::ColorEdit4("Triangle color: ", glm::value_ptr(m_TriangleColor));
-
-	// Renderer2D stats
-	ImGui::Text("Renderer2D Stats:");
-	ImGui::Text("Draw calls: %d", stats.DrawCalls);
-	ImGui::Text("Quads: %d", stats.QuadCount);
-	ImGui::Text("Vertex count: %d", stats.GetTotalVertexCount());
-	ImGui::Text("Index count: %d", stats.GetIndexCount());
-
-	ImGui::End();
 
     static bool dockspaceOpen = true;
     static bool opt_fullscreen = true;
@@ -149,28 +146,29 @@ void Sandbox2D::OnImGuiRender()
 
     if (ImGui::BeginMenuBar())
     {
-        if (ImGui::BeginMenu("Options"))
+        if (ImGui::BeginMenu("File"))
         {
-            // Disabling fullscreen would allow the window to be moved to the front of other windows,
-            // which we can't undo at the moment without finer window depth/z control.
-            ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-            ImGui::MenuItem("Padding", NULL, &opt_padding);
-            ImGui::Separator();
-
-            if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
-            if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-            if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
-            if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-            if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-            ImGui::Separator();
-
-            if (ImGui::MenuItem("Close", NULL, false))
-                dockspaceOpen = false;
+            if (ImGui::MenuItem("Exit")) Debut::Application::Get().Close();
             ImGui::EndMenu();
         }
 
         ImGui::EndMenuBar();
     }
+
+    ImGui::Begin("Settings");
+    ImGui::ColorEdit4("Triangle color: ", glm::value_ptr(m_TriangleColor));
+
+    // Renderer2D stats
+    ImGui::Text("Renderer2D Stats:");
+    ImGui::Text("Draw calls: %d", stats.DrawCalls);
+    ImGui::Text("Quads: %d", stats.QuadCount);
+    ImGui::Text("Vertex count: %d", stats.GetTotalVertexCount());
+    ImGui::Text("Index count: %d", stats.GetIndexCount());
+
+    uint32_t texId = m_FrameBuffer->GetColorAttachment();
+    ImGui::Image((void*)texId, ImVec2(320, 180), ImVec2{ 0,1 }, ImVec2{ 1,0 });
+
+    ImGui::End();
 
     ImGui::End();
 }

@@ -32,4 +32,5 @@
 #include "Debut/Renderer/SubTexture2D.h"
 #include "Debut/Renderer/Buffer.h"
 #include "Debut/Renderer/VertexArray.h"
+#include "Debut/Renderer/FrameBuffer.h"
 #include "Debut/Renderer/OrthographicCamera.h"

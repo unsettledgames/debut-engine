@@ -22,9 +22,9 @@ namespace Debut
 		virtual ~Application();
 
 		void Run();
+		void Close();
 
 		void OnEvent(Event& e);
-
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);

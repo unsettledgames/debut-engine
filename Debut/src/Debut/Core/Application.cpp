@@ -69,6 +69,11 @@ namespace Debut
 		}
 	}
 
+	void Application::Close()
+	{
+		m_Running = false;
+	}
+
 	void Application::OnEvent(Event& e)
 	{
 		DBT_PROFILE_FUNCTION();

@@ -16,7 +16,7 @@ namespace Debut
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLShader>(filePath);
+			return CreateRef<OpenGLShader>(filePath);
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
@@ -30,7 +30,7 @@ namespace Debut
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLShader>(name, vertSrc, fragSrc);
+			return CreateRef<OpenGLShader>(name, vertSrc, fragSrc);
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
