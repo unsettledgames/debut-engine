@@ -34,3 +34,7 @@
 #include "Debut/Renderer/VertexArray.h"
 #include "Debut/Renderer/FrameBuffer.h"
 #include "Debut/Renderer/OrthographicCamera.h"
+
+/*********Scene and ECS********************/
+#include "Debut/Scene/Scene.h"
+#include "Debut/Scene/Components.h"

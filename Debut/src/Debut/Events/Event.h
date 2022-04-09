@@ -45,6 +45,7 @@ namespace Debut
 
 		inline bool IsInCategory(EventCategory category) const { return GetCategoryFlags() & category; }
 		inline bool Handled() const { return m_Handled; }
+		inline void SetHandled(bool val) { m_Handled = val; }
 	protected:
 		// A layer may stop event propagation
 		bool m_Handled = false;

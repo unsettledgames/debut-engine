@@ -21,6 +21,12 @@ namespace Debut
         m_CameraController.SetZoomLevel(2);
         m_BushTexture = SubTexture2D::CreateFromCoords(m_Texture, glm::vec2(0, 4), glm::vec2(5, 6), glm::vec2(16, 16));
         m_FrameBuffer = FrameBuffer::Create(fbSpecs);
+
+        m_ActiveScene = CreateRef<Scene>();
+        
+        m_SquareEntity = m_ActiveScene->CreateEntity();
+        m_ActiveScene->Reg().emplace<TransformComponent>(m_SquareEntity, glm::mat4(1.0f));
+        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(m_SquareEntity, glm::vec4(0.0f, 0.8f, 0.5f, 1.0f));
     }
 
     void DebutantLayer::OnDetach()
@@ -30,31 +36,32 @@ namespace Debut
 
     void DebutantLayer::OnUpdate(Timestep ts)
     {
-        m_CameraController.OnUpdate(ts);
+        // Update camera
+        if (m_ViewportFocused)
+            m_CameraController.OnUpdate(ts);
+
+        m_ActiveScene->Reg().get<SpriteRendererComponent>(m_SquareEntity).Color = m_TriangleColor;
 
         Renderer2D::ResetStats();
         {
-            DBT_PROFILE_SCOPE("Sandbox2D::RendererSetup");
+            DBT_PROFILE_SCOPE("Debutant::RendererSetup");
             m_FrameBuffer->Bind();
 
             RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
             RenderCommand::Clear();
-
-            Renderer2D::BeginScene(m_CameraController.GetCamera()/*camera, lights, environment*/);
         }
 
         {
-            DBT_PROFILE_SCOPE("Sandbox2D::Rendering");
+            DBT_PROFILE_SCOPE("Debutant::RenderLoop")
+
+            Renderer2D::BeginScene(m_CameraController.GetCamera());
+
+            // Update the scene
+            m_ActiveScene->OnUpdate(ts);
 
             Renderer2D::EndScene();
         }
-
-        Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-        Renderer2D::DrawQuad(glm::vec3(0, 0, 0.1), glm::vec2(10.0f, 10.0f), 0, m_Texture);
-        Renderer2D::DrawQuad(glm::vec3(-10, 0, 0.1), glm::vec2(1, 1), 0, m_BushTexture);
-
-        Renderer2D::EndScene();
+        
 
         Log.AppInfo("Frame time: {0}", (1.0f / ts));
         m_FrameBuffer->Unbind();
@@ -146,11 +153,16 @@ namespace Debut
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::Begin("Scene view");
             
+        m_ViewportFocused = ImGui::IsWindowFocused();
+        m_ViewportHovered = ImGui::IsWindowHovered();
+        Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();
         if (m_ViewportSize.x != viewportSize.x || m_ViewportSize.y != viewportSize.y)
         {
-            m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
             m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
+
+            m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
             m_CameraController.Resize(m_ViewportSize.x, m_ViewportSize.y);
         }
         uint32_t texId = m_FrameBuffer->GetColorAttachment();

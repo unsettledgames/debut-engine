@@ -20,6 +20,7 @@
 
 #ifdef DBT_DEBUG
 	#define DBT_ASSERTS
+	#define DBT_PROFILE
 #endif 
 
 #define BIT(x) (1 << x)

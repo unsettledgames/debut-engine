@@ -146,6 +146,32 @@ namespace Debut
 		s_Data.Stats.QuadCount++;
 	}
 
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4 color)
+	{
+		DBT_PROFILE_FUNCTION();
+
+		// If we have drawn too many quads, we start a new batch
+		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
+			FlushAndReset();
+
+		// Use the white texture
+		const float texIndex = 0;
+		glm::vec2 texCoords[] = { glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 1) };
+
+		for (int i = 0; i < 4; i++)
+		{
+			s_Data.QuadVertexBufferPtr->Position = glm::vec3(transform * s_Data.QuadVertexPositions[i]);
+			s_Data.QuadVertexBufferPtr->Color = color;
+			s_Data.QuadVertexBufferPtr->TexCoord = texCoords[i];
+			s_Data.QuadVertexBufferPtr->TexIndex = 0;
+			s_Data.QuadVertexBufferPtr->TilingFactor = 1;
+			s_Data.QuadVertexBufferPtr++;
+		}
+
+		s_Data.QuadIndexCount += 6;
+		s_Data.Stats.QuadCount++;
+	}
+
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<Texture>& texture, float tilingFactor)
 	{
 		DBT_PROFILE_FUNCTION();

@@ -19,6 +19,7 @@ IncludeDir["imgui"] = "Debut/vendor/imgui"
 IncludeDir["glm"] = "Debut/vendor/glm"
 IncludeDir["stb_image"] = "Debut/vendor/stb_image"
 IncludeDir["spdlog"] = "Debut/vendor/spdlog/include"
+IncludeDir["entt"] = "Debut/vendor/entt/include"
 
 include "Debut/vendor/glfw"
 include "Debut/vendor/glad"
@@ -55,7 +56,8 @@ project "Debut"
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.spdlog}"
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.entt}"
 	}
 
 	links
@@ -79,7 +81,7 @@ project "Debut"
 
 	filter "configurations:Debug"
 		runtime "Debug"
-		defines {"DBT_DEBUG", "DBT_PROFILE"}
+		defines {"DBT_DEBUG"}
 		symbols "on"
 
 	filter "configurations:Release"
@@ -121,6 +123,7 @@ project "Debutant"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.entt}",
 		"Debut/src",
 	}
 
@@ -171,6 +174,7 @@ project "Sandbox"
 		"%{IncludeDir.spdlog}",
 		"Debut/src",
 		"%{IncludeDir.imgui}",
+		"%{IncludeDir.entt}",
 		"Debut/vendor/glm"
 	}
 

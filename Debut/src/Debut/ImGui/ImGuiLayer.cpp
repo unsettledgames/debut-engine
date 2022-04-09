@@ -65,6 +65,16 @@ namespace Debut
 		ImGui::NewFrame();
 	}
 
+	void ImGuiLayer::OnEvent(Event& e)
+	{
+		if (m_BlockEvents)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			e.SetHandled(e.Handled() || (e.IsInCategory(EventCategory::MouseEvent) && io.WantCaptureMouse));
+			e.SetHandled(e.Handled() || (e.IsInCategory(EventCategory::KeyboardEvent) && io.WantCaptureKeyboard));
+		}
+	}
+
 	void ImGuiLayer::OnImGuiRender()
 	{
 		//static bool showDemo = true;

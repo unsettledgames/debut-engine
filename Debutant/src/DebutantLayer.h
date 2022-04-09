@@ -19,6 +19,8 @@ namespace Debut
 		OrthographicCameraController m_CameraController;
 
 		glm::vec2 m_ViewportSize;
+		bool m_ViewportFocused;
+		bool m_ViewportHovered;
 
 		// Kinda placeholderish
 		Ref<Texture2D> m_Texture;
@@ -27,5 +29,9 @@ namespace Debut
 
 		Ref<FrameBuffer> m_FrameBuffer;
 		glm::vec4 m_TriangleColor = glm::vec4(0.3, 0.3, 1, 1);
+
+		// Scene
+		Ref<Scene> m_ActiveScene;
+		entt::entity m_SquareEntity;
 	};
 }

@@ -1,13 +1,11 @@
 #include "Debut/dbtpch.h"
-#include "WindowsInput.h"
+#include "Debut/Core/Input.h"
 #include "Debut/Core/Application.h"
 #include "GLFW/glfw3.h"
 
 namespace Debut
 {
-	Input* Input::s_Instance = new WindowsInput();
-
-	bool WindowsInput::IsKeyPressedImpl(unsigned int keycode)
+	bool Input::IsKeyPressed(unsigned int keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		auto state = glfwGetKey(window, keycode);
@@ -15,7 +13,7 @@ namespace Debut
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
-	bool WindowsInput::IsMouseButtonPressedImpl(unsigned int button)
+	bool Input::IsMouseButtonPressed(unsigned int button)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		auto state = glfwGetMouseButton(window, button);
@@ -23,19 +21,19 @@ namespace Debut
 		return state == GLFW_PRESS;
 	}
 
-	float WindowsInput::GetMouseXImpl()
+	float Input::GetMouseX()
 	{
-		auto [x, y] = GetMousePositionImpl();
+		auto [x, y] = GetMousePosition();
 		return (float)x;
 	}
 
-	float WindowsInput::GetMouseYImpl()
+	float Input::GetMouseY()
 	{
-		auto [x, y] = GetMousePositionImpl();
+		auto [x, y] = GetMousePosition();
 		return (float)y;
 	}
 
-	std::pair<float, float> WindowsInput::GetMousePositionImpl()
+	std::pair<float, float> Input::GetMousePosition()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		double xPos, yPos;

@@ -76,8 +76,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Debut/dbtpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_BUILD_DLL;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;DBT_DEBUG;DBT_PROFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_BUILD_DLL;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;DBT_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\spdlog\include;vendor\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -97,7 +97,7 @@
       <PrecompiledHeaderFile>Debut/dbtpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_BUILD_DLL;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;DBT_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\spdlog\include;vendor\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -121,7 +121,7 @@
       <PrecompiledHeaderFile>Debut/dbtpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_BUILD_DLL;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;DBT_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\spdlog\include;vendor\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -140,6 +140,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Debut\Scene\Components.h" />
+    <ClInclude Include="src\Debut\Scene\Scene.h" />
     <ClInclude Include="src\Debut.h" />
     <ClInclude Include="src\Debut\Core\Application.h" />
     <ClInclude Include="src\Debut\Core\Core.h" />
@@ -180,11 +182,11 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
-    <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Debut\Scene\Scene.cpp" />
     <ClCompile Include="src\Debut\Core\Application.cpp" />
     <ClCompile Include="src\Debut\Core\Layer.cpp" />
     <ClCompile Include="src\Debut\Core\LayerStack.cpp" />

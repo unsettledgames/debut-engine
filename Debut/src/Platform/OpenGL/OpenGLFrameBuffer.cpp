@@ -5,6 +5,8 @@
 
 namespace Debut
 {
+	static const unsigned int MAX_FRAME_BUFFER_SIZE = 65535;
+
 	OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecs& specs) : m_Specs(specs)
 	{
 		Invalidate();
@@ -14,9 +16,9 @@ namespace Debut
 	{
 		if (m_RendererID)
 		{
-			glDeleteFramebuffers(1, &m_RendererID);
-			glDeleteTextures(1, &m_ColorAttachment);
-			glDeleteTextures(1, &m_DepthAttachment);
+			GLCall(glDeleteFramebuffers(1, &m_RendererID));
+			GLCall(glDeleteTextures(1, &m_ColorAttachment));
+			GLCall(glDeleteTextures(1, &m_DepthAttachment));
 		}
 
 		GLCall(glCreateFramebuffers(1, &m_RendererID));
@@ -36,13 +38,19 @@ namespace Debut
 		GLCall(glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_Specs.Width, m_Specs.Height));
 
 		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0));
-		DBT_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Frame buffer is incomplete");
+		GLCall(DBT_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Frame buffer is incomplete"));
 		
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	}
 
 	void OpenGLFrameBuffer::Resize(uint32_t x, uint32_t y)
 	{
+		if (x == 0 || y == 0 || x > MAX_FRAME_BUFFER_SIZE || y > MAX_FRAME_BUFFER_SIZE)	
+		{
+			Log.CoreWarn("Attempted to resize frame buffer to incorrect size: {0}, {1}", x, y);
+			return;
+		}
+
 		m_Specs.Width = x;
 		m_Specs.Height = y;
 		Invalidate();
