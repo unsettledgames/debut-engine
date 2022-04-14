@@ -88,6 +88,18 @@ namespace Debut
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 	}
 
+	void Renderer2D::BeginScene(const Camera* camera, const glm::mat4 transform)
+	{
+		DBT_PROFILE_FUNCTION();
+		glm::mat4 viewProj = camera->GetProjection() /** glm::inverse(transform)*/;
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+		s_Data.TextureSlotIndex = 1;
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+	}
+
 	void Renderer2D::EndScene()
 	{
 		DBT_PROFILE_FUNCTION();

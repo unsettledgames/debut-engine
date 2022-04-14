@@ -25,7 +25,7 @@
 
 #define BIT(x) (1 << x)
 
-#define DBT_BIND(x) std::bind(&x, this, std::placeholders::_1)
+#define DBT_BIND(x) [this](auto&&... args) -> decltype(auto) {return this->x(std::forward<decltype(args)>(args)...);}
 
 namespace Debut
 {

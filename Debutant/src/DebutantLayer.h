@@ -1,5 +1,6 @@
 #pragma once
 #include <Debut.h>
+#include <Debut/Scene/Entity.h>
 
 namespace Debut
 {
@@ -32,6 +33,7 @@ namespace Debut
 
 		// Scene
 		Ref<Scene> m_ActiveScene;
-		entt::entity m_SquareEntity;
+		Entity m_SquareEntity;
+		Entity m_Camera;
 	};
 }

@@ -140,6 +140,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Debut\Scene\SceneCamera.h" />
+    <ClInclude Include="src\Debut\Renderer\Camera.h" />
+    <ClInclude Include="src\Debut\Scene\Entity.h" />
     <ClInclude Include="src\Debut\Scene\Components.h" />
     <ClInclude Include="src\Debut\Scene\Scene.h" />
     <ClInclude Include="src\Debut.h" />
@@ -186,6 +189,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Debut\Scene\SceneCamera.cpp" />
+    <ClCompile Include="src\Debut\Scene\Entity.cpp" />
     <ClCompile Include="src\Debut\Scene\Scene.cpp" />
     <ClCompile Include="src\Debut\Core\Application.cpp" />
     <ClCompile Include="src\Debut\Core\Layer.cpp" />

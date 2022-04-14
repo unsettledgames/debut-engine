@@ -25,8 +25,10 @@ namespace Debut
         m_ActiveScene = CreateRef<Scene>();
         
         m_SquareEntity = m_ActiveScene->CreateEntity();
-        m_ActiveScene->Reg().emplace<TransformComponent>(m_SquareEntity, glm::mat4(1.0f));
-        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(m_SquareEntity, glm::vec4(0.0f, 0.8f, 0.5f, 1.0f));
+        m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 0.8f, 0.5f, 1.0f));
+
+        m_Camera = m_ActiveScene->CreateEntity("Camera");
+        auto& cc = m_Camera.AddComponent<CameraComponent>();
     }
 
     void DebutantLayer::OnDetach()
@@ -40,7 +42,7 @@ namespace Debut
         if (m_ViewportFocused)
             m_CameraController.OnUpdate(ts);
 
-        m_ActiveScene->Reg().get<SpriteRendererComponent>(m_SquareEntity).Color = m_TriangleColor;
+        m_SquareEntity.GetComponent<SpriteRendererComponent>().Color = m_TriangleColor;
 
         Renderer2D::ResetStats();
         {
@@ -51,16 +53,8 @@ namespace Debut
             RenderCommand::Clear();
         }
 
-        {
-            DBT_PROFILE_SCOPE("Debutant::RenderLoop")
-
-            Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-            // Update the scene
-            m_ActiveScene->OnUpdate(ts);
-
-            Renderer2D::EndScene();
-        }
+        // Update the scene
+        m_ActiveScene->OnUpdate(ts);
         
 
         Log.AppInfo("Frame time: {0}", (1.0f / ts));
@@ -164,6 +158,8 @@ namespace Debut
 
             m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
             m_CameraController.Resize(m_ViewportSize.x, m_ViewportSize.y);
+
+            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
         uint32_t texId = m_FrameBuffer->GetColorAttachment();
         ImGui::Image((void*)texId, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });

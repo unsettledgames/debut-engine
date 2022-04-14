@@ -164,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="src\Debut\Scene\Scene.h" />
     <ClInclude Include="src\Debut\Scene\Components.h" />
+    <ClInclude Include="src\Debut\Scene\Entity.h" />
+    <ClInclude Include="src\Debut\Renderer\Camera.h" />
+    <ClInclude Include="src\Debut\Scene\SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Core\Application.cpp">
@@ -254,5 +257,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Scene\Scene.cpp" />
+    <ClCompile Include="src\Debut\Scene\Entity.cpp" />
+    <ClCompile Include="src\Debut\Scene\SceneCamera.cpp" />
   </ItemGroup>
 </Project>
