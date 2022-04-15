@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include <glm/glm.hpp>
 #include "Debut/Scene/Entity.h"
+#include "Debut/Scene/Components.h"
 #include "Debut/Renderer/Renderer2D.h"
 
 namespace Debut
@@ -18,6 +19,21 @@ namespace Debut
 
 	void Scene::OnUpdate(Timestep ts)
 	{
+		// Update scripts
+		{
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+				{
+					if (!nsc.Instance)
+					{
+						nsc.InstantiateFunction();
+						nsc.Instance->m_Entity = { entity, this };
+						nsc.OnCreateFunction(nsc.Instance);
+					}
+
+					nsc.OnUpdateFunction(nsc.Instance, ts);
+				});
+		}
+
 		// Render sprites
 
 		// Find the main camera of the scene

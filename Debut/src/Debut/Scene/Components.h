@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Debut/Core/Time.h"
 #include "Debut/Scene/SceneCamera.h"
 #include <glm/glm.hpp>
+#include <Debut/Scene/ScriptableEntity.h>
 
 namespace Debut
 {
@@ -44,5 +46,29 @@ namespace Debut
 		SpriteRendererComponent() : Color(glm::vec4(1.0f)) {}
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color) : Color(color) {}
+	};
+
+	struct NativeScriptComponent
+	{
+		ScriptableEntity* Instance = nullptr;
+
+		std::function<void()> InstantiateFunction;
+		std::function<void()> DestroyFunction;
+
+		std::function<void(ScriptableEntity* instance)> OnCreateFunction;
+		std::function<void(ScriptableEntity* instance)> OnDestroyFunction;
+		std::function<void(ScriptableEntity* instance, Timestep ts) > OnUpdateFunction;
+
+
+		template<typename T>
+		void Bind()
+		{
+			InstantiateFunction = [&]() {Instance = new T(); };
+			DestroyFunction = [&]() {delete (T*)Instance; };
+
+			OnCreateFunction = [](ScriptableEntity* Instance) { ((T*)Instance)->OnCreate(); };
+			OnDestroyFunction = [](ScriptableEntity* Instance) { ((T*)Instance)->OnDestroy(); };
+			OnUpdateFunction = [](ScriptableEntity* Instance, Timestep ts) { ((T*)Instance)->OnUpdate(ts); };
+		}
 	};
 }

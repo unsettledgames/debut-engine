@@ -1,7 +1,6 @@
 #pragma once
 
 #include <entt.hpp>
-#include "Components.h"
 #include "Debut/Core/Time.h"
 
 namespace Debut

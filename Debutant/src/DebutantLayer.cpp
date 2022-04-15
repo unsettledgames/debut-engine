@@ -27,7 +27,26 @@ namespace Debut
         m_SquareEntity = m_ActiveScene->CreateEntity();
         m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 0.8f, 0.5f, 1.0f));
 
+        class CameraController : public ScriptableEntity
+        {
+        public:
+            void OnCreate()
+            {
+                Log.AppInfo("Camera controller created");
+            }
+
+            void OnUpdate(Timestep ts)
+            {
+                Log.AppInfo("Camera controller update {0}", ts);
+            }
+
+            void OnDestroy()
+            {
+
+            }
+        };
         m_Camera = m_ActiveScene->CreateEntity("Camera");
+        m_Camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
         auto& cc = m_Camera.AddComponent<CameraComponent>();
     }
 
@@ -57,7 +76,7 @@ namespace Debut
         m_ActiveScene->OnUpdate(ts);
         
 
-        Log.AppInfo("Frame time: {0}", (1.0f / ts));
+        //Log.AppInfo("Frame time: {0}", (1.0f / ts));
         m_FrameBuffer->Unbind();
     }
 
