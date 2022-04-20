@@ -2,6 +2,8 @@
 #include <Debut.h>
 #include <Debut/Scene/Entity.h>
 
+#include <Panels/SceneHierarchyPanel.h>
+
 namespace Debut
 {
 	class DebutantLayer : public Layer
@@ -29,11 +31,13 @@ namespace Debut
 		Ref<SubTexture2D> m_BushTexture;
 
 		Ref<FrameBuffer> m_FrameBuffer;
-		glm::vec4 m_TriangleColor = glm::vec4(0.3, 0.3, 1, 1);
 
 		// Scene
 		Ref<Scene> m_ActiveScene;
 		Entity m_SquareEntity;
 		Entity m_Camera;
+
+		// Panels
+		SceneHierarchyPanel m_SceneHierarchy;
 	};
 }

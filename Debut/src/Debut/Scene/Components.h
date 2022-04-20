@@ -4,6 +4,7 @@
 #include "Debut/Scene/SceneCamera.h"
 #include <glm/glm.hpp>
 #include <Debut/Scene/ScriptableEntity.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Debut
 {
@@ -19,14 +20,25 @@ namespace Debut
 
 	struct TransformComponent
 	{
-		glm::mat4 Transform = glm::mat4(1.0f);
+		glm::vec3 Translation;
+		glm::vec3 Rotation;
+		glm::vec3 Scale = glm::vec3(1.0f);
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const glm::mat4& mat) : Transform(mat) {}
+		TransformComponent(const glm::vec3& translation) : Translation(translation) {}
 
-		operator const glm::mat4& () const { return Transform; }
-		operator glm::mat4& () { return Transform; }
+		glm::mat4 GetTransform() const
+		{
+			glm::mat4 transform(1.0f);
+			glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), Rotation.x, glm::vec3(1, 0, 0)) *
+				glm::rotate(glm::mat4(1.0f), Rotation.y, glm::vec3(0, 1, 0)) *
+				glm::rotate(glm::mat4(1.0f), Rotation.z, glm::vec3(0, 0, 1));
+
+			return glm::translate(transform, Translation) 
+				* rotation 
+				* glm::scale(glm::mat4(1.0f), Scale);
+		}
 	};
 
 	struct CameraComponent
@@ -52,23 +64,14 @@ namespace Debut
 	{
 		ScriptableEntity* Instance = nullptr;
 
-		std::function<void()> InstantiateFunction;
-		std::function<void()> DestroyFunction;
-
-		std::function<void(ScriptableEntity* instance)> OnCreateFunction;
-		std::function<void(ScriptableEntity* instance)> OnDestroyFunction;
-		std::function<void(ScriptableEntity* instance, Timestep ts) > OnUpdateFunction;
-
+		ScriptableEntity*(*InstantiateScript)();
+		void (*DestroyScript)(NativeScriptComponent*);
 
 		template<typename T>
-		void Bind()
+		void Bind()	
 		{
-			InstantiateFunction = [&]() {Instance = new T(); };
-			DestroyFunction = [&]() {delete (T*)Instance; };
-
-			OnCreateFunction = [](ScriptableEntity* Instance) { ((T*)Instance)->OnCreate(); };
-			OnDestroyFunction = [](ScriptableEntity* Instance) { ((T*)Instance)->OnDestroy(); };
-			OnUpdateFunction = [](ScriptableEntity* Instance, Timestep ts) { ((T*)Instance)->OnUpdate(ts); };
+			InstantiateScript = []() {return static_cast<ScriptableEntity*>(new T()); };	   
+			DestroyScript = [](NativeScriptComponent* nsc) {delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};
 }

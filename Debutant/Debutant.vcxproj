@@ -131,9 +131,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="src\DebutantLayer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
     <ClCompile Include="src\DebutantApp.cpp" />
     <ClCompile Include="src\DebutantLayer.cpp" />
   </ItemGroup>

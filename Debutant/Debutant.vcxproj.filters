@@ -18,6 +18,7 @@
     <ClInclude Include="src\DebutantLayer.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DebutantApp.cpp">
@@ -26,5 +27,6 @@
     <ClCompile Include="src\DebutantLayer.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
   </ItemGroup>
 </Project>

@@ -8,6 +8,7 @@ namespace Debut
 	class Scene
 	{
 	friend class Entity;
+	friend class SceneHierarchyPanel;
 
 	public:
 		Scene();

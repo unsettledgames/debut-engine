@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <chrono>
 
+
 namespace Debut
 {
     void DebutantLayer::OnAttach()
@@ -24,8 +25,13 @@ namespace Debut
 
         m_ActiveScene = CreateRef<Scene>();
         
-        m_SquareEntity = m_ActiveScene->CreateEntity();
-        m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 0.8f, 0.5f, 1.0f));
+        m_SquareEntity = m_ActiveScene->CreateEntity("Square");
+        m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 0.5f, 0.8f, 1.0f));
+
+        auto square = m_ActiveScene->CreateEntity("Square 2");
+        square.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 0.8f, 0.5f, 1.0f));
+        square.GetComponent<TransformComponent>().Translation = glm::vec3(1, 0, 0);
+
 
         class CameraController : public ScriptableEntity
         {
@@ -37,17 +43,25 @@ namespace Debut
 
             void OnUpdate(Timestep ts)
             {
-                Log.AppInfo("Camera controller update {0}", ts);
-            }
+                float cameraSpeed = 5;
+                auto& transform = GetComponent<TransformComponent>();
 
-            void OnDestroy()
-            {
+                if (Input::IsKeyPressed(DBT_KEY_A))
+                    transform.Translation.x -= ts * cameraSpeed;
+                if (Input::IsKeyPressed(DBT_KEY_D))
+                    transform.Translation.x += ts * cameraSpeed;
+                if (Input::IsKeyPressed(DBT_KEY_W))
+                    transform.Translation.y += ts * cameraSpeed;
+                if (Input::IsKeyPressed(DBT_KEY_S))
+                    transform.Translation.y -= ts * cameraSpeed;
 
             }
         };
         m_Camera = m_ActiveScene->CreateEntity("Camera");
+        m_Camera.AddComponent<CameraComponent>();
         m_Camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-        auto& cc = m_Camera.AddComponent<CameraComponent>();
+
+        m_SceneHierarchy.SetContext(m_ActiveScene);
     }
 
     void DebutantLayer::OnDetach()
@@ -60,8 +74,6 @@ namespace Debut
         // Update camera
         if (m_ViewportFocused)
             m_CameraController.OnUpdate(ts);
-
-        m_SquareEntity.GetComponent<SpriteRendererComponent>().Color = m_TriangleColor;
 
         Renderer2D::ResetStats();
         {
@@ -152,8 +164,9 @@ namespace Debut
             ImGui::EndMenuBar();
         }
 
+        m_SceneHierarchy.OnImGuiRender();
+
         ImGui::Begin("Settings");
-            ImGui::ColorEdit4("Triangle color: ", glm::value_ptr(m_TriangleColor));
 
             // Renderer2D stats
             ImGui::Text("Renderer2D Stats:");

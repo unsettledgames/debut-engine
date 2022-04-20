@@ -25,12 +25,12 @@ namespace Debut
 				{
 					if (!nsc.Instance)
 					{
-						nsc.InstantiateFunction();
+						nsc.Instance = nsc.InstantiateScript();
 						nsc.Instance->m_Entity = { entity, this };
-						nsc.OnCreateFunction(nsc.Instance);
+						nsc.Instance->OnCreate();
 					}
 
-					nsc.OnUpdateFunction(nsc.Instance, ts);
+					nsc.Instance->OnUpdate(ts);
 				});
 		}
 
@@ -38,16 +38,16 @@ namespace Debut
 
 		// Find the main camera of the scene
 		Camera* mainCamera = nullptr;
-		glm::mat4* cameraTransform;
+		glm::mat4 cameraTransform;
 		{
 			auto view = m_Registry.view<CameraComponent, TransformComponent>();
 			for (auto entity : view)
 			{
-				auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 				if (camera.Primary)
 				{
 					mainCamera = &(camera.Camera);
-					cameraTransform = &(transform.Transform);
+					cameraTransform = transform.GetTransform();
 					break;
 				}
 			}
@@ -56,14 +56,13 @@ namespace Debut
 		if (mainCamera)
 		{
 			DBT_PROFILE_SCOPE("Renderer2D update");
-			Renderer2D::BeginScene(mainCamera, *cameraTransform);
-
+			Renderer2D::BeginScene(mainCamera, cameraTransform);
 
 			auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
 			for (auto entity : group)
 			{
 				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawQuad(transform, sprite.Color);
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 			}
 
 			Renderer2D::EndScene();
@@ -75,7 +74,7 @@ namespace Debut
 		Entity ret = { m_Registry.create(), this };
 		
 		ret.AddComponent<TransformComponent>();
-		ret.AddComponent<TagComponent>("New Entity");
+		ret.AddComponent<TagComponent>(name);
 
 		return ret;
 	}
