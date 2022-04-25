@@ -37,5 +37,6 @@
 
 /*********Scene and ECS********************/
 #include "Debut/Scene/Scene.h"
+#include "Debut/Scene/SceneSerializer.h"
 #include "Debut/Scene/ScriptableEntity.h"
 #include "Debut/Scene/Components.h"

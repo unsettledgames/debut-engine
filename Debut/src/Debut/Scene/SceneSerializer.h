@@ -11,10 +11,10 @@ namespace Debut
 		~SceneSerializer() {}
 
 		void SerializeText(const std::string& name);
-		void SerializeBin(const std::string& name);
+		void SerializeBin(const std::string& name) {};
 
-		bool DeserializeText();
-		bool DeserializeBin();
+		bool DeserializeText(const std::string& name);
+		bool DeserializeBin(const std::string& name) { return false; };
 
 	private:
 		Ref<Scene> m_Scene;

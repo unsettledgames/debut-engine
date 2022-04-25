@@ -13,3 +13,6 @@
 [submodule "Debut/vendor/yaml-cpp"]
 	path = Debut/vendor/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
+[submodule "Debut/vendor/rttr"]
+	path = Debut/vendor/rttr
+	url = https://github.com/rttrorg/rttr

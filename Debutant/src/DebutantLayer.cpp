@@ -62,6 +62,11 @@ namespace Debut
         m_Camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
+
+        SceneSerializer ss(m_ActiveScene);
+        ss.SerializeText("assets/scenes/scene0.debut");
+        ss.DeserializeText("assets/scenes/scene0.debut");
+
     }
 
     void DebutantLayer::OnDetach()
@@ -160,6 +165,7 @@ namespace Debut
         {
             if (ImGui::BeginMenu("File"))
             {
+                //if (ImGui::MenuItem("Save")) SceneSerializer()
                 if (ImGui::MenuItem("Exit")) Application::Get().Close();
                 ImGui::EndMenu();
             }

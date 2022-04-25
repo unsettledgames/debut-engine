@@ -8,7 +8,7 @@ workspace "Debut"
 		"Dist"
 	}
 
-	startproject "Sandbox"
+	startproject "Debutant"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -21,13 +21,11 @@ IncludeDir["stb_image"] = "Debut/vendor/stb_image"
 IncludeDir["spdlog"] = "Debut/vendor/spdlog/include"
 IncludeDir["entt"] = "Debut/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Debut/vendor/yaml-cpp/include"
-IncludeDir["rttr"] = "Debut/vendor/rttr/src"
 
 include "Debut/vendor/glfw"
 include "Debut/vendor/glad"
 include "Debut/vendor/imgui"
 include "Debut/vendor/yaml-cpp"
-include "Debut/vendor/rttr"
 
 project "Debut"
 	location "Debut"
@@ -62,8 +60,7 @@ project "Debut"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}",
-		"%{IncludeDir.rttr}"
+		"%{IncludeDir.yaml_cpp}"
 	}
 
 	links
@@ -71,7 +68,8 @@ project "Debut"
 		"GLFW",
 		"Glad",
 		"ImGui",
-		"opengl32"
+		"opengl32.lib",
+		"yaml-cpp"
 	}
 
 	filter "system:windows"
@@ -82,7 +80,8 @@ project "Debut"
 			"DBT_PLATFORM_WINDOWS",
 			"DBT_BUILD_DLL",
 			"GLFW_INCLUDE_NONE",
-			"_CRT_SECURE_NO_WARNINGS"
+			"_CRT_SECURE_NO_WARNINGS",
+			"YAML_CPP_STATIC_DEFINE"
 		}
 
 	filter "configurations:Debug"
@@ -130,7 +129,7 @@ project "Debutant"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.entt}",
-		"Debut/src",
+		"Debut/src"
 	}
 
 	links
