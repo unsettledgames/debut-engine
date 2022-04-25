@@ -20,12 +20,14 @@ IncludeDir["glm"] = "Debut/vendor/glm"
 IncludeDir["stb_image"] = "Debut/vendor/stb_image"
 IncludeDir["spdlog"] = "Debut/vendor/spdlog/include"
 IncludeDir["entt"] = "Debut/vendor/entt/include"
-IncludeDir["yaml_cpp"] = "Debut/vendor/yaml-cpp/include"	
+IncludeDir["yaml_cpp"] = "Debut/vendor/yaml-cpp/include"
+IncludeDir["rttr"] = "Debut/vendor/rttr/src"
 
 include "Debut/vendor/glfw"
 include "Debut/vendor/glad"
 include "Debut/vendor/imgui"
 include "Debut/vendor/yaml-cpp"
+include "Debut/vendor/rttr"
 
 project "Debut"
 	location "Debut"
@@ -59,7 +61,9 @@ project "Debut"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.spdlog}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.rttr}"
 	}
 
 	links

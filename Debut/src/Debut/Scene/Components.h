@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <Debut/Scene/ScriptableEntity.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <rttr/registration.h>
 
 namespace Debut
 {

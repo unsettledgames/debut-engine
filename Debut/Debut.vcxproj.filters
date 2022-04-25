@@ -147,6 +147,9 @@
     <ClInclude Include="src\Debut\Scene\SceneCamera.h">
       <Filter>src\Debut\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Debut\Scene\SceneSerializer.h">
+      <Filter>src\Debut\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Debut\Scene\ScriptableEntity.h">
       <Filter>src\Debut\Scene</Filter>
     </ClInclude>
@@ -246,6 +249,9 @@
       <Filter>src\Debut\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Scene\SceneCamera.cpp">
+      <Filter>src\Debut\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debut\Scene\SceneSerializer.cpp">
       <Filter>src\Debut\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\dbtpch.cpp">
