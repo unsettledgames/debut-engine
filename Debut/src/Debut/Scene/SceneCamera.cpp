@@ -7,6 +7,7 @@ namespace Debut
 {
 	SceneCamera::SceneCamera()
 	{
+		// TODO: when a camera is created in the scene, the viewport and aspect ratio are not set.
 		RecalculateProjection();
 	}
 

@@ -140,11 +140,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Debut\Scene\SceneCamera.h" />
-    <ClInclude Include="src\Debut\Renderer\Camera.h" />
-    <ClInclude Include="src\Debut\Scene\Entity.h" />
-    <ClInclude Include="src\Debut\Scene\Components.h" />
-    <ClInclude Include="src\Debut\Scene\Scene.h" />
     <ClInclude Include="src\Debut.h" />
     <ClInclude Include="src\Debut\Core\Application.h" />
     <ClInclude Include="src\Debut\Core\Core.h" />
@@ -165,6 +160,7 @@
     <ClInclude Include="src\Debut\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Debut\OrthographicCameraController.h" />
     <ClInclude Include="src\Debut\Renderer\Buffer.h" />
+    <ClInclude Include="src\Debut\Renderer\Camera.h" />
     <ClInclude Include="src\Debut\Renderer\FrameBuffer.h" />
     <ClInclude Include="src\Debut\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Debut\Renderer\OrthographicCamera.h" />
@@ -176,8 +172,12 @@
     <ClInclude Include="src\Debut\Renderer\SubTexture2D.h" />
     <ClInclude Include="src\Debut\Renderer\Texture.h" />
     <ClInclude Include="src\Debut\Renderer\VertexArray.h" />
-    <ClInclude Include="src\Debut\dbtpch.h" />
+    <ClInclude Include="src\Debut\Scene\Components.h" />
+    <ClInclude Include="src\Debut\Scene\Entity.h" />
+    <ClInclude Include="src\Debut\Scene\Scene.h" />
+    <ClInclude Include="src\Debut\Scene\SceneCamera.h" />
     <ClInclude Include="src\Debut\Scene\ScriptableEntity.h" />
+    <ClInclude Include="src\Debut\dbtpch.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLError.h" />
@@ -190,9 +190,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Debut\Scene\SceneCamera.cpp" />
-    <ClCompile Include="src\Debut\Scene\Entity.cpp" />
-    <ClCompile Include="src\Debut\Scene\Scene.cpp" />
     <ClCompile Include="src\Debut\Core\Application.cpp" />
     <ClCompile Include="src\Debut\Core\Layer.cpp" />
     <ClCompile Include="src\Debut\Core\LayerStack.cpp" />
@@ -211,6 +208,9 @@
     <ClCompile Include="src\Debut\Renderer\SubTexture2D.cpp" />
     <ClCompile Include="src\Debut\Renderer\Texture.cpp" />
     <ClCompile Include="src\Debut\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Debut\Scene\Entity.cpp" />
+    <ClCompile Include="src\Debut\Scene\Scene.cpp" />
+    <ClCompile Include="src\Debut\Scene\SceneCamera.cpp" />
     <ClCompile Include="src\Debut\dbtpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

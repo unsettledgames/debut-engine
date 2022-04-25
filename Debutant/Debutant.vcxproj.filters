@@ -1,32 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Debut">
-      <UniqueIdentifier>{1995060D-85A9-2EBE-4E2B-D21DBAFE2AEF}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Debut\vendor">
-      <UniqueIdentifier>{56552E0A-42B8-BDAE-EB3D-F664D77F8931}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Debut\vendor\loguru">
-      <UniqueIdentifier>{C39F2B6A-2F01-0978-B86E-4F2A24CF3F37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src">
-      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    <Filter Include="Panels">
+      <UniqueIdentifier>{A80D95C9-94AF-BF9F-7D6A-D3F369AB46F0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\DebutantLayer.h">
-      <Filter>src</Filter>
+    <ClInclude Include="src\DebutantLayer.h" />
+    <ClInclude Include="src\Panels\SceneHierarchyPanel.h">
+      <Filter>Panels</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\DebutantApp.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="src\DebutantApp.cpp" />
+    <ClCompile Include="src\DebutantLayer.cpp" />
+    <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp">
+      <Filter>Panels</Filter>
     </ClCompile>
-    <ClCompile Include="src\DebutantLayer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
   </ItemGroup>
 </Project>

@@ -20,10 +20,12 @@ IncludeDir["glm"] = "Debut/vendor/glm"
 IncludeDir["stb_image"] = "Debut/vendor/stb_image"
 IncludeDir["spdlog"] = "Debut/vendor/spdlog/include"
 IncludeDir["entt"] = "Debut/vendor/entt/include"
+IncludeDir["yaml_cpp"] = "Debut/vendor/yaml-cpp/include"	
 
 include "Debut/vendor/glfw"
 include "Debut/vendor/glad"
 include "Debut/vendor/imgui"
+include "Debut/vendor/yaml-cpp"
 
 project "Debut"
 	location "Debut"

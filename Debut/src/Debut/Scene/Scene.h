@@ -18,7 +18,11 @@ namespace Debut
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		Entity CreateEntity(const std::string& name = "New Entity");
+		void DestroyEntity(Entity entity);
 
+	private:
+		template<typename T>
+		void OnComponentAdded(T& component, Entity entity);
 
 	private:
 		entt::registry m_Registry;

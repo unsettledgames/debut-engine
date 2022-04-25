@@ -1,5 +1,5 @@
 #pragma once
-
+#include <filesystem>
 #include "Debut/dbtpch.h"
 #include "Debut.h"
 
@@ -15,6 +15,7 @@ int main(int argc, char** argv)
 		DBT_PROFILE_SCOPE("App initialization");
 		// Initialize the logging system
 		Debut::Log.Init();
+		Debut::Log.CoreInfo("CWD: {0}", std::filesystem::current_path().string().c_str());
 		// Create the application
 		app = Debut::CreateApplication();
 		Debut::Log.CoreInfo("Created application");
