@@ -1,5 +1,6 @@
 #include "DebutantLayer.h"
 #include <Debut/dbtpch.h>
+#include <Debut/Utils/PlatformUtils.h>
 #include <imgui.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -62,11 +63,6 @@ namespace Debut
         m_Camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
-
-        SceneSerializer ss(m_ActiveScene);
-        ss.SerializeText("assets/scenes/scene0.debut");
-        ss.DeserializeText("assets/scenes/scene0.debut");
-
     }
 
     void DebutantLayer::OnDetach()
@@ -165,7 +161,43 @@ namespace Debut
         {
             if (ImGui::BeginMenu("File"))
             {
-                //if (ImGui::MenuItem("Save")) SceneSerializer()
+                if (ImGui::MenuItem("New scene", "Ctrl+N"))
+                {
+                    m_ActiveScene = CreateRef<Scene>();
+                    m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+                    m_SceneHierarchy.SetContext(m_ActiveScene);
+                }
+
+                if (ImGui::MenuItem("Open scene", "Ctrl+O"))
+                {
+                    std::string path = FileDialogs::OpenFile("Debut Scene (*.debut)\0*.debut\0");
+                    if (!path.empty())
+                    {
+                        m_ActiveScene = CreateRef<Scene>();
+                        m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+                        m_SceneHierarchy.SetContext(m_ActiveScene);
+
+                        SceneSerializer ss(m_ActiveScene);
+                        ss.DeserializeText(path);
+                    }
+                }
+
+                if (ImGui::MenuItem("Save scene", "Ctrl+S"))
+                {
+                    SceneSerializer ss(m_ActiveScene);
+                    ss.SerializeText("scene0.debut");
+                }
+
+                if (ImGui::MenuItem("Save scene as...", "Ctrl+Shift+S"))
+                {
+                    std::string path = FileDialogs::SaveFile("Debut Scene (*.debut)\0*.debut\0");
+                    if (!path.empty())
+                    {
+                        SceneSerializer ss(m_ActiveScene);
+                        ss.SerializeText(path);
+                    }
+                }
+
                 if (ImGui::MenuItem("Exit")) Application::Get().Close();
                 ImGui::EndMenu();
             }
