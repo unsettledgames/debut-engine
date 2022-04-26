@@ -18,6 +18,13 @@ namespace Debut
 		virtual void OnEvent(Event& e) override;
 		virtual void OnImGuiRender() override;
 
+		void NewScene();
+		void OpenScene();
+		void SaveScene();
+		void SaveSceneAs();
+
+		bool OnKeyPressed(KeyPressedEvent& e);
+
 	private:
 		OrthographicCameraController m_CameraController;
 
@@ -39,5 +46,8 @@ namespace Debut
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchy;
+
+		// Editor state
+		std::string m_ScenePath = "";
 	};
 }

@@ -95,7 +95,10 @@ namespace Debut
 
     void DebutantLayer::OnEvent(Event& e)
     {
+        EventDispatcher dispatcher(e);
         m_CameraController.OnEvent(e);
+
+        dispatcher.Dispatch<KeyPressedEvent>(DBT_BIND(DebutantLayer::OnKeyPressed));
     }
 
     void DebutantLayer::OnImGuiRender()
@@ -162,41 +165,16 @@ namespace Debut
             if (ImGui::BeginMenu("File"))
             {
                 if (ImGui::MenuItem("New scene", "Ctrl+N"))
-                {
-                    m_ActiveScene = CreateRef<Scene>();
-                    m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
-                    m_SceneHierarchy.SetContext(m_ActiveScene);
-                }
+                    NewScene();
 
                 if (ImGui::MenuItem("Open scene", "Ctrl+O"))
-                {
-                    std::string path = FileDialogs::OpenFile("Debut Scene (*.debut)\0*.debut\0");
-                    if (!path.empty())
-                    {
-                        m_ActiveScene = CreateRef<Scene>();
-                        m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
-                        m_SceneHierarchy.SetContext(m_ActiveScene);
-
-                        SceneSerializer ss(m_ActiveScene);
-                        ss.DeserializeText(path);
-                    }
-                }
+                    OpenScene();
 
                 if (ImGui::MenuItem("Save scene", "Ctrl+S"))
-                {
-                    SceneSerializer ss(m_ActiveScene);
-                    ss.SerializeText("scene0.debut");
-                }
+                    SaveScene();
 
                 if (ImGui::MenuItem("Save scene as...", "Ctrl+Shift+S"))
-                {
-                    std::string path = FileDialogs::SaveFile("Debut Scene (*.debut)\0*.debut\0");
-                    if (!path.empty())
-                    {
-                        SceneSerializer ss(m_ActiveScene);
-                        ss.SerializeText(path);
-                    }
-                }
+                    SaveSceneAs();
 
                 if (ImGui::MenuItem("Exit")) Application::Get().Close();
                 ImGui::EndMenu();
@@ -241,5 +219,82 @@ namespace Debut
         ImGui::End();
 
         ImGui::End();
+    }
+
+    bool DebutantLayer::OnKeyPressed(KeyPressedEvent& e)
+    {
+        if (e.GetRepeatCount() > 0)
+            return false;
+
+        switch (e.GetKeyCode())
+        {
+        case DBT_KEY_N:
+            if (Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL) || Input::IsKeyPressed(DBT_KEY_RIGHT_CONTROL))
+                NewScene();
+            break;
+        case DBT_KEY_O:
+            if (Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL) || Input::IsKeyPressed(DBT_KEY_RIGHT_CONTROL))
+                OpenScene();
+            break;
+        case DBT_KEY_S:
+            if (Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL) || Input::IsKeyPressed(DBT_KEY_RIGHT_CONTROL))
+                if (Input::IsKeyPressed(DBT_KEY_LEFT_SHIFT) || Input::IsKeyPressed(DBT_KEY_RIGHT_SHIFT) || m_ScenePath == "")
+                    SaveSceneAs();
+                else
+                    SaveScene();
+            break;
+        default:
+            break;
+        }
+
+        return true;
+    }
+
+    void DebutantLayer::NewScene()
+    {
+        m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+        m_SceneHierarchy.SetContext(m_ActiveScene);
+
+        m_ScenePath = "";
+    }
+
+    void DebutantLayer::OpenScene()
+    {
+        std::string path = FileDialogs::OpenFile("Debut Scene (*.debut)\0*.debut\0");
+        if (!path.empty())
+        {
+            m_ActiveScene = CreateRef<Scene>();
+            m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+            m_SceneHierarchy.SetContext(m_ActiveScene);
+
+            SceneSerializer ss(m_ActiveScene);
+            ss.DeserializeText(path);
+
+            m_ScenePath = path;
+        }
+    }
+
+    void DebutantLayer::SaveScene()
+    {
+        if (m_ScenePath == "")
+        {
+            SaveSceneAs();
+            return;
+        }
+        SceneSerializer ss(m_ActiveScene);
+        ss.SerializeText(m_ScenePath);
+    }
+
+    void DebutantLayer::SaveSceneAs()
+    {
+        std::string path = FileDialogs::SaveFile("Debut Scene (*.debut)\0*.debut\0");
+        if (!path.empty())
+        {
+            SceneSerializer ss(m_ActiveScene);
+            ss.SerializeText(path);
+
+            m_ScenePath = path;
+        }
     }
 }

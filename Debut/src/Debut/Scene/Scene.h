@@ -9,6 +9,7 @@ namespace Debut
 	{
 	friend class Entity;
 	friend class SceneHierarchyPanel;
+	friend class TopPanel;
 	friend class SceneSerializer;
 
 	public:
