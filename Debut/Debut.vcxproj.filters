@@ -22,6 +22,9 @@
     <Filter Include="src\Debut\Scene">
       <UniqueIdentifier>{8DE4E4EE-F96F-52B3-0281-D5A76E8BAEB3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Debut\Utils">
+      <UniqueIdentifier>{D07812EF-3C04-80B3-4515-03A8B11FDCB3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
     </Filter>
@@ -33,6 +36,21 @@
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\glm">
+      <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\glm\glm">
+      <UniqueIdentifier>{D11AC9C9-BDE8-BCCF-A67C-2DF692E99834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\glm\glm\core">
+      <UniqueIdentifier>{E9359AE0-5597-77EE-DE04-BEA04A65AEAD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\imguizmo">
+      <UniqueIdentifier>{B36F5F1F-1FFB-CCE3-280C-50D8941629E4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\imguizmo\example">
+      <UniqueIdentifier>{8E843554-FABB-7DEB-03C6-E10E6F7CA4E4}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\stb_image">
       <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
@@ -153,6 +171,9 @@
     <ClInclude Include="src\Debut\Scene\ScriptableEntity.h">
       <Filter>src\Debut\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Debut\Utils\PlatformUtils.h">
+      <Filter>src\Debut\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\Debut\dbtpch.h">
       <Filter>src\Debut</Filter>
     </ClInclude>
@@ -183,10 +204,45 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\imguizmo\ImCurveEdit.h">
+      <Filter>vendor\imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\ImGradient.h">
+      <Filter>vendor\imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\ImGuizmo.h">
+      <Filter>vendor\imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\ImSequencer.h">
+      <Filter>vendor\imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\example\ImApp.h">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\example\imconfig.h">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\example\imgui.h">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\example\imgui_internal.h">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\example\imstb_rectpack.h">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\example\imstb_textedit.h">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\example\imstb_truetype.h">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\example\stb_image.h">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Utils\PlatformUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Core\Application.cpp">
@@ -282,12 +338,41 @@
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp">
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\glm\glm\core\dummy.cpp">
+      <Filter>vendor\glm\glm\core</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imguizmo\ImCurveEdit.cpp">
+      <Filter>vendor\imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imguizmo\ImGradient.cpp">
+      <Filter>vendor\imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imguizmo\ImGuizmo.cpp">
+      <Filter>vendor\imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imguizmo\ImSequencer.cpp">
+      <Filter>vendor\imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imguizmo\example\imgui.cpp">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imguizmo\example\imgui_draw.cpp">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imguizmo\example\imgui_widgets.cpp">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imguizmo\example\main.cpp">
+      <Filter>vendor\imguizmo\example</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
   </ItemGroup>
 </Project>

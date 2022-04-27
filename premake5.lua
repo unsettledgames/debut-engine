@@ -21,6 +21,7 @@ IncludeDir["stb_image"] = "Debut/vendor/stb_image"
 IncludeDir["spdlog"] = "Debut/vendor/spdlog/include"
 IncludeDir["entt"] = "Debut/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Debut/vendor/yaml-cpp/include"
+IncludeDir["imguizmo"] = "Debut/vendor/imguizmo"
 
 include "Debut/vendor/glfw"
 include "Debut/vendor/glad"
@@ -47,7 +48,9 @@ project "Debut"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/glm/glm/**.cpp",
-		"%{prj.name}/vendor/glm/glm/**.h"
+		"%{prj.name}/vendor/glm/glm/**.h",
+		"%{prj.name}/vendor/imguizmo/**.h",
+		"%{prj.name}/vendor/imguizmo/**.cpp"
 	}
 
 	includedirs
@@ -60,7 +63,8 @@ project "Debut"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}"
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.imguizmo}"
 	}
 
 	links
@@ -100,7 +104,7 @@ project "Debut"
 		optimize "on"
 
 	filter "files:Debut/vendor/**.cpp"
-		flags {NoPCH}
+	flags {"NoPCH"}
 	
 
 project "Debutant"
@@ -129,6 +133,7 @@ project "Debutant"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.entt}",
+		"%{IncludeDir.imguzmo}",
 		"Debut/src"
 	}
 

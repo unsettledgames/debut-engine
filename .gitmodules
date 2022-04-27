@@ -16,3 +16,6 @@
 [submodule "Debut/vendor/rttr"]
 	path = Debut/vendor/rttr
 	url = https://github.com/rttrorg/rttr
+[submodule "Debut/vendor/imguizmo"]
+	path = Debut/vendor/imguizmo
+	url = https://github.com/thecherno/imguizmo
