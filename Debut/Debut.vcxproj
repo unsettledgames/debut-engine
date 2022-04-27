@@ -158,6 +158,7 @@
     <ClInclude Include="src\Debut\Events\KeyEvent.h" />
     <ClInclude Include="src\Debut\Events\MouseEvent.h" />
     <ClInclude Include="src\Debut\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Debut\Math\Math.h" />
     <ClInclude Include="src\Debut\OrthographicCameraController.h" />
     <ClInclude Include="src\Debut\Renderer\Buffer.h" />
     <ClInclude Include="src\Debut\Renderer\Camera.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="src\Debut\Core\Log.cpp" />
     <ClCompile Include="src\Debut\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Debut\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Debut\Math\Math.cpp" />
     <ClCompile Include="src\Debut\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Debut\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Debut\Renderer\FrameBuffer.cpp" />

@@ -239,9 +239,13 @@ namespace Debut
 
 		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
 			{
+				glm::vec3 rotDeg = glm::degrees(component.Rotation);
+
 				DrawVec3Control("Position", component.Translation);
-				DrawVec3Control("Rotation", component.Rotation);
+				DrawVec3Control("Rotation", rotDeg);
 				DrawVec3Control("Scale", component.Scale, 1);
+
+				component.Rotation = glm::radians(rotDeg);
 			});
 
 		DrawComponent<CameraComponent>("Camera", entity, [](auto& component)

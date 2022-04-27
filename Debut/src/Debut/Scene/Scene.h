@@ -22,6 +22,8 @@ namespace Debut
 		Entity CreateEntity(const std::string& name = "New Entity");
 		void DestroyEntity(Entity entity);
 
+		Entity GetPrimaryCameraEntity();
+
 	private:
 		template<typename T>
 		void OnComponentAdded(T& component, Entity entity);

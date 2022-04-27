@@ -36,6 +36,18 @@ namespace Debut
 	{
 		camera.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
 	}
+
+	Entity Scene::GetPrimaryCameraEntity()
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto e : view)
+		{
+			const auto& camera = view.get<CameraComponent>(e);
+			if (camera.Primary)
+				return Entity{ e, this };
+		}
+		return {};
+	}
 	
 
 	void Scene::OnUpdate(Timestep ts)

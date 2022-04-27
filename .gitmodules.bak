@@ -1,10 +1,21 @@
 [submodule "Debut/vendor/glfw"]
 	path = Debut/vendor/glfw
 	url = https://github.com/TheCherno/glfw/
-	url = https://github.com/emilk/loguru
 [submodule "Debut/vendor/imgui"]
 	path = Debut/vendor/imgui
 	url = https://github.com/TheCherno/imgui
 [submodule "Debut/vendor/glm"]
 	path = Debut/vendor/glm
 	url = https://github.com/Groovounet/glm
+[submodule "Debut/vendor/spdlog"]
+	path = Debut/vendor/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "Debut/vendor/yaml-cpp"]
+	path = Debut/vendor/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp
+[submodule "Debut/vendor/rttr"]
+	path = Debut/vendor/rttr
+	url = https://github.com/rttrorg/rttr
+[submodule "Debut/vendor/imguizmo"]
+	path = Debut/vendor/imguizmo
+	url = https://github.com/thecherno/imguizmo

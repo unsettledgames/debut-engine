@@ -8,6 +8,7 @@
 #include <glad/glad.h>
 #include "Debut/Core/Log.h"
 #include "Debut/Core/Core.h"
+#include "ImGuizmo.h"
 
 namespace Debut
 {
@@ -124,6 +125,7 @@ namespace Debut
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::OnEvent(Event& e)

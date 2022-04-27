@@ -2,6 +2,7 @@
 #include <Debut/dbtpch.h>
 #include <Debut/Utils/PlatformUtils.h>
 #include <imgui.h>
+#include "ImGuizmo.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Platform/OpenGL/OpenGLShader.h"
@@ -214,6 +215,47 @@ namespace Debut
         }
         uint32_t texId = m_FrameBuffer->GetColorAttachment();
         ImGui::Image((void*)texId, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
+        
+        // Draw gizmos
+        Entity currSelection = m_SceneHierarchy.GetSelectionContext();
+        if (currSelection)
+        {
+            float winWidth = ImGui::GetWindowWidth();
+            float winHeight = ImGui::GetWindowHeight();
+
+            Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+            if (cameraEntity)
+            {
+                const auto& cameraComponent = cameraEntity.GetComponent<CameraComponent>();
+                const glm::mat4& cameraProj = cameraComponent.Camera.GetProjection();
+                glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+                ImGuizmo::SetOrthographic(false);
+                ImGuizmo::SetDrawlist();
+                ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
+
+                auto& tc = currSelection.GetComponent<TransformComponent>();
+                glm::mat4 transform = tc.GetTransform();
+
+                ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
+                    ImGuizmo::OPERATION::ROTATE, ImGuizmo::LOCAL, glm::value_ptr(transform));
+
+                if (ImGuizmo::IsUsing())
+                {
+                    float* trans = glm::value_ptr(tc.Translation);
+                    float* rot = glm::value_ptr(tc.Rotation);
+                    float* scale = glm::value_ptr(tc.Scale);
+
+                    // https://omar-shehata.medium.com/how-to-fix-gimbal-lock-in-n-dimensions-f2f7baec2b5e
+                    ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), trans, rot, scale);
+                    glm::vec3 deltaRot = (glm::radians(glm::make_vec3(rot)) - tc.Rotation);
+
+                    tc.Translation = glm::make_vec3(trans);
+                    tc.Rotation += deltaRot;
+                    tc.Scale = glm::make_vec3(scale);
+                }
+            }
+        }
 
         ImGui::PopStyleVar();
         ImGui::End();

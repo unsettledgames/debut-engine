@@ -133,7 +133,7 @@ project "Debutant"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.imguzmo}",
+		"%{IncludeDir.imguizmo}",
 		"Debut/src"
 	}
 
