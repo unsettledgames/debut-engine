@@ -8,6 +8,7 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <chrono>
+#include <glm/gtx/matrix_operation.hpp>
 
 
 namespace Debut
@@ -236,18 +237,19 @@ namespace Debut
 
                 auto& tc = currSelection.GetComponent<TransformComponent>();
                 glm::mat4 transform = tc.GetTransform();
+                glm::mat4 deltaMatrix;
 
                 ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
-                    ImGuizmo::OPERATION::ROTATE, ImGuizmo::LOCAL, glm::value_ptr(transform));
+                    ImGuizmo::OPERATION::ROTATE, ImGuizmo::LOCAL, glm::value_ptr(transform), glm::value_ptr(deltaMatrix));
 
                 if (ImGuizmo::IsUsing())
                 {
-                    glm::vec3 translation, rotation, scale;
-                    Math::DecomposeTransform(transform, translation, rotation, scale);
+                    glm::vec3 finalTrans, finalRot, finalScale;
+                    Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
 
-                    tc.Translation = translation;
-                    tc.Rotation = rotation;
-                    tc.Scale = scale;
+                    tc.Translation = finalTrans;
+                    tc.Rotation = finalRot;
+                    tc.Scale = finalScale;
                 }
             }
         }
