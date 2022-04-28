@@ -240,7 +240,7 @@ namespace Debut
                 glm::mat4 deltaMatrix;
 
                 ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
-                    ImGuizmo::OPERATION::ROTATE, ImGuizmo::LOCAL, glm::value_ptr(transform), glm::value_ptr(deltaMatrix));
+                    ImGuizmo::OPERATION::SCALE, ImGuizmo::LOCAL, glm::value_ptr(transform), glm::value_ptr(deltaMatrix));
 
                 if (ImGuizmo::IsUsing())
                 {
