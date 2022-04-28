@@ -190,6 +190,16 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="vendor\glm\glm\simd\common.h" />
+    <ClInclude Include="vendor\glm\glm\simd\exponential.h" />
+    <ClInclude Include="vendor\glm\glm\simd\geometric.h" />
+    <ClInclude Include="vendor\glm\glm\simd\integer.h" />
+    <ClInclude Include="vendor\glm\glm\simd\matrix.h" />
+    <ClInclude Include="vendor\glm\glm\simd\neon.h" />
+    <ClInclude Include="vendor\glm\glm\simd\packing.h" />
+    <ClInclude Include="vendor\glm\glm\simd\platform.h" />
+    <ClInclude Include="vendor\glm\glm\simd\trigonometric.h" />
+    <ClInclude Include="vendor\glm\glm\simd\vector_relational.h" />
     <ClInclude Include="vendor\imguizmo\ImCurveEdit.h" />
     <ClInclude Include="vendor\imguizmo\ImGradient.h" />
     <ClInclude Include="vendor\imguizmo\ImGuizmo.h" />
@@ -241,7 +251,7 @@
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="vendor\glm\glm\core\dummy.cpp">
+    <ClCompile Include="vendor\glm\glm\detail\glm.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="vendor\imguizmo\ImCurveEdit.cpp">

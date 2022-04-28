@@ -242,17 +242,12 @@ namespace Debut
 
                 if (ImGuizmo::IsUsing())
                 {
-                    float* trans = glm::value_ptr(tc.Translation);
-                    float* rot = glm::value_ptr(tc.Rotation);
-                    float* scale = glm::value_ptr(tc.Scale);
+                    glm::vec3 translation, rotation, scale;
+                    Math::DecomposeTransform(transform, translation, rotation, scale);
 
-                    // https://omar-shehata.medium.com/how-to-fix-gimbal-lock-in-n-dimensions-f2f7baec2b5e
-                    ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), trans, rot, scale);
-                    glm::vec3 deltaRot = (glm::radians(glm::make_vec3(rot)) - tc.Rotation);
-
-                    tc.Translation = glm::make_vec3(trans);
-                    tc.Rotation += deltaRot;
-                    tc.Scale = glm::make_vec3(scale);
+                    tc.Translation = translation;
+                    tc.Rotation = rotation;
+                    tc.Scale = scale;
                 }
             }
         }

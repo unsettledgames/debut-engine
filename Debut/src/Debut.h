@@ -4,6 +4,7 @@
 
 /************Core**************/
 #include "Debut/Core/Time.h"
+#include "Debut/Math/Math.h"
 
 // Input
 #include "Debut/Core/KeyCodes.h"
