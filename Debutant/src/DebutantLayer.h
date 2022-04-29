@@ -1,5 +1,7 @@
 #pragma once
 #include <Debut.h>
+#include <imgui.h>
+#include "ImGuizmo.h"
 #include <Debut/Scene/Entity.h>
 
 #include <Panels/SceneHierarchyPanel.h>
@@ -49,5 +51,8 @@ namespace Debut
 
 		// Editor state
 		std::string m_ScenePath = "";
+
+		// Gizmos
+		ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 	};
 }

@@ -1,8 +1,6 @@
 #include "DebutantLayer.h"
 #include <Debut/dbtpch.h>
 #include <Debut/Utils/PlatformUtils.h>
-#include <imgui.h>
-#include "ImGuizmo.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Platform/OpenGL/OpenGLShader.h"
@@ -202,7 +200,7 @@ namespace Debut
             
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
-        Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+        Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
 
         ImVec2 viewportSize = ImGui::GetContentRegionAvail();
         if (m_ViewportSize.x != viewportSize.x || m_ViewportSize.y != viewportSize.y)
@@ -219,6 +217,13 @@ namespace Debut
         
         // Draw gizmos
         Entity currSelection = m_SceneHierarchy.GetSelectionContext();
+
+        bool snapping = Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL);
+        float snapAmount = 0.5f;
+        if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+            snapAmount = 45;
+        float snapValues[] = { snapAmount, snapAmount, snapAmount };
+
         if (currSelection)
         {
             float winWidth = ImGui::GetWindowWidth();
@@ -237,18 +242,19 @@ namespace Debut
 
                 auto& tc = currSelection.GetComponent<TransformComponent>();
                 glm::mat4 transform = tc.GetTransform();
-                glm::mat4 deltaMatrix;
 
                 ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
-                    ImGuizmo::OPERATION::SCALE, ImGuizmo::LOCAL, glm::value_ptr(transform), glm::value_ptr(deltaMatrix));
+                    m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr);
 
                 if (ImGuizmo::IsUsing())
                 {
                     glm::vec3 finalTrans, finalRot, finalScale;
                     Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
+                    
+                    glm::vec3 deltaRot = finalRot - tc.Rotation;
 
                     tc.Translation = finalTrans;
-                    tc.Rotation = finalRot;
+                    tc.Rotation += deltaRot;
                     tc.Scale = finalScale;
                 }
             }
@@ -267,6 +273,7 @@ namespace Debut
 
         switch (e.GetKeyCode())
         {
+        // File Menu
         case DBT_KEY_N:
             if (Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL) || Input::IsKeyPressed(DBT_KEY_RIGHT_CONTROL))
                 NewScene();
@@ -282,6 +289,19 @@ namespace Debut
                 else
                     SaveScene();
             break;
+        case DBT_KEY_1:
+            m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+            break;
+        case DBT_KEY_2:
+            m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+            break;
+        case DBT_KEY_3:
+            m_GizmoType = ImGuizmo::OPERATION::SCALE;
+            break;
+        case DBT_KEY_4:
+            m_GizmoType = ImGuizmo::OPERATION::UNIVERSAL;
+            break;
+
         default:
             break;
         }
