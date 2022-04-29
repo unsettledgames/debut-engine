@@ -140,6 +140,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Debut\Renderer\EditorCamera.h" />
     <ClInclude Include="src\Debut.h" />
     <ClInclude Include="src\Debut\Core\Application.h" />
     <ClInclude Include="src\Debut\Core\Core.h" />
@@ -215,6 +216,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Debut\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Debut\Core\Application.cpp" />
     <ClCompile Include="src\Debut\Core\Layer.cpp" />
     <ClCompile Include="src\Debut\Core\LayerStack.cpp" />

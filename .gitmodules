@@ -1,9 +1,6 @@
 [submodule "Debut/vendor/glfw"]
 	path = Debut/vendor/glfw
 	url = https://github.com/TheCherno/glfw/
-[submodule "Debut/vendor/imgui"]
-	path = Debut/vendor/imgui
-	url = https://github.com/TheCherno/imgui
 [submodule "Debut/vendor/spdlog"]
 	path = Debut/vendor/spdlog
 	url = https://github.com/gabime/spdlog

@@ -83,21 +83,27 @@ namespace Debut
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
-		s_Data.TextureSlotIndex = 1;
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+		StartBatch();
 	}
 
-	void Renderer2D::BeginScene(const Camera* camera, const glm::mat4 transform)
+	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4 transform)
 	{
 		DBT_PROFILE_FUNCTION();
-		glm::mat4 viewProj = camera->GetProjection() * glm::inverse(transform);
+		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
 
-		s_Data.TextureSlotIndex = 1;
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+		StartBatch();
+	}
+
+	void Renderer2D::BeginScene(const EditorCamera& camera)
+	{
+		DBT_PROFILE_FUNCTION();
+		glm::mat4 viewProj = camera.GetViewProjection();
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+		StartBatch();
 	}
 
 	void Renderer2D::EndScene()
@@ -275,5 +281,12 @@ namespace Debut
 	void Renderer2D::ResetStats()
 	{
 		memset(&s_Data.Stats, 0, sizeof(Render2DStats));
+	}
+
+	void Renderer2D::StartBatch()
+	{
+		s_Data.TextureSlotIndex = 1;
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 	}
 }

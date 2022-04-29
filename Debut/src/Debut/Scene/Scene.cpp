@@ -48,9 +48,24 @@ namespace Debut
 		}
 		return {};
 	}
+
+	void Scene::OnEditorUpdate(Timestep ts, EditorCamera& camera)
+	{
+		DBT_PROFILE_SCOPE("Editor update");
+		Renderer2D::BeginScene(camera);
+
+		auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
+		for (auto entity : group)
+		{
+			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+		}
+
+		Renderer2D::EndScene();
+	}
 	
 
-	void Scene::OnUpdate(Timestep ts)
+	void Scene::OnRuntimeUpdate(Timestep ts)
 	{
 		// Update scripts
 		{
@@ -89,7 +104,7 @@ namespace Debut
 		if (mainCamera)
 		{
 			DBT_PROFILE_SCOPE("Renderer2D update");
-			Renderer2D::BeginScene(mainCamera, cameraTransform);
+			Renderer2D::BeginScene(*mainCamera, cameraTransform);
 
 			auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
 			for (auto entity : group)

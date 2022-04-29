@@ -18,49 +18,10 @@ namespace Debut
         fbSpecs.Width = Application::Get().GetWindow().GetWidth();
         fbSpecs.Height = Application::Get().GetWindow().GetHeight();
 
-        m_Texture = Texture2D::Create("C:/dev/Debut/Sandbox/assets/tileset.png");
-        m_Checkerboard = Texture2D::Create("C:/dev/Debut/Debut/assets/textures/checkerboard.png");
-        m_CameraController.SetZoomLevel(2);
-        m_BushTexture = SubTexture2D::CreateFromCoords(m_Texture, glm::vec2(0, 4), glm::vec2(5, 6), glm::vec2(16, 16));
         m_FrameBuffer = FrameBuffer::Create(fbSpecs);
 
         m_ActiveScene = CreateRef<Scene>();
-        
-        m_SquareEntity = m_ActiveScene->CreateEntity("Square");
-        m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 0.5f, 0.8f, 1.0f));
-
-        auto square = m_ActiveScene->CreateEntity("Square 2");
-        square.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 0.8f, 0.5f, 1.0f));
-        square.GetComponent<TransformComponent>().Translation = glm::vec3(1, 0, 0);
-
-
-        class CameraController : public ScriptableEntity
-        {
-        public:
-            void OnCreate()
-            {
-                Log.AppInfo("Camera controller created");
-            }
-
-            void OnUpdate(Timestep ts)
-            {
-                float cameraSpeed = 5;
-                auto& transform = GetComponent<TransformComponent>();
-
-                if (Input::IsKeyPressed(DBT_KEY_A))
-                    transform.Translation.x -= ts * cameraSpeed;
-                if (Input::IsKeyPressed(DBT_KEY_D))
-                    transform.Translation.x += ts * cameraSpeed;
-                if (Input::IsKeyPressed(DBT_KEY_W))
-                    transform.Translation.y += ts * cameraSpeed;
-                if (Input::IsKeyPressed(DBT_KEY_S))
-                    transform.Translation.y -= ts * cameraSpeed;
-
-            }
-        };
-        m_Camera = m_ActiveScene->CreateEntity("Camera");
-        m_Camera.AddComponent<CameraComponent>();
-        m_Camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+        m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
     }
@@ -74,7 +35,7 @@ namespace Debut
     {
         // Update camera
         if (m_ViewportFocused)
-            m_CameraController.OnUpdate(ts);
+            m_EditorCamera.OnUpdate(ts);
 
         Renderer2D::ResetStats();
         {
@@ -86,8 +47,8 @@ namespace Debut
         }
 
         // Update the scene
-        m_ActiveScene->OnUpdate(ts);
-        
+        m_ActiveScene->OnRuntimeUpdate(ts);
+        m_ActiveScene->OnEditorUpdate(ts, m_EditorCamera);
 
         //Log.AppInfo("Frame time: {0}", (1.0f / ts));
         m_FrameBuffer->Unbind();
@@ -96,7 +57,7 @@ namespace Debut
     void DebutantLayer::OnEvent(Event& e)
     {
         EventDispatcher dispatcher(e);
-        m_CameraController.OnEvent(e);
+        m_EditorCamera.OnEvent(e);
 
         dispatcher.Dispatch<KeyPressedEvent>(DBT_BIND(DebutantLayer::OnKeyPressed));
     }
@@ -196,7 +157,7 @@ namespace Debut
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-        ImGui::Begin("Scene view");
+        ImGui::Begin("##", 0, ImGuiDockNodeFlags_AutoHideTabBar);
             
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
@@ -208,8 +169,8 @@ namespace Debut
             m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
 
             m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
-            m_CameraController.Resize(m_ViewportSize.x, m_ViewportSize.y);
 
+            m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         }
         uint32_t texId = m_FrameBuffer->GetColorAttachment();

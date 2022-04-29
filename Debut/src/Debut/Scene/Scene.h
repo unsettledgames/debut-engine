@@ -2,6 +2,7 @@
 
 #include <entt.hpp>
 #include "Debut/Core/Time.h"
+#include "Debut/Renderer/EditorCamera.h"
 
 namespace Debut
 {
@@ -16,7 +17,8 @@ namespace Debut
 		Scene();
 		~Scene();
 
-		void OnUpdate(Timestep ts);
+		void OnRuntimeUpdate(Timestep ts);
+		void OnEditorUpdate(Timestep ts, EditorCamera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		Entity CreateEntity(const std::string& name = "New Entity");
