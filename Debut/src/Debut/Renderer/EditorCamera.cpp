@@ -61,21 +61,32 @@ namespace Debut
 
 	void EditorCamera::OnUpdate(Timestep ts)
 	{
+		const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+		glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
+		m_InitialMousePosition = mouse;
+
+		if (Input::IsMouseButtonPressed(DBT_MOUSE_BUTTON_MIDDLE))
+			MousePan(delta);
+		else if (Input::IsMouseButtonPressed(DBT_MOUSE_BUTTON_LEFT))
+			WasdMove(mouse);
+
 		if (Input::IsKeyPressed(DBT_KEY_LEFT_ALT))
 		{
-			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
-			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
-			m_InitialMousePosition = mouse;
-
-			if (Input::IsMouseButtonPressed(DBT_MOUSE_BUTTON_MIDDLE))
-				MousePan(delta);
-			else if (Input::IsMouseButtonPressed(DBT_MOUSE_BUTTON_LEFT))
+			if (Input::IsMouseButtonPressed(DBT_MOUSE_BUTTON_LEFT))
 				MouseRotate(delta);
 			else if (Input::IsMouseButtonPressed(DBT_MOUSE_BUTTON_RIGHT))
 				MouseZoom(delta.y);
 		}
 
 		UpdateView();
+	}
+
+	void EditorCamera::WasdMove(const glm::vec2& mousePos)
+	{
+		glm::vec4 worldMouse = glm::inverse(m_Projection * m_ViewMatrix) * glm::vec4(mousePos, 0, 1);
+
+		Debut::Log.AppInfo("Mouse screen pos: {0}, {1}, {2}", mousePos[0], mousePos[1], 0);
+		Debut::Log.AppInfo("Mouse world pos: {0}, {1}, {2}", worldMouse[0], worldMouse[1], worldMouse[2]);
 	}
 
 	void EditorCamera::OnEvent(Event& e)

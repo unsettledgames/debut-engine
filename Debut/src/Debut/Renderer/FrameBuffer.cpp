@@ -5,7 +5,7 @@
 
 namespace Debut
 {
-	Ref<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecs& specs)
+	Ref<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecifications& specs)
 	{
 		switch (RendererAPI::GetAPI())
 		{

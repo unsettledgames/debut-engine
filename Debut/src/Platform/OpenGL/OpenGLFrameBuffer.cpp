@@ -7,8 +7,88 @@ namespace Debut
 {
 	static const unsigned int MAX_FRAME_BUFFER_SIZE = 65535;
 
-	OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecs& specs) : m_Specs(specs)
+	namespace Utils
 	{
+		static GLenum TextureTarget(bool multiSamples)
+		{
+			return multiSamples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+		}
+
+		static bool IsDepthFormat(FrameBufferTextureFormat format)
+		{
+			if (format == FrameBufferTextureFormat::DEPTH24STENCIL8)
+				return true;
+			return false;
+		}
+
+		static void BindTextures(bool multisampled, uint32_t id)
+		{
+			GLCall(glBindTexture(TextureTarget(multisampled), id));
+		}
+
+		static void CreateTextures(bool multiSamples, uint32_t* outID, uint32_t count)
+		{
+			GLCall(glCreateTextures(TextureTarget(multiSamples), count, outID));
+		}
+
+		static void AttachColorTexture(uint32_t texture, uint32_t nSamples, GLenum format, uint32_t width, uint32_t height, uint32_t idx)
+		{
+			bool multisampled = nSamples > 1;
+			if (multisampled)
+			{
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, nSamples, format, width, height, GL_FALSE);
+			}
+			else
+			{
+				glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+				// TODO: move to frame buffer specs
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			}
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + idx, TextureTarget(multisampled), texture, 0);
+		}
+
+		static void AttachDepthTexture(uint32_t texture, uint32_t nSamples, GLenum format, GLenum attachmentType,
+			uint32_t width, uint32_t height)
+		{
+			bool multisampled = nSamples > 1;
+			if (multisampled)
+			{
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, nSamples, format, width, height, GL_FALSE);
+			}
+			else
+			{
+				glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+
+				// TODO: move to frame buffer specs
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			}
+
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), texture, 0);
+		}
+	}
+
+
+	OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecifications& specs) : m_Specs(specs)
+	{
+		for (auto spec : m_Specs.Attachments.Attachments)
+		{
+			if (!Utils::IsDepthFormat(spec.TextureFormat))
+				m_ColorAttachmentSpecs.emplace_back(spec);
+			else
+				m_DepthAttachmentSpecs = spec;
+		}
+
 		Invalidate();
 	}
 
@@ -17,29 +97,68 @@ namespace Debut
 		if (m_RendererID)
 		{
 			GLCall(glDeleteFramebuffers(1, &m_RendererID));
-			GLCall(glDeleteTextures(1, &m_ColorAttachment));
+			GLCall(glDeleteTextures(m_ColorAttachmentSpecs.size(), m_ColorAttachments.data()));
 			GLCall(glDeleteTextures(1, &m_DepthAttachment));
+
+			m_ColorAttachments.clear();
+			m_DepthAttachment = 0;
 		}
 
 		GLCall(glCreateFramebuffers(1, &m_RendererID));
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
 
-		GLCall(glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttachment));
-		GLCall(glBindTexture(GL_TEXTURE_2D, m_ColorAttachment));
-		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Specs.Width, m_Specs.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
-		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-
-		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0));
-
-		// Depth buffer
-		GLCall(glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment));
-		GLCall(glBindTexture(GL_TEXTURE_2D, m_DepthAttachment));
-		GLCall(glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_Specs.Width, m_Specs.Height));
-
-		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0));
-		GLCall(DBT_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Frame buffer is incomplete"));
+		bool multiSamples = m_Specs.Samples > 1;
 		
+		if (m_ColorAttachmentSpecs.size())
+		{
+			m_ColorAttachments.resize(m_ColorAttachmentSpecs.size());
+			Utils::CreateTextures(multiSamples, m_ColorAttachments.data(), m_ColorAttachmentSpecs.size());
+
+			for (int i=0; i<m_ColorAttachmentSpecs.size(); i++)
+			{
+				Utils::BindTextures(multiSamples, m_ColorAttachments[i]);
+				switch (m_ColorAttachmentSpecs[i].TextureFormat)
+				{
+				case FrameBufferTextureFormat::RGBA8:
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specs.Samples, GL_RGBA8, m_Specs.Width, m_Specs.Height, i);
+					break;
+				default:
+					DBT_CORE_ASSERT(false, "Frame buffer texture format not supported");
+					break;
+				}
+			}
+		}
+
+		if (m_DepthAttachmentSpecs.TextureFormat != FrameBufferTextureFormat::None)
+		{
+			Utils::CreateTextures(multiSamples, &m_DepthAttachment, 1);
+			Utils::BindTextures(multiSamples, m_DepthAttachment);
+
+			switch (m_DepthAttachmentSpecs.TextureFormat)
+			{
+			case FrameBufferTextureFormat::DEPTH24STENCIL8:
+				Utils::AttachDepthTexture(m_DepthAttachment, m_Specs.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT,
+					m_Specs.Width, m_Specs.Height);
+				break;
+			default:
+				DBT_CORE_ASSERT(false, "Frame buffer texture format not supported");
+				break;
+			}
+		}
+
+		if (m_ColorAttachments.size() > 1)
+		{
+			DBT_CORE_ASSERT(m_ColorAttachments.size() <= 4);
+			GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, };
+			glDrawBuffers(m_ColorAttachments.size(), buffers);
+		}
+		else if (m_ColorAttachments.empty())
+		{
+			// Depth-pass only
+			glDrawBuffer(GL_NONE);
+		}
+
+		GLCall(DBT_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Frame buffer is incomplete"));		
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	}
 
@@ -59,7 +178,7 @@ namespace Debut
 	OpenGLFrameBuffer::~OpenGLFrameBuffer()
 	{
 		glDeleteFramebuffers(1, &m_RendererID);
-		glDeleteTextures(1, &m_ColorAttachment);
+		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
 		glDeleteTextures(1, &m_DepthAttachment);
 	}
 

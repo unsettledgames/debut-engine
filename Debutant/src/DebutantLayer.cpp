@@ -13,7 +13,8 @@ namespace Debut
 {
     void DebutantLayer::OnAttach()
     {
-        FrameBufferSpecs fbSpecs;
+        FrameBufferSpecifications fbSpecs;
+        fbSpecs.Attachments = { FrameBufferTextureFormat::Color, FrameBufferTextureFormat::Deph };
 
         fbSpecs.Width = Application::Get().GetWindow().GetWidth();
         fbSpecs.Height = Application::Get().GetWindow().GetHeight();
@@ -157,7 +158,7 @@ namespace Debut
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-        ImGui::Begin("##", 0, ImGuiDockNodeFlags_AutoHideTabBar);
+        ImGui::Begin("Viewport", 0, ImGuiWindowFlags_NoTitleBar);
             
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
@@ -190,34 +191,34 @@ namespace Debut
             float winWidth = ImGui::GetWindowWidth();
             float winHeight = ImGui::GetWindowHeight();
 
-            Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-            if (cameraEntity)
+            
+            /*const auto& cameraComponent = cameraEntity.GetComponent<CameraComponent>();
+            const glm::mat4& cameraProj = cameraComponent.Camera.GetProjection();
+            glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());*/
+
+            const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
+            const glm::mat4& cameraProj = m_EditorCamera.GetProjection();
+
+            ImGuizmo::SetOrthographic(false);
+            ImGuizmo::SetDrawlist();
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
+
+            auto& tc = currSelection.GetComponent<TransformComponent>();
+            glm::mat4 transform = tc.GetTransform();
+
+            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
+                m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr);
+
+            if (ImGuizmo::IsUsing())
             {
-                const auto& cameraComponent = cameraEntity.GetComponent<CameraComponent>();
-                const glm::mat4& cameraProj = cameraComponent.Camera.GetProjection();
-                glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
-
-                ImGuizmo::SetOrthographic(false);
-                ImGuizmo::SetDrawlist();
-                ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
-
-                auto& tc = currSelection.GetComponent<TransformComponent>();
-                glm::mat4 transform = tc.GetTransform();
-
-                ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
-                    m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr);
-
-                if (ImGuizmo::IsUsing())
-                {
-                    glm::vec3 finalTrans, finalRot, finalScale;
-                    Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
+                glm::vec3 finalTrans, finalRot, finalScale;
+                Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
                     
-                    glm::vec3 deltaRot = finalRot - tc.Rotation;
+                glm::vec3 deltaRot = finalRot - tc.Rotation;
 
-                    tc.Translation = finalTrans;
-                    tc.Rotation += deltaRot;
-                    tc.Scale = finalScale;
-                }
+                tc.Translation = finalTrans;
+                tc.Rotation += deltaRot;
+                tc.Scale = finalScale;
             }
         }
 

@@ -16,3 +16,6 @@
 [submodule "Debut/vendor/imguizmo"]
 	path = Debut/vendor/imguizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo
+[submodule "Debut/vendor/imgui"]
+	path = Debut/vendor/imgui
+	url = https://github.com/ocornut/imgui

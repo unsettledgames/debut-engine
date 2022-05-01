@@ -6,7 +6,7 @@ namespace Debut
 	class OpenGLFrameBuffer : public FrameBuffer
 	{
 	public:
-		OpenGLFrameBuffer(const FrameBufferSpecs& specs);
+		OpenGLFrameBuffer(const FrameBufferSpecifications& specs);
 		virtual ~OpenGLFrameBuffer();
 
 		virtual void Invalidate() override;
@@ -15,15 +15,21 @@ namespace Debut
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
-		inline virtual uint32_t GetColorAttachment() const { return m_ColorAttachment; }
-		inline virtual uint32_t GetDepthAttachment() const { return m_DepthAttachment; }
-		inline virtual FrameBufferSpecs& GetSpecs() override { return m_Specs; }
+		inline virtual uint32_t GetColorAttachment(int idx = 0) const override { DBT_ASSERT(idx < m_ColorAttachments.size()); return m_ColorAttachments[idx]; }
+		inline virtual uint32_t GetDepthAttachment() const override { return m_DepthAttachment; }
+		inline virtual FrameBufferSpecifications& GetSpecs() override { return m_Specs; }
 
 	private:
 		uint32_t m_RendererID = 0;
-		uint32_t m_DepthAttachment = 0;
-		uint32_t m_ColorAttachment = 0;
 
-		FrameBufferSpecs m_Specs;
+		FrameBufferSpecifications m_Specs;
+
+		// Renderer IDs for attachments
+		std::vector<uint32_t> m_ColorAttachments;
+		uint32_t m_DepthAttachment;
+
+		// Attachment formats
+		std::vector<FrameBufferTextureSpecification> m_ColorAttachmentSpecs;
+		FrameBufferTextureSpecification m_DepthAttachmentSpecs = FrameBufferTextureFormat::None;
 	};
 }

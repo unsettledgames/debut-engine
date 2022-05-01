@@ -40,6 +40,7 @@ namespace Debut
 		void MousePan(const glm::vec2 & delta);
 		void MouseRotate(const glm::vec2 & delta);
 		void MouseZoom(float delta);
+		void WasdMove(const glm::vec2& mousePos);
 
 		glm::vec3 CalculatePosition() const;
 

@@ -140,7 +140,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Debut\Renderer\EditorCamera.h" />
     <ClInclude Include="src\Debut.h" />
     <ClInclude Include="src\Debut\Core\Application.h" />
     <ClInclude Include="src\Debut\Core\Core.h" />
@@ -163,6 +162,7 @@
     <ClInclude Include="src\Debut\OrthographicCameraController.h" />
     <ClInclude Include="src\Debut\Renderer\Buffer.h" />
     <ClInclude Include="src\Debut\Renderer\Camera.h" />
+    <ClInclude Include="src\Debut\Renderer\EditorCamera.h" />
     <ClInclude Include="src\Debut\Renderer\FrameBuffer.h" />
     <ClInclude Include="src\Debut\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Debut\Renderer\OrthographicCamera.h" />
@@ -201,10 +201,12 @@
     <ClInclude Include="vendor\glm\glm\simd\platform.h" />
     <ClInclude Include="vendor\glm\glm\simd\trigonometric.h" />
     <ClInclude Include="vendor\glm\glm\simd\vector_relational.h" />
+    <ClInclude Include="vendor\imguizmo\GraphEditor.h" />
     <ClInclude Include="vendor\imguizmo\ImCurveEdit.h" />
     <ClInclude Include="vendor\imguizmo\ImGradient.h" />
     <ClInclude Include="vendor\imguizmo\ImGuizmo.h" />
     <ClInclude Include="vendor\imguizmo\ImSequencer.h" />
+    <ClInclude Include="vendor\imguizmo\ImZoomSlider.h" />
     <ClInclude Include="vendor\imguizmo\example\ImApp.h" />
     <ClInclude Include="vendor\imguizmo\example\imconfig.h" />
     <ClInclude Include="vendor\imguizmo\example\imgui.h" />
@@ -213,10 +215,10 @@
     <ClInclude Include="vendor\imguizmo\example\imstb_textedit.h" />
     <ClInclude Include="vendor\imguizmo\example\imstb_truetype.h" />
     <ClInclude Include="vendor\imguizmo\example\stb_image.h" />
+    <ClInclude Include="vendor\imguizmo\vcpkg-example\ImApp.h" />
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Debut\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Debut\Core\Application.cpp" />
     <ClCompile Include="src\Debut\Core\Layer.cpp" />
     <ClCompile Include="src\Debut\Core\LayerStack.cpp" />
@@ -226,6 +228,7 @@
     <ClCompile Include="src\Debut\Math\Math.cpp" />
     <ClCompile Include="src\Debut\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Debut\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Debut\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Debut\Renderer\FrameBuffer.cpp" />
     <ClCompile Include="src\Debut\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Debut\Renderer\RenderCommand.cpp" />
@@ -256,6 +259,9 @@
     <ClCompile Include="vendor\glm\glm\detail\glm.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="vendor\imguizmo\GraphEditor.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="vendor\imguizmo\ImCurveEdit.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -271,13 +277,23 @@
     <ClCompile Include="vendor\imguizmo\example\imgui.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="vendor\imguizmo\example\imgui_demo.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="vendor\imguizmo\example\imgui_draw.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\imguizmo\example\imgui_tables.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="vendor\imguizmo\example\imgui_widgets.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="vendor\imguizmo\example\main.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\imguizmo\vcpkg-example\main.cpp">
+      <ObjectFileName>$(IntDir)\main1.obj</ObjectFileName>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">

@@ -58,6 +58,9 @@
     <Filter Include="vendor\imguizmo\example">
       <UniqueIdentifier>{8E843554-FABB-7DEB-03C6-E10E6F7CA4E4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\imguizmo\vcpkg-example">
+      <UniqueIdentifier>{3654398E-A26C-20B8-6B19-B051D7F0B451}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\stb_image">
       <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
     </Filter>
@@ -127,6 +130,9 @@
       <Filter>src\Debut\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Renderer\Camera.h">
+      <Filter>src\Debut\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\Renderer\EditorCamera.h">
       <Filter>src\Debut\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Renderer\FrameBuffer.h">
@@ -243,6 +249,9 @@
     <ClInclude Include="vendor\glm\glm\simd\vector_relational.h">
       <Filter>vendor\glm\glm\simd</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\imguizmo\GraphEditor.h">
+      <Filter>vendor\imguizmo</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\imguizmo\ImCurveEdit.h">
       <Filter>vendor\imguizmo</Filter>
     </ClInclude>
@@ -253,6 +262,9 @@
       <Filter>vendor\imguizmo</Filter>
     </ClInclude>
     <ClInclude Include="vendor\imguizmo\ImSequencer.h">
+      <Filter>vendor\imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imguizmo\ImZoomSlider.h">
       <Filter>vendor\imguizmo</Filter>
     </ClInclude>
     <ClInclude Include="vendor\imguizmo\example\ImApp.h">
@@ -279,10 +291,12 @@
     <ClInclude Include="vendor\imguizmo\example\stb_image.h">
       <Filter>vendor\imguizmo\example</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\imguizmo\vcpkg-example\ImApp.h">
+      <Filter>vendor\imguizmo\vcpkg-example</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\EditorCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Core\Application.cpp">
@@ -310,6 +324,9 @@
       <Filter>src\Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Renderer\Buffer.cpp">
+      <Filter>src\Debut\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debut\Renderer\EditorCamera.cpp">
       <Filter>src\Debut\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Renderer\FrameBuffer.cpp">
@@ -390,6 +407,9 @@
     <ClCompile Include="vendor\glm\glm\detail\glm.cpp">
       <Filter>vendor\glm\glm\detail</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\imguizmo\GraphEditor.cpp">
+      <Filter>vendor\imguizmo</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\imguizmo\ImCurveEdit.cpp">
       <Filter>vendor\imguizmo</Filter>
     </ClCompile>
@@ -405,7 +425,13 @@
     <ClCompile Include="vendor\imguizmo\example\imgui.cpp">
       <Filter>vendor\imguizmo\example</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\imguizmo\example\imgui_demo.cpp">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\imguizmo\example\imgui_draw.cpp">
+      <Filter>vendor\imguizmo\example</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imguizmo\example\imgui_tables.cpp">
       <Filter>vendor\imguizmo\example</Filter>
     </ClCompile>
     <ClCompile Include="vendor\imguizmo\example\imgui_widgets.cpp">
@@ -414,9 +440,11 @@
     <ClCompile Include="vendor\imguizmo\example\main.cpp">
       <Filter>vendor\imguizmo\example</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\imguizmo\vcpkg-example\main.cpp">
+      <Filter>vendor\imguizmo\vcpkg-example</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\EditorCamera.cpp" />
   </ItemGroup>
 </Project>
