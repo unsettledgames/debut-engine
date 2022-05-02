@@ -31,16 +31,16 @@ namespace Debut
 			GLCall(glCreateTextures(TextureTarget(multiSamples), count, outID));
 		}
 
-		static void AttachColorTexture(uint32_t texture, uint32_t nSamples, GLenum format, uint32_t width, uint32_t height, uint32_t idx)
+		static void AttachColorTexture(uint32_t texture, uint32_t nSamples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, uint32_t idx)
 		{
 			bool multisampled = nSamples > 1;
 			if (multisampled)
 			{
-				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, nSamples, format, width, height, GL_FALSE);
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, nSamples, internalFormat, width, height, GL_FALSE);
 			}
 			else
 			{
-				glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
 
 				// TODO: move to frame buffer specs
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -120,7 +120,10 @@ namespace Debut
 				switch (m_ColorAttachmentSpecs[i].TextureFormat)
 				{
 				case FrameBufferTextureFormat::RGBA8:
-					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specs.Samples, GL_RGBA8, m_Specs.Width, m_Specs.Height, i);
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specs.Samples, GL_RGBA8, GL_RGBA, m_Specs.Width, m_Specs.Height, i);
+					break;
+				case FrameBufferTextureFormat::RED_INTEGER:
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specs.Samples, GL_R32I, GL_RED_INTEGER, m_Specs.Width, m_Specs.Height, i);
 					break;
 				default:
 					DBT_CORE_ASSERT(false, "Frame buffer texture format not supported");
@@ -173,6 +176,21 @@ namespace Debut
 		m_Specs.Width = x;
 		m_Specs.Height = y;
 		Invalidate();
+	}
+
+	int OpenGLFrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+	{
+		//Bind();
+
+		int pixelData;
+
+		DBT_ASSERT(attachmentIndex < m_ColorAttachments.size() && attachmentIndex >= 0);
+		GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex));
+		GLCall(glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData));
+
+		//Unbind();
+
+		return pixelData;
 	}
 
 	OpenGLFrameBuffer::~OpenGLFrameBuffer()

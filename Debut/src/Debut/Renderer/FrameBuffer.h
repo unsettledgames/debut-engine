@@ -8,12 +8,13 @@ namespace Debut
 
 		// Color
 		RGBA8,
+		RED_INTEGER,
 
 		// Depth / stencil
 		DEPTH24STENCIL8,
 
 		// Default values
-		Deph = DEPTH24STENCIL8,
+		Depth = DEPTH24STENCIL8,
 		Color = RGBA8
 	};
 
@@ -55,6 +56,7 @@ namespace Debut
 
 		virtual void Invalidate() = 0;
 		virtual void Resize(uint32_t x, uint32_t y) = 0;
+		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 
 		virtual const FrameBufferSpecifications& GetSpecs() = 0;
 		virtual uint32_t GetColorAttachment(int idx = 0) const = 0;

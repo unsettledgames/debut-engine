@@ -32,6 +32,7 @@ namespace Debut
 	private:
 		// Viewport data
 		glm::vec2 m_ViewportSize;
+		glm::vec2 m_ViewportBounds[2];
 		bool m_ViewportFocused;
 		bool m_ViewportHovered;
 

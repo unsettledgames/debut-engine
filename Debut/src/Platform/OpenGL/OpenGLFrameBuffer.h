@@ -11,6 +11,7 @@ namespace Debut
 
 		virtual void Invalidate() override;
 		virtual void Resize(uint32_t x, uint32_t y) override;
+		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;

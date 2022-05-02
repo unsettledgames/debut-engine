@@ -28,6 +28,7 @@ void main()
 #version 410
 			
 layout(location = 0) out vec4 color;
+layout(location = 1) out int id;
 
 in vec2 v_UV;
 in vec4 v_Color;
@@ -40,4 +41,5 @@ uniform float u_TilingFactor;
 void main()
 {
 	color = texture(u_Textures[int(v_TexIndex)], v_UV * v_TilingFactor) * v_Color;
+	id = 50;
 }
