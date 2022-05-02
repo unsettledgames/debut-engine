@@ -49,6 +49,9 @@ namespace Debut
 
             RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
             RenderCommand::Clear();
+
+            // Clear frame buffer for mouse picking
+            m_FrameBuffer->ClearAttachment(1, -1);
         }
 
         // Update the scene

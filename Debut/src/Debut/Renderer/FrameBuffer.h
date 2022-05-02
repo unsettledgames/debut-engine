@@ -57,6 +57,7 @@ namespace Debut
 		virtual void Invalidate() = 0;
 		virtual void Resize(uint32_t x, uint32_t y) = 0;
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
+		virtual void ClearAttachment(uint32_t index, int value) = 0;
 
 		virtual const FrameBufferSpecifications& GetSpecs() = 0;
 		virtual uint32_t GetColorAttachment(int idx = 0) const = 0;

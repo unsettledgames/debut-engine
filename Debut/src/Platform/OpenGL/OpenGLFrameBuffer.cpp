@@ -14,6 +14,32 @@ namespace Debut
 			return multiSamples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 		}
 
+		static GLenum TextureFormatDebutToGL(FrameBufferTextureFormat format)
+		{
+			switch (format)
+			{
+			case FrameBufferTextureFormat::Depth:		return GL_DEPTH24_STENCIL8;
+			case FrameBufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+			case FrameBufferTextureFormat::RGBA8:		return GL_RGBA8;
+			}
+
+			DBT_CORE_ASSERT(false, "Unrecognized texture format");
+			return 0;
+		}
+
+		static GLenum GetGLDataType(FrameBufferTextureFormat format)
+		{
+			switch (format)
+			{
+			case FrameBufferTextureFormat::Depth:		return GL_DEPTH24_STENCIL8;
+			case FrameBufferTextureFormat::RED_INTEGER: return GL_INT;
+			case FrameBufferTextureFormat::RGBA8:		return GL_UNSIGNED_BYTE;
+			}
+
+			DBT_CORE_ASSERT(false, "Unrecognized texture format {0}", (int)format);
+			return 0;
+		}
+
 		static bool IsDepthFormat(FrameBufferTextureFormat format)
 		{
 			if (format == FrameBufferTextureFormat::DEPTH24STENCIL8)
@@ -90,6 +116,13 @@ namespace Debut
 		}
 
 		Invalidate();
+	}
+
+	OpenGLFrameBuffer::~OpenGLFrameBuffer()
+	{
+		glDeleteFramebuffers(1, &m_RendererID);
+		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+		glDeleteTextures(1, &m_DepthAttachment);
 	}
 
 	void OpenGLFrameBuffer::Invalidate()
@@ -184,7 +217,7 @@ namespace Debut
 
 		int pixelData;
 
-		DBT_ASSERT(attachmentIndex < m_ColorAttachments.size() && attachmentIndex >= 0);
+		DBT_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size() && attachmentIndex >= 0);
 		GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex));
 		GLCall(glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData));
 
@@ -193,12 +226,14 @@ namespace Debut
 		return pixelData;
 	}
 
-	OpenGLFrameBuffer::~OpenGLFrameBuffer()
+	void OpenGLFrameBuffer::ClearAttachment(uint32_t index, int value)
 	{
-		glDeleteFramebuffers(1, &m_RendererID);
-		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
-		glDeleteTextures(1, &m_DepthAttachment);
+		DBT_CORE_ASSERT(index >= 0 && index < m_ColorAttachments.size());
+
+		auto& spec = m_ColorAttachmentSpecs[index];
+		glClearTexImage(m_ColorAttachments[index], 0, Utils::TextureFormatDebutToGL(spec.TextureFormat), GL_INT, &value);
 	}
+
 
 	void OpenGLFrameBuffer::Bind() const
 	{
