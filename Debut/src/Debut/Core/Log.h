@@ -5,8 +5,8 @@
 #include "Debut/dbtpch.h"
 
 #ifdef DBT_ASSERTS
-	#define DBT_ASSERT(x, ...) { if(!(x)) { Debut::Log.AppFatal("Assertion failed. %s", __VA_ARGS__); __debugbreak(); }}
-	#define DBT_CORE_ASSERT(x, ...) { if(!(x)) { Debut::Log.CoreFatal("Assertion failed. %s", __VA_ARGS__); __debugbreak(); }}
+	#define DBT_ASSERT(x, ...) { if(!(x)) { Debut::Log.AppFatal("Assertion failed. {0}", __VA_ARGS__); __debugbreak(); }}
+	#define DBT_CORE_ASSERT(x, ...) { if(!(x)) { Debut::Log.CoreFatal("Assertion failed. {0}", __VA_ARGS__); __debugbreak(); }}
 #else
 	#define DBT_ASSERT(x, ...)
 	#define DBT_CORE_ASSERT(x, ...)

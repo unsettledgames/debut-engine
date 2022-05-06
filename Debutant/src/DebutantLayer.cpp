@@ -29,6 +29,7 @@ namespace Debut
         m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
+        m_ContentBrowser.SetContext(m_ActiveScene);
     }
 
     void DebutantLayer::OnDetach()
@@ -58,20 +59,6 @@ namespace Debut
         m_ActiveScene->OnRuntimeUpdate(ts);
         m_ActiveScene->OnEditorUpdate(ts, m_EditorCamera);
 
-        // Mouse picking
-        auto [mouseX, mouseY] = ImGui::GetMousePos();
-        mouseX -= m_ViewportBounds[0].x;
-        mouseY -= m_ViewportBounds[0].y;
-        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-
-        int intMouseX = (int)mouseX;
-        int intMouseY = (int)(viewportSize.y - mouseY);
-
-        if (intMouseX >= 0 && mouseY >= 0 && mouseX <= viewportSize.x && mouseY <= viewportSize.y)
-        {
-            Log.CoreInfo("Color: {0}", m_FrameBuffer->ReadPixel(1, intMouseX, intMouseY));
-        }
-
         //Log.AppInfo("Frame time: {0}", (1.0f / ts));
         m_FrameBuffer->Unbind();
     }
@@ -82,6 +69,7 @@ namespace Debut
         m_EditorCamera.OnEvent(e);
 
         dispatcher.Dispatch<KeyPressedEvent>(DBT_BIND(DebutantLayer::OnKeyPressed));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(DBT_BIND(DebutantLayer::OnMouseButtonPressed));
     }
 
     void DebutantLayer::OnImGuiRender()
@@ -167,6 +155,7 @@ namespace Debut
             }
 
             m_SceneHierarchy.OnImGuiRender();
+            m_ContentBrowser.OnImGuiRender();
 
             ImGui::Begin("Settings");
 
@@ -297,6 +286,35 @@ namespace Debut
 
         default:
             break;
+        }
+
+        return true;
+    }
+
+    bool DebutantLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+    {
+        // Mouse picking
+        auto [mouseX, mouseY] = ImGui::GetMousePos();
+        mouseX -= m_ViewportBounds[0].x;
+        mouseY -= m_ViewportBounds[0].y;
+        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+
+        int intMouseX = (int)mouseX;
+        int intMouseY = (int)(viewportSize.y - mouseY);
+
+        if (e.GetMouseButton() == DBT_MOUSE_BUTTON_LEFT && !ImGuizmo::IsUsing() && !ImGuizmo::IsOver())
+        {
+            if (m_ViewportHovered)
+            {
+                int hoveredID = m_FrameBuffer->ReadPixel(1, intMouseX, intMouseY);
+
+                if (hoveredID == -1)
+                    m_HoveredEntity = {};
+                else
+                    m_HoveredEntity = { (entt::entity)hoveredID, m_ActiveScene.get() };
+
+                m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
+            }
         }
 
         return true;

@@ -84,9 +84,6 @@ namespace Debut
 	void EditorCamera::WasdMove(const glm::vec2& mousePos)
 	{
 		glm::vec4 worldMouse = glm::inverse(m_Projection * m_ViewMatrix) * glm::vec4(mousePos, 0, 1);
-
-		Debut::Log.AppInfo("Mouse screen pos: {0}, {1}, {2}", mousePos[0], mousePos[1], 0);
-		Debut::Log.AppInfo("Mouse world pos: {0}, {1}, {2}", worldMouse[0], worldMouse[1], worldMouse[2]);
 	}
 
 	void EditorCamera::OnEvent(Event& e)

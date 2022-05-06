@@ -5,8 +5,9 @@
 
 #include <Debut/Renderer/EditorCamera.h>
 #include <Debut/Scene/Entity.h>
-
+#include <Debut/Events/MouseEvent.h>
 #include <Panels/SceneHierarchyPanel.h>
+#include <Panels/ContentBrowserPanel.h>
 
 namespace Debut
 {
@@ -28,6 +29,7 @@ namespace Debut
 		void SaveSceneAs();
 
 		bool OnKeyPressed(KeyPressedEvent& e);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
 	private:
 		// Viewport data
@@ -40,16 +42,17 @@ namespace Debut
 
 		// Scene
 		Ref<Scene> m_ActiveScene;
-		Entity m_SquareEntity;
 
 		// Camera
 		EditorCamera m_EditorCamera;
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchy;
+		ContentBrowserPanel m_ContentBrowser;
 
 		// Editor state
 		std::string m_ScenePath = "";
+		Entity m_HoveredEntity;
 
 		// Gizmos
 		ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;

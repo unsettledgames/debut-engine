@@ -41,7 +41,8 @@ namespace Debut
 			{ShaderDataType::Float2, "a_UV", false},
 			{ShaderDataType::Float4, "a_Color", false},
 			{ShaderDataType::Float, "a_TexIndex", false},
-			{ShaderDataType::Float, "a_TilingFactor", false}
+			{ShaderDataType::Float, "a_TilingFactor", false},
+			{ShaderDataType::Int, "a_EntityID", false}
 		};
 		s_Data.QuadVertexBuffer->SetLayout(squareLayout);
 
@@ -271,6 +272,33 @@ namespace Debut
 			s_Data.QuadVertexBufferPtr->TexCoord = texture->GetTexCoords()[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr++;
+		}
+
+		s_Data.QuadIndexCount += 6;
+		s_Data.Stats.QuadCount++;
+	}
+
+	void Renderer2D::DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& src, int entityID)
+	{
+		DBT_PROFILE_FUNCTION();
+
+		// If we have drawn too many quads, we start a new batch
+		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
+			FlushAndReset();
+
+		// Use the white texture
+		const float texIndex = 0;
+		glm::vec2 texCoords[] = { glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 1) };
+
+		for (int i = 0; i < 4; i++)
+		{
+			s_Data.QuadVertexBufferPtr->Position = glm::vec3(transform * s_Data.QuadVertexPositions[i]);
+			s_Data.QuadVertexBufferPtr->Color = src.Color;
+			s_Data.QuadVertexBufferPtr->TexCoord = texCoords[i];
+			s_Data.QuadVertexBufferPtr->TexIndex = 0;
+			s_Data.QuadVertexBufferPtr->TilingFactor = 1;
+			s_Data.QuadVertexBufferPtr->EntityID = entityID;
 			s_Data.QuadVertexBufferPtr++;
 		}
 

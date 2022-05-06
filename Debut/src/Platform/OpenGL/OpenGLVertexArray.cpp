@@ -62,11 +62,38 @@ namespace Debut
 		uint32_t index = 0;
 		for (const auto& element : buffer->GetLayout())
 		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGL(element.Type),
-				element.Normalized ? GL_TRUE : GL_FALSE, buffer->GetLayout().GetStride(), (const void*)element.Offset);
+			switch (element.Type)
+			{
+				case ShaderDataType::Float:
+				case ShaderDataType::Float2:
+				case ShaderDataType::Float3:
+				case ShaderDataType::Float4:
+				case ShaderDataType::Mat3:
+				case ShaderDataType::Mat4:
+				{
+					glEnableVertexAttribArray(index);
+					glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGL(element.Type),
+						element.Normalized ? GL_TRUE : GL_FALSE, buffer->GetLayout().GetStride(), (const void*)element.Offset);
+					index++;
+				}
+				break;
+				case ShaderDataType::Int:
+				case ShaderDataType::Int3:
+				case ShaderDataType::Int2:
+				case ShaderDataType::Int4:
+				case ShaderDataType::Bool:
+				{
+					glEnableVertexAttribArray(index);
+					glVertexAttribIPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGL(element.Type),
+						buffer->GetLayout().GetStride(), (const void*)element.Offset);
+					index++;
+				}
+				break;
 
-			index++;
+			}
+			
+
+			
 		}
 		m_VertexBuffers.push_back(buffer);
 		

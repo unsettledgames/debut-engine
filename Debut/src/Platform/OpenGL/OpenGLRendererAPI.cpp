@@ -1,5 +1,6 @@
 #include "Debut/dbtpch.h"
 #include "OpenGLRendererAPI.h"
+#include "OpenGLError.h"
 #include <glad/glad.h>
 
 namespace Debut
@@ -25,9 +26,9 @@ namespace Debut
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& va, uint32_t indexCount)
 	{
 		uint32_t count = indexCount == 0 ? va->GetIndexBuffer()->GetCount() : indexCount;
-		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
+		GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr));
 		// Reset the texture after a draw call
-		glBindTexture(GL_TEXTURE_2D, 0);
+		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 	}
 
 	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)

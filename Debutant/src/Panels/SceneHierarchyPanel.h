@@ -9,9 +9,9 @@ namespace Debut
 
 	public:
 		SceneHierarchyPanel() = default;
-		SceneHierarchyPanel(const Ref<Scene>& scene);
 
 		void SetContext(const Ref<Scene>& scene);
+		void SetSelectedEntity(const Entity& entity);
 
 		void OnImGuiRender();
 

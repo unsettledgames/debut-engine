@@ -74,15 +74,18 @@ namespace Debut
 		ImGui::PopID();
 	}
 
-	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
-	{
-		SetContext(scene);
-	}
-
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& scene)
 	{
 		m_Context = scene;
 		m_SelectionContext = {};
+	}
+
+	void SceneHierarchyPanel::SetSelectedEntity(const Entity& entity)
+	{
+		if ((int)(entt::entity)entity != -1)
+			m_SelectionContext = entity;
+		else
+			m_SelectionContext = {};
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()

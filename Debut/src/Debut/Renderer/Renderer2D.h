@@ -10,6 +10,7 @@
 #include <Debut/Renderer/Camera.h>
 #include <Debut/Renderer/EditorCamera.h>
 #include <array>
+#include <Debut/Scene/Components.h>
 
 namespace Debut
 {
@@ -20,6 +21,9 @@ namespace Debut
 		glm::vec4 Color;
 		float TexIndex;
 		float TilingFactor;
+
+		// Editor only
+		int EntityID = -1;
 	};
 
 	struct Render2DStats
@@ -73,6 +77,7 @@ namespace Debut
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<Texture>& texture, float tilingFactor = 1);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<SubTexture2D>& texture, float tilingFactor = 1);
 
+		static void DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& src, int entityID);
 		static void ResetStats();
 		static Render2DStats GetStats() { return s_Data.Stats; }
 	

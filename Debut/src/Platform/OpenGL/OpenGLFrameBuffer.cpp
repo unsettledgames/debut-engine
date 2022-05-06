@@ -14,6 +14,8 @@ namespace Debut
 			return multiSamples ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 		}
 
+		// TODO: generalize these and put them somewhere like OpenGLUtil
+
 		static GLenum TextureFormatDebutToGL(FrameBufferTextureFormat format)
 		{
 			switch (format)
@@ -213,7 +215,7 @@ namespace Debut
 
 	int OpenGLFrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
 	{
-		//Bind();
+		Bind();
 
 		int pixelData;
 
@@ -221,7 +223,7 @@ namespace Debut
 		GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex));
 		GLCall(glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData));
 
-		//Unbind();
+		Unbind();
 
 		return pixelData;
 	}

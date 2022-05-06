@@ -2,6 +2,10 @@
 
 #include "Debut/Core/Core.h"
 
+/** TODO:
+* - Add HasClicked(unsigned int button) and start using it wherever it makes sense to do so
+
+*/
 namespace Debut
 {
 	class Input
