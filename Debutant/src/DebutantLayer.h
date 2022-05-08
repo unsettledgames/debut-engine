@@ -14,6 +14,11 @@ namespace Debut
 	class DebutantLayer : public Layer
 	{
 	public:
+		enum class SceneState
+		{
+			Edit = 0, Play = 1
+		};
+
 		DebutantLayer() : Layer("DebutantLayer") {}
 		virtual ~DebutantLayer() {}
 
@@ -29,8 +34,17 @@ namespace Debut
 		void SaveScene();
 		void SaveSceneAs();
 
+		void OnScenePlay();
+		void OnSceneStop();
+
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+
+		// UI panels
+		void DrawUIToolbar();
+		void DrawGizmos();
+		void DrawViewport();
+		void DrawTopBar();
 
 	private:
 		// Viewport data
@@ -43,7 +57,6 @@ namespace Debut
 
 		// Scene
 		Ref<Scene> m_ActiveScene;
-
 		// Camera
 		EditorCamera m_EditorCamera;
 
@@ -54,6 +67,11 @@ namespace Debut
 		// Editor state
 		std::string m_ScenePath = "";
 		Entity m_HoveredEntity;
+		SceneState m_SceneState = SceneState::Edit;
+
+		// Textures
+		Ref<Texture2D> m_IconPlay;
+		Ref<Texture2D> m_IconStop;
 
 		// Gizmos
 		ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;

@@ -30,6 +30,9 @@ namespace Debut
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
         m_ContentBrowser.SetContext(m_ActiveScene);
+
+        m_IconPlay = Texture2D::Create("assets/icons/play.png");
+        m_IconStop = Texture2D::Create("assets/icons/stop.png");
     }
 
     void DebutantLayer::OnDetach()
@@ -63,14 +66,17 @@ namespace Debut
         m_FrameBuffer->Unbind();
     }
 
-    void DebutantLayer::OnEvent(Event& e)
+    void DebutantLayer::OnScenePlay()
     {
-        EventDispatcher dispatcher(e);
-        m_EditorCamera.OnEvent(e);
-
-        dispatcher.Dispatch<KeyPressedEvent>(DBT_BIND(DebutantLayer::OnKeyPressed));
-        dispatcher.Dispatch<MouseButtonPressedEvent>(DBT_BIND(DebutantLayer::OnMouseButtonPressed));
+        m_SceneState = SceneState::Play;
     }
+
+    void DebutantLayer::OnSceneStop()
+    {
+        m_SceneState = SceneState::Edit;
+    }
+
+    
 
     void DebutantLayer::OnImGuiRender()
     {
@@ -131,28 +137,7 @@ namespace Debut
                 ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
             }
 
-            if (ImGui::BeginMenuBar())
-            {
-                if (ImGui::BeginMenu("File"))
-                {
-                    if (ImGui::MenuItem("New scene", "Ctrl+N"))
-                        NewScene();
-
-                    if (ImGui::MenuItem("Open scene", "Ctrl+O"))
-                        OpenScene();
-
-                    if (ImGui::MenuItem("Save scene", "Ctrl+S"))
-                        SaveScene();
-
-                    if (ImGui::MenuItem("Save scene as...", "Ctrl+Shift+S"))
-                        SaveSceneAs();
-
-                    if (ImGui::MenuItem("Exit")) Application::Get().Close();
-                    ImGui::EndMenu();
-                }
-
-                ImGui::EndMenuBar();
-            }
+            DrawTopBar();
 
             m_SceneHierarchy.OnImGuiRender();
             m_ContentBrowser.OnImGuiRender();
@@ -167,92 +152,169 @@ namespace Debut
                 ImGui::Text("Index count: %d", stats.GetIndexCount());
             ImGui::End();
 
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-            ImGui::Begin("Viewport");
-                // Window resizing
-                auto viewportOffset = ImGui::GetCursorPos();
-            
-                m_ViewportFocused = ImGui::IsWindowFocused();
-                m_ViewportHovered = ImGui::IsWindowHovered();
-                Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
-
-                ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-                if (m_ViewportSize.x != viewportSize.x || m_ViewportSize.y != viewportSize.y)
-                {
-                    m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
-
-                    m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
-
-                    m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-                    m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-                }
-
-                // Draw scene
-                uint32_t texId = m_FrameBuffer->GetColorAttachment();
-                ImGui::Image((void*)texId, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
-
-                // Accept scene loading
-                if (ImGui::BeginDragDropTarget())
-                {
-                    const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA");
-                    if (payload != nullptr)
-                    {
-                        OpenScene(std::filesystem::path((const wchar_t*)payload->Data));
-                        ImGui::EndDragDropTarget();
-                    }
-                    
-                }
-
-                // Save bounds for mouse picking
-                ImVec2 minBound = ImGui::GetItemRectMin();
-                ImVec2 maxBound = ImGui::GetItemRectMax();
-                m_ViewportBounds[0] = { minBound.x, minBound.y };
-                m_ViewportBounds[1] = { maxBound.x, maxBound.y };
-        
-                // Draw gizmos
-                Entity currSelection = m_SceneHierarchy.GetSelectionContext();
-
-                bool snapping = Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL);
-                float snapAmount = 0.5f;
-                if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
-                    snapAmount = 45;
-                float snapValues[] = { snapAmount, snapAmount, snapAmount };
-
-                if (currSelection)
-                {
-                    float winWidth = ImGui::GetWindowWidth();
-                    float winHeight = ImGui::GetWindowHeight();
-
-                    const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
-                    const glm::mat4& cameraProj = m_EditorCamera.GetProjection();
-
-                    ImGuizmo::SetOrthographic(false);
-                    ImGuizmo::SetDrawlist();
-                    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
-
-                    auto& tc = currSelection.GetComponent<TransformComponent>();
-                    glm::mat4 transform = tc.GetTransform();
-
-                    ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
-                        m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr);
-
-                    if (ImGuizmo::IsUsing())
-                    {
-                        glm::vec3 finalTrans, finalRot, finalScale;
-                        Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
-                    
-                        glm::vec3 deltaRot = finalRot - tc.Rotation;
-
-                        tc.Translation = finalTrans;
-                        tc.Rotation += deltaRot;
-                        tc.Scale = finalScale;
-                    }
-                }
-
-                ImGui::PopStyleVar();
-            ImGui::End();
+            DrawViewport();
+            DrawUIToolbar();
 
         ImGui::End();
+    }
+
+    void DebutantLayer::DrawUIToolbar()
+    {
+        ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+        Ref<Texture2D> icon;
+
+        switch (m_SceneState)
+        {
+        case SceneState::Edit:
+            icon = m_IconPlay;
+            break;
+        case SceneState::Play:
+            icon = m_IconStop;
+            break;
+        default:
+            break;
+        }
+
+        if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(16.0f, 16.0f)))
+        {
+            // TODO: simulate physics, pause scene...
+            if (m_SceneState == SceneState::Edit)
+                OnScenePlay();
+            else if (m_SceneState == SceneState::Play)
+                OnSceneStop();
+        }
+
+        ImGui::End();
+    }
+
+    void DebutantLayer::DrawTopBar()
+    {
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+                if (ImGui::MenuItem("New scene", "Ctrl+N"))
+                    NewScene();
+
+                if (ImGui::MenuItem("Open scene", "Ctrl+O"))
+                    OpenScene();
+
+                if (ImGui::MenuItem("Save scene", "Ctrl+S"))
+                    SaveScene();
+
+                if (ImGui::MenuItem("Save scene as...", "Ctrl+Shift+S"))
+                    SaveSceneAs();
+
+                if (ImGui::MenuItem("Exit")) Application::Get().Close();
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndMenuBar();
+        }
+    }
+
+    void DebutantLayer::DrawViewport()
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+        ImGui::Begin("Viewport");
+        {
+            // Window resizing
+            auto viewportOffset = ImGui::GetCursorPos();
+
+            m_ViewportFocused = ImGui::IsWindowFocused();
+            m_ViewportHovered = ImGui::IsWindowHovered();
+            Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+
+            ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+            if (m_ViewportSize.x != viewportSize.x || m_ViewportSize.y != viewportSize.y)
+            {
+                m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
+
+                m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+
+                m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
+                m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            }
+
+            // Draw scene
+            uint32_t texId = m_FrameBuffer->GetColorAttachment();
+            ImGui::Image((void*)texId, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
+
+            // Accept scene loading
+            if (ImGui::BeginDragDropTarget())
+            {
+                const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA");
+                if (payload != nullptr)
+                {
+                    OpenScene(std::filesystem::path((const wchar_t*)payload->Data));
+                    ImGui::EndDragDropTarget();
+                }
+
+            }
+
+            // Save bounds for mouse picking
+            ImVec2 minBound = ImGui::GetItemRectMin();
+            ImVec2 maxBound = ImGui::GetItemRectMax();
+            m_ViewportBounds[0] = { minBound.x, minBound.y };
+            m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+
+            DrawGizmos();
+
+            ImGui::PopStyleVar();
+        }
+        ImGui::End();
+    }
+
+    void DebutantLayer::DrawGizmos()
+    {
+        // Draw gizmos
+        Entity currSelection = m_SceneHierarchy.GetSelectionContext();
+
+        bool snapping = Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL);
+        float snapAmount = 0.5f;
+        if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+            snapAmount = 45;
+        float snapValues[] = { snapAmount, snapAmount, snapAmount };
+
+        if (currSelection)
+        {
+            float winWidth = ImGui::GetWindowWidth();
+            float winHeight = ImGui::GetWindowHeight();
+
+            const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
+            const glm::mat4& cameraProj = m_EditorCamera.GetProjection();
+
+            ImGuizmo::SetOrthographic(false);
+            ImGuizmo::SetDrawlist();
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
+
+            auto& tc = currSelection.GetComponent<TransformComponent>();
+            glm::mat4 transform = tc.GetTransform();
+
+            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
+                m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr);
+
+            if (ImGuizmo::IsUsing())
+            {
+                glm::vec3 finalTrans, finalRot, finalScale;
+                Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
+
+                glm::vec3 deltaRot = finalRot - tc.Rotation;
+
+                tc.Translation = finalTrans;
+                tc.Rotation += deltaRot;
+                tc.Scale = finalScale;
+            }
+        }
+    }
+
+    void DebutantLayer::OnEvent(Event& e)
+    {
+        EventDispatcher dispatcher(e);
+        m_EditorCamera.OnEvent(e);
+
+        dispatcher.Dispatch<KeyPressedEvent>(DBT_BIND(DebutantLayer::OnKeyPressed));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(DBT_BIND(DebutantLayer::OnMouseButtonPressed));
     }
 
     bool DebutantLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -315,7 +377,7 @@ namespace Debut
             {
                 int hoveredID = m_FrameBuffer->ReadPixel(1, intMouseX, intMouseY);
 
-                if (hoveredID == -1)
+                if (hoveredID < 0)
                     m_HoveredEntity = {};
                 else
                     m_HoveredEntity = { (entt::entity)hoveredID, m_ActiveScene.get() };

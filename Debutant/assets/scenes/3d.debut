@@ -2,25 +2,25 @@ Scene: Untitled scene
 Entities:
   - "Entity: ": 1
     TagComponent:
-      Name: Square 2
-      Tag: Untagged
-    TransformComponent:
-      Translation: [1.42981768, 2.91863918, 2.05345726]
-      Rotation: [2.8020401, 0.543581843, -2.78884959]
-      Scale: [1.00000179, 1, 0.99999994]
-    SpriteRendererComponent:
-      Color: [0.293436289, 1, 0.735038638, 1]
-      Texture: assets\textures\akita.png
-      TilingFactor: 1
-  - "Entity: ": 0
-    TagComponent:
       Name: Square
       Tag: Untagged
     TransformComponent:
-      Translation: [0.27689299, 1.15213418, 0.199951261]
+      Translation: [-1.05500281, 0.020932436, 0.199951261]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [0, 0.5, 0.800000012, 1]
       Texture: assets\textures\penguin.png
+      TilingFactor: 1
+  - "Entity: ": 0
+    TagComponent:
+      Name: Square 2
+      Tag: Untagged
+    TransformComponent:
+      Translation: [-0.00155344559, 0.953772783, 2.05523252]
+      Rotation: [2.8020401, 0.543581843, -2.78884959]
+      Scale: [1.00000179, 1, 0.99999994]
+    SpriteRendererComponent:
+      Color: [0.293436289, 1, 0.735038638, 1]
+      Texture: assets\textures\akita.png
       TilingFactor: 1
