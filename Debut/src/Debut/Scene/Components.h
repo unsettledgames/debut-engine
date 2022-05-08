@@ -12,6 +12,8 @@
 
 namespace Debut
 {
+	// BASIC
+
 	struct TagComponent
 	{
 		std::string Tag;
@@ -43,6 +45,8 @@ namespace Debut
 		}
 	};
 
+	// RENDERING
+
 	struct CameraComponent
 	{
 		Debut::SceneCamera Camera;
@@ -63,6 +67,39 @@ namespace Debut
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color) : Color(color) {}
 	};
+
+	// PHYSICS AND COLLIDER
+	struct Rigidbody2DComponent
+	{
+		enum class BodyType { Static = 0, Dynamic, Kinematic };
+		BodyType Type = BodyType::Static;
+		// TODO: constraints
+		bool FixedRotation = false;
+
+		void* RuntimeBody = nullptr;
+
+		Rigidbody2DComponent() = default;
+		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
+	};
+
+	struct BoxCollider2DComponent
+	{
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		glm::vec2 Size = { 1.0f, 1.0f };
+
+		// Shouldn't this stuff be in the rigidbody? Btw, move to physics material
+		float Density = 1.0f;
+		float Friction = 0.5f;
+		float Restitution = 0.5f;
+		float RestitutionThreshold = 0.5f;
+
+		void* RuntimeFixture = nullptr;
+
+		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
+	};
+
+	// SCRIPT
 
 	struct NativeScriptComponent
 	{

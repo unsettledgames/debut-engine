@@ -22,11 +22,13 @@ IncludeDir["spdlog"] = "Debut/vendor/spdlog/include"
 IncludeDir["entt"] = "Debut/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Debut/vendor/yaml-cpp/include"
 IncludeDir["imguizmo"] = "Debut/vendor/imguizmo"
+IncludeDir["box2d"] = "Debut/vendor/box2d/include"
 
 include "Debut/vendor/glfw"
 include "Debut/vendor/glad"
 include "Debut/vendor/imgui"
 include "Debut/vendor/yaml-cpp"
+include "Debut/vendor/box2d"
 
 project "Debut"
 	location "Debut"
@@ -64,7 +66,8 @@ project "Debut"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
-		"%{IncludeDir.imguizmo}"
+		"%{IncludeDir.imguizmo}",
+		"%{IncludeDir.box2d}"
 	}
 
 	links
@@ -73,7 +76,8 @@ project "Debut"
 		"Glad",
 		"ImGui",
 		"opengl32.lib",
-		"yaml-cpp"
+		"yaml-cpp",
+		"Box2D"
 	}
 
 	filter "system:windows"
@@ -134,7 +138,8 @@ project "Debutant"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.imguizmo}",
-		"Debut/src"
+		"Debut/src",
+		"%{IncludeDir.box2d}"
 	}
 
 	links

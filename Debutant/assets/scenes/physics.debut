@@ -1,0 +1,65 @@
+Scene: Untitled scene
+Entities:
+  - "Entity: ": 2
+    TagComponent:
+      Name: Camera
+      Tag: Untagged
+    TransformComponent:
+      Translation: [1.08750916, 1.50526989, 0]
+      Rotation: [0, 0, 0]
+      Scale: [2, 2, 1]
+    CameraComponent:
+      FixedAspectRatio: false
+      Primary: true
+      CameraData:
+        ProjectionType: 1
+        OrthoNear: -1
+        OrthoFar: 1
+        PerspNear: 0.00999999978
+        PerspFar: 1000
+        OrthoSize: 10
+        PerspFOV: 0.785398185
+  - "Entity: ": 1
+    TagComponent:
+      Name: Square
+      Tag: Untagged
+    TransformComponent:
+      Translation: [-5.32363558, 7.78123808, -1.22912598]
+      Rotation: [-0.222181663, 0.063401632, -2.76659846]
+      Scale: [1.00000536, 1.00001431, 0.999999166]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+      Texture: ""
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [1, 1]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.5
+      RestitutionThreshold: 0.5
+  - "Entity: ": 0
+    TagComponent:
+      Name: Ground
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0.96229589, -0.0658229291, 0]
+      Rotation: [-0.000103650491, -0.0283970945, -0.502564728]
+      Scale: [21.38027, 0.682874203, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: ""
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      Type: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [1, 1]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.5
+      RestitutionThreshold: 0.5

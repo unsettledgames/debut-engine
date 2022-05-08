@@ -19,3 +19,6 @@
 [submodule "Debut/vendor/imgui"]
 	path = Debut/vendor/imgui
 	url = https://github.com/ocornut/imgui
+[submodule "Debut/vendor/box2d"]
+	path = Debut/vendor/box2d
+	url = https://github.com/erincatto/box2d

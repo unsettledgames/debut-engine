@@ -5,8 +5,26 @@
 #include "Debut/Scene/Components.h"
 #include "Debut/Renderer/Renderer2D.h"
 
+#include "box2d/b2_world.h"
+#include "box2d/b2_body.h"
+#include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_fixture.h"
+
 namespace Debut
 {
+	static b2BodyType DbtToBox2DBodyType(Rigidbody2DComponent::BodyType dbtType)
+	{
+		switch (dbtType)
+		{
+		case Rigidbody2DComponent::BodyType::Dynamic:	return b2BodyType::b2_dynamicBody;
+		case Rigidbody2DComponent::BodyType::Kinematic:	return b2BodyType::b2_kinematicBody;
+		case Rigidbody2DComponent::BodyType::Static:	return b2BodyType::b2_staticBody;
+		default:
+			DBT_CORE_ASSERT("The specified body type ({0}) is not supported", (int)dbtType);
+			return b2BodyType::b2_staticBody;
+		}
+	}
+	
 	Scene::Scene()
 	{
 	}
@@ -30,6 +48,12 @@ namespace Debut
 	void Scene::OnComponentAdded(TagComponent& tc, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(NativeScriptComponent& nsc, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(Rigidbody2DComponent& rb2d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(BoxCollider2DComponent& bc2d, Entity entity) { }
+
+	//TODO: OnComponentRemove, delete bodies
 
 	template<>
 	void Scene::OnComponentAdded(CameraComponent& camera, Entity entity)
@@ -69,6 +93,7 @@ namespace Debut
 	{
 		// Update scripts
 		{
+			DBT_PROFILE_SCOPE("Scene: Script Update");
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 				{
 					if (!nsc.Instance)
@@ -80,6 +105,30 @@ namespace Debut
 
 					nsc.Instance->OnUpdate(ts);
 				});
+		}
+
+		// Update physics
+		{
+			DBT_PROFILE_SCOPE("Scene: Physics2D Update");
+			// TODO: physics settings
+			const int32_t velocityIterations = 6;
+			const int32_t positionIterations = 2;
+			m_PhysicsWorld2D->Step(ts, velocityIterations, positionIterations);
+
+			// Stuff moved, update the transforms to reflect that
+			auto view = m_Registry.view<Rigidbody2DComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				// TODO: cache bodies so that it's quicker to do this
+				b2Body* body = (b2Body*)entity.GetComponent<Rigidbody2DComponent>().RuntimeBody;
+				const auto& position = body->GetPosition();
+				auto& transform = entity.Transform();
+
+				transform.Translation = { position.x, position.y, 0 };
+				transform.Rotation.z = body->GetAngle();
+			}
+
 		}
 
 		// Render sprites
@@ -115,6 +164,63 @@ namespace Debut
 
 			Renderer2D::EndScene();
 		}
+	}
+
+	void Scene::OnRuntimeStart()
+	{
+		// SETUP PHYSICS!
+		// TODO: physics settings
+		m_PhysicsWorld2D = new b2World({b2Vec2(0.0f, -9.8f)});
+		auto rigidbodyView = m_Registry.view<Rigidbody2DComponent>();
+		auto boxView = m_Registry.view<BoxCollider2DComponent>();
+
+		// Create Rigidbodies
+		for (auto e : rigidbodyView)
+		{
+			Entity entity = { e, this };
+			auto& transform = entity.Transform();
+			auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+
+			b2BodyDef bodyDef;
+			bodyDef.type = DbtToBox2DBodyType(rb2d.Type);
+			bodyDef.position.Set(transform.Translation.x, transform.Translation.y
+			);
+			bodyDef.angle = transform.Rotation.z;
+
+			b2Body* body = m_PhysicsWorld2D->CreateBody(&bodyDef);
+			body->SetFixedRotation(rb2d.FixedRotation);
+			rb2d.RuntimeBody = body;
+
+			// Setup box collders
+			if (entity.HasComponent<BoxCollider2DComponent>())
+			{
+				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
+
+				b2PolygonShape boxShape;
+				boxShape.SetAsBox(transform.Scale.x * bc2d.Size.x / 2, transform.Scale.y * bc2d.Size.y / 2);
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &boxShape;
+				fixtureDef.density = bc2d.Density;
+				fixtureDef.friction = bc2d.Friction;
+				fixtureDef.restitution = bc2d.Restitution;
+				fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
+
+				body->CreateFixture(&fixtureDef);
+			}
+		}
+	}
+
+	void Scene::OnRuntimeStop()
+	{
+		delete m_PhysicsWorld2D;
+		m_PhysicsWorld2D = nullptr;
+	}
+
+	void Scene::DuplicateEntity(const Entity& entity)
+	{
+		// Cycle through all the components
+			// copy the data (is it possible to just memcpy depending on the component type?)
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)

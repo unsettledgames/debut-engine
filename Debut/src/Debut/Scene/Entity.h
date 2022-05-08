@@ -5,6 +5,8 @@
 
 namespace Debut
 {
+	class TransformComponent;
+
 	class Entity
 	{
 	public:
@@ -40,6 +42,8 @@ namespace Debut
 			DBT_ASSERT(HasComponent<T>(), "This entity doesn't have the required component");
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
+
+		TransformComponent& Transform();
 
 		operator bool() const { return (uint32_t)m_EntityHandle != entt::null; }
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; }

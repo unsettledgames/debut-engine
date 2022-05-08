@@ -7,6 +7,32 @@
 namespace YAML
 {
 	template<>
+	struct convert<glm::vec2>
+	{
+		static Node encode(const glm::vec2& rhs)
+		{
+			Node node;
+
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+
+			node.SetStyle(EmitterStyle::Flow);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::vec2& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+				return false;
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+
+			return true;
+		}
+	};
+
+	template<>
 	struct convert<glm::vec3>
 	{
 		static Node encode(const glm::vec3& rhs)
@@ -67,6 +93,13 @@ namespace YAML
 
 namespace Debut
 {
+	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v[0] << v[1] << YAML::EndSeq;
+		return out;
+	}
+
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
 	{
 		out << YAML::Flow;
@@ -79,6 +112,28 @@ namespace Debut
 		out << YAML::Flow;
 		out << YAML::BeginSeq << v[0] << v[1] << v[2] << v[3] << YAML::EndSeq;
 		return out;
+	}
+
+	static std::string Rb2DTypeToString(Rigidbody2DComponent::BodyType type)
+	{
+		switch (type)
+		{
+		case Rigidbody2DComponent::BodyType::Static: return "Static";
+		case Rigidbody2DComponent::BodyType::Dynamic: return "Dynamic";
+		case Rigidbody2DComponent::BodyType::Kinematic: return "Kinematic";
+		default:
+			DBT_CORE_ASSERT(false, "Unknown body type {0}", (int)type);
+			return "";
+		}
+	}
+	static Rigidbody2DComponent::BodyType StringToRb2DType(const std::string& type)
+	{
+		if (type == "Static") return Rigidbody2DComponent::BodyType::Static;
+		if (type == "Dynamic") return Rigidbody2DComponent::BodyType::Dynamic;
+		if (type == "Kinematic") return Rigidbody2DComponent::BodyType::Kinematic;
+		
+		DBT_CORE_ASSERT(false, "Unknown body type {0}", type);
+		return Rigidbody2DComponent::BodyType::Static;
 	}
 	
 
@@ -130,8 +185,25 @@ namespace Debut
 	static void SerializeComponent(const SpriteRendererComponent& s, YAML::Emitter& out)
 	{
 		out << YAML::Key << "Color" << YAML::Value << s.Color;
-		out << YAML::Key << "Texture" << YAML::Value << s.Texture->GetPath();
+		out << YAML::Key << "Texture" << YAML::Value << (s.Texture ? s.Texture->GetPath() : "");
 		out << YAML::Key << "TilingFactor" << YAML::Value << s.TilingFactor;
+	}
+
+	static void SerializeComponent(const Rigidbody2DComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Type" << YAML::Value << Rb2DTypeToString(c.Type);
+		out << YAML::Key << "FixedRotation" << YAML::Value << c.FixedRotation;
+	}
+
+	static void SerializeComponent(const BoxCollider2DComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Size" << YAML::Value << c.Size;
+		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
+
+		out << YAML::Key << "Density" << YAML::Value << c.Density;
+		out << YAML::Key << "Friction" << YAML::Value << c.Friction;
+		out << YAML::Key << "Restitution" << YAML::Value << c.Restitution;
+		out << YAML::Key << "RestitutionThreshold" << YAML::Value << c.RestitutionThreshold;
 	}
 
 	template <typename T>
@@ -184,6 +256,32 @@ namespace Debut
 		if (in["TilingFactor"])		sc.TilingFactor = in["TilingFactor"].as<float>();
 	}
 
+	template<>
+	static void DeserializeComponent<Rigidbody2DComponent>(Entity e, YAML::Node& in)
+	{
+		if (!in)
+			return;
+		Rigidbody2DComponent& rb2d = e.AddComponent<Rigidbody2DComponent>();
+		rb2d.FixedRotation = in["FixedRotation"].as<bool>();
+		rb2d.Type = StringToRb2DType(in["Type"].as<std::string>());
+	}
+
+	template<>
+	static void DeserializeComponent<BoxCollider2DComponent>(Entity e, YAML::Node& in)
+	{
+		if (!in)
+			return;
+		BoxCollider2DComponent& bc2d = e.AddComponent<BoxCollider2DComponent>();
+
+		bc2d.Density = in["Density"].as<float>();
+		bc2d.Friction = in["Friction"].as<float>();
+		bc2d.Restitution= in["Restitution"].as<float>();
+		bc2d.RestitutionThreshold = in["RestitutionThreshold"].as<float>();
+		
+		bc2d.Offset = in["Offset"].as<glm::vec2>();
+		bc2d.Size = in["Size"].as<glm::vec2>();
+	}
+
 	void SceneSerializer::SerializeText(const std::string& fileName)
 	{
 		YAML::Emitter out;
@@ -203,6 +301,8 @@ namespace Debut
 			SerializeComponent<TransformComponent>(entity, "TransformComponent", out);
 			SerializeComponent<CameraComponent>(entity, "CameraComponent", out);
 			SerializeComponent<SpriteRendererComponent>(entity, "SpriteRendererComponent", out);
+			SerializeComponent<Rigidbody2DComponent>(entity, "Rigidbody2DComponent", out);
+			SerializeComponent<BoxCollider2DComponent>(entity, "BoxCollider2DComponent", out);
 
 			out << YAML::EndMap;
 		});
@@ -245,6 +345,8 @@ namespace Debut
 				DeserializeComponent<TransformComponent>(entity, yamlEntity["TransformComponent"]);
 				DeserializeComponent<CameraComponent>(entity, yamlEntity["CameraComponent"]);
 				DeserializeComponent<SpriteRendererComponent>(entity, yamlEntity["SpriteRendererComponent"]);
+				DeserializeComponent<Rigidbody2DComponent>(entity, yamlEntity["Rigidbody2DComponent"]);
+				DeserializeComponent<BoxCollider2DComponent>(entity, yamlEntity["BoxCollider2DComponent"]);
 			}
 		}
 

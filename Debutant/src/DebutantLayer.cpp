@@ -59,8 +59,14 @@ namespace Debut
         }
 
         // Update the scene
-        m_ActiveScene->OnRuntimeUpdate(ts);
-        m_ActiveScene->OnEditorUpdate(ts, m_EditorCamera);
+        switch (m_SceneState)
+        {
+        case SceneState::Play:
+            m_ActiveScene->OnRuntimeUpdate(ts);
+            break;
+        case SceneState::Edit:
+            m_ActiveScene->OnEditorUpdate(ts, m_EditorCamera);
+        }
 
         //Log.AppInfo("Frame time: {0}", (1.0f / ts));
         m_FrameBuffer->Unbind();
@@ -69,11 +75,13 @@ namespace Debut
     void DebutantLayer::OnScenePlay()
     {
         m_SceneState = SceneState::Play;
+        m_ActiveScene->OnRuntimeStart();
     }
 
     void DebutantLayer::OnSceneStop()
     {
         m_SceneState = SceneState::Edit;
+        m_ActiveScene->OnRuntimeStop ();
     }
 
     
@@ -162,6 +170,7 @@ namespace Debut
     {
         ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
         Ref<Texture2D> icon;
+        float buttonSize = ImGui::GetWindowHeight() - 20.0f;
 
         switch (m_SceneState)
         {
@@ -175,7 +184,8 @@ namespace Debut
             break;
         }
 
-        if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(16.0f, 16.0f)))
+        ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (buttonSize * 0.5f));
+        if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(buttonSize, buttonSize)))
         {
             // TODO: simulate physics, pause scene...
             if (m_SceneState == SceneState::Edit)
