@@ -7,6 +7,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+#include <Debut/Renderer/Texture.h>
+#include <Debut/Core/Core.h>
 
 namespace Debut
 {
@@ -54,6 +56,8 @@ namespace Debut
 	struct SpriteRendererComponent
 	{
 		glm::vec4 Color;
+		Ref<Texture2D> Texture;
+		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() : Color(glm::vec4(1.0f)) {}
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;

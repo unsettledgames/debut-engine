@@ -16,7 +16,7 @@ namespace Debut
 	{
 		ImGui::Begin("Content browser");
 
-		static float padding = 16.0f;
+		static float padding = 4.0f;
 		static float iconSize = 64.0f;
 		float cellSize = iconSize + padding;
 
@@ -47,18 +47,29 @@ namespace Debut
 			std::string relativePathString = relativePath.string();
 
 			Ref<Texture2D> icon = dirEntry.is_directory() ? m_Icons["directory"] : GetFileIcon(dirEntry.path().extension().string());
-			
+
+			ImGui::PushID(pathName.c_str());
+
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { iconSize, iconSize }, { 0, 1 }, { 1, 0 });
 			ImGui::PopStyleColor();
 
-			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			if (ImGui::BeginDragDropSource())
+			{
+				const wchar_t* itemPath = path.c_str();
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_DATA", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
+				ImGui::EndDragDropSource();
+			}
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				if (dirEntry.is_directory())
 					m_CurrDirectory /= path.filename();
 			}
 
 			ImGui::TextWrapped(relativePath.filename().string().c_str());
+			ImGui::PopID();
+
 			ImGui::NextColumn();
 		}
 

@@ -2,6 +2,7 @@
 #include <yaml-cpp/yaml.h>
 #include "SceneSerializer.h"
 #include "Components.h"
+#include "Debut/Utils/CppUtils.h"
 
 namespace YAML
 {
@@ -129,6 +130,8 @@ namespace Debut
 	static void SerializeComponent(const SpriteRendererComponent& s, YAML::Emitter& out)
 	{
 		out << YAML::Key << "Color" << YAML::Value << s.Color;
+		out << YAML::Key << "Texture" << YAML::Value << s.Texture->GetPath();
+		out << YAML::Key << "TilingFactor" << YAML::Value << s.TilingFactor;
 	}
 
 	template <typename T>
@@ -177,6 +180,8 @@ namespace Debut
 			return;
 		SpriteRendererComponent& sc = e.AddComponent<SpriteRendererComponent>();
 		sc.Color = in["Color"].as<glm::vec4>();
+		if (in["Texture"])			sc.Texture = in["Texture"].as<std::string>() == "" ? nullptr : Texture2D::Create(in["Texture"].as<std::string>());
+		if (in["TilingFactor"])		sc.TilingFactor = in["TilingFactor"].as<float>();
 	}
 
 	void SceneSerializer::SerializeText(const std::string& fileName)
@@ -212,6 +217,9 @@ namespace Debut
 
 	bool SceneSerializer::DeserializeText(const std::string& fileName)
 	{
+		if (!CppUtils::String::endsWith(fileName, ".debut"))
+			return false;
+
 		std::ifstream inFile(fileName);
 		std::stringstream strStream;
 
@@ -240,6 +248,6 @@ namespace Debut
 			}
 		}
 
-		return false;
+		return true;
 	}
 }

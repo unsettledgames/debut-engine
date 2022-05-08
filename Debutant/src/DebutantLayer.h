@@ -25,6 +25,7 @@ namespace Debut
 
 		void NewScene();
 		void OpenScene();
+		void OpenScene(std::filesystem::path path);
 		void SaveScene();
 		void SaveSceneAs();
 

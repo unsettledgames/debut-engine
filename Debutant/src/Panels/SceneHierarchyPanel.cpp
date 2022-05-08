@@ -2,6 +2,8 @@
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui_internal.h>
+#include <Debut/Renderer/Texture.h>
+#include <filesystem>
 
 namespace Debut
 {
@@ -309,7 +311,22 @@ namespace Debut
 
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
 			{
+				// Color
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color), 0.15f);
+				// Texture
+				ImGui::Button("Texture", ImVec2(64.0f, 64.0f));
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						component.Texture = Texture2D::Create(std::filesystem::path(path).string());
+					}
+					ImGui::EndDragDropTarget();
+				}
+				// Tiling factor
+				ImGui::DragFloat("Tiling factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+
 			});
 	}
 

@@ -15,6 +15,7 @@ namespace Debut
 		uint32_t GetWidth() const override { return m_Width; }
 		uint32_t GetHeight() const override { return m_Height; }
 		uint32_t GetRendererID() const override { return m_RendererID; }
+		std::string GetPath() const override { return m_Path; }
 
 		virtual void SetData(void* data, uint32_t size) override;
 

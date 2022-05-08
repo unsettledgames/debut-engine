@@ -1,0 +1,31 @@
+Scene: Untitled scene
+Entities:
+  - "Entity: ": 1
+    TagComponent:
+      Name: Sprite
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.957528949, 0.214427337, 0.214427337, 1]
+  - "Entity: ": 0
+    TagComponent:
+      Name: Camera
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      FixedAspectRatio: false
+      Primary: true
+      CameraData:
+        ProjectionType: 1
+        OrthoNear: -1
+        OrthoFar: 1
+        PerspNear: 0.00999999978
+        PerspFar: 1000
+        OrthoSize: 5.05000019
+        PerspFOV: 0.785398185

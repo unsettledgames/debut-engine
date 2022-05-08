@@ -169,13 +169,13 @@ namespace Debut
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
             ImGui::Begin("Viewport");
+                // Window resizing
                 auto viewportOffset = ImGui::GetCursorPos();
             
                 m_ViewportFocused = ImGui::IsWindowFocused();
                 m_ViewportHovered = ImGui::IsWindowHovered();
                 Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
 
-                // Window resize
                 ImVec2 viewportSize = ImGui::GetContentRegionAvail();
                 if (m_ViewportSize.x != viewportSize.x || m_ViewportSize.y != viewportSize.y)
                 {
@@ -190,6 +190,18 @@ namespace Debut
                 // Draw scene
                 uint32_t texId = m_FrameBuffer->GetColorAttachment();
                 ImGui::Image((void*)texId, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
+
+                // Accept scene loading
+                if (ImGui::BeginDragDropTarget())
+                {
+                    const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA");
+                    if (payload != nullptr)
+                    {
+                        OpenScene(std::filesystem::path((const wchar_t*)payload->Data));
+                        ImGui::EndDragDropTarget();
+                    }
+                    
+                }
 
                 // Save bounds for mouse picking
                 ImVec2 minBound = ImGui::GetItemRectMin();
@@ -210,11 +222,6 @@ namespace Debut
                 {
                     float winWidth = ImGui::GetWindowWidth();
                     float winHeight = ImGui::GetWindowHeight();
-
-            
-                    /*const auto& cameraComponent = cameraEntity.GetComponent<CameraComponent>();
-                    const glm::mat4& cameraProj = cameraComponent.Camera.GetProjection();
-                    glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());*/
 
                     const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
                     const glm::mat4& cameraProj = m_EditorCamera.GetProjection();
@@ -333,16 +340,19 @@ namespace Debut
     {
         std::string path = FileDialogs::OpenFile("Debut Scene (*.debut)\0*.debut\0");
         if (!path.empty())
-        {
-            m_ActiveScene = CreateRef<Scene>();
-            m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
-            m_SceneHierarchy.SetContext(m_ActiveScene);
+            OpenScene(path);
+    }
 
-            SceneSerializer ss(m_ActiveScene);
-            ss.DeserializeText(path);
+    void DebutantLayer::OpenScene(std::filesystem::path path)
+    {
+        m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+        m_SceneHierarchy.SetContext(m_ActiveScene);
 
-            m_ScenePath = path;
-        }
+        SceneSerializer ss(m_ActiveScene);
+        ss.DeserializeText(path.string());
+
+        m_ScenePath = path.string();
     }
 
     void DebutantLayer::SaveScene()

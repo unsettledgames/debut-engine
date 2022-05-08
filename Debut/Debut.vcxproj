@@ -180,6 +180,7 @@
     <ClInclude Include="src\Debut\Scene\SceneCamera.h" />
     <ClInclude Include="src\Debut\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Debut\Scene\ScriptableEntity.h" />
+    <ClInclude Include="src\Debut\Utils\CppUtils.h" />
     <ClInclude Include="src\Debut\Utils\PlatformUtils.h" />
     <ClInclude Include="src\Debut\dbtpch.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />

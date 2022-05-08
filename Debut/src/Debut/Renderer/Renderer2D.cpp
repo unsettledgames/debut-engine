@@ -287,8 +287,25 @@ namespace Debut
 		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
 			FlushAndReset();
 
-		// Use the white texture
-		const float texIndex = 0;
+		float textureIndex = 0.0f;
+		if (src.Texture)
+		{
+			for (int i = 0; i < s_Data.TextureSlotIndex; i++)
+			{
+				if (*s_Data.TextureSlots[i].get() == *(src.Texture.get()))
+				{
+					textureIndex = (float)i;
+					break;
+				}
+			}
+			if (textureIndex == 0.0f)
+			{
+				textureIndex = (float)s_Data.TextureSlotIndex;
+				s_Data.TextureSlots[s_Data.TextureSlotIndex] = src.Texture;
+				s_Data.TextureSlotIndex++;
+			}
+		}
+
 		glm::vec2 texCoords[] = { glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 1) };
 
 		for (int i = 0; i < 4; i++)
@@ -296,8 +313,8 @@ namespace Debut
 			s_Data.QuadVertexBufferPtr->Position = glm::vec3(transform * s_Data.QuadVertexPositions[i]);
 			s_Data.QuadVertexBufferPtr->Color = src.Color;
 			s_Data.QuadVertexBufferPtr->TexCoord = texCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = 0;
-			s_Data.QuadVertexBufferPtr->TilingFactor = 1;
+			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = src.TilingFactor;
 			s_Data.QuadVertexBufferPtr->EntityID = entityID;
 			s_Data.QuadVertexBufferPtr++;
 		}
