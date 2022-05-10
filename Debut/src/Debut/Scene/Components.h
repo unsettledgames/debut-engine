@@ -9,10 +9,19 @@
 #include <glm/gtx/quaternion.hpp>
 #include <Debut/Renderer/Texture.h>
 #include <Debut/Core/Core.h>
+#include <Debut/Core/UUID.h>
 
 namespace Debut
 {
 	// BASIC
+
+	struct IDComponent
+	{
+		UUID ID;
+
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+	};
 
 	struct TagComponent
 	{

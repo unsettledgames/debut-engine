@@ -2,6 +2,11 @@
 
 #include "Scene.h"
 
+namespace YAML
+{
+	class Emitter;
+}
+
 namespace Debut
 {
 	class SceneSerializer
@@ -12,6 +17,7 @@ namespace Debut
 
 		void SerializeText(const std::string& name);
 		void SerializeBin(const std::string& name) {};
+		void SerializeEntity(Entity& entity, YAML::Emitter& out);
 
 		bool DeserializeText(const std::string& name);
 		bool DeserializeBin(const std::string& name) { return false; };

@@ -15,4 +15,9 @@ namespace Debut
 	{
 		return GetComponent<TransformComponent>();
 	}
+
+	uint64_t Entity::ID()
+	{
+		return GetComponent<IDComponent>().ID;
+	}
 }

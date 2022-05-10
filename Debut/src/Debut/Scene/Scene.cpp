@@ -52,6 +52,8 @@ namespace Debut
 	void Scene::OnComponentAdded(Rigidbody2DComponent& rb2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(BoxCollider2DComponent& bc2d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
 
 	//TODO: OnComponentRemove, delete bodies
 
@@ -229,6 +231,7 @@ namespace Debut
 		
 		ret.AddComponent<TransformComponent>();
 		ret.AddComponent<TagComponent>(name);
+		ret.AddComponent<IDComponent>();
 
 		return ret;
 	}

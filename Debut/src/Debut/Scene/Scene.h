@@ -32,6 +32,8 @@ namespace Debut
 
 		Entity GetPrimaryCameraEntity();
 
+		static void Copy();
+
 	private:
 		template<typename T>
 		void OnComponentAdded(T& component, Entity entity);

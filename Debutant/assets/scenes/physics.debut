@@ -1,25 +1,32 @@
 Scene: Untitled scene
 Entities:
-  - "Entity: ": 2
+  - "Entity: ": 17994332943426538562
+    IDComponent:
+      ID: 17994332943426538562
     TagComponent:
-      Name: Camera
+      Name: Ground
       Tag: Untagged
     TransformComponent:
-      Translation: [1.08750916, 1.50526989, 0]
-      Rotation: [0, 0, 0]
-      Scale: [2, 2, 1]
-    CameraComponent:
-      FixedAspectRatio: false
-      Primary: true
-      CameraData:
-        ProjectionType: 1
-        OrthoNear: -1
-        OrthoFar: 1
-        PerspNear: 0.00999999978
-        PerspFar: 1000
-        OrthoSize: 10
-        PerspFOV: 0.785398185
-  - "Entity: ": 1
+      Translation: [0.96229589, -0.0658229142, -9.18046972e-10]
+      Rotation: [-0.000103650025, -0.0283970926, -0.502564788]
+      Scale: [21.3802719, 0.682874203, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: ""
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      Type: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [1, 1]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.5
+      RestitutionThreshold: 0.5
+  - "Entity: ": 2483595427435548608
+    IDComponent:
+      ID: 2483595427435548608
     TagComponent:
       Name: Square
       Tag: Untagged
@@ -41,25 +48,24 @@ Entities:
       Friction: 0.5
       Restitution: 0.5
       RestitutionThreshold: 0.5
-  - "Entity: ": 0
+  - "Entity: ": 6780378847134667234
+    IDComponent:
+      ID: 6780378847134667234
     TagComponent:
-      Name: Ground
+      Name: Camera
       Tag: Untagged
     TransformComponent:
-      Translation: [0.96229589, -0.0658229291, 0]
-      Rotation: [-0.000103650491, -0.0283970945, -0.502564728]
-      Scale: [21.38027, 0.682874203, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      Texture: ""
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      Type: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Size: [1, 1]
-      Offset: [0, 0]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0.5
-      RestitutionThreshold: 0.5
+      Translation: [1.08750916, 1.50526989, 0]
+      Rotation: [0, 0, 0]
+      Scale: [2, 2, 1]
+    CameraComponent:
+      FixedAspectRatio: false
+      Primary: true
+      CameraData:
+        ProjectionType: 1
+        OrthoNear: -1
+        OrthoFar: 1
+        PerspNear: 0.00999999978
+        PerspFar: 1000
+        OrthoSize: 10
+        PerspFOV: 0.785398185

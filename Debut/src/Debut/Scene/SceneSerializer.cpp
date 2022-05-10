@@ -1,8 +1,8 @@
 #include "Debut/dbtpch.h"
-#include <yaml-cpp/yaml.h>
 #include "SceneSerializer.h"
 #include "Components.h"
 #include "Debut/Utils/CppUtils.h"
+#include <yaml-cpp/yaml.h>
 
 namespace YAML
 {
@@ -149,6 +149,10 @@ namespace Debut
 		out << YAML::EndMap;
 	}
 
+	static void SerializeComponent(const IDComponent& i, YAML::Emitter& out)
+	{
+		out << YAML::Key << "ID" << YAML::Value << i.ID;
+	}
 
 	static void SerializeComponent(const TagComponent& t, YAML::Emitter& out)
 	{
@@ -210,6 +214,14 @@ namespace Debut
 	static void DeserializeComponent(Entity e, YAML::Node& in)
 	{
 		DeserializeComponent<T>(e, in);
+	}
+
+	template <>
+	static void DeserializeComponent<IDComponent>(Entity e, YAML::Node& in)
+	{
+		if (!in) return;
+		IDComponent& id = e.GetComponent<IDComponent>();
+		id.ID = in["ID"].as<uint64_t>();
 	}
 
 	template <>
@@ -282,6 +294,21 @@ namespace Debut
 		bc2d.Size = in["Size"].as<glm::vec2>();
 	}
 
+	void SceneSerializer::SerializeEntity(Entity& entity, YAML::Emitter& out)
+	{
+		out << YAML::BeginMap << YAML::Key << "Entity: " << YAML::Value << entity.ID();
+
+		SerializeComponent<IDComponent>(entity, "IDComponent", out);
+		SerializeComponent<TagComponent>(entity, "TagComponent", out);
+		SerializeComponent<TransformComponent>(entity, "TransformComponent", out);
+		SerializeComponent<CameraComponent>(entity, "CameraComponent", out);
+		SerializeComponent<SpriteRendererComponent>(entity, "SpriteRendererComponent", out);
+		SerializeComponent<Rigidbody2DComponent>(entity, "Rigidbody2DComponent", out);
+		SerializeComponent<BoxCollider2DComponent>(entity, "BoxCollider2DComponent", out);
+
+		out << YAML::EndMap;
+	}
+
 	void SceneSerializer::SerializeText(const std::string& fileName)
 	{
 		YAML::Emitter out;
@@ -292,19 +319,9 @@ namespace Debut
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
 		m_Scene->m_Registry.each([&](auto entityId) 
-		{
+		{ 
 			Entity entity(entityId, m_Scene.get());
-
-			out << YAML::BeginMap << YAML::Key << "Entity: " << YAML::Value << (long)entityId;
-			
-			SerializeComponent<TagComponent>(entity, "TagComponent", out);
-			SerializeComponent<TransformComponent>(entity, "TransformComponent", out);
-			SerializeComponent<CameraComponent>(entity, "CameraComponent", out);
-			SerializeComponent<SpriteRendererComponent>(entity, "SpriteRendererComponent", out);
-			SerializeComponent<Rigidbody2DComponent>(entity, "Rigidbody2DComponent", out);
-			SerializeComponent<BoxCollider2DComponent>(entity, "BoxCollider2DComponent", out);
-
-			out << YAML::EndMap;
+			SerializeEntity(entity, out);
 		});
 
 		out << YAML::EndSeq;
@@ -347,6 +364,7 @@ namespace Debut
 				DeserializeComponent<SpriteRendererComponent>(entity, yamlEntity["SpriteRendererComponent"]);
 				DeserializeComponent<Rigidbody2DComponent>(entity, yamlEntity["Rigidbody2DComponent"]);
 				DeserializeComponent<BoxCollider2DComponent>(entity, yamlEntity["BoxCollider2DComponent"]);
+				DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
 			}
 		}
 

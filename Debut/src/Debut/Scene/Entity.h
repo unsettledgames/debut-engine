@@ -1,7 +1,9 @@
 #pragma once
 
 #include <Debut/Scene/Scene.h>
+#include <Debut/Core/UUID.h>
 #include <entt.hpp>
+#include <xhash>
 
 namespace Debut
 {
@@ -44,6 +46,7 @@ namespace Debut
 		}
 
 		TransformComponent& Transform();
+		uint64_t ID();
 
 		operator bool() const { return (uint32_t)m_EntityHandle != entt::null; }
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; }

@@ -75,13 +75,20 @@ namespace Debut
     void DebutantLayer::OnScenePlay()
     {
         m_SceneState = SceneState::Play;
-        m_ActiveScene->OnRuntimeStart();
+
+        m_RuntimeScene = Scene::Copy(m_EditorScene);
+        m_RuntimeScene->OnRuntimeStart();
+
+        m_ActiveScene = m_RuntimeScene;
     }
 
     void DebutantLayer::OnSceneStop()
     {
         m_SceneState = SceneState::Edit;
         m_ActiveScene->OnRuntimeStop ();
+
+        m_RuntimeScene = nullptr;
+        m_ActiveScene = m_EditorScene;
     }
 
     
@@ -268,7 +275,8 @@ namespace Debut
             m_ViewportBounds[0] = { minBound.x, minBound.y };
             m_ViewportBounds[1] = { maxBound.x, maxBound.y };
 
-            DrawGizmos();
+            if (m_SceneState == SceneState::Edit)
+                DrawGizmos();
 
             ImGui::PopStyleVar();
         }
@@ -417,14 +425,18 @@ namespace Debut
 
     void DebutantLayer::OpenScene(std::filesystem::path path)
     {
-        m_ActiveScene = CreateRef<Scene>();
-        m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
-        m_SceneHierarchy.SetContext(m_ActiveScene);
+        if (m_SceneState != SceneState::Edit)
+            OnSceneStop();
 
-        SceneSerializer ss(m_ActiveScene);
+        m_EditorScene = CreateRef<Scene>();
+        m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+        m_SceneHierarchy.SetContext(m_EditorScene);
+
+        SceneSerializer ss(m_EditorScene);
         ss.DeserializeText(path.string());
 
         m_ScenePath = path.string();
+        m_ActiveScene = m_EditorScene;
     }
 
     void DebutantLayer::SaveScene()
