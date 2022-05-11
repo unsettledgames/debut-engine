@@ -25,7 +25,8 @@ namespace Debut
 
         m_FrameBuffer = FrameBuffer::Create(fbSpecs);
 
-        m_ActiveScene = CreateRef<Scene>();
+        m_EditorScene = CreateRef<Scene>();
+        m_ActiveScene = m_EditorScene;
         m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
@@ -66,6 +67,7 @@ namespace Debut
             break;
         case SceneState::Edit:
             m_ActiveScene->OnEditorUpdate(ts, m_EditorCamera);
+            break;
         }
 
         //Log.AppInfo("Frame time: {0}", (1.0f / ts));
@@ -76,7 +78,8 @@ namespace Debut
     {
         m_SceneState = SceneState::Play;
 
-        m_RuntimeScene = Scene::Copy(m_EditorScene);
+        // TODO: textures aren't updated in the runtime scene
+        m_RuntimeScene = Scene::Copy(m_ActiveScene);
         m_RuntimeScene->OnRuntimeStart();
 
         m_ActiveScene = m_RuntimeScene;
@@ -85,12 +88,11 @@ namespace Debut
     void DebutantLayer::OnSceneStop()
     {
         m_SceneState = SceneState::Edit;
-        m_ActiveScene->OnRuntimeStop ();
+        m_ActiveScene->OnRuntimeStop();
 
         m_RuntimeScene = nullptr;
         m_ActiveScene = m_EditorScene;
     }
-
     
 
     void DebutantLayer::OnImGuiRender()
@@ -413,10 +415,15 @@ namespace Debut
 
     void DebutantLayer::NewScene()
     {
-        m_ActiveScene = CreateRef<Scene>();
-        m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
-        m_SceneHierarchy.SetContext(m_ActiveScene);
+        OnSceneStop();
 
+        m_EditorScene = CreateRef<Scene>();
+        m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+
+        m_ActiveScene = m_EditorScene;
+        m_RuntimeScene = nullptr;
+
+        m_SceneHierarchy.SetContext(m_ActiveScene);
         m_ScenePath = "";
     }
 
@@ -433,6 +440,8 @@ namespace Debut
             OnSceneStop();
 
         m_EditorScene = CreateRef<Scene>();
+        m_RuntimeScene = nullptr;
+
         m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
         m_SceneHierarchy.SetContext(m_EditorScene);
 

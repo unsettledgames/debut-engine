@@ -8,11 +8,11 @@ Entities:
       Tag: Untagged
     TransformComponent:
       Translation: [-5.32363558, 7.78123808, -1.22912598]
-      Rotation: [-0.222181663, 0.063401632, -2.76659846]
-      Scale: [1.00000536, 1.00001431, 0.999999166]
+      Rotation: [-0.222181559, 0.0634018034, -2.76659846]
+      Scale: [2.30000973, 2.30003095, 2.29999781]
     SpriteRendererComponent:
-      Color: [1, 0, 0, 1]
-      Texture: ""
+      Color: [0, 0.525096655, 1, 1]
+      Texture: assets\textures\akita.png
       TilingFactor: 1
     Rigidbody2DComponent:
       Type: Dynamic
@@ -22,7 +22,7 @@ Entities:
       Offset: [0, 0]
       Density: 1
       Friction: 0.5
-      Restitution: 0.5
+      Restitution: 1
       RestitutionThreshold: 0.5
   - "Entity: ": 6780378847134667234
     IDComponent:
@@ -52,12 +52,12 @@ Entities:
       Name: Square
       Tag: Untagged
     TransformComponent:
-      Translation: [-3.288445, 7.07815886, -1.22912598]
-      Rotation: [-0.222181335, 0.0634019077, -2.76659846]
-      Scale: [0.999999821, 1.00001252, 0.999998868]
+      Translation: [-3.38003588, 6.96370268, -1.22912598]
+      Rotation: [-0.222181469, 0.0634026527, 2.71129036]
+      Scale: [2.1863234, 2.27001309, 2.2699976]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
-      Texture: ""
+      Texture: assets\textures\akita.png
       TilingFactor: 1
     Rigidbody2DComponent:
       Type: Dynamic
@@ -66,8 +66,8 @@ Entities:
       Size: [1, 1]
       Offset: [0, 0]
       Density: 1
-      Friction: 0.5
-      Restitution: 0.5
+      Friction: 1
+      Restitution: 0
       RestitutionThreshold: 0.5
   - "Entity: ": 17994332943426538562
     IDComponent:
@@ -90,6 +90,6 @@ Entities:
       Size: [1, 1]
       Offset: [0, 0]
       Density: 1
-      Friction: 0.5
-      Restitution: 0.5
+      Friction: 1
+      Restitution: 0
       RestitutionThreshold: 0.5
