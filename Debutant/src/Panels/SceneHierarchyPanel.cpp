@@ -131,7 +131,7 @@ namespace Debut
 		flags |= ImGuiTreeNodeFlags_Selected;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 
-		// HACKY
+		// TODO: HACKY
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tc.Name.c_str());
 		if (ImGui::IsItemClicked())
 		{

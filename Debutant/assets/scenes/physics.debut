@@ -1,34 +1,10 @@
 Scene: Untitled scene
 Entities:
-  - "Entity: ": 17994332943426538562
+  - "Entity: ": 10553123880060492701
     IDComponent:
-      ID: 17994332943426538562
+      ID: 10553123880060492701
     TagComponent:
-      Name: Ground
-      Tag: Untagged
-    TransformComponent:
-      Translation: [0.96229589, -0.0658229142, -9.18046972e-10]
-      Rotation: [-0.000103650025, -0.0283970926, -0.502564788]
-      Scale: [21.3802719, 0.682874203, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      Texture: ""
-      TilingFactor: 1
-    Rigidbody2DComponent:
-      Type: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Size: [1, 1]
-      Offset: [0, 0]
-      Density: 1
-      Friction: 0.5
-      Restitution: 0.5
-      RestitutionThreshold: 0.5
-  - "Entity: ": 2483595427435548608
-    IDComponent:
-      ID: 2483595427435548608
-    TagComponent:
-      Name: Square
+      Name: Square Copy
       Tag: Untagged
     TransformComponent:
       Translation: [-5.32363558, 7.78123808, -1.22912598]
@@ -69,3 +45,51 @@ Entities:
         PerspFar: 1000
         OrthoSize: 10
         PerspFOV: 0.785398185
+  - "Entity: ": 2483595427435548608
+    IDComponent:
+      ID: 2483595427435548608
+    TagComponent:
+      Name: Square
+      Tag: Untagged
+    TransformComponent:
+      Translation: [-3.288445, 7.07815886, -1.22912598]
+      Rotation: [-0.222181335, 0.0634019077, -2.76659846]
+      Scale: [0.999999821, 1.00001252, 0.999998868]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+      Texture: ""
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [1, 1]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.5
+      RestitutionThreshold: 0.5
+  - "Entity: ": 17994332943426538562
+    IDComponent:
+      ID: 17994332943426538562
+    TagComponent:
+      Name: Ground
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0.96229589, -0.0658229142, -9.18046972e-10]
+      Rotation: [-0.000103650025, -0.0283970926, -0.502564788]
+      Scale: [21.3802719, 0.682874203, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: ""
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      Type: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [1, 1]
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.5
+      RestitutionThreshold: 0.5

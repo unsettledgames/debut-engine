@@ -342,6 +342,10 @@ namespace Debut
 
         switch (e.GetKeyCode())
         {
+        // Hierarchy shortcuts
+        case DBT_KEY_D:
+            m_ActiveScene->DuplicateEntity(m_SceneHierarchy.GetSelectionContext());
+            break;
         // File Menu
         case DBT_KEY_N:
             if (Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL) || Input::IsKeyPressed(DBT_KEY_RIGHT_CONTROL))

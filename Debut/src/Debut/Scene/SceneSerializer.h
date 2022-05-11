@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene.h"
+#include <Debut/Events/KeyEvent.h>
 
 namespace YAML
 {

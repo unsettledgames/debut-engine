@@ -55,6 +55,29 @@ namespace Debut
 	template<>
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
 
+	template <typename Component>
+	static void CopyComponent(entt::registry& dst, const entt::registry& src, const std::unordered_map<UUID, entt::entity> enttMap)
+	{
+		auto view = src.view<Component>();
+		auto idView = dst.view<IDComponent>();
+
+		for (auto e : view)
+		{
+			UUID id = src.get<IDComponent>(e).ID;
+			entt::entity dstEnttID = enttMap.at(id);
+
+			auto& component = src.get<Component>(e);
+			dst.emplace_or_replace<Component>(dstEnttID, component);
+		}
+	}
+
+	template <typename Component>
+	static void CopyComponentIfExists(Entity& dst, Entity& src)
+	{
+		if (src.HasComponent<Component>())
+			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+	}
+
 	//TODO: OnComponentRemove, delete bodies
 
 	template<>
@@ -219,16 +242,25 @@ namespace Debut
 		m_PhysicsWorld2D = nullptr;
 	}
 
-	void Scene::DuplicateEntity(const Entity& entity)
+	void Scene::DuplicateEntity(Entity& entity)
 	{
-		// Cycle through all the components
-			// copy the data (is it possible to just memcpy depending on the component type?)
+		if (!entity)
+			return;
+
+		Entity duplicate = CreateEntity(entity.GetComponent<TagComponent>().Name + " Copy");
+		
+		CopyComponentIfExists<TransformComponent>(duplicate, entity);
+		CopyComponentIfExists<SpriteRendererComponent>(duplicate, entity);
+		CopyComponentIfExists<Rigidbody2DComponent>(duplicate, entity);
+		CopyComponentIfExists<BoxCollider2DComponent>(duplicate, entity);
+		CopyComponentIfExists<CameraComponent>(duplicate, entity);
+		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity ret = { m_Registry.create(), this };
-		
+
 		ret.AddComponent<TransformComponent>();
 		ret.AddComponent<TagComponent>(name);
 		ret.AddComponent<IDComponent>();
@@ -236,9 +268,54 @@ namespace Debut
 		return ret;
 	}
 
+	Entity Scene::CreateEntity(const UUID& id, const std::string& name)
+	{
+		Entity ret = { m_Registry.create(), this };
+
+		ret.AddComponent<TransformComponent>();
+		ret.AddComponent<TagComponent>(name);
+		IDComponent idC = ret.AddComponent<IDComponent>();
+		idC.ID = id;
+
+		return ret;
+	}
+
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+	}
+
+	Ref<Scene> Scene::Copy(Ref<Scene> other)
+	{
+		Ref<Scene> newScene = CreateRef<Scene>();
+
+		newScene->m_ViewportHeight = other->m_ViewportHeight;
+		newScene->m_ViewportWidth = other->m_ViewportWidth;
+
+		std::unordered_map<UUID, entt::entity> enttMap;
+
+		auto& srcSceneRegistry = other->m_Registry;
+		auto& dstSceneRegistry = newScene->m_Registry;
+		auto idView = srcSceneRegistry.view<IDComponent>();
+
+		// Copy old entities
+		for (auto e : idView)
+		{
+			UUID id = srcSceneRegistry.get<IDComponent>(e).ID;
+			auto& name = srcSceneRegistry.get<TagComponent>(e).Name;
+
+			Entity newEntity = newScene->CreateEntity(id, name);
+			enttMap[id] = newEntity;
+		}
+
+		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+
+		return newScene;
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)

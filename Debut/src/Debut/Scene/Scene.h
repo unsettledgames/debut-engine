@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entt.hpp>
+#include <Debut/Core/UUID.h>
 #include "Debut/Core/Time.h"
 #include "Debut/Renderer/EditorCamera.h"
 
@@ -27,12 +28,14 @@ namespace Debut
 		void OnRuntimeStop();
 
 		Entity CreateEntity(const std::string& name = "New Entity");
-		void DuplicateEntity(const Entity& entity);
+		Entity CreateEntity(const UUID& id, const std::string& name = "New Entity");
+
+		void DuplicateEntity(Entity& entity);
 		void DestroyEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
 
-		static void Copy();
+		static Ref<Scene> Copy(Ref<Scene> other);
 
 	private:
 		template<typename T>
