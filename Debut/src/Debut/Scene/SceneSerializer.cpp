@@ -210,6 +210,17 @@ namespace Debut
 		out << YAML::Key << "RestitutionThreshold" << YAML::Value << c.RestitutionThreshold;
 	}
 
+	static void SerializeComponent(const CircleCollider2DComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Radius" << YAML::Value << c.Radius;
+		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
+
+		out << YAML::Key << "Density" << YAML::Value << c.Density;
+		out << YAML::Key << "Friction" << YAML::Value << c.Friction;
+		out << YAML::Key << "Restitution" << YAML::Value << c.Restitution;
+		out << YAML::Key << "RestitutionThreshold" << YAML::Value << c.RestitutionThreshold;
+	}
+
 	template <typename T>
 	static void DeserializeComponent(Entity e, YAML::Node& in)
 	{
@@ -287,11 +298,27 @@ namespace Debut
 
 		bc2d.Density = in["Density"].as<float>();
 		bc2d.Friction = in["Friction"].as<float>();
-		bc2d.Restitution= in["Restitution"].as<float>();
+		bc2d.Restitution = in["Restitution"].as<float>();
 		bc2d.RestitutionThreshold = in["RestitutionThreshold"].as<float>();
-		
+
 		bc2d.Offset = in["Offset"].as<glm::vec2>();
 		bc2d.Size = in["Size"].as<glm::vec2>();
+	}
+
+	template<>
+	static void DeserializeComponent<CircleCollider2DComponent>(Entity e, YAML::Node& in)
+	{
+		if (!in)
+			return;
+		CircleCollider2DComponent& bc2d = e.AddComponent<CircleCollider2DComponent>();
+
+		bc2d.Density = in["Density"].as<float>();
+		bc2d.Friction = in["Friction"].as<float>();
+		bc2d.Restitution = in["Restitution"].as<float>();
+		bc2d.RestitutionThreshold = in["RestitutionThreshold"].as<float>();
+
+		bc2d.Offset = in["Offset"].as<glm::vec2>();
+		bc2d.Radius = in["Radius"].as<float>();
 	}
 
 	void SceneSerializer::SerializeEntity(Entity& entity, YAML::Emitter& out)
@@ -305,6 +332,7 @@ namespace Debut
 		SerializeComponent<SpriteRendererComponent>(entity, "SpriteRendererComponent", out);
 		SerializeComponent<Rigidbody2DComponent>(entity, "Rigidbody2DComponent", out);
 		SerializeComponent<BoxCollider2DComponent>(entity, "BoxCollider2DComponent", out);
+		SerializeComponent<CircleCollider2DComponent>(entity, "CircleCollider2DComponent", out);
 
 		out << YAML::EndMap;
 	}
@@ -364,6 +392,7 @@ namespace Debut
 				DeserializeComponent<SpriteRendererComponent>(entity, yamlEntity["SpriteRendererComponent"]);
 				DeserializeComponent<Rigidbody2DComponent>(entity, yamlEntity["Rigidbody2DComponent"]);
 				DeserializeComponent<BoxCollider2DComponent>(entity, yamlEntity["BoxCollider2DComponent"]);
+				DeserializeComponent<CircleCollider2DComponent>(entity, yamlEntity["CircleCollider2DComponent"]);
 				DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
 			}
 		}

@@ -92,7 +92,8 @@ namespace Debut
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<Texture>& texture, float tilingFactor = 1);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<SubTexture2D>& texture, float tilingFactor = 1);
 
-		static void DrawLine(glm::vec3& p0, glm::vec3& p1, glm::vec4& color);
+		static void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color);
+		static void DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec4& color);
 
 		static void DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& src, int entityID);
 		static void ResetStats();

@@ -77,18 +77,7 @@ namespace Debut
 		SpriteRendererComponent(const glm::vec4& color) : Color(color) {}
 	};
 
-	struct CircleRendererComponent
-	{
-		glm::vec4 Color{0.2f, 0.3f, 1.0f, 1.0f};
-		float Radius = 0.5f;
-		float Thickness = 1.0f;
-		float Fade = 0.0f;
-
-		CircleRendererComponent() : Color(glm::vec4(1.0f)) {}
-		CircleRendererComponent(const CircleRendererComponent&) = default;
-	};
-
-	// PHYSICS AND COLLIDER
+	// PHYSICS AND COLLIDERS
 	struct Rigidbody2DComponent
 	{
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
@@ -107,7 +96,7 @@ namespace Debut
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		glm::vec2 Size = { 1.0f, 1.0f };
 
-		// Shouldn't this stuff be in the rigidbody? Btw, move to physics material
+		// Move to physics material
 		float Density = 1.0f;
 		float Friction = 0.5f;
 		float Restitution = 0.5f;
@@ -117,6 +106,23 @@ namespace Debut
 
 		BoxCollider2DComponent() = default;
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
+	};
+
+	struct CircleCollider2DComponent
+	{
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		float Radius = 1.0f;
+		
+		// Move to physics material
+		float Density = 1.0f;
+		float Friction = 0.5f;
+		float Restitution = 0.5f;
+		float RestitutionThreshold = 0.5f;
+
+		void* RuntimeFixture = nullptr;
+
+		CircleCollider2DComponent() = default;
+		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
 	// SCRIPT

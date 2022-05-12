@@ -27,6 +27,8 @@ namespace Debut
 		inline static API GetAPI() { return s_API; }
 		inline static void SetAPI(API val) { s_API = val; }
 
+		virtual void SetLineWidth(float thickness) = 0;
+
 	private:
 		static API s_API;
 	};

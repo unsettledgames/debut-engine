@@ -8,6 +8,7 @@
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_circle_shape.h"
 #include "box2d/b2_fixture.h"
 
 namespace Debut
@@ -52,6 +53,8 @@ namespace Debut
 	void Scene::OnComponentAdded(Rigidbody2DComponent& rb2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(BoxCollider2DComponent& bc2d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(CircleCollider2DComponent& bc2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
 
@@ -108,9 +111,17 @@ namespace Debut
 		{
 			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 			Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-		}
 
-		Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.0f, 0.0f, 1.0f, 1.0f));
+			// Render debug info
+			// Test: visualize box colliders
+			auto boxView = m_Registry.view<BoxCollider2DComponent>();
+			for (auto e : boxView)
+			{
+				Entity entity = { e, this };
+				BoxCollider2DComponent component = m_Registry.get<BoxCollider2DComponent>(e);
+				Renderer2D::DrawRect(entity.Transform().GetTransform(), component.Size, glm::vec4(0.2f, 1.0f, 0.4f, 1.0f));
+			}
+		}
 
 		Renderer2D::EndScene();
 	}
@@ -118,6 +129,7 @@ namespace Debut
 
 	void Scene::OnRuntimeUpdate(Timestep ts)
 	{
+		
 		// Update scripts
 		{
 			DBT_PROFILE_SCOPE("Scene: Script Update");
@@ -155,7 +167,6 @@ namespace Debut
 				transform.Translation = { position.x, position.y, 0 };
 				transform.Rotation.z = body->GetAngle();
 			}
-
 		}
 
 		// Render sprites
@@ -187,7 +198,6 @@ namespace Debut
 			{
 				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-
 			}
 
 			Renderer2D::EndScene();
@@ -201,6 +211,7 @@ namespace Debut
 		m_PhysicsWorld2D = new b2World({b2Vec2(0.0f, -9.8f)});
 		auto rigidbodyView = m_Registry.view<Rigidbody2DComponent>();
 		auto boxView = m_Registry.view<BoxCollider2DComponent>();
+		auto circleView = m_Registry.view<CircleCollider2DComponent>();
 
 		// Create Rigidbodies
 		for (auto e : rigidbodyView)
@@ -236,6 +247,23 @@ namespace Debut
 
 				body->CreateFixture(&fixtureDef);
 			}
+
+			if (entity.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
+
+				b2CircleShape circleShape;
+				circleShape.m_radius = cc2d.Radius;
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &circleShape;
+				fixtureDef.density = cc2d.Density;
+				fixtureDef.friction = cc2d.Friction;
+				fixtureDef.restitution = cc2d.Restitution;
+				fixtureDef.restitutionThreshold = cc2d.RestitutionThreshold;
+				
+				body->CreateFixture(&fixtureDef);
+			}
 		}
 	}
 
@@ -256,6 +284,7 @@ namespace Debut
 		CopyComponentIfExists<SpriteRendererComponent>(duplicate, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(duplicate, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(duplicate, entity);
+		CopyComponentIfExists<CircleCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CameraComponent>(duplicate, entity);
 		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
 	}
@@ -315,6 +344,7 @@ namespace Debut
 		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 

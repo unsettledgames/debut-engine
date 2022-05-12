@@ -37,6 +37,11 @@ namespace Debut
 			s_RendererAPI->SetViewport(x, y, width, height);
 		}
 
+		inline static void SetLineWidth(float thickness)
+		{
+			s_RendererAPI->SetLineWidth(thickness);
+		}
+
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

@@ -13,6 +13,8 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION();
 
+		RenderCommand::SetLineWidth(1.3f);
+
 		// Initialize index buffer
 		int* quadIndices = new int[s_Data.MaxIndices];
 		uint32_t offset = 0;
@@ -137,7 +139,7 @@ namespace Debut
 			uint32_t dataSize = (uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase;
 			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
 
-			s_Data.LineShader->Bind();
+			s_Data.LineShader->Bind();			
 			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
 			s_Data.LineShader->Unbind();
 		}
@@ -162,7 +164,7 @@ namespace Debut
 		s_Data.Stats.DrawCalls++;
 	}
 
-	void Renderer2D::DrawLine(glm::vec3& p0, glm::vec3& p1, glm::vec4& color) 
+	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
 	{
 		s_Data.LineVertexBufferPtr->Position = p0;
 		s_Data.LineVertexBufferPtr->Color = color;
@@ -173,6 +175,21 @@ namespace Debut
 		s_Data.LineVertexBufferPtr++;
 
 		s_Data.LineVertexCount += 2;
+	}
+
+	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec4& color)
+	{
+		glm::vec3 topRight, bottomRight, topLeft, bottomLeft;
+
+		topRight = transform * glm::vec4(-size.x / 2, size.y / 2, 0.0f, 1.0f);
+		bottomRight = transform * glm::vec4(-size.x / 2, -size.y / 2, 0.0f, 1.0f);
+		topLeft = transform * glm::vec4(size.x / 2, size.y / 2, 0.0f, 1.0f);
+		bottomLeft = transform * glm::vec4(size.x / 2, -size.y / 2, 0.0f, 1.0f);
+
+		DrawLine(topRight, bottomRight, color);
+		DrawLine(topLeft, bottomLeft, color);
+		DrawLine(topLeft, topRight, color);
+		DrawLine(bottomLeft, bottomRight, color);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const glm::vec4 color)

@@ -93,3 +93,27 @@ Entities:
       Friction: 1
       Restitution: 0
       RestitutionThreshold: 0.5
+  - "Entity: ": 6535183061097293687
+    IDComponent:
+      ID: 6535183061097293687
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [-0.732957661, 6.01955843, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0.243243217, 0.243243217, 1]
+      Texture: ""
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    CircleCollider2DComponent:
+      Radius: 1
+      Offset: [0, 0]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0.5
+      RestitutionThreshold: 0.5
