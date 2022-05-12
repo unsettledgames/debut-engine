@@ -26,6 +26,14 @@ namespace Debut
 		int EntityID = -1;
 	};
 
+	struct LineVertex
+	{
+		glm::vec3 Position;
+		glm::vec4 Color;
+
+		// Unity-like line rendering? In that case Quad + proper shader!
+	};
+
 	struct Render2DStats
 	{
 		uint32_t DrawCalls;
@@ -43,14 +51,22 @@ namespace Debut
 		// TODO: RenderCapabilities
 		static const uint32_t MaxTextureSlots = 32;
 
-		Ref<VertexArray> VertexArray;
+		Ref<VertexArray> QuadVertexArray;
 		Ref<VertexBuffer> QuadVertexBuffer;
 		Ref<Shader> TextureShader;
 		Ref<Texture> WhiteTexture;
 
+		Ref<Debut::VertexArray> LineVertexArray;
+		Ref<VertexBuffer> LineVertexBuffer;
+		Ref<Shader> LineShader;
+
 		uint32_t QuadIndexCount = 0;
 		QuadVertex* QuadVertexBufferBase = nullptr;
 		QuadVertex* QuadVertexBufferPtr = nullptr;
+
+		uint32_t LineVertexCount = 0;
+		LineVertex* LineVertexBufferBase = nullptr;
+		LineVertex* LineVertexBufferPtr = nullptr;
 
 		std::array<Ref<Texture>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 = white texture
@@ -67,7 +83,6 @@ namespace Debut
 
 		static void BeginScene(const Camera& camera, const glm::mat4 transform);
 		static void BeginScene(const EditorCamera& camera);
-		static void BeginScene(const OrthographicCamera& camera);
 		static void EndScene();
 		static void Flush();
 
@@ -76,6 +91,8 @@ namespace Debut
 		static void DrawQuad(const glm::mat4& transform, const glm::vec4 color);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<Texture>& texture, float tilingFactor = 1);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<SubTexture2D>& texture, float tilingFactor = 1);
+
+		static void DrawLine(glm::vec3& p0, glm::vec3& p1, glm::vec4& color);
 
 		static void DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& src, int entityID);
 		static void ResetStats();

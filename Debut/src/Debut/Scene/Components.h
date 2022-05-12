@@ -77,6 +77,17 @@ namespace Debut
 		SpriteRendererComponent(const glm::vec4& color) : Color(color) {}
 	};
 
+	struct CircleRendererComponent
+	{
+		glm::vec4 Color{0.2f, 0.3f, 1.0f, 1.0f};
+		float Radius = 0.5f;
+		float Thickness = 1.0f;
+		float Fade = 0.0f;
+
+		CircleRendererComponent() : Color(glm::vec4(1.0f)) {}
+		CircleRendererComponent(const CircleRendererComponent&) = default;
+	};
+
 	// PHYSICS AND COLLIDER
 	struct Rigidbody2DComponent
 	{
@@ -109,7 +120,6 @@ namespace Debut
 	};
 
 	// SCRIPT
-
 	struct NativeScriptComponent
 	{
 		ScriptableEntity* Instance = nullptr;

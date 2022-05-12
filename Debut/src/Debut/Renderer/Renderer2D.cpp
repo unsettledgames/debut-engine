@@ -13,8 +13,6 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION();
 
-		s_Data.VertexArray = VertexArray::Create();
-
 		// Initialize index buffer
 		int* quadIndices = new int[s_Data.MaxIndices];
 		uint32_t offset = 0;
@@ -35,7 +33,7 @@ namespace Debut
 
 		// Initialize vertex buffer
 		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
-		s_Data.VertexArray = VertexArray::Create();
+		s_Data.QuadVertexArray = VertexArray::Create();
 		BufferLayout squareLayout = {
 			{ShaderDataType::Float3, "a_Position", false},
 			{ShaderDataType::Float2, "a_UV", false},
@@ -47,9 +45,19 @@ namespace Debut
 		s_Data.QuadVertexBuffer->SetLayout(squareLayout);
 
 		// Setup vertex array
-		s_Data.VertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
-		s_Data.VertexArray->AddIndexBuffer(textIndBuffer);
+		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
+		s_Data.QuadVertexArray->AddIndexBuffer(textIndBuffer);
 		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+
+		s_Data.LineVertexArray = VertexArray::Create();
+		s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(LineVertex));
+		BufferLayout lineLayout = {
+			{ShaderDataType::Float3, "a_Position", false},
+			{ShaderDataType::Float4, "a_Color", false}
+		};
+		s_Data.LineVertexBuffer->SetLayout(lineLayout);
+		s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
+		s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxVertices];
 
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t data = 0xffffffff;
@@ -61,6 +69,7 @@ namespace Debut
 
 		// Texture / shader setup
 		s_Data.TextureShader = Shader::Create("C:/dev/Debut/Debut/assets/shaders/texture.glsl");
+		s_Data.LineShader = Shader::Create("C:/dev/Debut/Debut/assets/shaders/line.glsl");
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
@@ -78,21 +87,18 @@ namespace Debut
 		delete[] s_Data.QuadVertexBufferBase;	
 	}
 
-	void Renderer2D::BeginScene(const OrthographicCamera& camera)
-	{
-		DBT_PROFILE_FUNCTION();
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-
-		StartBatch();
-	}
-
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4 transform)
 	{
 		DBT_PROFILE_FUNCTION();
+
 		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+		s_Data.TextureShader->Unbind();
+
+		s_Data.LineShader->Bind();
+		s_Data.LineShader->SetMat4("u_ViewProjection", viewProj);
+		s_Data.LineShader->Unbind();
 
 		StartBatch();
 	}
@@ -101,8 +107,14 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION();
 		glm::mat4 viewProj = camera.GetViewProjection();
+
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+		s_Data.TextureShader->Unbind();
+
+		s_Data.LineShader->Bind();
+		s_Data.LineShader->SetMat4("u_ViewProjection", viewProj);
+		s_Data.LineShader->Unbind();
 
 		StartBatch();
 	}
@@ -110,10 +122,25 @@ namespace Debut
 	void Renderer2D::EndScene()
 	{
 		DBT_PROFILE_FUNCTION();
-		uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+		if (s_Data.QuadIndexCount)
+		{
+			uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
+			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
-		Flush();
+			s_Data.TextureShader->Bind();
+			Flush();
+			s_Data.TextureShader->Unbind();
+		}
+
+		if (s_Data.LineVertexCount)
+		{
+			uint32_t dataSize = (uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase;
+			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
+
+			s_Data.LineShader->Bind();
+			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
+			s_Data.LineShader->Unbind();
+		}
 	}
 
 	void Renderer2D::FlushAndReset()
@@ -131,8 +158,21 @@ namespace Debut
 			s_Data.TextureSlots[i]->Bind(i);
 
 		// Draw call
-		RenderCommand::DrawIndexed(s_Data.VertexArray, s_Data.QuadIndexCount);
+		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 		s_Data.Stats.DrawCalls++;
+	}
+
+	void Renderer2D::DrawLine(glm::vec3& p0, glm::vec3& p1, glm::vec4& color) 
+	{
+		s_Data.LineVertexBufferPtr->Position = p0;
+		s_Data.LineVertexBufferPtr->Color = color;
+		s_Data.LineVertexBufferPtr++;
+
+		s_Data.LineVertexBufferPtr->Position = p1;
+		s_Data.LineVertexBufferPtr->Color = color;
+		s_Data.LineVertexBufferPtr++;
+
+		s_Data.LineVertexCount += 2;
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const glm::vec4 color)
@@ -333,5 +373,8 @@ namespace Debut
 		s_Data.TextureSlotIndex = 1;
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.LineVertexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 	}
 }

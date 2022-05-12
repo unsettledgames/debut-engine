@@ -452,4 +452,7 @@
     </ClCompile>
     <ClCompile Include="src\Debut\Core\UUID.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\line.glsl" />
+  </ItemGroup>
 </Project>

@@ -148,12 +148,12 @@ namespace Debut
 	void OpenGLShader::Bind() const
 	{
 		DBT_PROFILE_FUNCTION();
-		glUseProgram(m_ProgramID);
+		GLCall(glUseProgram(m_ProgramID));
 	}
 
 	void OpenGLShader::Unbind() const
 	{
-		glUseProgram(0);
+		GLCall(glUseProgram(0));
 	}
 
 	void OpenGLShader::SetInt(const std::string& name, int uniform)
