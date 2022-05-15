@@ -31,7 +31,7 @@ void ParticleSystem::OnUpdate(Debut::Timestep ts)
 
 void ParticleSystem::OnRender(Debut::OrthographicCamera& camera)
 {
-	Debut::Renderer2D::BeginScene(camera);
+	/*Debut::Renderer2D::BeginScene(camera);
 
 	for (auto& particle : m_ParticlePool)
 	{
@@ -49,6 +49,7 @@ void ParticleSystem::OnRender(Debut::OrthographicCamera& camera)
 	}
 
 	Debut::Renderer2D::EndScene();
+	*/
 }
 
 void ParticleSystem::Emit(const ParticleProps& particleProps)

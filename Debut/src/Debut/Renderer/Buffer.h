@@ -76,6 +76,7 @@ namespace Debut
 			}
 
 			DBT_ASSERT(false, "Unknown ShaderDataType");
+			return 0;
 		}
 	};
 

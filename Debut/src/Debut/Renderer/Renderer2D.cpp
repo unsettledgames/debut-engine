@@ -156,7 +156,7 @@ namespace Debut
 	void Renderer2D::Flush()
 	{
 		// Bind textures
-		for (int i = 0; i < s_Data.TextureSlotIndex; i++)
+		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 			s_Data.TextureSlots[i]->Bind(i);
 
 		// Draw call
@@ -257,7 +257,7 @@ namespace Debut
 			FlushAndReset();
 
 		float textureIndex = 0.0f;
-		for (int i = 0; i < s_Data.TextureSlotIndex; i++)
+		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 		{
 			if (*s_Data.TextureSlots[i].get() == *texture.get())
 			{
@@ -301,7 +301,7 @@ namespace Debut
 			FlushAndReset();
 
 		float textureIndex = 0.0f;
-		for (int i = 0; i < s_Data.TextureSlotIndex; i++)
+		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 		{
 			if (*s_Data.TextureSlots[i].get() == *(texture->GetTexture().get()))
 			{
@@ -347,7 +347,7 @@ namespace Debut
 		float textureIndex = 0.0f;
 		if (src.Texture)
 		{
-			for (int i = 0; i < s_Data.TextureSlotIndex; i++)
+			for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 			{
 				if (*s_Data.TextureSlots[i].get() == *(src.Texture.get()))
 				{

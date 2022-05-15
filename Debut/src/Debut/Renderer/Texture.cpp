@@ -17,6 +17,7 @@ namespace Debut
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
+		return nullptr;
 	}
 
 	Ref<Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
@@ -31,5 +32,6 @@ namespace Debut
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
+		return nullptr;
 	}
 }

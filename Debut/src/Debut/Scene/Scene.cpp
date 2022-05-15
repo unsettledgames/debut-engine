@@ -236,7 +236,7 @@ namespace Debut
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
 
 				b2PolygonShape boxShape;
-				boxShape.SetAsBox(transform.Scale.x * bc2d.Size.x / 2, transform.Scale.y * bc2d.Size.y / 2);
+				boxShape.SetAsBox(transform.Scale.x * bc2d.Size.x / 2, transform.Scale.y * bc2d.Size.y / 2, b2Vec2(bc2d.Offset.x, bc2d.Offset.y), 0);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
@@ -254,6 +254,7 @@ namespace Debut
 
 				b2CircleShape circleShape;
 				circleShape.m_radius = cc2d.Radius;
+				circleShape.m_p.Set(cc2d.Offset.x, cc2d.Offset.y);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &circleShape;

@@ -31,6 +31,7 @@ void Sandbox2D::OnDetach()
 
 void Sandbox2D::OnUpdate(Debut::Timestep ts)
 {
+#if 0
 	m_CameraController.OnUpdate(ts);
 	Debut::Renderer2D::ResetStats();
 	{
@@ -74,6 +75,8 @@ void Sandbox2D::OnUpdate(Debut::Timestep ts)
 	Debut::Renderer2D::EndScene();
 
 	Debut::Log.AppInfo("Frame time: {0}", (1.0f / ts));
+
+#endif
 }
 
 void Sandbox2D::OnEvent(Debut::Event& e)

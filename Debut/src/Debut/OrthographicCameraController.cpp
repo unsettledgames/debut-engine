@@ -49,7 +49,7 @@ namespace Debut
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
-		m_ZoomLevel = e.GetOffsetY() > 0 ? m_ZoomLevel * 0.9 : m_ZoomLevel / 0.9;
+		m_ZoomLevel = e.GetOffsetY() > 0.0f ? m_ZoomLevel * 0.9f : m_ZoomLevel / 0.9f;
 		m_CameraMovementSpeed = m_ZoomLevel * 2;
 
 		CalculateView();

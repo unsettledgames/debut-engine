@@ -55,6 +55,12 @@ project "Debut"
 		"%{prj.name}/vendor/imguizmo/**.cpp"
 	}
 
+	removefiles
+	{
+		"%{prj.name}/vendor/imguizmo/example/main.cpp",
+		"%{prj.name}/vendor/imguizmo/vcpkg-example/main.cpp"
+	}
+
 	includedirs
 	{
 		"%{prj.name}/src",
@@ -108,6 +114,7 @@ project "Debut"
 		optimize "on"
 
 	filter "files:Debut/vendor/**.cpp"
+		warnings "Off"
 	flags {"NoPCH"}
 	
 

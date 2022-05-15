@@ -19,5 +19,6 @@ namespace Debut
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
+		return nullptr;
 	}	
 }

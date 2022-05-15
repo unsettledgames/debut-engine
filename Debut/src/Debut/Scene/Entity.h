@@ -7,7 +7,7 @@
 
 namespace Debut
 {
-	class TransformComponent;
+	struct TransformComponent;
 
 	class Entity
 	{

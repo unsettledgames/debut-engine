@@ -30,6 +30,7 @@ namespace Debut
 		}
 
 		DBT_ASSERT(false, "Can't convert unknown ShaderDataType");
+		return GL_NONE;
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()

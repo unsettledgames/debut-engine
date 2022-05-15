@@ -331,7 +331,8 @@ namespace Debut
     void DebutantLayer::OnEvent(Event& e)
     {
         EventDispatcher dispatcher(e);
-        m_EditorCamera.OnEvent(e);
+        if (m_SceneState == SceneState::Edit)
+            m_EditorCamera.OnEvent(e);
 
         dispatcher.Dispatch<KeyPressedEvent>(DBT_BIND(DebutantLayer::OnKeyPressed));
         dispatcher.Dispatch<MouseButtonPressedEvent>(DBT_BIND(DebutantLayer::OnMouseButtonPressed));

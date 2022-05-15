@@ -22,6 +22,7 @@ namespace Debut
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
+		return nullptr;
 	}
 
 	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
@@ -36,6 +37,7 @@ namespace Debut
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
+		return nullptr;
 	}
 
 	Ref<IndexBuffer> IndexBuffer::Create(int* indices, unsigned int count)
@@ -50,5 +52,6 @@ namespace Debut
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
+		return nullptr;
 	}
 }

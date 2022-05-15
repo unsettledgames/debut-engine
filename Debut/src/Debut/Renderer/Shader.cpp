@@ -20,6 +20,7 @@ namespace Debut
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
+		return nullptr;
 	}
 
 	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertSrc, const std::string& fragSrc)
@@ -34,6 +35,7 @@ namespace Debut
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
+		return nullptr;
 	}
 
 	void ShaderLibrary::Add(const Ref<Shader>& shader)
