@@ -113,7 +113,7 @@ namespace Debut
 
 		ImGui::End();
 
-		ImGui::Begin("Properties");
+		ImGui::Begin("Inspector");
 
 		if (m_SelectionContext)
 		{
@@ -227,10 +227,10 @@ namespace Debut
 		if (ImGui::BeginPopup("AddComponent"))
 		{
 			DrawAddComponentEntry<CameraComponent>("Camera");
-			DrawAddComponentEntry<CameraComponent>("Sprite Renderer");
-			DrawAddComponentEntry<CameraComponent>("Rigidbody2D");
-			DrawAddComponentEntry<CameraComponent>("Box Collider 2D");
-			DrawAddComponentEntry<CameraComponent>("Circle Collider 2D");
+			DrawAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
+			DrawAddComponentEntry<Rigidbody2DComponent>("Rigidbody2D");
+			DrawAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
+			DrawAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 
 			ImGui::EndPopup();
 		}

@@ -65,6 +65,7 @@ namespace Debutant
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchy;
 		ContentBrowserPanel m_ContentBrowser;
+		PropertiesPanel m_PropertiesPanel;
 
 		// Editor state
 		std::string m_ScenePath = "";

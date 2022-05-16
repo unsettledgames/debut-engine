@@ -58,7 +58,10 @@ namespace Debutant
 			ImGui::PushID(pathName.c_str());
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { iconSize, iconSize }, { 0, 1 }, { 1, 0 });
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { iconSize, iconSize }, { 0, 1 }, { 1, 0 }))
+			{
+				m_PropertiesPanel->SetAsset(path);
+			}
 			ImGui::PopStyleColor();
 
 			if (ImGui::BeginDragDropSource())

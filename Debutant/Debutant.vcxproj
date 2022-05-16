@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Panels\PropertiesPanel.h" />
     <ClInclude Include="src\Camera\EditorCamera.h" />
     <ClInclude Include="src\DebutantLayer.h" />
     <ClInclude Include="src\Panels\ContentBrowserPanel.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="src\Utils\EditorCache.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Panels\PropertiesPanel.cpp" />
     <ClCompile Include="src\Camera\EditorCamera.cpp" />
     <ClCompile Include="src\DebutantApp.cpp" />
     <ClCompile Include="src\DebutantLayer.cpp" />

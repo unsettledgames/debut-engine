@@ -31,7 +31,7 @@ namespace Debutant
         m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
-        m_ContentBrowser.SetContext(m_ActiveScene);
+        m_ContentBrowser.SetPropertiesPanel(&m_PropertiesPanel);
 
         m_IconPlay = Texture2D::Create("assets/icons/play.png");
         m_IconStop = Texture2D::Create("assets/icons/stop.png");
@@ -159,16 +159,7 @@ namespace Debutant
 
             m_SceneHierarchy.OnImGuiRender();
             m_ContentBrowser.OnImGuiRender();
-
-            ImGui::Begin("Settings");
-
-                // Renderer2D stats
-                ImGui::Text("Renderer2D Stats:");
-                ImGui::Text("Draw calls: %d", stats.DrawCalls);
-                ImGui::Text("Quads: %d", stats.QuadCount);
-                ImGui::Text("Vertex count: %d", stats.GetTotalVertexCount());
-                ImGui::Text("Index count: %d", stats.GetIndexCount());
-            ImGui::End();
+            m_PropertiesPanel.OnImGuiRender();
 
             DrawViewport();
             DrawUIToolbar();
