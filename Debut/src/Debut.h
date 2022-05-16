@@ -48,3 +48,6 @@
 #include "Debut/Scene/SceneSerializer.h"
 #include "Debut/Scene/ScriptableEntity.h"
 #include "Debut/Scene/Components.h"
+
+// Utils
+#include "Debut/Utils/AssetCache.h"

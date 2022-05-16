@@ -72,6 +72,7 @@ namespace Debutant
 		SceneState m_SceneState = SceneState::Edit;
 
 		// Textures
+		AssetCache<Ref<Texture2D>> m_TextureCache;
 		Ref<Texture2D> m_IconPlay;
 		Ref<Texture2D> m_IconStop;
 

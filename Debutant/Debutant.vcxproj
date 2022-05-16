@@ -135,6 +135,7 @@
     <ClInclude Include="src\DebutantLayer.h" />
     <ClInclude Include="src\Panels\ContentBrowserPanel.h" />
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
+    <ClInclude Include="src\Utils\EditorCache.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera\EditorCamera.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="src\DebutantLayer.cpp" />
     <ClCompile Include="src\Panels\ContentBrowserPanel.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
+    <ClCompile Include="src\Utils\EditorCache.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Debut\Debut.vcxproj">

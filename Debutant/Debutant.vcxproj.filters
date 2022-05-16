@@ -19,6 +19,7 @@
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h">
       <Filter>Panels</Filter>
     </ClInclude>
+    <ClInclude Include="src\Utils\EditorCache.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera\EditorCamera.cpp">
@@ -32,5 +33,6 @@
     <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
+    <ClCompile Include="src\Utils\EditorCache.cpp" />
   </ItemGroup>
 </Project>
