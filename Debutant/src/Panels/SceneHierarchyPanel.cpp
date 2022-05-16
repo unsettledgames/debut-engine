@@ -166,42 +166,41 @@ namespace Debut
 	template<typename T, typename UIFunction>
 	void DrawComponent(const std::string& name, Entity& entity, UIFunction uiFunction)
 	{
+		if (!entity.HasComponent<T>())
+			return;
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap 
 			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 
-		if (entity.HasComponent<T>())
+		bool remove = false;			
+		ImVec2 availRegion = ImGui::GetContentRegionAvail();
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
+		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2;
+		ImGui::Separator();
+		bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
+		ImGui::PopStyleVar();
+
+		ImGui::SameLine(availRegion.x - lineHeight * 0.5f);
+		if (ImGui::Button("...", ImVec2{ lineHeight, lineHeight }))
+			ImGui::OpenPopup("ComponentSettings");
+
+		if (ImGui::BeginPopup("ComponentSettings"))
 		{
-			bool remove = false;			
-			ImVec2 availRegion = ImGui::GetContentRegionAvail();
+			if (ImGui::MenuItem("Remove component"))
+				remove = true;
 
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
-			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2;
-			ImGui::Separator();
-			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
-			ImGui::PopStyleVar();
-
-			ImGui::SameLine(availRegion.x - lineHeight * 0.5f);
-			if (ImGui::Button("...", ImVec2{ lineHeight, lineHeight }))
-				ImGui::OpenPopup("ComponentSettings");
-
-			if (ImGui::BeginPopup("ComponentSettings"))
-			{
-				if (ImGui::MenuItem("Remove component"))
-					remove = true;
-
-				ImGui::EndPopup();
-			}
-
-			if (open)
-			{
-				auto& component = entity.GetComponent<T>();
-				uiFunction(component);
-				ImGui::TreePop();
-			}
-
-			if (remove)
-				entity.RemoveComponent<T>();
+			ImGui::EndPopup();
 		}
+
+		if (open)
+		{
+			auto& component = entity.GetComponent<T>();
+			uiFunction(component);
+			ImGui::TreePop();
+		}
+
+		if (remove)
+			entity.RemoveComponent<T>();
 	}
 
 	void SceneHierarchyPanel::DrawComponents(Entity& entity)
@@ -227,51 +226,11 @@ namespace Debut
 
 		if (ImGui::BeginPopup("AddComponent"))
 		{
-			// TODO: template it
-			if (!m_SelectionContext.HasComponent<CameraComponent>())
-			{
-				if (ImGui::MenuItem("Camera"))
-				{
-					m_SelectionContext.AddComponent<CameraComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-			
-			if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
-			{
-				if (ImGui::MenuItem("Sprite Renderer"))
-				{
-					m_SelectionContext.AddComponent<SpriteRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
-			{
-				if (ImGui::MenuItem("Rigidbody2D"))
-				{
-					m_SelectionContext.AddComponent<Rigidbody2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<BoxCollider2DComponent>())
-			{
-				if (ImGui::MenuItem("Box Collider 2D"))
-				{
-					m_SelectionContext.AddComponent<BoxCollider2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<CircleCollider2DComponent>())
-			{
-				if (ImGui::MenuItem("Circle Collider 2D"))
-				{
-					m_SelectionContext.AddComponent<CircleCollider2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
+			DrawAddComponentEntry<CameraComponent>("Camera");
+			DrawAddComponentEntry<CameraComponent>("Sprite Renderer");
+			DrawAddComponentEntry<CameraComponent>("Rigidbody2D");
+			DrawAddComponentEntry<CameraComponent>("Box Collider 2D");
+			DrawAddComponentEntry<CameraComponent>("Circle Collider 2D");
 
 			ImGui::EndPopup();
 		}

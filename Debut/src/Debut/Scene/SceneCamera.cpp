@@ -7,7 +7,6 @@ namespace Debut
 {
 	SceneCamera::SceneCamera()
 	{
-		// TODO: when a camera is created in the scene, the viewport and aspect ratio are not set.
 		RecalculateProjection();
 	}
 
@@ -56,7 +55,7 @@ namespace Debut
 	{
 		if (m_ProjectionType == ProjectionType::Perspective)
 		{
-			m_Projection = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+			m_ProjectionMatrix = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
 		}
 		else
 		{
@@ -65,7 +64,7 @@ namespace Debut
 			float orthoBottom = -0.5f * m_OrthographicSize;
 			float orthoTop = 0.5f * m_OrthographicSize;
 
-			m_Projection = glm::ortho(orthoLeft, orthoRight, orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar);
+			m_ProjectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar);
 		}
 	}
 }

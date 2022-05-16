@@ -131,11 +131,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Camera\EditorCamera.h" />
     <ClInclude Include="src\DebutantLayer.h" />
     <ClInclude Include="src\Panels\ContentBrowserPanel.h" />
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera\EditorCamera.cpp" />
     <ClCompile Include="src\DebutantApp.cpp" />
     <ClCompile Include="src\DebutantLayer.cpp" />
     <ClCompile Include="src\Panels\ContentBrowserPanel.cpp" />

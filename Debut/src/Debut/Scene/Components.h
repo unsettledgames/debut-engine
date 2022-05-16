@@ -140,4 +140,55 @@ namespace Debut
 			DestroyScript = [](NativeScriptComponent* nsc) {delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};
+
+	// Utility functions
+	namespace Components
+	{
+		/*
+		struct ComponentData
+		{
+			const std::string Name;
+		};
+
+		static uint32_t NComponents = 9;
+		enum class ComponentType
+		{
+			ID, Tag, Transform,
+			Camera, SpriteRenderer, 
+			Rigidbody2D, BoxCollider2D, CircleCollider2D,
+			NativeScript
+		};
+
+		typedef struct
+		{
+			ComponentType Type;
+			std::string Name;
+		} ComponentTypeDef;
+
+		typedef struct : ComponentTypeDef
+		{
+			ComponentType Type = ComponentType::ID;
+			std::string Name = "IDComponent";
+		}IDType;
+
+		typedef struct : ComponentTypeDef
+		{
+			ComponentType Type = ComponentType::Tag;
+			std::string Name = "TagComponent";
+		}TagType;
+
+		typedef struct : ComponentTypeDef
+		{
+			ComponentType Type = ComponentType::Transform;
+			std::string Name = "TransformComponent";
+		}TransformType;
+
+		static ComponentTypeDef Components[] =
+		{
+			IDType(),
+			TagType(),
+			TransformType()
+		};
+		*/
+	}
 }

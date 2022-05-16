@@ -7,15 +7,15 @@
 
 namespace Debut
 {
-	class Debutant : public Application
+	class DebutantApp : public Application
 	{
 	public:
-		Debutant() : Application("Debutant")
+		DebutantApp() : Application("Debutant")
 		{
-			PushLayer(new DebutantLayer());
+			PushLayer(new Debutant::DebutantLayer());
 		}
 
-		~Debutant()
+		~DebutantApp()
 		{
 
 		}
@@ -25,7 +25,7 @@ namespace Debut
 
 	Application* CreateApplication()
 	{
-		return new Debutant();
+		return new DebutantApp();
 	}
 
 }

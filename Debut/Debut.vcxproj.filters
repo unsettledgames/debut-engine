@@ -135,9 +135,6 @@
     <ClInclude Include="src\Debut\Renderer\Camera.h">
       <Filter>src\Debut\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\EditorCamera.h">
-      <Filter>src\Debut\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="src\Debut\Renderer\FrameBuffer.h">
       <Filter>src\Debut\Renderer</Filter>
     </ClInclude>
@@ -333,9 +330,6 @@
       <Filter>src\Debut</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Renderer\Buffer.cpp">
-      <Filter>src\Debut\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\EditorCamera.cpp">
       <Filter>src\Debut\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Renderer\FrameBuffer.cpp">

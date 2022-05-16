@@ -1,9 +1,10 @@
 #pragma once
 
 #include <entt.hpp>
+#include <Debut/Core/Core.h>
+#include <Debut/Renderer/Camera.h>
 #include <Debut/Core/UUID.h>
 #include "Debut/Core/Time.h"
-#include "Debut/Renderer/EditorCamera.h"
 
 class b2World;
 
@@ -21,7 +22,7 @@ namespace Debut
 		~Scene();
 
 		void OnRuntimeUpdate(Timestep ts);
-		void OnEditorUpdate(Timestep ts, EditorCamera& camera);
+		void OnEditorUpdate(Timestep ts, Camera& camera);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		void OnRuntimeStart();

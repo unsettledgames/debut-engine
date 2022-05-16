@@ -3,13 +3,13 @@
 #include <imgui.h>
 #include "ImGuizmo.h"
 
-#include <Debut/Renderer/EditorCamera.h>
-#include <Debut/Scene/Entity.h>
-#include <Debut/Events/MouseEvent.h>
 #include <Panels/SceneHierarchyPanel.h>
 #include <Panels/ContentBrowserPanel.h>
+#include <Camera/EditorCamera.h>
 
-namespace Debut
+using namespace Debut;
+
+namespace Debutant
 {
 	class DebutantLayer : public Layer
 	{

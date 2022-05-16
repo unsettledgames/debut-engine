@@ -101,10 +101,10 @@ namespace Debut
 		return {};
 	}
 
-	void Scene::OnEditorUpdate(Timestep ts, EditorCamera& camera)
+	void Scene::OnEditorUpdate(Timestep ts, Camera& camera)
 	{
 		DBT_PROFILE_SCOPE("Editor update");
-		Renderer2D::BeginScene(camera);
+		Renderer2D::BeginScene(camera, glm::inverse(camera.GetView()));
 
 		auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
 		for (auto entity : group)

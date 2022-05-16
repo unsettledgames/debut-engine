@@ -8,16 +8,14 @@ namespace Debut
 	{
 	public:
 		Camera() = default;
-		Camera(const glm::mat4& projection) : m_Projection(projection) {}
+		Camera(const glm::mat4& projection) : m_ProjectionMatrix(projection) {}
 		virtual ~Camera() {}
 
-		const glm::mat4 GetProjection() const { return m_Projection; }
-		/**
-		* TODO:
-		*	SetPerspective();
-		*	SetOrthographic();
-		*/
+		const glm::mat4 GetProjection() const { return m_ProjectionMatrix; }
+		const glm::mat4 GetView() const { return m_ViewMatrix; }
+		const glm::mat4 GetViewProjection() { return m_ProjectionMatrix * glm::inverse(m_ViewMatrix); }
 	protected:
-		glm::mat4 m_Projection = glm::mat4(1.0f);
+		glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f);
+		glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
 	};
 }

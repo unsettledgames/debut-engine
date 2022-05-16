@@ -105,22 +105,6 @@ namespace Debut
 		StartBatch();
 	}
 
-	void Renderer2D::BeginScene(const EditorCamera& camera)
-	{
-		DBT_PROFILE_FUNCTION();
-		glm::mat4 viewProj = camera.GetViewProjection();
-
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
-		s_Data.TextureShader->Unbind();
-
-		s_Data.LineShader->Bind();
-		s_Data.LineShader->SetMat4("u_ViewProjection", viewProj);
-		s_Data.LineShader->Unbind();
-
-		StartBatch();
-	}
-
 	void Renderer2D::EndScene()
 	{
 		DBT_PROFILE_FUNCTION();

@@ -27,8 +27,10 @@
 
 #define DBT_BIND(x) [this](auto&&... args) -> decltype(auto) {return this->x(std::forward<decltype(args)>(args)...);}
 
+
 namespace Debut
 {
+
 	template <typename T>
 	using Scope = std::unique_ptr<T>;
 

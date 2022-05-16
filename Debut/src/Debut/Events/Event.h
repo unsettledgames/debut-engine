@@ -33,7 +33,7 @@ namespace Debut
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override {return category;}
 
-	class DBT_API Event
+	class Event
 	{
 		friend class EventDispatcher;
 

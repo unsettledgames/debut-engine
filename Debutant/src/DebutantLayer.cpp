@@ -1,16 +1,17 @@
 #include "DebutantLayer.h"
-#include <Debut/dbtpch.h>
+#include "Camera/EditorCamera.h"
 #include <Debut/Utils/PlatformUtils.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Platform/OpenGL/OpenGLShader.h"
-#include <glm/gtc/matrix_transform.hpp>
+
 #include <chrono>
-#include <glm/gtx/matrix_operation.hpp>
 #include <imgui_internal.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_operation.hpp>
 
-namespace Debut
+
+namespace Debutant
 {
     void DebutantLayer::OnAttach()
     {
