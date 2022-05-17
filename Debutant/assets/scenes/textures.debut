@@ -1,0 +1,16 @@
+Scene: Untitled scene
+Entities:
+  - "Entity: ": 8878270713908621395
+    IDComponent:
+      ID: 8878270713908621395
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0.0488418639, 0.230541602, 0]
+      Rotation: [0, 0, 0]
+      Scale: [8.59051228, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: assets\textures\Banner2.png
+      TilingFactor: 1

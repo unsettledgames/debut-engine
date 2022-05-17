@@ -11,7 +11,7 @@ namespace Debutant
 
 		void OnImGuiRender();
 
-		void SetAsset(std::filesystem::path path) { m_AssetPath = path; }
+		void SetAsset(std::filesystem::path path);
 
 	private:
 		void DrawTextureProperties();

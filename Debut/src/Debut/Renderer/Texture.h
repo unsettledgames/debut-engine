@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Debut/Core/Log.h"
 #include "Debut/Core/Core.h"
 
 namespace Debut
@@ -9,6 +10,36 @@ namespace Debut
 		FILTERING_POINT = 0, FILTERING_LINEAR,
 		WRAP_REPEAT, WRAP_CLAMP, NONE
 	};
+
+	struct Texture2DConfig
+	{
+		Texture2DParameter Filtering;
+		Texture2DParameter WrapMode;
+	};
+
+	static std::string Tex2DParamToString(Texture2DParameter parameter)
+	{
+		switch (parameter)
+		{
+		case Texture2DParameter::FILTERING_LINEAR: return "Linear";
+		case Texture2DParameter::FILTERING_POINT: return "Point";
+		case Texture2DParameter::WRAP_CLAMP: return "Clamp";
+		case Texture2DParameter::WRAP_REPEAT: return "Repeat";
+		}
+
+		Log.AppWarn("Texture parameter {0} not supported", (uint32_t)parameter);
+		return "";
+	}
+	static Texture2DParameter StringToTex2DParam(const std::string& param)
+	{
+		if (param == "Linear") return Texture2DParameter::FILTERING_LINEAR;
+		if (param == "Point") return Texture2DParameter::FILTERING_POINT;
+		if (param == "Clamp") return Texture2DParameter::WRAP_CLAMP;
+		if (param == "Repeat") return Texture2DParameter::WRAP_REPEAT;
+
+		Log.AppWarn("Texture parameter {0} not supported", param);
+		return Texture2DParameter::NONE;
+	}
 
 	class Texture
 	{
@@ -46,6 +77,7 @@ namespace Debut
 		void SetMinFiltering(Texture2DParameter param) { m_MinFiltering = param; }
 		void SetMagFiltering(Texture2DParameter param) { m_MagFiltering = param; }
 		void SetWrapMode(Texture2DParameter param) { m_WrapMode = param; }
+		virtual void Reload() = 0;
 
 		float GetAspectRatio() { return (float)GetWidth() / GetHeight(); }
 	};

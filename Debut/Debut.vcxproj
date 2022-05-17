@@ -140,7 +140,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Debut\Utils\AssetCache.h" />
     <ClInclude Include="src\Debut.h" />
     <ClInclude Include="src\Debut\Core\Application.h" />
     <ClInclude Include="src\Debut\Core\Core.h" />
@@ -181,6 +180,7 @@
     <ClInclude Include="src\Debut\Scene\SceneCamera.h" />
     <ClInclude Include="src\Debut\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Debut\Scene\ScriptableEntity.h" />
+    <ClInclude Include="src\Debut\Utils\AssetCache.h" />
     <ClInclude Include="src\Debut\Utils\CppUtils.h" />
     <ClInclude Include="src\Debut\Utils\PlatformUtils.h" />
     <ClInclude Include="src\Debut\dbtpch.h" />

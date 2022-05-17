@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+// TODO: maybe make it more cache-like? And use LRU / LFU
+
 namespace Debut
 {
 	template <typename T>
@@ -35,6 +37,17 @@ namespace Debut
 			}
 
 			m_Cache[id] = item;
+		}
+
+		inline T Remove(const std::string& id)
+		{
+			if (m_Cache.find(id) != m_Cache.end())
+			{
+				T ret = m_Cache[id];
+				m_Cache.erase(ret);
+
+				return ret;
+			}
 		}
 
 		T operator[](const std::string& id)

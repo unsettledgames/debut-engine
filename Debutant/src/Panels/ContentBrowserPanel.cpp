@@ -48,6 +48,10 @@ namespace Debutant
 		for (auto dirEntry : std::filesystem::directory_iterator(m_CurrDirectory))
 		{
 			const std::filesystem::path& path = dirEntry.path();
+			// Don't show meta files
+			if (path.extension().string() == ".meta")
+				continue;
+
 			std::string pathName = path.string();
 
 			auto relativePath = std::filesystem::relative(path, s_AssetsPath);

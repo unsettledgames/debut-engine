@@ -12,6 +12,8 @@
 
 using namespace Debut;
 
+// TODO: unload textures from the cache
+
 namespace Debutant
 {
 	class ContentBrowserPanel

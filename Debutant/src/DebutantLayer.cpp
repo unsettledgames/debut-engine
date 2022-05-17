@@ -1,5 +1,6 @@
 #include "DebutantLayer.h"
 #include "Camera/EditorCamera.h"
+#include <Utils/EditorCache.h>
 #include <Debut/Utils/PlatformUtils.h>
 
 #include <chrono>
@@ -33,8 +34,11 @@ namespace Debutant
         m_SceneHierarchy.SetContext(m_ActiveScene);
         m_ContentBrowser.SetPropertiesPanel(&m_PropertiesPanel);
 
-        m_IconPlay = Texture2D::Create("assets/icons/play.png");
-        m_IconStop = Texture2D::Create("assets/icons/stop.png");
+        m_IconPlay = Texture2D::Create("assets\\icons\\play.png");
+        m_IconStop = Texture2D::Create("assets\\icons\\stop.png");
+
+        EditorCache::Textures().Put("assets\\icons\\play.png", m_IconPlay);
+        EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
     }
 
     void DebutantLayer::OnDetach()
@@ -167,6 +171,7 @@ namespace Debutant
         ImGui::End();
     }
 
+    // TODO: move this to the top bar
     void DebutantLayer::DrawUIToolbar()
     {
         ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
@@ -176,10 +181,10 @@ namespace Debutant
         switch (m_SceneState)
         {
         case SceneState::Edit:
-            icon = m_IconPlay;
+            icon = EditorCache::Textures().Get("assets\\icons\\play.png");
             break;
         case SceneState::Play:
-            icon = m_IconStop;
+            icon = EditorCache::Textures().Get("assets\\icons\\stop.png");
             break;
         default:
             break;

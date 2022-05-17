@@ -2,18 +2,36 @@
 #include "Renderer.h"
 #include "Texture.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
+#include "yaml-cpp/yaml.h"
+#include <fstream>
 
 namespace Debut
 {
 	Ref<Texture2D> Texture2D::Create(const std::string& path)
 	{
+		std::ifstream metaFile(path + ".meta");
+		std::stringstream strStream;
+
+		Texture2DConfig texParams = { Texture2DParameter::FILTERING_LINEAR, Texture2DParameter::WRAP_CLAMP };
+
+		if (metaFile.good())
+		{
+			strStream << metaFile.rdbuf();
+			YAML::Node in = YAML::Load(strStream.str().c_str());
+
+			texParams.Filtering = StringToTex2DParam(in["Filtering"].as<std::string>());
+			texParams.WrapMode = StringToTex2DParam(in["WrapMode"].as<std::string>());
+		}
+
+		// TODO: textures are created by path: this is a good opportunity to load the parameters from 
+		// the meta file.
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return CreateRef<OpenGLTexture2D>(path);
+			return CreateRef<OpenGLTexture2D>(path, texParams);
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");

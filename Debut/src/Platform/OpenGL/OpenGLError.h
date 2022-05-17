@@ -24,7 +24,7 @@ namespace Debut
     {
         while (GLenum error = glGetError())
         {
-            Log.CoreError("[OpenGL Error] in {0}: {1} in function {2} (ERROR CODE 0x{3})", file, line, function, error);
+            Log.CoreError("[OpenGL Error] in {0}: {1} in function {2} (ERROR CODE 0x{3:x})", file, line, function, error);
             return false;
         }
 

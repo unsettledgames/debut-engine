@@ -145,13 +145,15 @@ project "Debutant"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.imguizmo}",
+		"%{IncludeDir.yaml_cpp}",
 		"Debut/src",
 		"%{IncludeDir.box2d}"
 	}
 
 	links
 	{
-		"Debut"
+		"Debut",
+		"yaml-cpp"
 	}
 
 	filter "system:windows"
@@ -159,7 +161,8 @@ project "Debutant"
 
 		defines 
 		{
-			"DBT_PLATFORM_WINDOWS"
+			"DBT_PLATFORM_WINDOWS",
+			"YAML_CPP_STATIC_DEFINE"
 		}
 
 	filter "configurations:Debug"
