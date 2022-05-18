@@ -5,10 +5,7 @@
 #include <imgui.h>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
-
-/* Almost there
-* - Remove distinction between mig / mag filtering, just use one
-**/
+#include <Debut/Physics/PhysicsMaterial2D.h>
 
 namespace Debutant
 {
@@ -35,13 +32,67 @@ namespace Debutant
 
 		if (m_AssetPath != "")
 		{
+			// Put extensions as static members of Texture2D and PhysicsMaterial2D?
 			if (m_AssetPath.extension().string() == ".png")
 			{
 				DrawTextureProperties();
 			}
+			else if (m_AssetPath.extension().string() == ".physmat2d")
+			{
+				DrawPhysicsMaterial2DProperties();
+			}
 		}
 
 		ImGui::End();
+	}
+
+	void PropertiesPanel::DrawPhysicsMaterial2DProperties()
+	{
+		Ref<PhysicsMaterial2D> material = AssetManager::RequestPhysicsMaterial2D(m_AssetPath.string());
+		std::ifstream metaFile(material->GetPath());
+		std::stringstream strStream;
+
+		Texture2DConfig texParams = { Texture2DParameter::FILTERING_LINEAR, Texture2DParameter::WRAP_CLAMP };
+
+		if (metaFile.good())
+		{
+			strStream << metaFile.rdbuf();
+			YAML::Node in = YAML::Load(strStream.str().c_str());
+
+			texParams.Filtering = StringToTex2DParam(in["Filtering"].as<std::string>());
+			texParams.WrapMode = StringToTex2DParam(in["WrapMode"].as<std::string>());
+		}
+
+		float density = material->GetDensity(), friction = material->GetFriction(),
+			restitution = material->GetRestitution(), restitutionThreshold = material->GetRestitutionThreshold();
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
+
+		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
+		ImGui::LabelText("##importtitle", (m_AssetPath.filename().string() + " import settings").c_str(), 50);
+		ImGui::PopFont();
+
+		// PhysMat2D parameters
+		ImGui::SliderFloat("Density", &density, 0, 1, "", 0.02f);
+		ImGui::SliderFloat("Friction", &friction, 0, 1, "", 0.02f);
+		ImGui::SliderFloat("Restitution", &restitution, 0, 100, "", 0.1f);
+		ImGui::SliderFloat("Restitution threshold", &restitutionThreshold, 0, 100, "", 0.1f);
+
+
+		// When settings are saved, a meta file containing the data is generated for that texture
+		if (ImGui::Button("Save settings"))
+		{
+			PhysicsMaterial2DConfig config;
+			config.Density = density;
+			config.Friction = friction;
+			config.Restitution = restitution;
+			config.RestitutionThreshold = restitutionThreshold;
+
+			//PhysicsMaterial2D::SaveSettings(config);
+			material->SetConfig(config);
+		}
+
+		ImGui::PopStyleVar();
 	}
 
 	void PropertiesPanel::DrawTextureProperties()
@@ -153,7 +204,6 @@ namespace Debutant
 
 	void PropertiesPanel::SetAsset(std::filesystem::path path)
 	{
-		if (path.extension().string() == ".png")
-			m_AssetPath = path;
+		m_AssetPath = path;
 	}
 }

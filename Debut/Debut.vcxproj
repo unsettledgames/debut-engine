@@ -163,6 +163,7 @@
     <ClInclude Include="src\Debut\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Debut\Math\Math.h" />
     <ClInclude Include="src\Debut\OrthographicCameraController.h" />
+    <ClInclude Include="src\Debut\Physics\PhysicsMaterial2D.h" />
     <ClInclude Include="src\Debut\Renderer\Buffer.h" />
     <ClInclude Include="src\Debut\Renderer\Camera.h" />
     <ClInclude Include="src\Debut\Renderer\FrameBuffer.h" />
@@ -233,6 +234,7 @@
     <ClCompile Include="src\Debut\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Debut\Math\Math.cpp" />
     <ClCompile Include="src\Debut\OrthographicCameraController.cpp" />
+    <ClCompile Include="src\Debut\Physics\PhysicsMaterial2D.cpp" />
     <ClCompile Include="src\Debut\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Debut\Renderer\FrameBuffer.cpp" />
     <ClCompile Include="src\Debut\Renderer\OrthographicCamera.cpp" />

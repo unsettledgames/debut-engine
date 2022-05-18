@@ -305,6 +305,7 @@
     </ClInclude>
     <ClInclude Include="src\Debut\AssetManager\AssetManager.h" />
     <ClInclude Include="src\Debut\AssetManager\Asset.h" />
+    <ClInclude Include="src\Debut\Physics\PhysicsMaterial2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Core\Application.cpp">
@@ -449,5 +450,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\AssetManager\AssetManager.cpp" />
+    <ClCompile Include="src\Debut\Physics\PhysicsMaterial2D.cpp" />
   </ItemGroup>
 </Project>

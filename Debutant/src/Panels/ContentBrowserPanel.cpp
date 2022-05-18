@@ -1,5 +1,7 @@
 #include "ContentBrowserPanel.h"
 
+#include <Debut/Physics/PhysicsMaterial2D.h>
+#include <Debut/AssetManager/AssetManager.h>
 #include "Utils/EditorCache.h"
 #include <imgui.h>
 
@@ -23,6 +25,14 @@ namespace Debutant
 	{
 		ImGui::Begin("Content browser");
 
+		// TODO: Right click menu
+		if (ImGui::BeginPopupContextWindow(0, 1, false))
+		{
+			if (ImGui::MenuItem("Create Physics Material 2D"))
+				AssetManager::CreateAsset<PhysicsMaterial2D>(m_CurrDirectory.string() + "/NewPhysicsMaterial2D.physmat2d");
+			ImGui::EndPopup();
+		}
+		
 		static float padding = 4.0f;
 		static float iconSize = 64.0f;
 		float cellSize = iconSize + padding;

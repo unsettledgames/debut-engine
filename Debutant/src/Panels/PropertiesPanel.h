@@ -15,6 +15,7 @@ namespace Debutant
 
 	private:
 		void DrawTextureProperties();
+		void DrawPhysicsMaterial2DProperties();
 
 	private:
 		std::filesystem::path m_AssetPath = "";
