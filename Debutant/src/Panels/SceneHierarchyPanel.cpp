@@ -81,7 +81,7 @@ namespace Debut
 
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
-		EditorCache::Textures().Put("assets\\textures\\empty_textures.png", Texture2D::Create(1, 1));
+		EditorCache::Textures().Put("assets\\textures\\empty_texture.png", Texture2D::Create(1, 1));
 	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& scene)
@@ -319,7 +319,7 @@ namespace Debut
 				// Texture
 				ImTextureID buttonTexture;
 				// Use a blank texture if the user hasn't already set one, otherwise use the one submitted by the user	
-				buttonTexture = component.Texture == 0 ?
+				buttonTexture = component.Texture == nullptr ?
 					(ImTextureID)EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID() : 
 					(ImTextureID)component.Texture->GetRendererID();
 				

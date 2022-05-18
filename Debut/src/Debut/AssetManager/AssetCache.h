@@ -4,8 +4,6 @@
 #include <string>
 #include <unordered_map>
 
-// TODO: maybe make it more cache-like? And use LRU / LFU
-
 namespace Debut
 {
 	template <typename Key, typename Value>

@@ -69,7 +69,7 @@ namespace Debut
 	struct SpriteRendererComponent
 	{
 		glm::vec4 Color;
-		Ref<Texture2D> Texture;
+		Ref<Texture2D> Texture = nullptr;
 		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() : Color(glm::vec4(1.0f)) {}

@@ -35,8 +35,7 @@ namespace Debut
 
 		m_Width = width;
 		m_Height = height;
-		m_MinFiltering = config.Filtering;
-		m_MagFiltering = config.Filtering;
+		m_FilteringMode = config.Filtering;
 		m_WrapMode = config.WrapMode;
 		m_ID = config.ID;
 
@@ -98,8 +97,8 @@ namespace Debut
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
-		GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, DbtToGLParameter(m_MinFiltering)));
-		GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, DbtToGLParameter(m_MagFiltering)));
+		GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, DbtToGLParameter(m_FilteringMode)));
+		GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, DbtToGLParameter(m_FilteringMode)));
 
 		GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, DbtToGLParameter(m_WrapMode)));
 		GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, DbtToGLParameter(m_WrapMode)));

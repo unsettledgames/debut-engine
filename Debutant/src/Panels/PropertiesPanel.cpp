@@ -8,7 +8,6 @@
 
 /* Almost there
 * - Remove distinction between mig / mag filtering, just use one
-* - Save UUIDs in the YAML file
 **/
 
 namespace Debutant
@@ -62,16 +61,13 @@ namespace Debutant
 			texParams.WrapMode = StringToTex2DParam(in["WrapMode"].as<std::string>());
 		}
 		
-		Texture2DParameter magFilt = texture->GetMagFiltering();
-		Texture2DParameter minFilt = texture->GetMinFiltering();
+		Texture2DParameter filter = texture->GetFilteringMode();
 		Texture2DParameter wrapMode = texture->GetWrapMode();
 
-		std::string currMagString = Tex2DParamToString(magFilt);
-		std::string currMinString = Tex2DParamToString(magFilt);
+		std::string currFilterString = Tex2DParamToString(filter);
 		std::string currWrapString = Tex2DParamToString(wrapMode);
 
-		const char* magTypes[] = { "Linear", "Point" };
-		const char* minTypes[] = { "Linear", "Point" };
+		const char* filterTypes[] = { "Linear", "Point" };
 		const char* wrapTypes[] = { "Clamp", "Repeat" };
 
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap
@@ -86,39 +82,17 @@ namespace Debutant
 
 		ImGui::Columns(2);
 		// Min filtering 
-		ImGui::Text("Min filtering");
+		ImGui::Text("Filterig mode");
 		ImGui::NextColumn();
-		if (ImGui::BeginCombo("##minfilter", Tex2DParamToString(minFilt).c_str()))
+		if (ImGui::BeginCombo("##filter", Tex2DParamToString(filter).c_str()))
 		{
 			for (int i = 0; i < 2; i++)
 			{
-				bool isSelected = currMinString == minTypes[i];
-				if (ImGui::Selectable(minTypes[i], &isSelected))
+				bool isSelected = currFilterString == filterTypes[i];
+				if (ImGui::Selectable(filterTypes[i], &isSelected))
 				{
-					currMinString = minTypes[i];
-					texture->SetMinFiltering(StringToTex2DParam(std::string(currMinString)));
-				}
-
-				if (isSelected)
-					ImGui::SetItemDefaultFocus();
-			}
-
-			ImGui::EndCombo();
-		}
-
-		// Mag filtering 
-		ImGui::NextColumn();
-		ImGui::Text("Mag filtering");
-		ImGui::NextColumn();
-		if (ImGui::BeginCombo("##magfilter", Tex2DParamToString(magFilt).c_str()))
-		{
-			for (int i = 0; i < 2; i++)
-			{
-				bool isSelected = currMagString == magTypes[i];
-				if (ImGui::Selectable(magTypes[i], &isSelected))
-				{
-					currMagString = magTypes[i];
-					texture->SetMagFiltering(StringToTex2DParam(std::string(currMagString)));
+					currFilterString = filterTypes[i];
+					texture->SetFilteringMode(StringToTex2DParam(std::string(currFilterString)));
 				}
 
 				if (isSelected)
@@ -166,7 +140,7 @@ namespace Debutant
 		if (ImGui::Button("Save settings"))
 		{
 			Texture2DConfig config;
-			config.Filtering = StringToTex2DParam(currMinString);
+			config.Filtering = StringToTex2DParam(currFilterString);
 			config.WrapMode = StringToTex2DParam(currWrapString);
 			config.ID = texture->GetID();
 
