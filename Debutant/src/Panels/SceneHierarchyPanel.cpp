@@ -2,9 +2,11 @@
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui_internal.h>
+#include "Utils/EditorCache.h"
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Renderer/Texture.h>
 #include <filesystem>
+
 
 namespace Debut
 {
@@ -75,6 +77,11 @@ namespace Debut
 		ImGui::Columns(1);
 
 		ImGui::PopID();
+	}
+
+	SceneHierarchyPanel::SceneHierarchyPanel()
+	{
+		EditorCache::Textures().Put("assets\\textures\\empty_textures.png", Texture2D::Create(1, 1));
 	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& scene)
@@ -304,12 +311,20 @@ namespace Debut
 				}
 			});
 
+
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
 			{
 				// Color
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color), 0.15f);
 				// Texture
-				ImGui::Button("Texture", ImVec2(64.0f, 64.0f));
+				ImTextureID buttonTexture;
+				// Use a blank texture if the user hasn't already set one, otherwise use the one submitted by the user	
+				buttonTexture = component.Texture == 0 ?
+					(ImTextureID)EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID() : 
+					(ImTextureID)component.Texture->GetRendererID();
+				
+				ImGui::ImageButton(buttonTexture, ImVec2(64.0f, 64.0f), { 0, 1 }, { 1, 0 });
+
 				if (ImGui::BeginDragDropTarget())
 				{
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
@@ -322,6 +337,8 @@ namespace Debut
 					}
 					ImGui::EndDragDropTarget();
 				}
+				ImGui::SameLine();
+				ImGui::LabelText("##maintexture", "Main texture");
 				// Tiling factor
 				ImGui::DragFloat("Tiling factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
 

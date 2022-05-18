@@ -1,8 +1,6 @@
 #include "EditorCache.h"
 
-using namespace Debut;
-
-namespace Debutant
+namespace Debut
 {
 	static AssetCache<std::string, Ref<Texture2D>> s_TextureCache(256, "Editor textures");
 

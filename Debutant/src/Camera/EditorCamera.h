@@ -3,7 +3,7 @@
 
 using namespace Debut;
 
-namespace Debutant
+namespace Debut
 {
 	class EditorCamera : public Camera
 	{

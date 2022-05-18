@@ -2,13 +2,14 @@
 
 #include "Debut.h"
 
+
 namespace Debut
 {
 	class SceneHierarchyPanel
 	{
 
 	public:
-		SceneHierarchyPanel() = default;
+		SceneHierarchyPanel();
 
 		void SetContext(const Ref<Scene>& scene);
 		void SetSelectedEntity(const Entity& entity);

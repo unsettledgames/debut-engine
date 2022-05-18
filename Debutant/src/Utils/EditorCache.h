@@ -7,7 +7,7 @@
 using namespace Debut;
 
 // This horror will probably become the resources manager sooner or later (probably later)
-namespace Debutant
+namespace Debut
 {
 	class EditorCache
 	{
