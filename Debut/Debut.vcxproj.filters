@@ -186,7 +186,7 @@
     <ClInclude Include="src\Debut\Scene\ScriptableEntity.h">
       <Filter>src\Debut\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Utils\AssetCache.h">
+    <ClInclude Include="src\Debut\AssetManager\AssetCache.h">
       <Filter>src\Debut\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Utils\CppUtils.h">
@@ -303,6 +303,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\Debut\AssetManager\AssetManager.h" />
+    <ClInclude Include="src\Debut\AssetManager\Asset.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Core\Application.cpp">
@@ -446,5 +448,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Debut\AssetManager\AssetManager.cpp" />
   </ItemGroup>
 </Project>

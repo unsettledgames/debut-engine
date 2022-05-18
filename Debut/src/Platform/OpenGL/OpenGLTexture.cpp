@@ -38,6 +38,7 @@ namespace Debut
 		m_MinFiltering = config.Filtering;
 		m_MagFiltering = config.Filtering;
 		m_WrapMode = config.WrapMode;
+		m_ID = config.ID;
 
 		if (channels == 4)
 		{

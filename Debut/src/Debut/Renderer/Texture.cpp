@@ -21,6 +21,7 @@ namespace Debut
 
 			texParams.Filtering = StringToTex2DParam(in["Filtering"].as<std::string>());
 			texParams.WrapMode = StringToTex2DParam(in["WrapMode"].as<std::string>());
+			texParams.ID = in["ID"] ? in["ID"].as<uint64_t>() : 0;
 		}
 
 		// TODO: textures are created by path: this is a good opportunity to load the parameters from 

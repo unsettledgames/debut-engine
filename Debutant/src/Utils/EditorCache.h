@@ -2,7 +2,7 @@
 #include <string>
 #include <Debut/Core/Core.h>
 #include <Debut/Renderer/Texture.h>
-#include <Debut/Utils/AssetCache.h>
+#include <Debut/AssetManager/AssetCache.h>
 
 using namespace Debut;
 
@@ -12,6 +12,6 @@ namespace Debutant
 	class EditorCache
 	{
 	public:
-		static AssetCache<Ref<Texture2D>>& Textures();
+		static AssetCache<std::string, Ref<Texture2D>>& Textures();
 	};
 }

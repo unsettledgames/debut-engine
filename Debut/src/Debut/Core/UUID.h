@@ -3,7 +3,6 @@
 
 namespace Debut
 {
-	// TODO: have a look into how safe it is to randomly generate a number and trust that it won't cause a collision
 	class UUID
 	{
 	public:

@@ -1,16 +1,37 @@
 Scene: Untitled scene
 Entities:
-  - "Entity: ": 8878270713908621395
+  - "Entity: ": 13784771077045596972
     IDComponent:
-      ID: 8878270713908621395
+      ID: 13784771077045596972
     TagComponent:
       Name: New Entity
       Tag: Untagged
     TransformComponent:
-      Translation: [0.0488418639, 0.230541602, 0]
+      Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [8.59051228, 1, 1]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      FixedAspectRatio: false
+      Primary: true
+      CameraData:
+        ProjectionType: 1
+        OrthoNear: -1
+        OrthoFar: 1
+        PerspNear: 0.00999999978
+        PerspFar: 1000
+        OrthoSize: 10
+        PerspFOV: 0.785398185
+  - "Entity: ": 1172893419631375017
+    IDComponent:
+      ID: 1172893419631375017
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      Texture: assets\textures\Banner2.png
+      Texture: assets\icons\play.png
       TilingFactor: 1

@@ -141,6 +141,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Debut.h" />
+    <ClInclude Include="src\Debut\AssetManager\Asset.h" />
+    <ClInclude Include="src\Debut\AssetManager\AssetManager.h" />
     <ClInclude Include="src\Debut\Core\Application.h" />
     <ClInclude Include="src\Debut\Core\Core.h" />
     <ClInclude Include="src\Debut\Core\EntryPoint.h" />
@@ -180,7 +182,7 @@
     <ClInclude Include="src\Debut\Scene\SceneCamera.h" />
     <ClInclude Include="src\Debut\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Debut\Scene\ScriptableEntity.h" />
-    <ClInclude Include="src\Debut\Utils\AssetCache.h" />
+    <ClInclude Include="src\Debut\AssetManager\AssetCache.h" />
     <ClInclude Include="src\Debut\Utils\CppUtils.h" />
     <ClInclude Include="src\Debut\Utils\PlatformUtils.h" />
     <ClInclude Include="src\Debut\dbtpch.h" />
@@ -221,6 +223,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Debut\AssetManager\AssetManager.cpp" />
     <ClCompile Include="src\Debut\Core\Application.cpp" />
     <ClCompile Include="src\Debut\Core\Layer.cpp" />
     <ClCompile Include="src\Debut\Core\LayerStack.cpp" />

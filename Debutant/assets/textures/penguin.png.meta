@@ -1,5 +1,6 @@
 ---
 Asset: Texture2D
+ID: 0
 Filtering: Linear
 WrapMode: Repeat
 ...

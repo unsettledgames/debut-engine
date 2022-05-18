@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Debut/Core/Log.h"
+#include "Debut/Core/UUID.h"
 #include "Debut/Core/Core.h"
 
 namespace Debut
@@ -15,6 +16,7 @@ namespace Debut
 	{
 		Texture2DParameter Filtering;
 		Texture2DParameter WrapMode;
+		UUID ID;
 	};
 
 	static std::string Tex2DParamToString(Texture2DParameter parameter)
@@ -66,6 +68,8 @@ namespace Debut
 		Texture2DParameter m_MagFiltering = Texture2DParameter::FILTERING_LINEAR;
 		Texture2DParameter m_WrapMode = Texture2DParameter::WRAP_CLAMP;
 
+		UUID m_ID;
+
 	public:
 		static Ref<Texture2D> Create(const std::string& path);
 		static Ref<Texture2D> Create(uint32_t width, uint32_t height);
@@ -77,8 +81,10 @@ namespace Debut
 		void SetMinFiltering(Texture2DParameter param) { m_MinFiltering = param; }
 		void SetMagFiltering(Texture2DParameter param) { m_MagFiltering = param; }
 		void SetWrapMode(Texture2DParameter param) { m_WrapMode = param; }
-		virtual void Reload() = 0;
-
+		
+		UUID GetID() { return m_ID; }
 		float GetAspectRatio() { return (float)GetWidth() / GetHeight(); }
+
+		virtual void Reload() = 0;
 	};
 }

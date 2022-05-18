@@ -1,12 +1,14 @@
 #include "PropertiesPanel.h"
 #include "Utils/EditorCache.h"
+#include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Renderer/Texture.h>
 #include <imgui.h>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
 
 /* Almost there
-* - Update texture if it's loaded
+* - Remove distinction between mig / mag filtering, just use one
+* - Save UUIDs in the YAML file
 **/
 
 namespace Debutant
@@ -18,6 +20,7 @@ namespace Debutant
 		emitter << YAML::BeginDoc << YAML::BeginMap;
 
 		emitter << YAML::Key << "Asset" << YAML::Value << "Texture2D";
+		emitter << YAML::Key << "ID" << YAML::Value << parameters.ID;
 		emitter << YAML::Key << "Filtering" << YAML::Value << Tex2DParamToString(parameters.Filtering);
 		emitter << YAML::Key << "WrapMode" << YAML::Value << Tex2DParamToString(parameters.WrapMode);
 
@@ -44,7 +47,7 @@ namespace Debutant
 
 	void PropertiesPanel::DrawTextureProperties()
 	{
-		Ref<Texture2D> texture = EditorCache::Textures().Get(m_AssetPath.string());
+		Ref<Texture2D> texture = AssetManager::RequestTexture(m_AssetPath.string());
 		std::ifstream metaFile(texture->GetPath() + ".meta");
 		std::stringstream strStream;
 
@@ -165,7 +168,9 @@ namespace Debutant
 			Texture2DConfig config;
 			config.Filtering = StringToTex2DParam(currMinString);
 			config.WrapMode = StringToTex2DParam(currWrapString);
+			config.ID = texture->GetID();
 
+			GenerateTextureData(config, texture->GetPath());
 			texture->Reload();
 		}
 

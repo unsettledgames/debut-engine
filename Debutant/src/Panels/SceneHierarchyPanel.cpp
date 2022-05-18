@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui_internal.h>
+#include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Renderer/Texture.h>
 #include <filesystem>
 
@@ -314,7 +315,10 @@ namespace Debut
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
 					{
 						const wchar_t* path = (const wchar_t*)payload->Data;
-						component.Texture = Texture2D::Create(std::filesystem::path(path).string());
+						std::filesystem::path pathStr(path);
+						Ref<Texture2D> selectedTexture = AssetManager::RequestTexture(pathStr.string());
+
+						component.Texture = selectedTexture;
 					}
 					ImGui::EndDragDropTarget();
 				}

@@ -49,5 +49,7 @@
 #include "Debut/Scene/ScriptableEntity.h"
 #include "Debut/Scene/Components.h"
 
-// Utils
-#include "Debut/Utils/AssetCache.h"
+/************Asset managemenet************/
+#include "Debut/AssetManager/AssetCache.h"
+#include "Debut/AssetManager/AssetManager.h"
+
