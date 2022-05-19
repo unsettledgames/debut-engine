@@ -242,6 +242,7 @@ namespace Debut
 
 				ImGuiUtils::StartColumns(3, {80, 100, 100});
 
+				// Accept PNG files to use as textures for the sprite renderer
 				ImGui::ImageButton(buttonTexture, ImVec2(64.0f, 64.0f), { 0, 1 }, { 1, 0 });
 				if (ImGui::BeginDragDropTarget())
 				{
@@ -249,9 +250,12 @@ namespace Debut
 					{
 						const wchar_t* path = (const wchar_t*)payload->Data;
 						std::filesystem::path pathStr(path);
-						Ref<Texture2D> selectedTexture = AssetManager::RequestTexture(pathStr.string());
 
-						component.Texture = selectedTexture;
+						if (pathStr.extension() == ".png")
+						{
+							Ref<Texture2D> selectedTexture = AssetManager::Request<Texture2D>(pathStr.string());
+							component.Texture = selectedTexture;
+						}
 					}
 					ImGui::EndDragDropTarget();
 				}
@@ -280,6 +284,12 @@ namespace Debut
 
 				ImGuiUtils::RGBVec2("Offset", { "X", "Y" }, { &component.Offset.x, &component.Offset.y });
 				ImGuiUtils::RGBVec2("Size", { "X", "Y" }, { &component.Size.x, &component.Size.y });
+
+				auto material = ImGuiUtils::DragDestination<PhysicsMaterial2D>("Physics material", ".physmat2d");
+				if (material != nullptr)
+				{
+
+				}
 
 				ImGui::Dummy({ 0.0f, 10.0f });
 				ImGui::Separator();

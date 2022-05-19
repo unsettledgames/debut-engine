@@ -5,12 +5,6 @@
 #include <yaml-cpp/yaml.h>
 #include <Debut/AssetManager/AssetManager.h>
 
-/* TODO: 
-	- Properly serialize texture data
-	- Properly serialize physics2dmaterial data
-* 
-*/
-
 namespace YAML
 {
 	template<>
@@ -196,6 +190,7 @@ namespace Debut
 	static void SerializeComponent(const SpriteRendererComponent& s, YAML::Emitter& out)
 	{
 		out << YAML::Key << "Color" << YAML::Value << s.Color;
+		out << YAML::BeginMap << YAML::Value << "Texture";
 		out << YAML::Key << "Texture" << YAML::Value << (s.Texture ? s.Texture->GetPath() : "");
 		out << YAML::Key << "TilingFactor" << YAML::Value << s.TilingFactor;
 	}
@@ -284,7 +279,7 @@ namespace Debut
 		sc.Color = in["Color"].as<glm::vec4>();
 		if (in["Texture"])
 		{
-			Ref<Texture2D> texture = AssetManager::RequestTexture(in["Texture"].as<std::string>());
+			Ref<Texture2D> texture = AssetManager::Request<Texture2D>(in["Texture"].as<std::string>());
 			sc.Texture = texture;
 		}
 		if (in["TilingFactor"])		sc.TilingFactor = in["TilingFactor"].as<float>();

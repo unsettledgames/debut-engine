@@ -7,7 +7,16 @@ namespace Debut
 	static AssetCache<std::string, Ref<Texture2D>> s_TextureCache;
 	static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
 
-	void AssetManager::SubmitTexture(const std::string& path)
+	// ASSET SUBMISSION BY PATH
+
+	template <typename T>
+	void AssetManager::Submit(const std::string& path)
+	{
+
+	}
+
+	template <>
+	void AssetManager::Submit<Texture2D>(const std::string& path)
 	{
 		if (s_TextureCache.Has(path))
 			return;
@@ -16,7 +25,26 @@ namespace Debut
 		s_TextureCache.Put(path, toAdd);
 	}
 
-	void AssetManager::SubmitTexture(Ref<Texture2D>& texture)
+	template<>
+	void AssetManager::Submit<PhysicsMaterial2D>(const std::string& path)
+	{
+		if (s_PhysicsMaterial2DCache.Has(path))
+			return;
+
+		Ref<PhysicsMaterial2D> toAdd = CreateRef<PhysicsMaterial2D>(path);
+		s_PhysicsMaterial2DCache.Put(path, toAdd);
+	}
+
+	// ASSET SUBMISSION BY REFERENCE
+
+	template <typename T>
+	void AssetManager::Submit(const Ref<T>& toAdd)
+	{
+
+	}
+
+	template <>
+	void AssetManager::Submit<Texture2D>(const Ref<Texture2D>& texture)
 	{
 		if (s_TextureCache.Has(texture->GetPath()))
 			return;
@@ -25,7 +53,26 @@ namespace Debut
 		return;
 	}
 
-	Ref<Texture2D> AssetManager::RequestTexture(const std::string& id)
+	template <>
+	void AssetManager::Submit<PhysicsMaterial2D>(const Ref<PhysicsMaterial2D>& material)
+	{
+		if (s_PhysicsMaterial2DCache.Has(material->GetPath()))
+			return;
+
+		s_PhysicsMaterial2DCache.Put(material->GetPath(), material);
+		return;
+	}
+
+	// ASSET REQUESTS
+
+	template <typename T>
+	Ref<T> AssetManager::Request(const std::string& id)
+	{
+
+	}
+
+	template<>
+	Ref<Texture2D> AssetManager::Request<Texture2D>(const std::string& id)
 	{
 		if (s_TextureCache.Has(id))
 			return s_TextureCache.Get(id);
@@ -40,25 +87,8 @@ namespace Debut
 		return toAdd;
 	}
 
-	void AssetManager::SubmitPhysicsMaterial2D(const std::string& path)
-	{
-		if (s_PhysicsMaterial2DCache.Has(path))
-			return;
-
-		Ref<PhysicsMaterial2D> toAdd = CreateRef<PhysicsMaterial2D>(path);
-		s_PhysicsMaterial2DCache.Put(path, toAdd);
-	}
-
-	void AssetManager::SubmitPhysicsMaterial2D(Ref<PhysicsMaterial2D>& material)
-	{
-		if (s_PhysicsMaterial2DCache.Has(material->GetPath()))
-			return;
-
-		s_PhysicsMaterial2DCache.Put(material->GetPath(), material);
-		return;
-	}
-
-	Ref<PhysicsMaterial2D> AssetManager::RequestPhysicsMaterial2D(const std::string& id)
+	template<>
+	Ref<PhysicsMaterial2D> AssetManager::Request<PhysicsMaterial2D>(const std::string& id)
 	{
 		if (s_PhysicsMaterial2DCache.Has(id))
 			return s_PhysicsMaterial2DCache.Get(id);

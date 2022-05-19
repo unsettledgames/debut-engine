@@ -1,5 +1,8 @@
 #include <Debut/dbtpch.h>
 #include <Debut/ImGui/ImGuiUtils.h>
+
+#include <Debut/AssetManager/AssetManager.h>
+#include <filesystem>
 #include <imgui_internal.h>
 
 namespace Debut
@@ -215,5 +218,42 @@ namespace Debut
 		ImGuiUtils::ResetColumns();
 
 		return changed;
+	}
+
+	template <typename T>
+	Ref<T> ImGuiUtils::DragDestination(const std::string& label, const std::string& acceptedExtension, const std::string& current)
+	{
+		Ref<PhysicsMaterial2D> ret = nullptr;
+
+		ImGui::PushID(label.c_str());
+		ImGuiUtils::StartColumns(2, { 100, 300 });
+
+		ImGui::Text(label.c_str());
+		ImGui::SameLine();
+		ImGui::NextColumn();
+
+		// TODO: put name of selected material inside 
+		ImGui::Button(("##" + label).c_str(), { ImGui::GetTextLineHeight(), 300 });
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
+			{
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				std::filesystem::path pathStr(path);
+
+				if (pathStr.extension() == acceptedExtension)
+				{
+					Ref<T> selectedAsset = AssetManager::Request<T>(pathStr.string());
+					ret = selectedAsset;
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGuiUtils::ResetColumns();
+		ImGui::PopID();
+
+		return nullptr;
 	}
 }

@@ -55,7 +55,7 @@ namespace Debutant
 
 	void PropertiesPanel::DrawPhysicsMaterial2DProperties()
 	{
-		Ref<PhysicsMaterial2D> material = AssetManager::RequestPhysicsMaterial2D(m_AssetPath.string());
+		Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(m_AssetPath.string());
 		std::ifstream metaFile(material->GetPath());
 		std::stringstream strStream;
 
@@ -105,7 +105,7 @@ namespace Debutant
 
 	void PropertiesPanel::DrawTextureProperties()
 	{
-		Ref<Texture2D> texture = AssetManager::RequestTexture(m_AssetPath.string());
+		Ref<Texture2D> texture = AssetManager::Request<Texture2D>(m_AssetPath.string());
 		std::ifstream metaFile(texture->GetPath() + ".meta");
 		std::stringstream strStream;
 
