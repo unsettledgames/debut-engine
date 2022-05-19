@@ -195,35 +195,35 @@ namespace Debut
 
 				if (ImGuiUtils::Combo("Projection", projectionTypes, 2, &currProjType, &finalProjType))
 					camera.SetProjectionType(SceneCamera::StringToProjType(finalProjType));
-
 				ImGui::Checkbox("Set as primary", &component.Primary);
+				ImGui::Dummy({0.0f, 0.5f});
 
 				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 				{
 					float perspFOV = glm::degrees(camera.GetPerspFOV());
-					if (ImGui::DragFloat("Vertical FOV", &perspFOV, 0.15f))
+					if (ImGuiUtils::DragFloat("Vertical FOV", &perspFOV, 0.15f))
 						camera.SetPerspFOV(glm::radians(perspFOV));
 
 					float perspNear = camera.GetPerspNearClip();
-					if (ImGui::DragFloat("Near clip", &perspNear, 0.15f))
+					if (ImGuiUtils::DragFloat("Near clip", &perspNear, 0.15f))
 						camera.SetPerspNearClip(perspNear);
 
 					float perspFar = camera.GetPerspFarClip();
-					if (ImGui::DragFloat("Far clip", &perspFar, 0.15f))
+					if (ImGuiUtils::DragFloat("Far clip", &perspFar, 0.15f))
 						camera.SetPerspFarClip(perspFar);
 				}
 				else
 				{
 					float orthoSize = camera.GetOrthoSize();
-					if (ImGui::DragFloat("Size", &orthoSize, 0.15f))
+					if (ImGuiUtils::DragFloat("Size", &orthoSize, 0.15f))
 						camera.SetOrthoSize(orthoSize);
 
 					float orthoNear = camera.GetOrthoNearClip();
-					if (ImGui::DragFloat("Near clip", &orthoNear, 0.15f))
+					if (ImGuiUtils::DragFloat("Near clip", &orthoNear, 0.15f))
 						camera.SetOrthoNearClip(orthoNear);
 
 					float orthoFar = camera.GetOrthoFarClip();
-					if (ImGui::DragFloat("Far clip", &orthoFar, 0.15f))
+					if (ImGuiUtils::DragFloat("Far clip", &orthoFar, 0.15f))
 						camera.SetOrthoFarClip(orthoFar);
 				}
 			});
@@ -258,11 +258,7 @@ namespace Debut
 				ImGui::NextColumn();
 
 				ImGui::SameLine();
-				ImGui::Text("Tiling factor");
-				ImGui::NextColumn();
-
-				ImGui::DragFloat("##", &component.TilingFactor, -100000, 100000, 0.1f);
-				ImGui::Columns(1);
+				ImGuiUtils::DragFloat("Tiling factor", &component.TilingFactor, 0.1f);
 
 			});
 
@@ -270,47 +266,44 @@ namespace Debut
 			{
 				const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
 				const char* currBodyType = bodyTypeStrings[(int)component.Type];
+				const char* finalBodyType = nullptr;
 
-				if (ImGui::BeginCombo("Body type", currBodyType))
-				{
-					for (int i = 0; i < 2; i++)
-					{
-						bool isSelected = currBodyType == bodyTypeStrings[i];
-						if (ImGui::Selectable(bodyTypeStrings[i], &isSelected))
-						{
-							currBodyType = bodyTypeStrings[i];
-							component.Type = (Rigidbody2DComponent::BodyType)i;
-						}
-
-						if (isSelected)
-							ImGui::SetItemDefaultFocus();
-					}
-					ImGui::EndCombo();
-				}
+				if (ImGuiUtils::Combo("Body type", bodyTypeStrings, 3, &currBodyType, &finalBodyType))
+					component.Type = Rigidbody2DComponent::StrToRigidbody2DType(finalBodyType);
 
 				ImGui::Checkbox("Fixed rotation", &component.FixedRotation);
 			});
 		
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
 			{
-				ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
-				ImGui::DragFloat2("Size", glm::value_ptr(component.Size));
+				ImGui::Dummy({ 0.0f, 5.0f });
 
-				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Restitution threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+				ImGuiUtils::RGBVec2("Offset", { "X", "Y" }, { &component.Offset.x, &component.Offset.y });
+				ImGuiUtils::RGBVec2("Size", { "X", "Y" }, { &component.Size.x, &component.Size.y });
+
+				ImGui::Dummy({ 0.0f, 10.0f });
+				ImGui::Separator();
+				ImGui::Dummy({ 0.0f, 10.0f });
+
+				ImGuiUtils::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+				ImGuiUtils::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+				ImGuiUtils::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+				ImGuiUtils::DragFloat("Restitution threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 			});
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)
 			{
-				ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
-				ImGui::DragFloat("Radius", &component.Radius);
+				ImGuiUtils::RGBVec2("Offset", { "X", "Y" }, { &component.Offset.x, &component.Offset.y });
+				ImGuiUtils::DragFloat("Radius", &component.Radius, 0.1f);
 
-				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Restitution threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+				ImGui::Dummy({ 0.0f, 10.0f });
+				ImGui::Separator();
+				ImGui::Dummy({ 0.0f, 10.0f });
+
+				ImGuiUtils::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+				ImGuiUtils::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+				ImGuiUtils::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+				ImGuiUtils::DragFloat("Restitution threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 			});
 	}
 }

@@ -119,7 +119,7 @@ namespace Debut
 			{
 				Entity entity = { e, this };
 				BoxCollider2DComponent component = m_Registry.get<BoxCollider2DComponent>(e);
-				Renderer2D::DrawRect(entity.Transform().GetTransform(), component.Size, glm::vec4(0.2f, 1.0f, 0.4f, 1.0f));
+				Renderer2D::DrawRect(entity.Transform().GetTransform(), component.Size, component.Offset, glm::vec4(0.2f, 1.0f, 0.4f, 1.0f));
 			}
 		}
 

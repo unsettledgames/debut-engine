@@ -81,6 +81,7 @@ namespace Debut
 	struct Rigidbody2DComponent
 	{
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
+
 		BodyType Type = BodyType::Static;
 		// TODO: constraints
 		bool FixedRotation = false;
@@ -89,6 +90,13 @@ namespace Debut
 
 		Rigidbody2DComponent() = default;
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
+
+		static BodyType StrToRigidbody2DType(const std::string& type)
+		{
+			if (type == "Static") return BodyType::Static;
+			if (type == "Dynamic") return BodyType::Dynamic;
+			if (type == "Kinematic") return BodyType::Kinematic;
+		}
 	};
 
 	struct BoxCollider2DComponent

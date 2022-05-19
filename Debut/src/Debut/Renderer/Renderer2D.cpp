@@ -161,14 +161,14 @@ namespace Debut
 		s_Data.LineVertexCount += 2;
 	}
 
-	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec4& color)
+	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec2& offset,const glm::vec4& color)
 	{
 		glm::vec3 topRight, bottomRight, topLeft, bottomLeft;
 
-		topRight = transform * glm::vec4(-size.x / 2, size.y / 2, 0.0f, 1.0f);
-		bottomRight = transform * glm::vec4(-size.x / 2, -size.y / 2, 0.0f, 1.0f);
-		topLeft = transform * glm::vec4(size.x / 2, size.y / 2, 0.0f, 1.0f);
-		bottomLeft = transform * glm::vec4(size.x / 2, -size.y / 2, 0.0f, 1.0f);
+		topRight = transform * glm::vec4(-size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f, 1.0f);
+		bottomRight = transform * glm::vec4(-size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f);
+		topLeft = transform * glm::vec4(size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f, 1.0f);
+		bottomLeft = transform * glm::vec4(size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f);
 
 		DrawLine(topRight, bottomRight, color);
 		DrawLine(topLeft, bottomLeft, color);

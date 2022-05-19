@@ -7,32 +7,15 @@
 #include <filesystem>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <imgui_internal.h>
+#include <Debut/ImGui/ImGuiUtils.h>
+
+/**
+	TODO:
+	- Polish: reset texture paramters so they're coherent if the user doesn't save the results
+*/
 
 namespace Debutant
 {
-	static void DrawFloatParameter(const std::string& label, float* value, float min, float max, float power)
-	{
-		uint32_t columnWidth = 150;
-		ImGui::PushID(label.c_str());
-
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
-
-		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
-
-		ImGui::Text(label.c_str());
-		ImGui::NextColumn();
-
-		ImGui::DragFloat("##", value, min, max, power);
-		ImGui::PopItemWidth();
-
-		ImGui::PopStyleVar();
-		ImGui::PopID();
-
-		ImGui::Columns(1);
-	}
-
 	static void GenerateTextureData(const Texture2DConfig& parameters, std::string& path)
 	{
 		YAML::Emitter emitter;
@@ -97,10 +80,12 @@ namespace Debutant
 		ImGui::PopFont();
 
 		// PhysMat2D parameters
-		DrawFloatParameter("Density", &density, 0, 1, 0.02f);
-		DrawFloatParameter("Friction", &friction, 0, 1, 0.02f);
-		DrawFloatParameter("Restitution", &restitution, 0, 100, 1.0f);
-		DrawFloatParameter("Restitution threshold", &restitutionThreshold, 0, 100, 1.0f);
+		ImGuiUtils::StartColumns(2, { 150, 200 });
+			ImGuiUtils::DragFloat("Density", &density, 0.1f, 0.0f, 1.0f);
+			ImGuiUtils::DragFloat("Friction", &friction, 0.1f, 0.0f, 1.0f);
+			ImGuiUtils::DragFloat("Restitution", &restitution, 0.3f, 0.0f, 100000.0f);
+			ImGuiUtils::DragFloat("Restitution threshold", &restitutionThreshold, 0.3f, 0.0f, 100000.0f);
+		ImGuiUtils::ResetColumns();
 
 		// When settings are saved, a meta file containing the data is generated for that texture
 		if (ImGui::Button("Save settings"))
@@ -126,23 +111,18 @@ namespace Debutant
 
 		Texture2DConfig texParams = { Texture2DParameter::FILTERING_LINEAR, Texture2DParameter::WRAP_CLAMP };
 
-		if (metaFile.good())
-		{
-			strStream << metaFile.rdbuf();
-			YAML::Node in = YAML::Load(strStream.str().c_str());
-
-			texParams.Filtering = StringToTex2DParam(in["Filtering"].as<std::string>());
-			texParams.WrapMode = StringToTex2DParam(in["WrapMode"].as<std::string>());
-		}
-		
 		Texture2DParameter filter = texture->GetFilteringMode();
 		Texture2DParameter wrapMode = texture->GetWrapMode();
 
-		std::string currFilterString = Tex2DParamToString(filter);
-		std::string currWrapString = Tex2DParamToString(wrapMode);
+		std::string currFilterStdStr = Tex2DParamToString(filter);
+		std::string currWrapStdStr = Tex2DParamToString(wrapMode);
+		const char* currFilterString = currFilterStdStr.c_str();
+		const char* currWrapString = currWrapStdStr.c_str();
 
 		const char* filterTypes[] = { "Linear", "Point" };
+		const char* newFilterType = nullptr;
 		const char* wrapTypes[] = { "Clamp", "Repeat" };
+		const char* newWrapMode = nullptr;
 
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap
 			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
@@ -153,51 +133,20 @@ namespace Debutant
 		ImGui::LabelText("##importtitle", (m_AssetPath.filename().string() + " import settings").c_str(), 50);
 		ImGui::PopFont();
 
-		ImGui::Columns(2);
-		// Min filtering 
-		ImGui::Text("Filterig mode");
-		ImGui::NextColumn();
-		if (ImGui::BeginCombo("##filter", Tex2DParamToString(filter).c_str()))
+		ImGuiUtils::StartColumns(2, { 100, 200 });
+		if (ImGuiUtils::Combo("Filtering mode", filterTypes, 2, &currFilterString, &newFilterType))
 		{
-			for (int i = 0; i < 2; i++)
-			{
-				bool isSelected = currFilterString == filterTypes[i];
-				if (ImGui::Selectable(filterTypes[i], &isSelected))
-				{
-					currFilterString = filterTypes[i];
-					// This should be done at the end of everything
-					texture->SetFilteringMode(StringToTex2DParam(std::string(currFilterString)));
-				}
-
-				if (isSelected)
-					ImGui::SetItemDefaultFocus();
-			}
-
-			ImGui::EndCombo();
+			texParams.Filtering = StringToTex2DParam(newFilterType);
+			texture->SetFilteringMode(texParams.Filtering);
 		}
 
-		// Wrap mode
-		ImGui::NextColumn();
-		ImGui::Text("Wrap mode");
-		ImGui::NextColumn();
-		if (ImGui::BeginCombo("##wrapmode", Tex2DParamToString(wrapMode).c_str()))
+		ImGuiUtils::StartColumns(2, { 100, 200 });
+		if (ImGuiUtils::Combo("Wrap mode", wrapTypes, 2, &currWrapString, &newWrapMode))
 		{
-			for (int i = 0; i < 2; i++)
-			{
-				bool isSelected = currWrapString == wrapTypes[i];
-				if (ImGui::Selectable(wrapTypes[i], &isSelected))
-				{
-					currWrapString = wrapTypes[i];
-					texture->SetWrapMode(StringToTex2DParam(std::string(currWrapString)));
-				}
-
-				if (isSelected)
-					ImGui::SetItemDefaultFocus();
-			}
-
-			ImGui::EndCombo();
+			texParams.WrapMode = StringToTex2DParam(newWrapMode);
+			texture->SetWrapMode(texParams.WrapMode);
 		}
-
+		
 		ImGui::Columns(1);
 
 		if (ImGui::TreeNodeEx("Texture preview", treeNodeFlags))
@@ -213,12 +162,9 @@ namespace Debutant
 		// When settings are saved, a meta file containing the data is generated for that texture
 		if (ImGui::Button("Save settings"))
 		{
-			Texture2DConfig config;
-			config.Filtering = StringToTex2DParam(currFilterString);
-			config.WrapMode = StringToTex2DParam(currWrapString);
-			config.ID = texture->GetID();
+			texParams.ID = texture->GetID();
 
-			GenerateTextureData(config, texture->GetPath());
+			GenerateTextureData(texParams, texture->GetPath());
 			texture->Reload();
 		}
 
