@@ -306,6 +306,7 @@
     <ClInclude Include="src\Debut\AssetManager\AssetManager.h" />
     <ClInclude Include="src\Debut\AssetManager\Asset.h" />
     <ClInclude Include="src\Debut\Physics\PhysicsMaterial2D.h" />
+    <ClInclude Include="src\Debut\ImGui\ImGuiUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\Core\Application.cpp">
@@ -451,5 +452,6 @@
     </ClCompile>
     <ClCompile Include="src\Debut\AssetManager\AssetManager.cpp" />
     <ClCompile Include="src\Debut\Physics\PhysicsMaterial2D.cpp" />
+    <ClCompile Include="src\Debut\ImGui\ImGuiUtils.cpp" />
   </ItemGroup>
 </Project>

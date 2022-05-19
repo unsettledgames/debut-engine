@@ -67,4 +67,12 @@ namespace Debut
 			m_ProjectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar);
 		}
 	}
+
+	SceneCamera::ProjectionType SceneCamera::StringToProjType(const char* string)
+	{
+		if (string == "Perspective")
+			return SceneCamera::ProjectionType::Perspective;
+		
+		return SceneCamera::ProjectionType::Orthographic;
+	}
 }

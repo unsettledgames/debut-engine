@@ -13,7 +13,7 @@ Entities:
     SpriteRendererComponent:
       Color: [0, 0.525096655, 1, 1]
       Texture: assets\textures\akita.png
-      TilingFactor: 1
+      TilingFactor: 5
     Rigidbody2DComponent:
       Type: Dynamic
       FixedRotation: false
@@ -81,7 +81,7 @@ Entities:
       Scale: [21.3802719, 0.682874203, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      Texture: ""
+      Texture: assets\textures\checkerboard.png
       TilingFactor: 1
     Rigidbody2DComponent:
       Type: Static

@@ -2,5 +2,5 @@
 Asset: Texture2D
 ID: 9408092029031480453
 Filtering: Point
-WrapMode: Clamp
+WrapMode: Repeat
 ...

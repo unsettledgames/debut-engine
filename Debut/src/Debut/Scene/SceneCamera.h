@@ -34,6 +34,7 @@ namespace Debut
 		void SetPerspNearClip(float val) { m_PerspectiveNear = val; RecalculateProjection(); }
 		void SetPerspFarClip(float val) { m_PerspectiveFar = val; RecalculateProjection(); }
 
+		static ProjectionType StringToProjType(const char* string);
 		
 	
 	private:

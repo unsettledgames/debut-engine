@@ -6,79 +6,10 @@
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Renderer/Texture.h>
 #include <filesystem>
-
+#include <Debut/ImGui/ImGuiUtils.h>
 
 namespace Debut
 {
-	static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100)
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		auto boldFont = io.Fonts->Fonts[1];
-
-		ImGui::PushID(label.c_str());
-
-		ImGui::Columns(2);
-		ImGui::SetColumnWidth(0, columnWidth);
-		ImGui::Text(label.c_str());
-		ImGui::NextColumn();
-
-		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
-
-		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
-
-		// Red X component
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("X", buttonSize))
-			values.x = resetValue;
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::DragFloat("##X", &values.x, 0.15f);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		// Green Y component
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.6f, 0.15f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.7f, 0.2f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.6f, 0.15f, 1.0f));
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Y", buttonSize))
-			values.y = resetValue;
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::DragFloat("##Y", &values.y, 0.15f);
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-
-		// Blue Z component
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.3f, 0.8f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.4f, 0.9f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.3f, 0.8f, 1.0f));
-		ImGui::PushFont(boldFont);
-		if (ImGui::Button("Z", buttonSize))
-			values.z = resetValue;
-		ImGui::PopFont();
-		ImGui::PopStyleColor(3);
-
-		ImGui::SameLine();
-		ImGui::DragFloat("##Z", &values.z, 0.15f);
-		ImGui::PopItemWidth();
-
-		ImGui::PopStyleVar();
-
-		ImGui::Columns(1);
-
-		ImGui::PopID();
-	}
-
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
 		EditorCache::Textures().Put("assets\\textures\\empty_texture.png", Texture2D::Create(1, 1));
@@ -247,10 +178,9 @@ namespace Debut
 		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
 			{
 				glm::vec3 rotDeg = glm::degrees(component.Rotation);
-
-				DrawVec3Control("Position", component.Translation);
-				DrawVec3Control("Rotation", rotDeg);
-				DrawVec3Control("Scale", component.Scale, 1);
+				ImGuiUtils::RGBVec3("Position", { "X", "Y", "Z" }, {&component.Translation.x, &component.Translation.y, &component.Translation.z});
+				ImGuiUtils::RGBVec3("Rotation", { "X", "Y", "Z" }, {&rotDeg.x, &rotDeg.y, &rotDeg.z});
+				ImGuiUtils::RGBVec3("Scale", { "X", "Y", "Z" }, {&component.Scale.x,&component.Scale.y, &component.Scale.z}, 1);
 
 				component.Rotation = glm::radians(rotDeg);
 			});
@@ -261,23 +191,10 @@ namespace Debut
 
 				const char* projectionTypes[] = { "Perspective", "Orthographic" };
 				const char* currProjType = projectionTypes[(int)camera.GetProjectionType()];
+				const char* finalProjType = nullptr;
 
-				if (ImGui::BeginCombo("Projection", projectionTypes[(int)camera.GetProjectionType()]))
-				{
-					for (int i = 0; i < 2; i++)
-					{
-						bool isSelected = currProjType == projectionTypes[i];
-						if (ImGui::Selectable(projectionTypes[i], &isSelected))
-						{
-							currProjType = projectionTypes[i];
-							camera.SetProjectionType((SceneCamera::ProjectionType)i);
-						}
-
-						if (isSelected)
-							ImGui::SetItemDefaultFocus();
-					}
-					ImGui::EndCombo();
-				}
+				if (ImGuiUtils::Combo("Projection", projectionTypes, 2, &currProjType, &finalProjType))
+					camera.SetProjectionType(SceneCamera::StringToProjType(finalProjType));
 
 				ImGui::Checkbox("Set as primary", &component.Primary);
 
@@ -320,11 +237,12 @@ namespace Debut
 				ImTextureID buttonTexture;
 				// Use a blank texture if the user hasn't already set one, otherwise use the one submitted by the user	
 				buttonTexture = component.Texture == nullptr ?
-					(ImTextureID)EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID() : 
+					(ImTextureID)EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID() :
 					(ImTextureID)component.Texture->GetRendererID();
-				
-				ImGui::ImageButton(buttonTexture, ImVec2(64.0f, 64.0f), { 0, 1 }, { 1, 0 });
 
+				ImGuiUtils::StartColumns(3, {80, 100, 100});
+
+				ImGui::ImageButton(buttonTexture, ImVec2(64.0f, 64.0f), { 0, 1 }, { 1, 0 });
 				if (ImGui::BeginDragDropTarget())
 				{
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
@@ -337,10 +255,14 @@ namespace Debut
 					}
 					ImGui::EndDragDropTarget();
 				}
+				ImGui::NextColumn();
+
 				ImGui::SameLine();
-				ImGui::LabelText("##maintexture", "Main texture");
-				// Tiling factor
-				ImGui::DragFloat("Tiling factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+				ImGui::Text("Tiling factor");
+				ImGui::NextColumn();
+
+				ImGui::DragFloat("##", &component.TilingFactor, -100000, 100000, 0.1f);
+				ImGui::Columns(1);
 
 			});
 

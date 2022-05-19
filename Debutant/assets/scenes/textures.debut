@@ -7,12 +7,12 @@ Entities:
       Name: Icons
       Tag: Untagged
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [-1.43321991, 0.179113954, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [5, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
-      Texture: ""
+      Texture: assets\textures\Icons.png
       TilingFactor: 1
   - "Entity: ": 13784771077045596972
     IDComponent:
@@ -21,7 +21,7 @@ Entities:
       Name: New Entity
       Tag: Untagged
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [-1.46685183, 0.00833430886, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     CameraComponent:
@@ -42,10 +42,10 @@ Entities:
       Name: New Entity
       Tag: Untagged
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [0, -0.62401104, 0]
       Rotation: [0, 0, 0]
       Scale: [2, 8, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       Texture: assets\textures\WholeSketch.png
-      TilingFactor: 1
+      TilingFactor: 2

@@ -3,6 +3,13 @@
 #include "Components.h"
 #include "Debut/Utils/CppUtils.h"
 #include <yaml-cpp/yaml.h>
+#include <Debut/AssetManager/AssetManager.h>
+
+/* TODO: 
+	- Properly serialize texture data
+	- Properly serialize physics2dmaterial data
+* 
+*/
 
 namespace YAML
 {
@@ -275,7 +282,11 @@ namespace Debut
 			return;
 		SpriteRendererComponent& sc = e.AddComponent<SpriteRendererComponent>();
 		sc.Color = in["Color"].as<glm::vec4>();
-		if (in["Texture"])			sc.Texture = in["Texture"].as<std::string>() == "" ? nullptr : Texture2D::Create(in["Texture"].as<std::string>());
+		if (in["Texture"])
+		{
+			Ref<Texture2D> texture = AssetManager::RequestTexture(in["Texture"].as<std::string>());
+			sc.Texture = texture;
+		}
 		if (in["TilingFactor"])		sc.TilingFactor = in["TilingFactor"].as<float>();
 	}
 

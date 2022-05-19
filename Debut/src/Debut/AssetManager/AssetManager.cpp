@@ -30,7 +30,11 @@ namespace Debut
 		if (s_TextureCache.Has(id))
 			return s_TextureCache.Get(id);
 
-		Ref<Texture2D> toAdd = Texture2D::Create(id);
+		Ref<Texture2D> toAdd;
+		if (id == "")
+			toAdd = Texture2D::Create(1, 1);
+		else
+			toAdd = Texture2D::Create(id);
 		s_TextureCache.Put(id, toAdd);
 
 		return toAdd;

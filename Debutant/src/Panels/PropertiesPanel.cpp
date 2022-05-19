@@ -6,9 +6,33 @@
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
 #include <Debut/Physics/PhysicsMaterial2D.h>
+#include <imgui_internal.h>
 
 namespace Debutant
 {
+	static void DrawFloatParameter(const std::string& label, float* value, float min, float max, float power)
+	{
+		uint32_t columnWidth = 150;
+		ImGui::PushID(label.c_str());
+
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, columnWidth);
+
+		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
+
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		ImGui::DragFloat("##", value, min, max, power);
+		ImGui::PopItemWidth();
+
+		ImGui::PopStyleVar();
+		ImGui::PopID();
+
+		ImGui::Columns(1);
+	}
+
 	static void GenerateTextureData(const Texture2DConfig& parameters, std::string& path)
 	{
 		YAML::Emitter emitter;
@@ -73,11 +97,10 @@ namespace Debutant
 		ImGui::PopFont();
 
 		// PhysMat2D parameters
-		ImGui::SliderFloat("Density", &density, 0, 1, "", 0.02f);
-		ImGui::SliderFloat("Friction", &friction, 0, 1, "", 0.02f);
-		ImGui::SliderFloat("Restitution", &restitution, 0, 100, "", 0.1f);
-		ImGui::SliderFloat("Restitution threshold", &restitutionThreshold, 0, 100, "", 0.1f);
-
+		DrawFloatParameter("Density", &density, 0, 1, 0.02f);
+		DrawFloatParameter("Friction", &friction, 0, 1, 0.02f);
+		DrawFloatParameter("Restitution", &restitution, 0, 100, 1.0f);
+		DrawFloatParameter("Restitution threshold", &restitutionThreshold, 0, 100, 1.0f);
 
 		// When settings are saved, a meta file containing the data is generated for that texture
 		if (ImGui::Button("Save settings"))
@@ -130,7 +153,6 @@ namespace Debutant
 		ImGui::LabelText("##importtitle", (m_AssetPath.filename().string() + " import settings").c_str(), 50);
 		ImGui::PopFont();
 
-
 		ImGui::Columns(2);
 		// Min filtering 
 		ImGui::Text("Filterig mode");
@@ -143,6 +165,7 @@ namespace Debutant
 				if (ImGui::Selectable(filterTypes[i], &isSelected))
 				{
 					currFilterString = filterTypes[i];
+					// This should be done at the end of everything
 					texture->SetFilteringMode(StringToTex2DParam(std::string(currFilterString)));
 				}
 
