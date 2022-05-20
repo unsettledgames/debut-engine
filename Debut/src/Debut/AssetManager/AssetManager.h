@@ -62,6 +62,8 @@ namespace Debut
 
 		static void Init();
 		static void Reimport();
+
+		static std::string GetPath(UUID id);
 		static void AddAsset(const UUID& id, const std::string& path);
 
 		template<typename T>
@@ -87,8 +89,23 @@ namespace Debut
 
 		template <typename T>
 		static Ref<T> Request(const std::string& id);
+		template <typename T>
+		static Ref<T> Request(UUID id)
+		{
+			if (id == 0)
+				return nullptr;
+			if (s_AssetMap.find(id) == s_AssetMap.end())
+			{
+				Log.CoreFatal("The requested ID doesn't correspond to any resources");
+				return nullptr;
+			}
+
+			return Request<T>(s_AssetMap[id]);
+		}
 
 	private:
 		static void Reimport(const std::string& folder);
+
+		static std::unordered_map<UUID, std::string> s_AssetMap;
 	};
 }

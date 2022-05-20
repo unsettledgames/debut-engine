@@ -14,7 +14,7 @@
 	- Polish: reset texture paramters so they're coherent if the user doesn't save the results
 */
 
-namespace Debutant
+namespace Debut
 {
 	static void GenerateTextureData(const Texture2DConfig& parameters, std::string& path)
 	{
@@ -70,9 +70,6 @@ namespace Debutant
 			texParams.WrapMode = StringToTex2DParam(in["WrapMode"].as<std::string>());
 		}
 
-		float density = material->GetDensity(), friction = material->GetFriction(),
-			restitution = material->GetRestitution(), restitutionThreshold = material->GetRestitutionThreshold();
-
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
 
 		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
@@ -81,22 +78,22 @@ namespace Debutant
 
 		// PhysMat2D parameters
 		ImGuiUtils::StartColumns(2, { 150, 200 });
-			ImGuiUtils::DragFloat("Density", &density, 0.1f, 0.0f, 1.0f);
-			ImGuiUtils::DragFloat("Friction", &friction, 0.1f, 0.0f, 1.0f);
-			ImGuiUtils::DragFloat("Restitution", &restitution, 0.3f, 0.0f, 100000.0f);
-			ImGuiUtils::DragFloat("Restitution threshold", &restitutionThreshold, 0.3f, 0.0f, 100000.0f);
+			ImGuiUtils::DragFloat("Density", &material->m_Density, 0.1f, 0.0f, 1.0f);
+			ImGuiUtils::DragFloat("Friction", &material->m_Friction, 0.1f, 0.0f, 1.0f);
+			ImGuiUtils::DragFloat("Restitution", &material->m_Restitution, 0.3f, 0.0f, 100000.0f);
+			ImGuiUtils::DragFloat("Restitution threshold", &material->m_RestitutionThreshold, 0.3f, 0.0f, 100000.0f);
 		ImGuiUtils::ResetColumns();
 
 		// When settings are saved, a meta file containing the data is generated for that texture
 		if (ImGui::Button("Save settings"))
 		{
 			PhysicsMaterial2DConfig config;
-			config.Density = density;
-			config.Friction = friction;
-			config.Restitution = restitution;
-			config.RestitutionThreshold = restitutionThreshold;
+			config.Density = material->m_Density;
+			config.Friction = material->m_Friction;
+			config.Restitution = material->m_Restitution;
+			config.RestitutionThreshold = material->m_RestitutionThreshold;
 
-			//PhysicsMaterial2D::SaveSettings(config);
+			PhysicsMaterial2D::SaveSettings(m_AssetPath.string(), config);
 			material->SetConfig(config);
 		}
 
@@ -163,6 +160,8 @@ namespace Debutant
 		if (ImGui::Button("Save settings"))
 		{
 			texParams.ID = texture->GetID();
+			texParams.WrapMode = texture->GetWrapMode();
+			texParams.Filtering = texture->GetFilteringMode();
 
 			GenerateTextureData(texParams, texture->GetPath());
 			texture->Reload();

@@ -5,9 +5,17 @@
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 
+/**
+*	- Innanzitutto, non devono essere le classi a creare in automatico i metafile, al massimo possono contenere una configurazione
+*	  base (il che mi sembra accettabile), che poi provvede a salvare l'AssetManager. Altrimenti anche solo creando un PhysicsMaterial2D
+*	  per salvare un valore mi crea un meta file che non ha senso
+* 
+*	- Richiesta per stringa: se l'asset è stato creato, devo aggiungere la stringa all'asset map
+*/
+
 namespace Debut
 {
-	static std::unordered_map<UUID, std::string> s_AssetMap;
+	std::unordered_map<UUID, std::string> AssetManager::s_AssetMap;
 
 	static AssetCache<std::string, Ref<Texture2D>> s_TextureCache;
 	static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
@@ -54,12 +62,12 @@ namespace Debut
 
 	void AssetManager::Reimport()
 	{
-
 		AssetManager::Reimport("assets");
 	}
 
 	void AssetManager::Reimport(const std::string& folder)
 	{
+		// TODO: generate a meta file for the asset if it doesn't have it.
 		std::filesystem::path assetPath(folder);
 
 		for (auto dirIt : std::filesystem::directory_iterator(folder))
@@ -112,6 +120,13 @@ namespace Debut
 		currFile.close();
 		currFile.open("Debut\\AssetMap.yaml", std::ios::out | std::ios::trunc);
 		currFile << emitter.c_str();
+	}
+
+	std::string AssetManager::GetPath(UUID id)
+	{
+		if (s_AssetMap.find(id) != s_AssetMap.end())
+			return s_AssetMap[id];	
+		return "None";
 	}
 
 	// ASSET SUBMISSION BY PATH
@@ -189,7 +204,10 @@ namespace Debut
 			toAdd = Texture2D::Create(1, 1);
 		else
 			toAdd = Texture2D::Create(id);
+
 		s_TextureCache.Put(id, toAdd);
+		s_AssetMap[toAdd->GetID()] = id;
+		AssetManager::AddAsset(toAdd->GetID(), id);
 
 		return toAdd;
 	}
@@ -201,8 +219,14 @@ namespace Debut
 			return s_PhysicsMaterial2DCache.Get(id);
 
 		Ref<PhysicsMaterial2D> toAdd = CreateRef<PhysicsMaterial2D>(id);
+
+		// Update the asset map
 		s_PhysicsMaterial2DCache.Put(id, toAdd);
+		s_AssetMap[toAdd->GetID()] = id;
+		AssetManager::AddAsset(toAdd->GetID(), id);
 
 		return toAdd;
 	}
+
+	
 }

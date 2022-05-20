@@ -4,6 +4,7 @@
 #include "Debut/Scene/Entity.h"
 #include "Debut/Scene/Components.h"
 #include "Debut/Renderer/Renderer2D.h"
+#include "Debut/AssetManager/AssetManager.h"
 
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
@@ -222,8 +223,7 @@ namespace Debut
 
 			b2BodyDef bodyDef;
 			bodyDef.type = DbtToBox2DBodyType(rb2d.Type);
-			bodyDef.position.Set(transform.Translation.x, transform.Translation.y
-			);
+			bodyDef.position.Set(transform.Translation.x, transform.Translation.y);
 			bodyDef.angle = transform.Rotation.z;
 
 			b2Body* body = m_PhysicsWorld2D->CreateBody(&bodyDef);
@@ -234,23 +234,35 @@ namespace Debut
 			if (entity.HasComponent<BoxCollider2DComponent>())
 			{
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
+				Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(bc2d.Material);
 
 				b2PolygonShape boxShape;
 				boxShape.SetAsBox(transform.Scale.x * bc2d.Size.x / 2, transform.Scale.y * bc2d.Size.y / 2, b2Vec2(bc2d.Offset.x, bc2d.Offset.y), 0);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
-				fixtureDef.density = bc2d.Density;
-				fixtureDef.friction = bc2d.Friction;
-				fixtureDef.restitution = bc2d.Restitution;
-				fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
 
+				if (material != nullptr)
+				{
+					fixtureDef.density = material->GetDensity();
+					fixtureDef.friction = material->GetFriction();
+					fixtureDef.restitution = material->GetRestitution();
+					fixtureDef.restitutionThreshold = material->GetRestitutionThreshold();
+				}
+				else
+				{
+					fixtureDef.density = PhysicsMaterial2D::DefaultSettings.Density;
+					fixtureDef.friction = PhysicsMaterial2D::DefaultSettings.Friction;
+					fixtureDef.restitution = PhysicsMaterial2D::DefaultSettings.Restitution;
+					fixtureDef.restitutionThreshold = PhysicsMaterial2D::DefaultSettings.RestitutionThreshold;
+				}
 				body->CreateFixture(&fixtureDef);
 			}
 
 			if (entity.HasComponent<CircleCollider2DComponent>())
 			{
 				auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
+				//Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(cc2d.Material);
 
 				b2CircleShape circleShape;
 				circleShape.m_radius = cc2d.Radius;

@@ -4,6 +4,8 @@
 
 namespace Debut
 {
+	PhysicsMaterial2DConfig PhysicsMaterial2D::DefaultSettings;
+
 	PhysicsMaterial2D::PhysicsMaterial2D(const std::string& path)
 	{
 		PhysicsMaterial2DConfig config;
@@ -19,6 +21,18 @@ namespace Debut
 			config.Friction = in["Friction"].as<float>();
 			config.Restitution = in["Restitution"].as<float>();
 			config.RestitutionThreshold = in["RestitutionThreshold"].as<float>();
+
+			file.close();
+
+			// Try loading the id as well
+			file.open(path + ".meta");
+			if (file.good())
+			{
+				strStream.str("");
+				strStream << file.rdbuf();
+				in = YAML::Load(strStream.str().c_str());
+				m_ID = in["ID"].as<uint64_t>();
+			}
 		}
 		else
 		{
@@ -28,8 +42,9 @@ namespace Debut
 		SetConfig(config);
 	}
 
-	PhysicsMaterial2D::PhysicsMaterial2D(const PhysicsMaterial2DConfig& config)
+	PhysicsMaterial2D::PhysicsMaterial2D(const std::string& path, const PhysicsMaterial2DConfig& config)
 	{
+		m_Path = path;
 		SetConfig(config);
 	}
 
@@ -37,8 +52,29 @@ namespace Debut
 	{
 		m_Density = config.Density;
 		m_Friction = config.Friction;
-		m_Restituion = config.Restitution;
+		m_Restitution = config.Restitution;
 		m_RestitutionThreshold = config.RestitutionThreshold;
+	}
+
+	void PhysicsMaterial2D::SaveSettings(const std::string& path, const PhysicsMaterial2DConfig& config)
+	{
+		YAML::Emitter out;
+		YAML::Emitter outMeta;
+
+		std::ofstream outFile(path, std::ios::out | std::ios::trunc);
+		std::ofstream metaFile(path + ".meta");
+
+		out << YAML::BeginDoc << YAML::BeginMap;
+		out << YAML::Key << "Asset" << YAML::Value << "PhysicsMaterial2D";
+		out << YAML::Key << "Density" << YAML::Value << 1.0f;
+		out << YAML::Key << "Friction" << YAML::Value << 0.5f;
+		out << YAML::Key << "Restitution" << YAML::Value << 0.5f;
+		out << YAML::Key << "RestitutionThreshold" << YAML::Value << 0.5f;
+
+		outFile << out.c_str();
+
+		outMeta << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << UUID() << YAML::EndMap;
+		metaFile << outMeta.c_str();
 	}
 
 	void PhysicsMaterial2D::SaveDefaultConfig(const std::string& path)

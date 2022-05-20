@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-namespace Debutant
+namespace Debut
 {
 	class PropertiesPanel
 	{

@@ -72,6 +72,7 @@ namespace Debut
 	public:
 		static Ref<Texture2D> Create(const std::string& path);
 		static Ref<Texture2D> Create(uint32_t width, uint32_t height);
+		static void SaveDefaultConfig(const std::string& path);
 
 		Texture2DParameter GetFilteringMode() { return m_FilteringMode; }
 		Texture2DParameter GetWrapMode() { return m_WrapMode; }

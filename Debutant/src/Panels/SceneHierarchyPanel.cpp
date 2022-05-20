@@ -287,20 +287,9 @@ namespace Debut
 
 				ImGuiUtils::VerticalSpace(10);
 
-				Ref<PhysicsMaterial2D> material = ImGuiUtils::DragDestination<PhysicsMaterial2D>("Physics material", ".physmat2d", "None");
+				UUID material = ImGuiUtils::DragDestination<PhysicsMaterial2D>("Physics material", ".physmat2d", component.Material);
 				if (material)
-				{
-
-				}
-				
-				ImGui::Dummy({ 0.0f, 10.0f });
-				ImGui::Separator();
-				ImGui::Dummy({ 0.0f, 10.0f });
-
-				ImGuiUtils::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
-				ImGuiUtils::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
-				ImGuiUtils::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
-				ImGuiUtils::DragFloat("Restitution threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+					component.Material = material;
 			});
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)

@@ -21,9 +21,12 @@ namespace Debut
 		static bool Combo(const char* id, const char* selectables[], uint32_t nSelectables, const char** currSelected, const char** ret);
 
 		template <typename T>
-		static Ref<T> DragDestination(const std::string& label, const std::string& acceptedExtension, const std::string& current)
+		static UUID DragDestination(const std::string& label, const std::string& acceptedExtension, UUID currentID)
 		{
-			Ref<PhysicsMaterial2D> ret = nullptr;
+			UUID ret = 0;
+
+			std::string currentName = AssetManager::GetPath(currentID);
+			currentName = currentName.substr(currentName.find_last_of("\\") + 1, currentName.size() - currentName.find_last_of("\\"));
 
 			ImGui::PushID(label.c_str());
 			ImGuiUtils::StartColumns(2, { 120, 280 });
@@ -33,7 +36,7 @@ namespace Debut
 			ImGui::NextColumn();
 
 			// TODO: put name of selected material inside 
-			ImGui::Button((current + "##" + label).c_str(), { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.2f});
+			ImGui::Button((currentName + "##" + label).c_str(), {ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.2f});
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
@@ -44,7 +47,7 @@ namespace Debut
 					if (pathStr.extension() == acceptedExtension)
 					{
 						Ref<T> selectedAsset = AssetManager::Request<T>(pathStr.string());
-						ret = selectedAsset;
+						ret = selectedAsset->GetID();
 					}
 				}
 
@@ -54,7 +57,7 @@ namespace Debut
 			ImGuiUtils::ResetColumns();
 			ImGui::PopID();
 
-			return nullptr;
+			return ret;
 		}
 	};
 }

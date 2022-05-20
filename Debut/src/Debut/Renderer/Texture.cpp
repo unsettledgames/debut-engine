@@ -51,4 +51,10 @@ namespace Debut
 		DBT_ASSERT(false, "Unsupported renderer API");
 		return nullptr;
 	}
+
+	void Texture2D::SaveDefaultConfig(const std::string& path)
+	{
+
+	}
+
 }

@@ -14,18 +14,25 @@ namespace Debut
 
 	class PhysicsMaterial2D
 	{
+		friend class PropertiesPanel;
+
 	public:
+		
+		static PhysicsMaterial2DConfig DefaultSettings;
+
 		PhysicsMaterial2D() = default;
 		PhysicsMaterial2D(const std::string& config);
-		PhysicsMaterial2D(const PhysicsMaterial2DConfig& config);
+		PhysicsMaterial2D(const std::string& path, const PhysicsMaterial2DConfig& config);
 
 		static void SaveDefaultConfig(const std::string& path);
+		static void SaveSettings(const std::string& path, const PhysicsMaterial2DConfig& config);
 
 		std::string GetPath() { return m_Path; }
 		float GetDensity() { return m_Density; }
 		float GetFriction() { return m_Friction; }
-		float GetRestitution() { return m_Restituion; }
+		float GetRestitution() { return m_Restitution; }
 		float GetRestitutionThreshold() { return m_RestitutionThreshold; }
+		UUID GetID() { return m_ID; }
 
 		void SetConfig(const PhysicsMaterial2DConfig& config);		
 		
@@ -35,7 +42,7 @@ namespace Debut
 
 		float m_Density;
 		float m_Friction;
-		float m_Restituion;
+		float m_Restitution;
 		float m_RestitutionThreshold;
 	};
 }

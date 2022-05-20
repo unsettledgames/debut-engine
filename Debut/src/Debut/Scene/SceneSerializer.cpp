@@ -203,13 +203,25 @@ namespace Debut
 
 	static void SerializeComponent(const BoxCollider2DComponent& c, YAML::Emitter& out)
 	{
+		Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(c.Material);
+
 		out << YAML::Key << "Size" << YAML::Value << c.Size;
 		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
 
-		out << YAML::Key << "Density" << YAML::Value << c.Density;
-		out << YAML::Key << "Friction" << YAML::Value << c.Friction;
-		out << YAML::Key << "Restitution" << YAML::Value << c.Restitution;
-		out << YAML::Key << "RestitutionThreshold" << YAML::Value << c.RestitutionThreshold;
+		if (material != nullptr)
+		{
+			out << YAML::Key << "Density" << YAML::Value << material->GetDensity();
+			out << YAML::Key << "Friction" << YAML::Value << material->GetFriction();
+			out << YAML::Key << "Restitution" << YAML::Value << material->GetRestitution();
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << material->GetRestitutionThreshold();
+		}
+		else
+		{
+			out << YAML::Key << "Density" << YAML::Value << PhysicsMaterial2D::DefaultSettings.Density;
+			out << YAML::Key << "Friction" << YAML::Value << PhysicsMaterial2D::DefaultSettings.Friction;
+			out << YAML::Key << "Restitution" << YAML::Value << PhysicsMaterial2D::DefaultSettings.Restitution;
+			out << YAML::Key << "RestitutionThreshold" << YAML::Value << PhysicsMaterial2D::DefaultSettings.RestitutionThreshold;
+		}
 	}
 
 	static void SerializeComponent(const CircleCollider2DComponent& c, YAML::Emitter& out)
@@ -301,14 +313,11 @@ namespace Debut
 		if (!in)
 			return;
 		BoxCollider2DComponent& bc2d = e.AddComponent<BoxCollider2DComponent>();
-
-		bc2d.Density = in["Density"].as<float>();
-		bc2d.Friction = in["Friction"].as<float>();
-		bc2d.Restitution = in["Restitution"].as<float>();
-		bc2d.RestitutionThreshold = in["RestitutionThreshold"].as<float>();
+		Ref<PhysicsMaterial2D> material = in["Material"] ? AssetManager::Request<PhysicsMaterial2D>(in["Material"].as<uint64_t>()) : nullptr;
 
 		bc2d.Offset = in["Offset"].as<glm::vec2>();
 		bc2d.Size = in["Size"].as<glm::vec2>();
+		bc2d.Material = material ? material->GetID() : 0;
 	}
 
 	template<>
