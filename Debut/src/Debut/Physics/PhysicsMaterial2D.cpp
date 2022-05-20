@@ -44,7 +44,10 @@ namespace Debut
 	void PhysicsMaterial2D::SaveDefaultConfig(const std::string& path)
 	{
 		YAML::Emitter out;
-		std::ofstream outFile(path);
+		YAML::Emitter outMeta;
+
+		std::ofstream outFile(path, std::ios::out | std::ios::trunc);
+		std::ofstream metaFile(path + ".meta");
 
 		out << YAML::BeginDoc << YAML::BeginMap;
 		out << YAML::Key << "Asset" << YAML::Value << "PhysicsMaterial2D";
@@ -54,5 +57,8 @@ namespace Debut
 		out << YAML::Key << "RestitutionThreshold" << YAML::Value << 0.5f;
 
 		outFile << out.c_str();
+		
+		outMeta << YAML::Key << "ID" << YAML::Value << UUID();
+		metaFile << outMeta.c_str();
 	}
 }

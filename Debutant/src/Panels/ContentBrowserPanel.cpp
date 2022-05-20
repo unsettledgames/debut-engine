@@ -7,6 +7,9 @@
 
 using namespace Debut;
 
+/**
+	TODO: - Avoid super long names, trunk them after n characters
+*/
 namespace Debutant
 {
 	// TODO: change this when we have projects

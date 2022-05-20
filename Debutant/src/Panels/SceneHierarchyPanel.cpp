@@ -285,12 +285,14 @@ namespace Debut
 				ImGuiUtils::RGBVec2("Offset", { "X", "Y" }, { &component.Offset.x, &component.Offset.y });
 				ImGuiUtils::RGBVec2("Size", { "X", "Y" }, { &component.Size.x, &component.Size.y });
 
-				auto material = ImGuiUtils::DragDestination<PhysicsMaterial2D>("Physics material", ".physmat2d");
-				if (material != nullptr)
+				ImGuiUtils::VerticalSpace(10);
+
+				Ref<PhysicsMaterial2D> material = ImGuiUtils::DragDestination<PhysicsMaterial2D>("Physics material", ".physmat2d", "None");
+				if (material)
 				{
 
 				}
-
+				
 				ImGui::Dummy({ 0.0f, 10.0f });
 				ImGui::Separator();
 				ImGui::Dummy({ 0.0f, 10.0f });

@@ -37,6 +37,8 @@ namespace Debutant
         m_IconPlay = Texture2D::Create("assets\\icons\\play.png");
         m_IconStop = Texture2D::Create("assets\\icons\\stop.png");
 
+        AssetManager::Init();
+
         EditorCache::Textures().Put("assets\\icons\\play.png", m_IconPlay);
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
     }
@@ -222,6 +224,13 @@ namespace Debutant
                     SaveSceneAs();
 
                 if (ImGui::MenuItem("Exit")) Application::Get().Close();
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Assets"))
+            {
+                if (ImGui::MenuItem("Reimport"))
+                    AssetManager::Reimport();
                 ImGui::EndMenu();
             }
 

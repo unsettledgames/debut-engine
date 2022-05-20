@@ -60,6 +60,10 @@ namespace Debut
 	public:
 		AssetManager() = default;
 
+		static void Init();
+		static void Reimport();
+		static void AddAsset(const UUID& id, const std::string& path);
+
 		template<typename T>
 		static void CreateAsset(const std::string& path)
 		{
@@ -83,5 +87,8 @@ namespace Debut
 
 		template <typename T>
 		static Ref<T> Request(const std::string& id);
+
+	private:
+		static void Reimport(const std::string& folder);
 	};
 }
