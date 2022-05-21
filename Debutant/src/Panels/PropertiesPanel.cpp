@@ -16,23 +16,6 @@
 
 namespace Debut
 {
-	static void GenerateTextureData(const Texture2DConfig& parameters, std::string& path)
-	{
-		YAML::Emitter emitter;
-
-		emitter << YAML::BeginDoc << YAML::BeginMap;
-
-		emitter << YAML::Key << "Asset" << YAML::Value << "Texture2D";
-		emitter << YAML::Key << "ID" << YAML::Value << parameters.ID;
-		emitter << YAML::Key << "Filtering" << YAML::Value << Tex2DParamToString(parameters.Filtering);
-		emitter << YAML::Key << "WrapMode" << YAML::Value << Tex2DParamToString(parameters.WrapMode);
-
-		emitter << YAML::EndMap << YAML::EndDoc;
-
-		std::ofstream outFile(path + ".meta");
-		outFile << emitter.c_str();
-	}
-
 	void PropertiesPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Properties");
@@ -59,17 +42,6 @@ namespace Debut
 		std::ifstream metaFile(material->GetPath());
 		std::stringstream strStream;
 
-		Texture2DConfig texParams = { Texture2DParameter::FILTERING_LINEAR, Texture2DParameter::WRAP_CLAMP };
-
-		if (metaFile.good())
-		{
-			strStream << metaFile.rdbuf();
-			YAML::Node in = YAML::Load(strStream.str().c_str());
-
-			texParams.Filtering = StringToTex2DParam(in["Filtering"].as<std::string>());
-			texParams.WrapMode = StringToTex2DParam(in["WrapMode"].as<std::string>());
-		}
-
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
 
 		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
@@ -84,7 +56,7 @@ namespace Debut
 			ImGuiUtils::DragFloat("Restitution threshold", &material->m_RestitutionThreshold, 0.3f, 0.0f, 100000.0f);
 		ImGuiUtils::ResetColumns();
 
-		// When settings are saved, a meta file containing the data is generated for that texture
+		// Update settings
 		if (ImGui::Button("Save settings"))
 		{
 			PhysicsMaterial2DConfig config;
@@ -156,14 +128,14 @@ namespace Debut
 			ImGui::TreePop();
 		}
 
-		// When settings are saved, a meta file containing the data is generated for that texture
+		// Update settings
 		if (ImGui::Button("Save settings"))
 		{
 			texParams.ID = texture->GetID();
 			texParams.WrapMode = texture->GetWrapMode();
 			texParams.Filtering = texture->GetFilteringMode();
 
-			GenerateTextureData(texParams, texture->GetPath());
+			Texture2D::SaveSettings(texParams, texture->GetPath());
 			texture->Reload();
 		}
 

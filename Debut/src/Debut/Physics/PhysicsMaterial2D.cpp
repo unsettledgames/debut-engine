@@ -21,6 +21,7 @@ namespace Debut
 			config.Friction = in["Friction"].as<float>();
 			config.Restitution = in["Restitution"].as<float>();
 			config.RestitutionThreshold = in["RestitutionThreshold"].as<float>();
+			m_Path = path;
 
 			file.close();
 
@@ -59,22 +60,18 @@ namespace Debut
 	void PhysicsMaterial2D::SaveSettings(const std::string& path, const PhysicsMaterial2DConfig& config)
 	{
 		YAML::Emitter out;
-		YAML::Emitter outMeta;
 
-		std::ofstream outFile(path, std::ios::out | std::ios::trunc);
-		std::ofstream metaFile(path + ".meta");
+		std::ofstream outFile(path);
 
 		out << YAML::BeginDoc << YAML::BeginMap;
 		out << YAML::Key << "Asset" << YAML::Value << "PhysicsMaterial2D";
-		out << YAML::Key << "Density" << YAML::Value << 1.0f;
-		out << YAML::Key << "Friction" << YAML::Value << 0.5f;
-		out << YAML::Key << "Restitution" << YAML::Value << 0.5f;
-		out << YAML::Key << "RestitutionThreshold" << YAML::Value << 0.5f;
+		out << YAML::Key << "Density" << YAML::Value << config.Density;
+		out << YAML::Key << "Friction" << YAML::Value << config.Friction;
+		out << YAML::Key << "Restitution" << YAML::Value << config.Restitution;
+		out << YAML::Key << "RestitutionThreshold" << YAML::Value << config.RestitutionThreshold;
+		out << YAML::EndMap << YAML::EndDoc;
 
 		outFile << out.c_str();
-
-		outMeta << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << UUID() << YAML::EndMap;
-		metaFile << outMeta.c_str();
 	}
 
 	void PhysicsMaterial2D::SaveDefaultConfig(const std::string& path)
@@ -94,7 +91,7 @@ namespace Debut
 
 		outFile << out.c_str();
 		
-		outMeta << YAML::Key << "ID" << YAML::Value << UUID();
+		outMeta << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << UUID() << YAML::EndMap; 
 		metaFile << outMeta.c_str();
 	}
 }

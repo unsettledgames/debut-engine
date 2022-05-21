@@ -111,6 +111,7 @@ namespace Debut
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height) : m_Width(width), m_Height(height)
 	{
 		DBT_PROFILE_FUNCTION();
+		uint32_t data = 0xffffffff;
 		m_InternalFormat = GL_RGBA8, m_Format = GL_RGBA;
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
@@ -121,6 +122,8 @@ namespace Debut
 
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_Format, GL_UNSIGNED_BYTE, (void*)&data);
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()

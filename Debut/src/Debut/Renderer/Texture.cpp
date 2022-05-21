@@ -23,6 +23,11 @@ namespace Debut
 			texParams.WrapMode = StringToTex2DParam(in["WrapMode"].as<std::string>());
 			texParams.ID = in["ID"] ? in["ID"].as<uint64_t>() : 0;
 		}
+		else
+		{
+			texParams.ID = UUID();
+			SaveSettings(texParams, path + ".meta");
+		}
 
 		switch (Renderer::GetAPI())
 		{
@@ -54,7 +59,25 @@ namespace Debut
 
 	void Texture2D::SaveDefaultConfig(const std::string& path)
 	{
-
 	}
+
+	void Texture2D::SaveSettings(const Texture2DConfig& parameters, const std::string& path)
+	{
+		YAML::Emitter emitter;
+
+		emitter << YAML::BeginDoc << YAML::BeginMap;
+
+		emitter << YAML::Key << "Asset" << YAML::Value << "Texture2D";
+		emitter << YAML::Key << "ID" << YAML::Value << parameters.ID;
+		emitter << YAML::Key << "Filtering" << YAML::Value << Tex2DParamToString(parameters.Filtering);
+		emitter << YAML::Key << "WrapMode" << YAML::Value << Tex2DParamToString(parameters.WrapMode);
+
+		emitter << YAML::EndMap << YAML::EndDoc;
+
+		std::ofstream outFile(path + ".meta");
+		outFile << emitter.c_str();
+	}
+
+
 
 }

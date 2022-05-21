@@ -187,11 +187,13 @@ namespace Debut
 		out << YAML::EndMap;
 	}
 
+	// TODO: textures as resources? Or wait for materials?
 	static void SerializeComponent(const SpriteRendererComponent& s, YAML::Emitter& out)
 	{
+		std::string texPath = s.Texture ? s.Texture->GetPath() : "";
+
 		out << YAML::Key << "Color" << YAML::Value << s.Color;
-		out << YAML::BeginMap << YAML::Value << "Texture";
-		out << YAML::Key << "Texture" << YAML::Value << (s.Texture ? s.Texture->GetPath() : "");
+		out << YAML::Key << "Texture" << YAML::Value << texPath;
 		out << YAML::Key << "TilingFactor" << YAML::Value << s.TilingFactor;
 	}
 
@@ -208,20 +210,12 @@ namespace Debut
 		out << YAML::Key << "Size" << YAML::Value << c.Size;
 		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
 
+		out << YAML::Key << "Material";
+
 		if (material != nullptr)
-		{
-			out << YAML::Key << "Density" << YAML::Value << material->GetDensity();
-			out << YAML::Key << "Friction" << YAML::Value << material->GetFriction();
-			out << YAML::Key << "Restitution" << YAML::Value << material->GetRestitution();
-			out << YAML::Key << "RestitutionThreshold" << YAML::Value << material->GetRestitutionThreshold();
-		}
+			out << YAML::Value << material->GetID();
 		else
-		{
-			out << YAML::Key << "Density" << YAML::Value << PhysicsMaterial2D::DefaultSettings.Density;
-			out << YAML::Key << "Friction" << YAML::Value << PhysicsMaterial2D::DefaultSettings.Friction;
-			out << YAML::Key << "Restitution" << YAML::Value << PhysicsMaterial2D::DefaultSettings.Restitution;
-			out << YAML::Key << "RestitutionThreshold" << YAML::Value << PhysicsMaterial2D::DefaultSettings.RestitutionThreshold;
-		}
+			out << YAML::Value << 0;
 	}
 
 	static void SerializeComponent(const CircleCollider2DComponent& c, YAML::Emitter& out)

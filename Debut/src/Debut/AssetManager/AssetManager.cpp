@@ -57,6 +57,8 @@ namespace Debut
 			emitter << YAML::BeginMap << YAML::Key << "Associations" << YAML::Value << YAML::BeginSeq << YAML::EndSeq << YAML::EndMap;
 			toCreate << emitter.c_str();
 			toCreate.close();
+
+			Reimport("assets");
 		}
 	}
 
@@ -97,6 +99,10 @@ namespace Debut
 
 	void AssetManager::AddAsset(const UUID& id, const std::string& path)
 	{
+		// Don't bother saving runtime assets
+		if (path == "")
+			return;
+
 		std::stringstream ss;
 		std::fstream currFile("Debut\\AssetMap.yaml", std::ios::in | std::ios::out);
 		YAML::Emitter emitter;
@@ -206,8 +212,11 @@ namespace Debut
 			toAdd = Texture2D::Create(id);
 
 		s_TextureCache.Put(id, toAdd);
-		s_AssetMap[toAdd->GetID()] = id;
-		AssetManager::AddAsset(toAdd->GetID(), id);
+		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+		{
+			s_AssetMap[toAdd->GetID()] = id;
+			AssetManager::AddAsset(toAdd->GetID(), id);
+		}
 
 		return toAdd;
 	}
@@ -220,10 +229,13 @@ namespace Debut
 
 		Ref<PhysicsMaterial2D> toAdd = CreateRef<PhysicsMaterial2D>(id);
 
-		// Update the asset map
+		// Update the asset map if the entry wasn't there
 		s_PhysicsMaterial2DCache.Put(id, toAdd);
-		s_AssetMap[toAdd->GetID()] = id;
-		AssetManager::AddAsset(toAdd->GetID(), id);
+		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+		{
+			s_AssetMap[toAdd->GetID()] = id;
+			AssetManager::AddAsset(toAdd->GetID(), id);
+		}
 
 		return toAdd;
 	}
