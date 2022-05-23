@@ -94,7 +94,10 @@ namespace Debutant
 					m_CurrDirectory /= path.filename();
 			}
 
-			ImGui::TextWrapped(relativePath.filename().string().c_str());
+			std::string fileName = relativePath.filename().string();
+			if (fileName.length() > 17)
+				fileName = fileName.substr(0, 17) + "...";
+			ImGui::TextWrapped(fileName.c_str());
 			ImGui::PopID();
 
 			ImGui::NextColumn();

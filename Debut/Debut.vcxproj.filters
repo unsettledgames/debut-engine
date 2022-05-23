@@ -7,6 +7,9 @@
     <Filter Include="src\Debut">
       <UniqueIdentifier>{70A3C3B2-DC0D-7829-254C-29CF91F5557E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Debut\AssetManager">
+      <UniqueIdentifier>{FAFD8276-E6F7-ABC8-CF64-42D9BBFD1135}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Debut\Core">
       <UniqueIdentifier>{C86D3C26-B43B-302C-9DCF-A052893C0C91}</UniqueIdentifier>
     </Filter>
@@ -18,6 +21,9 @@
     </Filter>
     <Filter Include="src\Debut\Math">
       <UniqueIdentifier>{49AE4126-357C-352C-1E10-A6520A7D1191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Debut\Physics">
+      <UniqueIdentifier>{E216D861-4E2D-D6F7-97A4-611903FAA67F}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Debut\Renderer">
       <UniqueIdentifier>{16C5B573-02A9-76C9-6B09-711C570C614B}</UniqueIdentifier>
@@ -68,6 +74,15 @@
   <ItemGroup>
     <ClInclude Include="src\Debut.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\AssetManager\Asset.h">
+      <Filter>src\Debut\AssetManager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\AssetManager\AssetCache.h">
+      <Filter>src\Debut\AssetManager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\AssetManager\AssetManager.h">
+      <Filter>src\Debut\AssetManager</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Core\Application.h">
       <Filter>src\Debut\Core</Filter>
@@ -123,11 +138,17 @@
     <ClInclude Include="src\Debut\ImGui\ImGuiLayer.h">
       <Filter>src\Debut\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Debut\ImGui\ImGuiUtils.h">
+      <Filter>src\Debut\ImGui</Filter>
+    </ClInclude>
     <ClInclude Include="src\Debut\Math\Math.h">
       <Filter>src\Debut\Math</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\OrthographicCameraController.h">
       <Filter>src\Debut</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\Physics\PhysicsMaterial2D.h">
+      <Filter>src\Debut\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Renderer\Buffer.h">
       <Filter>src\Debut\Renderer</Filter>
@@ -185,9 +206,6 @@
     </ClInclude>
     <ClInclude Include="src\Debut\Scene\ScriptableEntity.h">
       <Filter>src\Debut\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Debut\AssetManager\AssetCache.h">
-      <Filter>src\Debut\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Utils\CppUtils.h">
       <Filter>src\Debut\Utils</Filter>
@@ -303,12 +321,11 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\AssetManager\AssetManager.h" />
-    <ClInclude Include="src\Debut\AssetManager\Asset.h" />
-    <ClInclude Include="src\Debut\Physics\PhysicsMaterial2D.h" />
-    <ClInclude Include="src\Debut\ImGui\ImGuiUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Debut\AssetManager\AssetManager.cpp">
+      <Filter>src\Debut\AssetManager</Filter>
+    </ClCompile>
     <ClCompile Include="src\Debut\Core\Application.cpp">
       <Filter>src\Debut\Core</Filter>
     </ClCompile>
@@ -330,11 +347,17 @@
     <ClCompile Include="src\Debut\ImGui\ImGuiLayer.cpp">
       <Filter>src\Debut\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Debut\ImGui\ImGuiUtils.cpp">
+      <Filter>src\Debut\ImGui</Filter>
+    </ClCompile>
     <ClCompile Include="src\Debut\Math\Math.cpp">
       <Filter>src\Debut\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\OrthographicCameraController.cpp">
       <Filter>src\Debut</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debut\Physics\PhysicsMaterial2D.cpp">
+      <Filter>src\Debut\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Renderer\Buffer.cpp">
       <Filter>src\Debut\Renderer</Filter>
@@ -450,8 +473,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\AssetManager\AssetManager.cpp" />
-    <ClCompile Include="src\Debut\Physics\PhysicsMaterial2D.cpp" />
-    <ClCompile Include="src\Debut\ImGui\ImGuiUtils.cpp" />
   </ItemGroup>
 </Project>

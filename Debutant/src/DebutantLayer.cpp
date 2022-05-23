@@ -105,6 +105,7 @@ namespace Debutant
     void DebutantLayer::OnImGuiRender()
     {
         DBT_PROFILE_FUNCTION();
+
         auto stats = Renderer2D::GetStats();
 
         static bool dockspaceOpen = true;

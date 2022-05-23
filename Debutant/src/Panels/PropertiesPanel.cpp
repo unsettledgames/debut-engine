@@ -2,7 +2,6 @@
 #include "Utils/EditorCache.h"
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Renderer/Texture.h>
-#include <imgui.h>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
 #include <Debut/Physics/PhysicsMaterial2D.h>
@@ -16,12 +15,26 @@
 
 namespace Debut
 {
+	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d"};
+
+	static int SetFileName(ImGuiInputTextCallbackData* data)
+	{
+		int sas = 2;
+		return 0;
+	}
+
 	void PropertiesPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Properties");
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
 
 		if (m_AssetPath != "")
 		{
+			if (std::find(s_SupportedExtensions.begin(), s_SupportedExtensions.end(), m_AssetPath.extension().string()) != s_SupportedExtensions.end())
+			{
+				DrawName();
+			}
+
 			// Put extensions as static members of Texture2D and PhysicsMaterial2D?
 			if (m_AssetPath.extension().string() == ".png")
 			{
@@ -33,7 +46,41 @@ namespace Debut
 			}
 		}
 
+		ImGui::PopStyleVar();
 		ImGui::End();
+	}
+
+	void PropertiesPanel::DrawName()
+	{
+		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+		ImGui::TextWrapped("Import settings");
+		ImGui::PopItemWidth();
+		ImGui::PopFont();
+		
+		char renameName[128];
+		wcstombs(renameName, m_AssetPath.filename().c_str(), m_AssetPath.string().length());
+
+		ImGui::PushID(m_AssetPath.c_str());
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, 100);
+		ImGui::SetColumnWidth(1, ImGui::GetWindowWidth() - 100);
+
+		ImGui::TextWrapped("Name");
+		ImGui::NextColumn();
+		ImGui::PushItemWidth(ImGui::GetWindowWidth() - 100);
+		
+
+		if (ImGui::InputText("##", renameName, 128, ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			// Set name and edit it in the asset manager
+		}
+
+		ImGui::PopItemWidth();
+
+		ImGuiUtils::ResetColumns();
+		ImGui::PopID();
+		
 	}
 
 	void PropertiesPanel::DrawPhysicsMaterial2DProperties()
@@ -41,12 +88,6 @@ namespace Debut
 		Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(m_AssetPath.string());
 		std::ifstream metaFile(material->GetPath());
 		std::stringstream strStream;
-
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
-
-		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
-		ImGui::LabelText("##importtitle", (m_AssetPath.filename().string() + " import settings").c_str(), 50);
-		ImGui::PopFont();
 
 		// PhysMat2D parameters
 		ImGuiUtils::StartColumns(2, { 150, 200 });
@@ -68,8 +109,6 @@ namespace Debut
 			PhysicsMaterial2D::SaveSettings(m_AssetPath.string(), config);
 			material->SetConfig(config);
 		}
-
-		ImGui::PopStyleVar();
 	}
 
 	void PropertiesPanel::DrawTextureProperties()
@@ -95,12 +134,6 @@ namespace Debut
 
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap
 			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
-
-		ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
-		ImGui::LabelText("##importtitle", (m_AssetPath.filename().string() + " import settings").c_str(), 50);
-		ImGui::PopFont();
 
 		ImGuiUtils::StartColumns(2, { 100, 200 });
 		if (ImGuiUtils::Combo("Filtering mode", filterTypes, 2, &currFilterString, &newFilterType))
@@ -138,8 +171,6 @@ namespace Debut
 			Texture2D::SaveSettings(texParams, texture->GetPath());
 			texture->Reload();
 		}
-
-		ImGui::PopStyleVar();
 	}
 
 	void PropertiesPanel::SetAsset(std::filesystem::path path)

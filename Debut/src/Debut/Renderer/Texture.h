@@ -17,6 +17,7 @@ namespace Debut
 		Texture2DParameter Filtering;
 		Texture2DParameter WrapMode;
 		UUID ID;
+		// TODO: mip mapping
 	};
 
 	static std::string Tex2DParamToString(Texture2DParameter parameter)

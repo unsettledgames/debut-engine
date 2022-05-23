@@ -64,7 +64,7 @@ namespace Debut
 		static void Reimport();
 
 		static std::string GetPath(UUID id);
-		static void AddAsset(const UUID& id, const std::string& path);
+		static void AddAssociationToFile(const UUID& id, const std::string& path);
 
 		template<typename T>
 		static void CreateAsset(const std::string& path)
@@ -82,10 +82,6 @@ namespace Debut
 			T::SaveDefaultConfig(tmpPath);
 		}
 
-		template <typename T>
-		static void Submit(const std::string& path);
-		template <typename T>
-		static void Submit(const Ref<T>& toSubmit);
 
 		template <typename T>
 		static Ref<T> Request(const std::string& id);

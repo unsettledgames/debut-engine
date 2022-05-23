@@ -1,5 +1,6 @@
 #pragma once
 
+#include <imgui.h>
 #include <filesystem>
 
 namespace Debut
@@ -14,6 +15,7 @@ namespace Debut
 		void SetAsset(std::filesystem::path path);
 
 	private:
+		void DrawName();
 		void DrawTextureProperties();
 		void DrawPhysicsMaterial2DProperties();
 

@@ -152,8 +152,7 @@ project "Debutant"
 
 	links
 	{
-		"Debut",
-		"yaml-cpp"
+		"Debut"
 	}
 
 	filter "system:windows"
@@ -163,57 +162,6 @@ project "Debutant"
 		{
 			"DBT_PLATFORM_WINDOWS",
 			"YAML_CPP_STATIC_DEFINE"
-		}
-
-	filter "configurations:Debug"
-		defines "DBT_DEBUG"
-		symbols "on"
-
-	filter "configurations:Release"
-		defines "DBT_RELEASE"
-		optimize "on"
-
-	filter "configurations:Dist"
-		defines "DBT_DIST"
-		optimize "on"
-
-project "Sandbox"
-	location "Sandbox"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17"
-	staticruntime "on"
-
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-	files 
-	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
-	}
-
-	includedirs
-	{
-		"%{prj.name}/src/",
-		"%{IncludeDir.spdlog}",
-		"Debut/src",
-		"%{IncludeDir.imgui}",
-		"%{IncludeDir.entt}",
-		"Debut/vendor/glm"
-	}
-
-	links
-	{
-		"Debut"
-	}
-
-	filter "system:windows"
-		systemversion "latest"
-
-		defines 
-		{
-			"DBT_PLATFORM_WINDOWS"
 		}
 
 	filter "configurations:Debug"

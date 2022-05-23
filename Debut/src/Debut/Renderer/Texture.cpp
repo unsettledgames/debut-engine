@@ -26,7 +26,7 @@ namespace Debut
 		else
 		{
 			texParams.ID = UUID();
-			SaveSettings(texParams, path + ".meta");
+			SaveSettings(texParams, path);
 		}
 
 		switch (Renderer::GetAPI())

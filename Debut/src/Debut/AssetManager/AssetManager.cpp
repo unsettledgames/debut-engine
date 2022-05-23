@@ -5,14 +5,6 @@
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 
-/**
-*	- Innanzitutto, non devono essere le classi a creare in automatico i metafile, al massimo possono contenere una configurazione
-*	  base (il che mi sembra accettabile), che poi provvede a salvare l'AssetManager. Altrimenti anche solo creando un PhysicsMaterial2D
-*	  per salvare un valore mi crea un meta file che non ha senso
-* 
-*	- Richiesta per stringa: se l'asset è stato creato, devo aggiungere la stringa all'asset map
-*/
-
 namespace Debut
 {
 	std::unordered_map<UUID, std::string> AssetManager::s_AssetMap;
@@ -64,12 +56,14 @@ namespace Debut
 
 	void AssetManager::Reimport()
 	{
+		std::ofstream file("Debut\\AssetMap.yaml", std::ios::out | std::ios::trunc);
+		file.close();
+
 		AssetManager::Reimport("assets");
 	}
 
 	void AssetManager::Reimport(const std::string& folder)
 	{
-		// TODO: generate a meta file for the asset if it doesn't have it.
 		std::filesystem::path assetPath(folder);
 
 		for (auto dirIt : std::filesystem::directory_iterator(folder))
@@ -91,13 +85,13 @@ namespace Debut
 					std::string path = dirIt.path().string();
 
 					s_AssetMap[id] = path;
-					AssetManager::AddAsset(id, path);
+					AssetManager::AddAssociationToFile(id, path);
 				}
 			}
 		}
 	}
 
-	void AssetManager::AddAsset(const UUID& id, const std::string& path)
+	void AssetManager::AddAssociationToFile(const UUID& id, const std::string& path)
 	{
 		// Don't bother saving runtime assets
 		if (path == "")
@@ -137,60 +131,6 @@ namespace Debut
 
 	// ASSET SUBMISSION BY PATH
 
-	template <typename T>
-	void AssetManager::Submit(const std::string& path)
-	{
-
-	}
-
-	template <>
-	void AssetManager::Submit<Texture2D>(const std::string& path)
-	{
-		if (s_TextureCache.Has(path))
-			return;
-
-		Ref<Texture2D> toAdd = Texture2D::Create(path);
-		s_TextureCache.Put(path, toAdd);
-	}
-
-	template<>
-	void AssetManager::Submit<PhysicsMaterial2D>(const std::string& path)
-	{
-		if (s_PhysicsMaterial2DCache.Has(path))
-			return;
-
-		Ref<PhysicsMaterial2D> toAdd = CreateRef<PhysicsMaterial2D>(path);
-		s_PhysicsMaterial2DCache.Put(path, toAdd);
-	}
-
-	// ASSET SUBMISSION BY REFERENCE
-
-	template <typename T>
-	void AssetManager::Submit(const Ref<T>& toAdd)
-	{
-
-	}
-
-	template <>
-	void AssetManager::Submit<Texture2D>(const Ref<Texture2D>& texture)
-	{
-		if (s_TextureCache.Has(texture->GetPath()))
-			return;
-
-		s_TextureCache.Put(texture->GetPath(), texture);
-		return;
-	}
-
-	template <>
-	void AssetManager::Submit<PhysicsMaterial2D>(const Ref<PhysicsMaterial2D>& material)
-	{
-		if (s_PhysicsMaterial2DCache.Has(material->GetPath()))
-			return;
-
-		s_PhysicsMaterial2DCache.Put(material->GetPath(), material);
-		return;
-	}
-
 	// ASSET REQUESTS
 
 	template <typename T>
@@ -215,7 +155,7 @@ namespace Debut
 		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
 		{
 			s_AssetMap[toAdd->GetID()] = id;
-			AssetManager::AddAsset(toAdd->GetID(), id);
+			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
 		}
 
 		return toAdd;
@@ -234,7 +174,7 @@ namespace Debut
 		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
 		{
 			s_AssetMap[toAdd->GetID()] = id;
-			AssetManager::AddAsset(toAdd->GetID(), id);
+			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
 		}
 
 		return toAdd;
