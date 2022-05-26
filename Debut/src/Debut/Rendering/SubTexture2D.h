@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <Debut/Renderer/Texture.h>
+#include <Debut/Rendering/Texture.h>
 
 namespace Debut
 {

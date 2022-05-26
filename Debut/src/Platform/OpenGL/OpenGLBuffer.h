@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Debut/Renderer/Buffer.h"
+#include "Debut/Rendering/Structures/Buffer.h"
 
 namespace Debut
 {

@@ -3,8 +3,8 @@
 
 #include "Debut/Core/Log.h"
 #include "Debut/Core/Core.h"
-#include "Renderer.h"
-#include "RendererAPI.h"
+#include "Debut/Rendering/Renderer/Renderer.h"
+#include "Debut/Rendering/Renderer/RendererAPI.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"
 #include "Buffer.h"
 

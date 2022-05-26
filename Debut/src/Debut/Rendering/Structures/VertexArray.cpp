@@ -1,8 +1,8 @@
 #include "Debut/dbtpch.h"
 
-#include "Debut/Renderer/Renderer.h"
-#include "Debut/Renderer/RendererAPI.h"
-#include "Debut/Renderer/VertexArray.h"
+#include "Debut/Rendering/Renderer/Renderer.h"
+#include "Debut/Rendering/Renderer/RendererAPI.h"
+#include "Debut/Rendering/Structures/VertexArray.h"
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace Debut

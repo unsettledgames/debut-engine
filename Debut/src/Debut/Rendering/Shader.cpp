@@ -2,8 +2,8 @@
 
 #include <Debut/dbtpch.h>
 #include <Debut/Core/Log.h>
-#include <Debut/Renderer/Renderer.h>
-#include <Debut/Renderer/Shader.h>
+#include <Debut/Rendering/Renderer/Renderer.h>
+#include <Debut/Rendering/Shader.h>
 #include <Platform/OpenGL/OpenGLShader.h>
 
 namespace Debut

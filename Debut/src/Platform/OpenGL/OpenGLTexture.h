@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
-#include "Debut/Renderer/Texture.h"
+#include "Debut/Rendering/Texture.h"
 
 namespace Debut
 {

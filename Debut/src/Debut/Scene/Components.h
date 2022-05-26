@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
-#include <Debut/Renderer/Texture.h>
+#include <Debut/Rendering/Texture.h>
 #include <Debut/Core/Core.h>
 #include <Debut/Core/UUID.h>
 

@@ -1,7 +1,7 @@
 #include "PropertiesPanel.h"
 #include "Utils/EditorCache.h"
 #include <Debut/AssetManager/AssetManager.h>
-#include <Debut/Renderer/Texture.h>
+#include <Debut/Rendering/Texture.h>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
 #include <Debut/Physics/PhysicsMaterial2D.h>

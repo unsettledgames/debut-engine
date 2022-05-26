@@ -1,13 +1,12 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <Debut/Renderer/VertexArray.h>
-#include <Debut/Renderer/Buffer.h>
-#include <Debut/Renderer/Shader.h>
-#include <Debut/Renderer/Texture.h>
-#include <Debut/Renderer/SubTexture2D.h>
-#include <Debut/Renderer/OrthographicCamera.h>
-#include <Debut/Renderer/Camera.h>
+#include <Debut/Rendering/Structures/VertexArray.h>
+#include <Debut/Rendering/Structures/Buffer.h>
+#include <Debut/Rendering/Shader.h>
+#include <Debut/Rendering/Texture.h>
+#include <Debut/Rendering/SubTexture2D.h>
+#include <Debut/Rendering/Camera.h>
 #include <array>
 #include <Debut/Scene/Components.h>
 

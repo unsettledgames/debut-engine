@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Debut/Renderer/VertexArray.h"
+#include "Debut/Rendering/Structures/VertexArray.h"
 #include <glm/glm.hpp>
 
 namespace Debut

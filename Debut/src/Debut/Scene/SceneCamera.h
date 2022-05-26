@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Debut/Renderer/Camera.h"
+#include "Debut/Rendering/Camera.h"
 
 namespace Debut
 {

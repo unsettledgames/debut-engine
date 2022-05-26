@@ -1,7 +1,7 @@
 #pragma once
 #include <imgui.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
-#include <Debut/Renderer/Texture.h>
+#include <Debut/Rendering/Texture.h>
 
 namespace Debut
 {

@@ -2,7 +2,7 @@
 
 #include <Debut/Core/Core.h>
 #include <Debut/Core/UUID.h>
-#include <Debut/Renderer/Texture.h>
+#include <Debut/Rendering/Texture.h>
 #include <Debut/AssetManager/Asset.h>
 #include <Debut/AssetManager/AssetCache.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>

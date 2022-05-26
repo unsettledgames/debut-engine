@@ -4,7 +4,7 @@
 #include <imgui_internal.h>
 #include "Utils/EditorCache.h"
 #include <Debut/AssetManager/AssetManager.h>
-#include <Debut/Renderer/Texture.h>
+#include <Debut/Rendering/Texture.h>
 #include <filesystem>
 #include <Debut/ImGui/ImGuiUtils.h>
 

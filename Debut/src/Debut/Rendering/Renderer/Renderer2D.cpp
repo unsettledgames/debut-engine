@@ -1,7 +1,7 @@
 #include "Debut/dbtpch.h"
-#include "Debut/Renderer/RenderCommand.h"
-#include "Debut/Renderer/VertexArray.h"
-#include "Debut/Renderer/Shader.h"
+#include "Debut/Rendering/Renderer/RenderCommand.h"
+#include "Debut/Rendering/Structures/VertexArray.h"
+#include "Debut/Rendering/Shader.h"
 #include "Debut/AssetManager/AssetManager.h"
 #include "Renderer2D.h"
 #include <glm/gtc/matrix_transform.hpp>

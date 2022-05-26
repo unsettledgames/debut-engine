@@ -28,6 +28,15 @@
     <Filter Include="src\Debut\Renderer">
       <UniqueIdentifier>{16C5B573-02A9-76C9-6B09-711C570C614B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Debut\Rendering">
+      <UniqueIdentifier>{BD786EEA-29DA-4BF8-B247-92AA1EA882B7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Debut\Rendering\Renderer">
+      <UniqueIdentifier>{03E18DEC-EF9B-7D98-9853-F6E284EDC728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Debut\Rendering\Structures">
+      <UniqueIdentifier>{906D07E8-7C93-D14E-65D9-561A519EF61A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Debut\Scene">
       <UniqueIdentifier>{8DE4E4EE-F96F-52B3-0281-D5A76E8BAEB3}</UniqueIdentifier>
     </Filter>
@@ -144,50 +153,44 @@
     <ClInclude Include="src\Debut\Math\Math.h">
       <Filter>src\Debut\Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\OrthographicCameraController.h">
-      <Filter>src\Debut</Filter>
-    </ClInclude>
     <ClInclude Include="src\Debut\Physics\PhysicsMaterial2D.h">
       <Filter>src\Debut\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\Buffer.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\Camera.h">
+      <Filter>src\Debut\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\Camera.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\GraphicsContext.h">
+      <Filter>src\Debut\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\FrameBuffer.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\Renderer\RenderCommand.h">
+      <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\GraphicsContext.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\Renderer\Renderer.h">
+      <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\OrthographicCamera.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\Renderer\Renderer2D.h">
+      <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\RenderCommand.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\Renderer\RendererAPI.h">
+      <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\Renderer.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\Shader.h">
+      <Filter>src\Debut\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\Renderer2D.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\Structures\Buffer.h">
+      <Filter>src\Debut\Rendering\Structures</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\RendererAPI.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\Structures\FrameBuffer.h">
+      <Filter>src\Debut\Rendering\Structures</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\Shader.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\Structures\VertexArray.h">
+      <Filter>src\Debut\Rendering\Structures</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\SubTexture2D.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\SubTexture2D.h">
+      <Filter>src\Debut\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\Texture.h">
-      <Filter>src\Debut\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Debut\Renderer\VertexArray.h">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClInclude Include="src\Debut\Rendering\Texture.h">
+      <Filter>src\Debut\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Scene\Components.h">
       <Filter>src\Debut\Scene</Filter>
@@ -353,44 +356,38 @@
     <ClCompile Include="src\Debut\Math\Math.cpp">
       <Filter>src\Debut\Math</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\OrthographicCameraController.cpp">
-      <Filter>src\Debut</Filter>
-    </ClCompile>
     <ClCompile Include="src\Debut\Physics\PhysicsMaterial2D.cpp">
       <Filter>src\Debut\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\Buffer.cpp">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClCompile Include="src\Debut\Rendering\Renderer\RenderCommand.cpp">
+      <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\FrameBuffer.cpp">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClCompile Include="src\Debut\Rendering\Renderer\Renderer.cpp">
+      <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\OrthographicCamera.cpp">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClCompile Include="src\Debut\Rendering\Renderer\Renderer2D.cpp">
+      <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\RenderCommand.cpp">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClCompile Include="src\Debut\Rendering\Renderer\RendererAPI.cpp">
+      <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\Renderer.cpp">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClCompile Include="src\Debut\Rendering\Shader.cpp">
+      <Filter>src\Debut\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\Renderer2D.cpp">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClCompile Include="src\Debut\Rendering\Structures\Buffer.cpp">
+      <Filter>src\Debut\Rendering\Structures</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\RendererAPI.cpp">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClCompile Include="src\Debut\Rendering\Structures\FrameBuffer.cpp">
+      <Filter>src\Debut\Rendering\Structures</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\Shader.cpp">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClCompile Include="src\Debut\Rendering\Structures\VertexArray.cpp">
+      <Filter>src\Debut\Rendering\Structures</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\SubTexture2D.cpp">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClCompile Include="src\Debut\Rendering\SubTexture2D.cpp">
+      <Filter>src\Debut\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\Texture.cpp">
-      <Filter>src\Debut\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Debut\Renderer\VertexArray.cpp">
-      <Filter>src\Debut\Renderer</Filter>
+    <ClCompile Include="src\Debut\Rendering\Texture.cpp">
+      <Filter>src\Debut\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Scene\Entity.cpp">
       <Filter>src\Debut\Scene</Filter>

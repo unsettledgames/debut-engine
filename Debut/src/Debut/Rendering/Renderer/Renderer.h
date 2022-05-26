@@ -1,8 +1,6 @@
 #pragma once
 
 #include "RendererAPI.h"
-#include "Shader.h"
-#include "OrthographicCamera.h"
 
 namespace Debut
 {
@@ -10,10 +8,6 @@ namespace Debut
 	{
 	public:
 		static void Init();
-		static void BeginScene(OrthographicCamera& camera/*Cameras, lights*/);
-		static void Submit(const Ref<VertexArray>& va, const Ref<Shader>& shader,
-			const glm::mat4 transform = glm::mat4(1.0f));
-		static void EndScene();
 
 		static void OnWindowResized(uint32_t width, uint32_t height);
 

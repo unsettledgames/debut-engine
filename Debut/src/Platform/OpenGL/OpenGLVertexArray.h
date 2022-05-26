@@ -1,5 +1,5 @@
 #pragma once
-#include "Debut/Renderer/VertexArray.h"
+#include "Debut/Rendering/Structures/VertexArray.h"
 
 namespace Debut
 {

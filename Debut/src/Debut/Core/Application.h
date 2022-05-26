@@ -6,10 +6,9 @@
 #include "LayerStack.h"
 #include "Debut/ImGui/ImGuiLayer.h"
 #include "Debut/Events/ApplicationEvent.h"
-#include "Debut/Renderer/VertexArray.h"
-#include "Debut/Renderer/Buffer.h"
-#include "Debut/Renderer/Shader.h"
-#include "Debut/Renderer/OrthographicCamera.h"
+#include "Debut/Rendering/Structures/VertexArray.h"
+#include "Debut/Rendering/Structures/Buffer.h"
+#include "Debut/Rendering/Shader.h"
 
 
 namespace Debut
