@@ -35,8 +35,8 @@ namespace Debut
 
 	struct TransformComponent
 	{
-		glm::vec3 Translation;
-		glm::vec3 Rotation = glm::vec3(0,0,0);
+		glm::vec3 Translation = glm::vec3(0.0f);
+		glm::vec3 Rotation = glm::vec3(0.0f);
 		glm::vec3 Scale = glm::vec3(1.0f);
 
 		TransformComponent() = default;
@@ -69,7 +69,7 @@ namespace Debut
 	struct SpriteRendererComponent
 	{
 		glm::vec4 Color;
-		Ref<Texture2D> Texture = nullptr;
+		UUID Texture = 0;
 		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() : Color(glm::vec4(1.0f)) {}

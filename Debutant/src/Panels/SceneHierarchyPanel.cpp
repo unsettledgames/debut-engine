@@ -236,9 +236,9 @@ namespace Debut
 				// Texture
 				ImTextureID buttonTexture;
 				// Use a blank texture if the user hasn't already set one, otherwise use the one submitted by the user	
-				buttonTexture = component.Texture == nullptr ?
+				buttonTexture = component.Texture == 0 ?
 					(ImTextureID)EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID() :
-					(ImTextureID)component.Texture->GetRendererID();
+					(ImTextureID)AssetManager::Request<Texture2D>(component.Texture)->GetRendererID();
 
 				ImGuiUtils::StartColumns(3, {80, 100, 100});
 
@@ -254,7 +254,7 @@ namespace Debut
 						if (pathStr.extension() == ".png")
 						{
 							Ref<Texture2D> selectedTexture = AssetManager::Request<Texture2D>(pathStr.string());
-							component.Texture = selectedTexture;
+							component.Texture = selectedTexture->GetID();
 						}
 					}
 					ImGui::EndDragDropTarget();

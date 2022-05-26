@@ -2,6 +2,7 @@
 #include "Debut/Renderer/RenderCommand.h"
 #include "Debut/Renderer/VertexArray.h"
 #include "Debut/Renderer/Shader.h"
+#include "Debut/AssetManager/AssetManager.h"
 #include "Renderer2D.h"
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -328,12 +329,14 @@ namespace Debut
 		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
 			FlushAndReset();
 
+		Ref<Texture2D> texture = AssetManager::Request<Texture2D>(src.Texture);
+
 		float textureIndex = 0.0f;
 		if (src.Texture)
 		{
 			for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 			{
-				if (*s_Data.TextureSlots[i].get() == *(src.Texture.get()))
+				if (*s_Data.TextureSlots[i].get() == *(texture.get()))
 				{
 					textureIndex = (float)i;
 					break;
@@ -342,7 +345,7 @@ namespace Debut
 			if (textureIndex == 0.0f)
 			{
 				textureIndex = (float)s_Data.TextureSlotIndex;
-				s_Data.TextureSlots[s_Data.TextureSlotIndex] = src.Texture;
+				s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 				s_Data.TextureSlotIndex++;
 			}
 		}

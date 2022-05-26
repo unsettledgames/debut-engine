@@ -190,10 +190,8 @@ namespace Debut
 	// TODO: textures as resources? Or wait for materials?
 	static void SerializeComponent(const SpriteRendererComponent& s, YAML::Emitter& out)
 	{
-		std::string texPath = s.Texture ? s.Texture->GetPath() : "";
-
 		out << YAML::Key << "Color" << YAML::Value << s.Color;
-		out << YAML::Key << "Texture" << YAML::Value << texPath;
+		out << YAML::Key << "Texture" << YAML::Value << s.Texture;
 		out << YAML::Key << "TilingFactor" << YAML::Value << s.TilingFactor;
 	}
 
@@ -283,11 +281,7 @@ namespace Debut
 			return;
 		SpriteRendererComponent& sc = e.AddComponent<SpriteRendererComponent>();
 		sc.Color = in["Color"].as<glm::vec4>();
-		if (in["Texture"])
-		{
-			Ref<Texture2D> texture = AssetManager::Request<Texture2D>(in["Texture"].as<std::string>());
-			sc.Texture = texture;
-		}
+		if (in["Texture"]) sc.Texture = in["Texture"].as<uint64_t>();
 		if (in["TilingFactor"])		sc.TilingFactor = in["TilingFactor"].as<float>();
 	}
 
