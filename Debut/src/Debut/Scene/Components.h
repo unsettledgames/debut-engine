@@ -96,6 +96,8 @@ namespace Debut
 			if (type == "Static") return BodyType::Static;
 			if (type == "Dynamic") return BodyType::Dynamic;
 			if (type == "Kinematic") return BodyType::Kinematic;
+
+			return BodyType::Dynamic;
 		}
 	};
 

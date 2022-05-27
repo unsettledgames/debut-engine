@@ -3,18 +3,12 @@
 #include "Debut/Core/Core.h"
 #include "Debut/Core/Log.h"
 
+#include "Debut/Rendering/Shader.h"
+
 namespace Debut
 {
-	enum class ShaderDataType : uint8_t
-	{
-		None = 0, 
-		Float, Float2, Float3, Float4, 
-		Int, Int2, Int3, Int4, 
-		Bool,
-		Mat3, Mat4, Struct
-	};
 
-	static uint32_t ShaderDataTypeSize(ShaderDataType type)
+	static uint32_t ShaderAttribTypeSize(ShaderDataType type)
 	{
 		switch (type)
 		{
@@ -36,7 +30,7 @@ namespace Debut
 			case ShaderDataType::Bool: return 1;
 		}
 
-		DBT_ASSERT(false, "Unknown ShaderDataType");
+		DBT_ASSERT(false, "Unknown ShaderAttribType");
 
 		return 0;
 	}
@@ -50,10 +44,10 @@ namespace Debut
 		uint32_t Offset;
 		bool Normalized;
 
-		BufferElement() {}
+		BufferElement() = default;
 
 		BufferElement(ShaderDataType type, const std::string& name, bool normalize) :
-			Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(normalize) {}
+			Name(name), Type(type), Size(ShaderAttribTypeSize(type)), Offset(0), Normalized(normalize) {}
 
 		uint32_t GetComponentCount() const
 		{
@@ -75,7 +69,7 @@ namespace Debut
 			case ShaderDataType::Bool: return 1;
 			}
 
-			DBT_ASSERT(false, "Unknown ShaderDataType");
+			DBT_ASSERT(false, "Unknown ShaderAttribType");
 			return 0;
 		}
 	};
@@ -83,7 +77,7 @@ namespace Debut
 	class BufferLayout
 	{
 	public:
-		BufferLayout() {}
+		BufferLayout() = default;
 
 		BufferLayout(const std::initializer_list<BufferElement>& elements) : m_Elements(elements) 
 		{

@@ -167,6 +167,7 @@
     <ClInclude Include="src\Debut\Physics\PhysicsMaterial2D.h" />
     <ClInclude Include="src\Debut\Rendering\Camera.h" />
     <ClInclude Include="src\Debut\Rendering\GraphicsContext.h" />
+    <ClInclude Include="src\Debut\Rendering\Material.h" />
     <ClInclude Include="src\Debut\Rendering\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Debut\Rendering\Renderer\Renderer.h" />
     <ClInclude Include="src\Debut\Rendering\Renderer\Renderer2D.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="src\Debut\ImGui\ImGuiUtils.cpp" />
     <ClCompile Include="src\Debut\Math\Math.cpp" />
     <ClCompile Include="src\Debut\Physics\PhysicsMaterial2D.cpp" />
+    <ClCompile Include="src\Debut\Rendering\Material.cpp" />
     <ClCompile Include="src\Debut\Rendering\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Debut\Rendering\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Debut\Rendering\Renderer\Renderer2D.cpp" />
