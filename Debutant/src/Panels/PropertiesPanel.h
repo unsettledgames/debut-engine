@@ -16,7 +16,11 @@ namespace Debut
 
 	private:
 		void DrawName();
+
 		void DrawTextureProperties();
+		void DrawShaderProperties();
+		void DrawMaterialProperties();
+
 		void DrawPhysicsMaterial2DProperties();
 
 	private:

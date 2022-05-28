@@ -4,12 +4,17 @@
 #include <filesystem>
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
+#include <Debut/Rendering/Shader.h>
+#include <Debut/Rendering/Material.h>
 
 namespace Debut
 {
 	std::unordered_map<UUID, std::string> AssetManager::s_AssetMap;
 
 	static AssetCache<std::string, Ref<Texture2D>> s_TextureCache;
+	static AssetCache<std::string, Ref<Shader>> s_ShaderCache;
+	static AssetCache<std::string, Ref<Material>> s_MaterialCache;
+
 	static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
 
 	void AssetManager::Init()
@@ -171,6 +176,44 @@ namespace Debut
 
 		// Update the asset map if the entry wasn't there
 		s_PhysicsMaterial2DCache.Put(id, toAdd);
+		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+		{
+			s_AssetMap[toAdd->GetID()] = id;
+			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
+		}
+
+		return toAdd;
+	}
+
+	template <>
+	Ref<Shader> AssetManager::Request<Shader>(const std::string& id)
+	{
+		if (s_ShaderCache.Has(id))
+			return s_ShaderCache.Get(id);
+
+		Ref<Shader> toAdd = Shader::Create(id);
+
+		// Update the asset map if the entry wasn't there
+		s_ShaderCache.Put(id, toAdd);
+		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+		{
+			s_AssetMap[toAdd->GetID()] = id;
+			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
+		}
+
+		return toAdd;
+	}
+
+	template <>
+	Ref<Material> AssetManager::Request<Material>(const std::string& id)
+	{
+		if (s_MaterialCache.Has(id))
+			return s_MaterialCache.Get(id);
+
+		Ref<Material> toAdd = CreateRef<Material>(id);
+
+		// Update the asset map if the entry wasn't there
+		s_MaterialCache.Put(id, toAdd);
 		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
 		{
 			s_AssetMap[toAdd->GetID()] = id;

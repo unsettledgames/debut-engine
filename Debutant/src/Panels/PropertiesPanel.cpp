@@ -7,6 +7,8 @@
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <imgui_internal.h>
 #include <Debut/ImGui/ImGuiUtils.h>
+#include <Debut/Rendering/Material.h>
+#include <Debut/Rendering/Shader.h>
 
 /**
 	TODO:
@@ -15,7 +17,7 @@
 
 namespace Debut
 {
-	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d"};
+	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d", ".glsl", ".mat"};
 
 	static int SetFileName(ImGuiInputTextCallbackData* data)
 	{
@@ -43,6 +45,14 @@ namespace Debut
 			else if (m_AssetPath.extension().string() == ".physmat2d")
 			{
 				DrawPhysicsMaterial2DProperties();
+			}
+			else if (m_AssetPath.extension().string() == ".glsl")
+			{
+				DrawShaderProperties();
+			}
+			else if (m_AssetPath.extension().string() == ".mat")
+			{
+				DrawMaterialProperties();
 			}
 		}
 
@@ -171,6 +181,32 @@ namespace Debut
 			Texture2D::SaveSettings(texParams, texture->GetPath());
 			texture->Reload();
 		}
+	}
+
+	void PropertiesPanel::DrawShaderProperties()
+	{
+		Ref<Shader> shader = AssetManager::Request<Shader>(m_AssetPath.string());
+		std::vector<ShaderUniform> uniforms = shader->GetUniforms();
+
+		ImGui::Text("Shader uniforms");
+
+		// Show uniforms
+		ImGuiUtils::StartColumns(2, { 150, 200 });
+		for (auto& uniform : uniforms)
+		{
+			ImGui::PushID(uniform.Name.c_str());
+			ImGui::Text(uniform.Name.c_str());
+			ImGui::NextColumn();
+			ImGui::Text(ShaderDataTypeToString(uniform.Type).c_str());
+			ImGui::PopID();
+			ImGui::NextColumn();
+		}
+		ImGuiUtils::ResetColumns();
+	}
+
+	void PropertiesPanel::DrawMaterialProperties()
+	{
+		Ref<Material> material = AssetManager::Request<Material>(m_AssetPath.string());
 	}
 
 	void PropertiesPanel::SetAsset(std::filesystem::path path)

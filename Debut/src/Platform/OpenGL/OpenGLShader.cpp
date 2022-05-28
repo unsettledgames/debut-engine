@@ -44,6 +44,8 @@ namespace Debut
 	OpenGLShader::OpenGLShader(const std::string& filePath)
 	{
 		DBT_PROFILE_FUNCTION();
+		CreateOrLoadMeta(filePath);
+
 		std::string src = ReadFile(filePath);
 		auto shaderSources = PreProcess(src);
 
@@ -202,7 +204,7 @@ namespace Debut
 			ShaderUniform::UniformData placeHolder;
 
 			glGetActiveUniform(m_ProgramID, (GLuint)i, bufSize, &length, &size, &type, name);
-			ret[0] = { name, GLToDbtUniformType(type), placeHolder };
+			ret[i] = { name, GLToDbtUniformType(type), placeHolder };
 		}
 
 		return ret;

@@ -16,6 +16,11 @@
 
 namespace Debut
 {
+	Material::Material(const std::string& path)
+	{
+
+	}
+
 	void Material::SetFloat(const std::string& name, float val)
 	{
 		FIND_UNIFORM(name);
@@ -46,11 +51,22 @@ namespace Debut
 
 	void Material::SetInt(const std::string& name, int val)
 	{
-
+		FIND_UNIFORM(name);
+		CHECK_TYPE(name, ShaderDataType::Int);
+		m_Uniforms[name].Data.Int = val;
 	}
 
-	void Material::SetTexture(const Ref<Texture2D> texture)
+	void Material::SetBool(const std::string& name, bool val)
 	{
+		FIND_UNIFORM(name);
+		CHECK_TYPE(name, ShaderDataType::Bool);
+		m_Uniforms[name].Data.Bool = val;
+	}
 
+	void Material::SetTexture(const std::string& name, const Ref<Texture2D> texture)
+	{
+		FIND_UNIFORM(name);
+		CHECK_TYPE(name, ShaderDataType::Sampler2D);
+		m_Uniforms[name].Data.Texture = texture->GetID();
 	}
 }

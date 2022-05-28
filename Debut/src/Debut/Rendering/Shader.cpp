@@ -5,6 +5,7 @@
 #include <Debut/Rendering/Renderer/Renderer.h>
 #include <Debut/Rendering/Shader.h>
 #include <Platform/OpenGL/OpenGLShader.h>
+#include <yaml-cpp/yaml.h>
 
 namespace Debut
 {
@@ -38,41 +39,31 @@ namespace Debut
 		return nullptr;
 	}
 
-	void ShaderLibrary::Add(const Ref<Shader>& shader)
+	void Shader::CreateOrLoadMeta(const std::string& path)
 	{
-		auto& name = shader->GetName();
-		DBT_CORE_ASSERT(m_Shaders.find(name) == m_Shaders.end(), "Shader is already in the library");
-		m_Shaders[name] = shader;
-	}
+		std::ifstream meta(path + ".meta");
+		std::stringstream ss;
 
-	void ShaderLibrary::Add(const Ref<Shader>& shader, const std::string& name)
-	{
-		DBT_CORE_ASSERT(m_Shaders.find(name) == m_Shaders.end(), "Shader is already in the library");
-		m_Shaders[name] = shader;
-	}
+		if (meta.good())
+		{
+			// Load data
+			ss << meta.rdbuf();
+			YAML::Node node = YAML::Load(ss.str());
 
-	Ref<Shader> ShaderLibrary::Load(const std::string& filePath)
-	{
-		auto shader = Shader::Create(filePath);
-		Add(shader);
-		return shader;
-	}
+			m_ID = node["ID"].as<uint64_t>();
+		}
+		else
+		{
+			// Automatically create a meta file
+			meta.close();
 
-	Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filePath)
-	{
-		auto shader = Shader::Create(filePath);
-		Add(shader, name);
-		return shader;
-	}
+			std::ofstream newMeta(path + ".meta");
+			YAML::Emitter emitter;
 
-	Ref<Shader> ShaderLibrary::Get(const std::string& name)
-	{
-		DBT_CORE_ASSERT(m_Shaders.find(name) != m_Shaders.end(), "Shader to get has not been found");
-		return m_Shaders[name];
-	}
+			emitter << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap;
 
-	bool ShaderLibrary::Exists(const std::string& name) const
-	{
-		return m_Shaders.find(name) != m_Shaders.end();
+			newMeta << emitter.c_str();
+			newMeta.close();
+		}
 	}
 }

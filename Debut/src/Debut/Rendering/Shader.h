@@ -23,6 +23,9 @@ namespace Debut
 		union UniformData
 		{
 			float Float;
+			int Int;
+			bool Bool;
+
 			glm::vec2 Vec2;
 			glm::vec3 Vec3;
 			glm::vec4 Vec4;
@@ -35,6 +38,25 @@ namespace Debut
 		ShaderUniform() {}
 		ShaderUniform(const std::string& name, ShaderDataType type, UniformData data) : Name(name), Type(type), Data(data) {}
 	};
+
+	inline std::string ShaderDataTypeToString(ShaderDataType type)
+	{
+		switch (type)
+		{
+		case ShaderDataType::Bool: return "Bool";
+		case ShaderDataType::Float: return "Float";
+		case ShaderDataType::Float2: return "Vec2";
+		case ShaderDataType::Float3: return "Vec3";
+		case ShaderDataType::Float4: return "Vec4";
+		case ShaderDataType::Int: return "Int";
+		case ShaderDataType::Mat3: return "Mat3";
+		case ShaderDataType::Mat4: return "Mat4";
+		case ShaderDataType::Sampler2D: return "Texture";
+		}
+
+		Log.CoreWarn("Maybe the time to use Int vectors has come?");
+		return "None";
+	}
 
 	class Shader
 	{
@@ -56,26 +78,16 @@ namespace Debut
 
 		virtual void SetMat4(const std::string& name, const glm::mat4& uniform) = 0;
 
+		UUID GetID() { return m_ID; }
+
 		static Ref<Shader> Create(const std::string& name, const std::string& vertSrc, const std::string& fragSrc);
 		static Ref<Shader> Create(const std::string& filePath);
+	
+	protected:
+		void CreateOrLoadMeta(const std::string& path);
 
 	protected:
 		unsigned int m_ProgramID;
-	};
-
-	class ShaderLibrary
-	{
-	public:
-		void Add(const Ref<Shader>& shader);
-		void Add(const Ref<Shader>& shader, const std::string& name);
-
-		Ref<Shader> Load(const std::string& filePath);
-		Ref<Shader> Load(const std::string& name, const std::string& filePath);
-
-		Ref<Shader> Get(const std::string& name);
-		bool Exists(const std::string& name) const;
-
-	private:
-		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
+		UUID m_ID;
 	};
 }

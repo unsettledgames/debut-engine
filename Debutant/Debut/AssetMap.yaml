@@ -9,3 +9,9 @@ Associations:
     Path: assets\NewPhysicsMaterial2D-copy.physmat2d
   - ID: 9140592576541228310
     Path: assets\textures\penguin.png
+  - ID: 14782759418488697461
+    Path: assets\shaders\line.glsl
+  - ID: 8653149696889396285
+    Path: assets\shaders\texture.glsl
+  - ID: 12157534753583906862
+    Path: assets\shaders\unlit.glsl
