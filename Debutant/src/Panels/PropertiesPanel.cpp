@@ -4,6 +4,7 @@
 #include <Debut/Rendering/Texture.h>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
+#include <stack>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <imgui_internal.h>
 #include <Debut/ImGui/ImGuiUtils.h>
@@ -206,11 +207,103 @@ namespace Debut
 
 	void PropertiesPanel::DrawMaterialProperties()
 	{
+		MaterialConfig finalConfig;
+
 		Ref<Material> material = AssetManager::Request<Material>(m_AssetPath.string());
+		Ref<Shader> shader = AssetManager::Request<Shader>(material->GetShader());
+
+		// Shader selection combobox
+		std::vector<std::string> shaderStrings;
+		const char** shaders;
+		std::filesystem::path shaderFolder("assets\\shaders");
+
+		const char* currShader = shader == nullptr ? "None" : shader->GetName().c_str();
+		const char* ret = nullptr;
+
+		// BF visit to find all the shaders in the folder
+		std::stack<std::filesystem::path> pathsToVisit;
+		pathsToVisit.push(std::filesystem::path("assets\\shaders"));
+		std::filesystem::path currPath;
+
+		// TODO: cache paths
+		while (pathsToVisit.size() > 0)
+		{
+			currPath = pathsToVisit.top();
+			pathsToVisit.pop();
+
+			auto& dirIt = std::filesystem::directory_iterator(currPath);
+
+			for (auto entry : dirIt)
+			{
+				if (entry.is_directory())
+					pathsToVisit.push(entry.path());
+				else
+				{
+					std::string extension = entry.path().extension().string();
+					if (extension == ".glsl" || extension == ".hlsl")
+						shaderStrings.push_back(entry.path().string());
+				}
+			}
+		}
+
+		// Convert the strings to const char*s
+		shaders = new const char* [shaderStrings.size()];
+		for (uint32_t i = 0; i < shaderStrings.size(); i++)
+			shaders[i] = shaderStrings[i].c_str();
+
+		// Draw the combobox to choose the shader
+		if (ImGuiUtils::Combo("Shader", shaders, shaderStrings.size(), &currShader, &ret))
+		{
+			Ref<Shader> loadedShader = AssetManager::Request<Shader>(ret);
+			material->SetShader(loadedShader);
+		}
+		delete[] shaders;
+
+		// Draw Material properties
+		for (auto uniform : material->GetUniforms())
+		{
+			switch (uniform.Type)
+			{
+			case ShaderDataType::Float:
+			{
+				float value = uniform.Data.Float;
+				if (ImGuiUtils::DragFloat(uniform.Name, &value, 0.15f))
+					material->SetFloat(uniform.Name, value);
+				break;
+			}
+			case ShaderDataType::Sampler2D:
+			{
+				// Load the texture: if it doesn't exist, just use a white default texture
+				uint32_t rendererID;
+				Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.Data.Texture);
+				if (currTexture == nullptr)
+					rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
+				else
+					rendererID = currTexture->GetRendererID();
+
+				// Texture title
+				ImGuiUtils::BoldText("Texture " + uniform.Name);
+
+				// Texture preview button
+				ImGuiUtils::StartColumns(3, { 80, 200, 200 });
+				Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, {64, 64});
+				if (newTexture != nullptr)
+					material->SetTexture(uniform.Name, newTexture);
+				
+				// TODO: Size and offset?
+				break;
+			}
+				
+			default:
+				break;
+			}
+		}
 	}
 
 	void PropertiesPanel::SetAsset(std::filesystem::path path)
 	{
+		if (std::filesystem::is_directory(path))
+			return;
 		m_AssetPath = path;
 	}
 }

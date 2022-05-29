@@ -3,17 +3,14 @@
 #include <imgui.h>
 #include <filesystem>
 #include <Debut/AssetManager/AssetManager.h>
-#include <Debut/Physics/PhysicsMaterial2D.h>
-#include <Debut/Rendering/Shader.h>
-#include <Debut/Rendering/Material.h>
 
 namespace Debut
 {
 	std::unordered_map<UUID, std::string> AssetManager::s_AssetMap;
 
-	static AssetCache<std::string, Ref<Texture2D>> s_TextureCache;
-	static AssetCache<std::string, Ref<Shader>> s_ShaderCache;
-	static AssetCache<std::string, Ref<Material>> s_MaterialCache;
+	AssetCache<std::string, Ref<Texture2D>> AssetManager::s_TextureCache;
+	AssetCache<std::string, Ref<Shader>> AssetManager::s_ShaderCache;
+	AssetCache<std::string, Ref<Material>> AssetManager::s_MaterialCache;
 
 	static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
 

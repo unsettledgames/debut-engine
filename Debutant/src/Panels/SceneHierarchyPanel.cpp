@@ -287,9 +287,9 @@ namespace Debut
 
 				ImGuiUtils::VerticalSpace(10);
 
-				UUID material = ImGuiUtils::DragDestination<PhysicsMaterial2D>("Physics material", ".physmat2d", component.Material);
+				Ref<PhysicsMaterial2D> material = ImGuiUtils::DragDestination<PhysicsMaterial2D>("Physics material", ".physmat2d", component.Material);
 				if (material)
-					component.Material = material;
+					component.Material = material->GetID();
 			});
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)

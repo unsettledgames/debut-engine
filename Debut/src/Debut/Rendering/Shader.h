@@ -30,7 +30,7 @@ namespace Debut
 			glm::vec3 Vec3;
 			glm::vec4 Vec4;
 
-			UUID Texture;
+			UUID Texture = 0;
 
 			UniformData() {}
 		} Data;

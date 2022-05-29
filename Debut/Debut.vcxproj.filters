@@ -325,6 +325,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Rendering\Material.h" />
+    <ClInclude Include="src\Debut\Utils\YamlUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\AssetManager\AssetManager.cpp">

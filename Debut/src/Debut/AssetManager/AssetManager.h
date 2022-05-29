@@ -6,6 +6,8 @@
 #include <Debut/AssetManager/Asset.h>
 #include <Debut/AssetManager/AssetCache.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
+#include <Debut/Rendering/Shader.h>
+#include <Debut/Rendering/Material.h>
 
 
 /* THINK
@@ -91,10 +93,7 @@ namespace Debut
 			if (id == 0)
 				return nullptr;
 			if (s_AssetMap.find(id) == s_AssetMap.end())
-			{
-				Log.CoreFatal("The requested ID doesn't correspond to any resources");
 				return nullptr;
-			}
 
 			return Request<T>(s_AssetMap[id]);
 		}
@@ -103,5 +102,8 @@ namespace Debut
 		static void Reimport(const std::string& folder);
 
 		static std::unordered_map<UUID, std::string> s_AssetMap;
+		static AssetCache<std::string, Ref<Texture2D>> s_TextureCache;
+		static AssetCache<std::string, Ref<Shader>> s_ShaderCache;
+		static AssetCache<std::string, Ref<Material>> s_MaterialCache;
 	};
 }

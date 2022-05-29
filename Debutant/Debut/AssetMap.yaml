@@ -15,3 +15,11 @@ Associations:
     Path: assets\shaders\texture.glsl
   - ID: 12157534753583906862
     Path: assets\shaders\unlit.glsl
+  - ID: 6304827802734497039
+    Path: assets\materials\NewMaterial.mat
+  - ID: 11117274267211669238
+    Path: assets\shaders\Temp\texture2.glsl
+  - ID: 3838735425579894555
+    Path: assets\textures\WholeSketch.png
+  - ID: 2254251900848253897
+    Path: assets\textures\Icons.png

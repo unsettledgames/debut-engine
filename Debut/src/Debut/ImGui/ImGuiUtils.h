@@ -18,12 +18,13 @@ namespace Debut
 		static void RGBVec2(const char* id, std::vector<const char*>labels, std::vector<float*>values, float resetValue = 0, uint32_t columnWidth = 100);
 
 		static bool ImageButton(Ref<Texture2D> texture, ImVec2 size, ImVec4 color = {0.1, 0.2, 0.4, 1});
+		static void BoldText(const std::string& label);
 		static bool Combo(const char* id, const char* selectables[], uint32_t nSelectables, const char** currSelected, const char** ret);
 
 		template <typename T>
-		static UUID DragDestination(const std::string& label, const std::string& acceptedExtension, UUID currentID)
+		static Ref<T> DragDestination(const std::string& label, const std::string& acceptedExtension, UUID currentID)
 		{
-			UUID ret = 0;
+			Ref<T> ret = nullptr;
 
 			std::string currentName = AssetManager::GetPath(currentID);
 			currentName = currentName.substr(currentName.find_last_of("\\") + 1, currentName.size() - currentName.find_last_of("\\"));
@@ -45,10 +46,7 @@ namespace Debut
 					std::filesystem::path pathStr(path);
 
 					if (pathStr.extension() == acceptedExtension)
-					{
-						Ref<T> selectedAsset = AssetManager::Request<T>(pathStr.string());
-						ret = selectedAsset->GetID();
-					}
+						ret = AssetManager::Request<T>(pathStr.string());
 				}
 
 				ImGui::EndDragDropTarget();
@@ -58,6 +56,28 @@ namespace Debut
 			ImGui::PopID();
 
 			return ret;
+		}
+
+		template <typename T>
+		static Ref<T> ImageDragDestination(uint32_t rendererID, ImVec2 size)
+		{
+			Ref<T> selectedAsset = nullptr;
+			// Accept PNG files to use as textures for the sprite renderer
+			ImGui::ImageButton((ImTextureID)rendererID, size, { 0, 1 }, { 1, 0 });
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					std::filesystem::path pathStr(path);
+
+					if (pathStr.extension() == ".png")
+						selectedAsset = AssetManager::Request<T>(pathStr.string());
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			return selectedAsset;
 		}
 	};
 }

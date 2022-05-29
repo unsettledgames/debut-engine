@@ -184,6 +184,16 @@ namespace Debut
 		return ImGui::ImageButton((ImTextureID)texture->GetRendererID(), size, { 1, 0 }, { 0, 1 }, -1, color);
 	}
 
+	void ImGuiUtils::BoldText(const std::string& label)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		auto boldFont = io.Fonts->Fonts[1];
+
+		ImGui::PushFont(boldFont);
+		ImGui::Text(label.c_str());
+		ImGui::PopFont();
+	}
+
 	bool ImGuiUtils::Combo(const char* id, const char* selectables[], uint32_t nSelectables, const char** currSelected, const char** ret)
 	{
 		bool changed = false;
@@ -198,7 +208,7 @@ namespace Debut
 
 		if (ImGui::BeginCombo(("##"+std::string(id)).c_str(), *currSelected))
 		{
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < nSelectables; i++)
 			{
 				bool isSelected = *currSelected == selectables[i];
 				if (ImGui::Selectable(selectables[i], &isSelected))

@@ -9,11 +9,24 @@
 
 namespace Debut
 {
+	struct MaterialConfig
+	{
+		std::string Name;
+		UUID Shader;
+		std::vector<ShaderUniform> Uniforms;
+	};
+
 	class Material
 	{
 	public:
 		Material() = default;
 		Material(const std::string& path);
+
+		void SetShader(Ref<Shader> shader);
+
+		void SetConfig(const MaterialConfig& config);
+		static void SaveSettings(const std::string& path, const MaterialConfig& config);
+		static void SaveDefaultConfig(const std::string& path);
 
 		void SetFloat(const std::string& name, float val);
 		void SetVec2(const std::string& name, const glm::vec2& vec);
@@ -25,9 +38,13 @@ namespace Debut
 		void SetTexture(const std::string& name, const Ref<Texture2D> texture);
 
 		UUID GetID() { return m_ID; }
+		UUID GetShader() { return m_Shader; }
+		std::vector<ShaderUniform> GetUniforms();
 
 	private:
 		UUID m_ID;
+		UUID m_Shader;
+
 		std::string m_Path;
 		std::string m_Name;
 		std::unordered_map<std::string, ShaderUniform> m_Uniforms;
