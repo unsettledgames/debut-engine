@@ -196,14 +196,14 @@ namespace Debut
 		GLchar name[bufSize]; // variable name in GLSL
 		GLsizei length; // name length
 
-		glGetProgramiv(m_ProgramID, GL_ACTIVE_UNIFORMS, &count);
+		GLCall(glGetProgramiv(m_ProgramID, GL_ACTIVE_UNIFORMS, &count));
 		ret.resize(count);
 
 		for (i = 0; i < count; i++)
 		{
 			ShaderUniform::UniformData placeHolder;
 
-			glGetActiveUniform(m_ProgramID, (GLuint)i, bufSize, &length, &size, &type, name);
+			GLCall(glGetActiveUniform(m_ProgramID, (GLuint)i, bufSize, &length, &size, &type, name));
 			ret[i] = { name, GLToDbtUniformType(type), placeHolder };
 		}
 

@@ -44,6 +44,6 @@ uniform float u_TilingFactor;
 
 void main()
 {
-	color = texture(u_Textures[int(v_TexIndex)], v_UV * v_TilingFactor) * v_Color;
+	color = texture(u_Textures[int(v_TexIndex)], v_UV * u_TilingFactor) * v_Color;
 	id = v_EntityID;
 }

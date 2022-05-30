@@ -474,4 +474,7 @@
     </ClCompile>
     <ClCompile Include="src\Debut\Rendering\Material.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\temp.glsl" />
+  </ItemGroup>
 </Project>

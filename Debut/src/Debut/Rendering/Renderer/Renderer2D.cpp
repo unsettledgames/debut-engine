@@ -97,6 +97,7 @@ namespace Debut
 		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+		s_Data.TextureShader->SetFloat("u_TilingFactor", 1.0f);
 		s_Data.TextureShader->Unbind();
 
 		s_Data.LineShader->Bind();

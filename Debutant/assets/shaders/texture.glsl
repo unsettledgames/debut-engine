@@ -9,6 +9,7 @@ layout(location = 4) in float a_TilingFactor;
 layout(location = 5) in	int a_EntityID;
 
 uniform mat4 u_ViewProjection;
+uniform vec4 u_TestVec4;
 
 out vec2 v_UV;
 out vec4 v_Color;
@@ -24,7 +25,7 @@ void main()
 	v_TilingFactor = a_TilingFactor;
 	v_EntityID = a_EntityID;
 
-	gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+	gl_Position = u_ViewProjection * u_TestVec4;
 }
 
 #type fragment
