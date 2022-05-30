@@ -90,7 +90,7 @@ namespace Debut
 		delete[] s_Data.QuadVertexBufferBase;	
 	}
 
-	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4 transform)
+	void Renderer2D::BeginScene(Camera& camera, const glm::mat4 transform)
 	{
 		DBT_PROFILE_FUNCTION();
 

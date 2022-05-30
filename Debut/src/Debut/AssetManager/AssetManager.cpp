@@ -11,6 +11,7 @@ namespace Debut
 	AssetCache<std::string, Ref<Texture2D>> AssetManager::s_TextureCache;
 	AssetCache<std::string, Ref<Shader>> AssetManager::s_ShaderCache;
 	AssetCache<std::string, Ref<Material>> AssetManager::s_MaterialCache;
+	AssetCache<std::string, Ref<Mesh>> AssetManager::s_MeshCache;
 
 	static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
 
@@ -219,6 +220,24 @@ namespace Debut
 
 		return toAdd;
 	}
+	
+	template <>
+	Ref<Mesh> AssetManager::Request<Mesh>(const std::string& id)
+	{
+		if (s_MeshCache.Has(id))
+			return s_MeshCache.Get(id);
 
+		Ref<Mesh> toAdd = CreateRef<Mesh>(id);
+
+		// Update the asset map if the entry wasn't there
+		s_MeshCache.Put(id, toAdd);
+		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+		{
+			s_AssetMap[toAdd->GetID()] = id;
+			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
+		}
+
+		return toAdd;
+	}
 	
 }

@@ -54,4 +54,19 @@ namespace Debut
 		DBT_ASSERT(false, "Unsupported renderer API");
 		return nullptr;
 	}
+
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t count)
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:
+			DBT_ASSERT(false, "The renderer doesn't have an API set.");
+			return nullptr;
+		case RendererAPI::API::OpenGL:
+			return std::make_shared<OpenGLIndexBuffer>(count);
+		}
+
+		DBT_ASSERT(false, "Unsupported renderer API");
+		return nullptr;
+	}
 }

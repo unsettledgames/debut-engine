@@ -141,6 +141,19 @@ namespace Debut
 		SaveSettings(path, { "New Material", 0, {} });
 	}
 
+	void Material::SaveSettings()
+	{
+		MaterialConfig config;
+
+		config.Name = m_Name;
+		config.Shader = m_Shader;
+
+		for (auto& uniform : m_Uniforms)
+			config.Uniforms.push_back(uniform.second);
+
+		SaveSettings(m_Path, config);
+	}
+
 	void Material::SaveSettings(const std::string& path, const MaterialConfig& config)
 	{
 		std::ofstream out(path);

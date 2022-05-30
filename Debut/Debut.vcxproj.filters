@@ -25,14 +25,14 @@
     <Filter Include="src\Debut\Physics">
       <UniqueIdentifier>{E216D861-4E2D-D6F7-97A4-611903FAA67F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Debut\Renderer">
-      <UniqueIdentifier>{16C5B573-02A9-76C9-6B09-711C570C614B}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Debut\Rendering">
       <UniqueIdentifier>{BD786EEA-29DA-4BF8-B247-92AA1EA882B7}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Debut\Rendering\Renderer">
       <UniqueIdentifier>{03E18DEC-EF9B-7D98-9853-F6E284EDC728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Debut\Rendering\Resources">
+      <UniqueIdentifier>{676EF719-D386-DE43-9C33-6EDD080B73DD}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Debut\Rendering\Structures">
       <UniqueIdentifier>{906D07E8-7C93-D14E-65D9-561A519EF61A}</UniqueIdentifier>
@@ -78,6 +78,9 @@
     </Filter>
     <Filter Include="vendor\stb_image">
       <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\tinyobjloader">
+      <UniqueIdentifier>{386CC32A-24FB-4CF4-CD19-61EFB9875D9A}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +165,9 @@
     <ClInclude Include="src\Debut\Rendering\GraphicsContext.h">
       <Filter>src\Debut\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Debut\Rendering\Material.h">
+      <Filter>src\Debut\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Debut\Rendering\Renderer\RenderCommand.h">
       <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClInclude>
@@ -171,8 +177,17 @@
     <ClInclude Include="src\Debut\Rendering\Renderer\Renderer2D.h">
       <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Debut\Rendering\Renderer\Renderer3D.h">
+      <Filter>src\Debut\Rendering\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Debut\Rendering\Renderer\RendererAPI.h">
       <Filter>src\Debut\Rendering\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\Rendering\Resources\Mesh.h">
+      <Filter>src\Debut\Rendering\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\Rendering\Resources\Model.h">
+      <Filter>src\Debut\Rendering\Resources</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Rendering\Shader.h">
       <Filter>src\Debut\Rendering</Filter>
@@ -214,6 +229,9 @@
       <Filter>src\Debut\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\Utils\PlatformUtils.h">
+      <Filter>src\Debut\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debut\Utils\YamlUtils.h">
       <Filter>src\Debut\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Debut\dbtpch.h">
@@ -324,8 +342,9 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Debut\Rendering\Material.h" />
-    <ClInclude Include="src\Debut\Utils\YamlUtils.h" />
+    <ClInclude Include="vendor\tinyobjloader\tiny_obj_loader.h">
+      <Filter>vendor\tinyobjloader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\AssetManager\AssetManager.cpp">
@@ -361,6 +380,9 @@
     <ClCompile Include="src\Debut\Physics\PhysicsMaterial2D.cpp">
       <Filter>src\Debut\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Debut\Rendering\Material.cpp">
+      <Filter>src\Debut\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Debut\Rendering\Renderer\RenderCommand.cpp">
       <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClCompile>
@@ -370,8 +392,17 @@
     <ClCompile Include="src\Debut\Rendering\Renderer\Renderer2D.cpp">
       <Filter>src\Debut\Rendering\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Debut\Rendering\Renderer\Renderer3D.cpp">
+      <Filter>src\Debut\Rendering\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Debut\Rendering\Renderer\RendererAPI.cpp">
       <Filter>src\Debut\Rendering\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debut\Rendering\Resources\Mesh.cpp">
+      <Filter>src\Debut\Rendering\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debut\Rendering\Resources\Model.cpp">
+      <Filter>src\Debut\Rendering\Resources</Filter>
     </ClCompile>
     <ClCompile Include="src\Debut\Rendering\Shader.cpp">
       <Filter>src\Debut\Rendering</Filter>
@@ -472,9 +503,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Debut\Rendering\Material.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\shaders\temp.glsl" />
   </ItemGroup>
 </Project>

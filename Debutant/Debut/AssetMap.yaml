@@ -23,3 +23,9 @@ Associations:
     Path: assets\textures\WholeSketch.png
   - ID: 2254251900848253897
     Path: assets\textures\Icons.png
+  - ID: 0
+    Path: assets\icons\play.png
+  - ID: 17985255014677475054
+    Path: assets\icons\stop.png
+  - ID: 6940031442624376811
+    Path: assets\textures\checkerboard.png

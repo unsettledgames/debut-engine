@@ -171,7 +171,10 @@
     <ClInclude Include="src\Debut\Rendering\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Debut\Rendering\Renderer\Renderer.h" />
     <ClInclude Include="src\Debut\Rendering\Renderer\Renderer2D.h" />
+    <ClInclude Include="src\Debut\Rendering\Renderer\Renderer3D.h" />
     <ClInclude Include="src\Debut\Rendering\Renderer\RendererAPI.h" />
+    <ClInclude Include="src\Debut\Rendering\Resources\Mesh.h" />
+    <ClInclude Include="src\Debut\Rendering\Resources\Model.h" />
     <ClInclude Include="src\Debut\Rendering\Shader.h" />
     <ClInclude Include="src\Debut\Rendering\Structures\Buffer.h" />
     <ClInclude Include="src\Debut\Rendering\Structures\FrameBuffer.h" />
@@ -186,8 +189,8 @@
     <ClInclude Include="src\Debut\Scene\ScriptableEntity.h" />
     <ClInclude Include="src\Debut\Utils\CppUtils.h" />
     <ClInclude Include="src\Debut\Utils\PlatformUtils.h" />
-    <ClInclude Include="src\Debut\dbtpch.h" />
     <ClInclude Include="src\Debut\Utils\YamlUtils.h" />
+    <ClInclude Include="src\Debut\dbtpch.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLError.h" />
@@ -223,6 +226,7 @@
     <ClInclude Include="vendor\imguizmo\example\stb_image.h" />
     <ClInclude Include="vendor\imguizmo\vcpkg-example\ImApp.h" />
     <ClInclude Include="vendor\stb_image\stb_image.h" />
+    <ClInclude Include="vendor\tinyobjloader\tiny_obj_loader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Debut\AssetManager\AssetManager.cpp" />
@@ -240,7 +244,10 @@
     <ClCompile Include="src\Debut\Rendering\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Debut\Rendering\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Debut\Rendering\Renderer\Renderer2D.cpp" />
+    <ClCompile Include="src\Debut\Rendering\Renderer\Renderer3D.cpp" />
     <ClCompile Include="src\Debut\Rendering\Renderer\RendererAPI.cpp" />
+    <ClCompile Include="src\Debut\Rendering\Resources\Mesh.cpp" />
+    <ClCompile Include="src\Debut\Rendering\Resources\Model.cpp" />
     <ClCompile Include="src\Debut\Rendering\Shader.cpp" />
     <ClCompile Include="src\Debut\Rendering\Structures\Buffer.cpp" />
     <ClCompile Include="src\Debut\Rendering\Structures\FrameBuffer.cpp" />
@@ -329,9 +336,6 @@
     <ProjectReference Include="vendor\box2d\Box2D.vcxproj">
       <Project>{A434E80C-1049-10BE-D9CA-B31D459E0CEF}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\shaders\temp.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

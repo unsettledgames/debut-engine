@@ -25,6 +25,7 @@ namespace Debut
 		void SetShader(Ref<Shader> shader);
 
 		void SetConfig(const MaterialConfig& config);
+		void SaveSettings();
 		static void SaveSettings(const std::string& path, const MaterialConfig& config);
 		static void SaveDefaultConfig(const std::string& path);
 

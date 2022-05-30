@@ -327,6 +327,11 @@ namespace Debut
 
 			ImGui::TreePop();
 		}
+
+		if (ImGui::Button("Save settings"))
+		{
+			material->SaveSettings();
+		}
 		
 	}
 

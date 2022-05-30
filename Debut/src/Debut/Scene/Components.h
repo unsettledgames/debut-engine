@@ -77,6 +77,15 @@ namespace Debut
 		SpriteRendererComponent(const glm::vec4& color) : Color(color) {}
 	};
 
+	struct MeshRendererComponent
+	{
+		UUID Material = 0;
+		UUID Mesh = 0;
+
+		MeshRendererComponent()  {}
+		MeshRendererComponent(const MeshRendererComponent&) = default;
+	};
+
 	// PHYSICS AND COLLIDERS
 	struct Rigidbody2DComponent
 	{

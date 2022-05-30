@@ -141,7 +141,10 @@ namespace Debut
 		
 		virtual uint32_t GetCount() const = 0;
 
+		virtual void SetData(const void* data, uint32_t count) = 0;
+
 		static Ref<IndexBuffer> Create(int* indices, unsigned int count);
+		static Ref<IndexBuffer> Create(uint32_t count);
 	private:
 	};
 }

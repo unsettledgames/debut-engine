@@ -32,6 +32,7 @@ namespace Debut
 	{
 	public:
 		OpenGLIndexBuffer(int* indices, unsigned int size);
+		OpenGLIndexBuffer(uint32_t count);
 		virtual ~OpenGLIndexBuffer();
 
 		virtual void Bind() const override;
@@ -39,7 +40,7 @@ namespace Debut
 		
 		virtual inline uint32_t GetCount() const override { return m_Count; }
 
-		//static IndexBuffer* Create(int* vertices, unsigned int size);
+		virtual void SetData(const void* data, uint32_t count) override;
 	private:
 		unsigned int m_RendererID;
 		uint32_t m_Count;

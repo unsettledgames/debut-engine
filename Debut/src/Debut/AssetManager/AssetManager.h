@@ -6,6 +6,7 @@
 #include <Debut/AssetManager/Asset.h>
 #include <Debut/AssetManager/AssetCache.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
+#include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Rendering/Shader.h>
 #include <Debut/Rendering/Material.h>
 
@@ -105,5 +106,6 @@ namespace Debut
 		static AssetCache<std::string, Ref<Texture2D>> s_TextureCache;
 		static AssetCache<std::string, Ref<Shader>> s_ShaderCache;
 		static AssetCache<std::string, Ref<Material>> s_MaterialCache;
+		static AssetCache<std::string, Ref<Mesh>> s_MeshCache;
 	};
 }
