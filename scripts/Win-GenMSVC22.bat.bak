@@ -1,0 +1,5 @@
+pushd .\..\Debut
+mkdir Build
+call cmake -G "Visual Studio 17 2022" -DBBOX2D_BUILD_TESTBED=OFF
+popd
+PAUSE

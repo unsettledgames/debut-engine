@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -9,332 +12,287 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Dist|x64">
-      <Configuration>Dist</Configuration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1995060D-85A9-2EBE-4E2B-D21DBAFE2AEF}</ProjectGuid>
-    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <ProjectGuid>{7DA4D184-C51C-3813-AD5E-DD3E7F6F6964}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Debut</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>Debut</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\bin\Debug-windows-x86_64\Debut\</OutDir>
-    <IntDir>..\bin-int\Debug-windows-x86_64\Debut\</IntDir>
-    <TargetName>Debut</TargetName>
-    <TargetExt>.lib</TargetExt>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\bin\Release-windows-x86_64\Debut\</OutDir>
-    <IntDir>..\bin-int\Release-windows-x86_64\Debut\</IntDir>
-    <TargetName>Debut</TargetName>
-    <TargetExt>.lib</TargetExt>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
-    <OutDir>..\bin\Dist-windows-x86_64\Debut\</OutDir>
-    <IntDir>..\bin-int\Dist-windows-x86_64\Debut\</IntDir>
-    <TargetName>Debut</TargetName>
-    <TargetExt>.lib</TargetExt>
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\dev\Debut\Debut\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Debut.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Debut</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\dev\Debut\Debut\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Debut.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Debut</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\dev\Debut\Debut\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Debut.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Debut</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\dev\Debut\Debut\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Debut.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Debut</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>Debut/dbtpch.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_BUILD_DLL;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;YAML_CPP_STATIC_DEFINE;DBT_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\spdlog\include;vendor\entt\include;vendor\yaml-cpp\include;vendor\imguizmo;vendor\box2d\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;YAML_CPP_STATIC_DEFINE;SPDLOG_COMPILED_LIB;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;YAML_CPP_STATIC_DEFINE;SPDLOG_COMPILED_LIB;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>Debut/dbtpch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_BUILD_DLL;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;YAML_CPP_STATIC_DEFINE;DBT_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\spdlog\include;vendor\entt\include;vendor\yaml-cpp\include;vendor\imguizmo;vendor\box2d\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Optimization>Full</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;YAML_CPP_STATIC_DEFINE;SPDLOG_COMPILED_LIB;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;YAML_CPP_STATIC_DEFINE;SPDLOG_COMPILED_LIB;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>Debut/dbtpch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>DBT_PLATFORM_WINDOWS;DBT_BUILD_DLL;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;YAML_CPP_STATIC_DEFINE;DBT_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\spdlog\include;vendor\entt\include;vendor\yaml-cpp\include;vendor\imguizmo;vendor\box2d\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Optimization>Full</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <MinimalRebuild>false</MinimalRebuild>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;YAML_CPP_STATIC_DEFINE;SPDLOG_COMPILED_LIB;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;YAML_CPP_STATIC_DEFINE;SPDLOG_COMPILED_LIB;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;YAML_CPP_STATIC_DEFINE;SPDLOG_COMPILED_LIB;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;YAML_CPP_STATIC_DEFINE;SPDLOG_COMPILED_LIB;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\dev\Debut\Debut\src;C:\dev\Debut\Debut\vendor\box2d\include;C:\dev\Debut\Debut\vendor\glfw\include;C:\dev\Debut\Debut\vendor\glm;C:\dev\Debut\Debut\vendor\box2d\src\..\include;C:\dev\Debut\Debut\vendor\spdlog\include;C:\dev\Debut\Debut\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Debut.h" />
-    <ClInclude Include="src\Debut\AssetManager\Asset.h" />
-    <ClInclude Include="src\Debut\AssetManager\AssetCache.h" />
-    <ClInclude Include="src\Debut\AssetManager\AssetManager.h" />
-    <ClInclude Include="src\Debut\Core\Application.h" />
-    <ClInclude Include="src\Debut\Core\Core.h" />
-    <ClInclude Include="src\Debut\Core\EntryPoint.h" />
-    <ClInclude Include="src\Debut\Core\Input.h" />
-    <ClInclude Include="src\Debut\Core\Instrumentor.h" />
-    <ClInclude Include="src\Debut\Core\KeyCodes.h" />
-    <ClInclude Include="src\Debut\Core\Layer.h" />
-    <ClInclude Include="src\Debut\Core\LayerStack.h" />
-    <ClInclude Include="src\Debut\Core\Log.h" />
-    <ClInclude Include="src\Debut\Core\MouseButtonCodes.h" />
-    <ClInclude Include="src\Debut\Core\Time.h" />
-    <ClInclude Include="src\Debut\Core\UUID.h" />
-    <ClInclude Include="src\Debut\Core\Window.h" />
-    <ClInclude Include="src\Debut\Events\ApplicationEvent.h" />
-    <ClInclude Include="src\Debut\Events\Event.h" />
-    <ClInclude Include="src\Debut\Events\KeyEvent.h" />
-    <ClInclude Include="src\Debut\Events\MouseEvent.h" />
-    <ClInclude Include="src\Debut\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\Debut\ImGui\ImGuiUtils.h" />
-    <ClInclude Include="src\Debut\Math\Math.h" />
-    <ClInclude Include="src\Debut\Physics\PhysicsMaterial2D.h" />
-    <ClInclude Include="src\Debut\Rendering\Camera.h" />
-    <ClInclude Include="src\Debut\Rendering\GraphicsContext.h" />
-    <ClInclude Include="src\Debut\Rendering\Material.h" />
-    <ClInclude Include="src\Debut\Rendering\Renderer\RenderCommand.h" />
-    <ClInclude Include="src\Debut\Rendering\Renderer\Renderer.h" />
-    <ClInclude Include="src\Debut\Rendering\Renderer\Renderer2D.h" />
-    <ClInclude Include="src\Debut\Rendering\Renderer\Renderer3D.h" />
-    <ClInclude Include="src\Debut\Rendering\Renderer\RendererAPI.h" />
-    <ClInclude Include="src\Debut\Rendering\Resources\Mesh.h" />
-    <ClInclude Include="src\Debut\Rendering\Resources\Model.h" />
-    <ClInclude Include="src\Debut\Rendering\Shader.h" />
-    <ClInclude Include="src\Debut\Rendering\Structures\Buffer.h" />
-    <ClInclude Include="src\Debut\Rendering\Structures\FrameBuffer.h" />
-    <ClInclude Include="src\Debut\Rendering\Structures\VertexArray.h" />
-    <ClInclude Include="src\Debut\Rendering\SubTexture2D.h" />
-    <ClInclude Include="src\Debut\Rendering\Texture.h" />
-    <ClInclude Include="src\Debut\Scene\Components.h" />
-    <ClInclude Include="src\Debut\Scene\Entity.h" />
-    <ClInclude Include="src\Debut\Scene\Scene.h" />
-    <ClInclude Include="src\Debut\Scene\SceneCamera.h" />
-    <ClInclude Include="src\Debut\Scene\SceneSerializer.h" />
-    <ClInclude Include="src\Debut\Scene\ScriptableEntity.h" />
-    <ClInclude Include="src\Debut\Utils\CppUtils.h" />
-    <ClInclude Include="src\Debut\Utils\PlatformUtils.h" />
-    <ClInclude Include="src\Debut\Utils\YamlUtils.h" />
-    <ClInclude Include="src\Debut\dbtpch.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLError.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLFrameBuffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
-    <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
-    <ClInclude Include="vendor\glm\glm\simd\common.h" />
-    <ClInclude Include="vendor\glm\glm\simd\exponential.h" />
-    <ClInclude Include="vendor\glm\glm\simd\geometric.h" />
-    <ClInclude Include="vendor\glm\glm\simd\integer.h" />
-    <ClInclude Include="vendor\glm\glm\simd\matrix.h" />
-    <ClInclude Include="vendor\glm\glm\simd\neon.h" />
-    <ClInclude Include="vendor\glm\glm\simd\packing.h" />
-    <ClInclude Include="vendor\glm\glm\simd\platform.h" />
-    <ClInclude Include="vendor\glm\glm\simd\trigonometric.h" />
-    <ClInclude Include="vendor\glm\glm\simd\vector_relational.h" />
-    <ClInclude Include="vendor\imguizmo\GraphEditor.h" />
-    <ClInclude Include="vendor\imguizmo\ImCurveEdit.h" />
-    <ClInclude Include="vendor\imguizmo\ImGradient.h" />
-    <ClInclude Include="vendor\imguizmo\ImGuizmo.h" />
-    <ClInclude Include="vendor\imguizmo\ImSequencer.h" />
-    <ClInclude Include="vendor\imguizmo\ImZoomSlider.h" />
-    <ClInclude Include="vendor\imguizmo\example\ImApp.h" />
-    <ClInclude Include="vendor\imguizmo\example\imconfig.h" />
-    <ClInclude Include="vendor\imguizmo\example\imgui.h" />
-    <ClInclude Include="vendor\imguizmo\example\imgui_internal.h" />
-    <ClInclude Include="vendor\imguizmo\example\imstb_rectpack.h" />
-    <ClInclude Include="vendor\imguizmo\example\imstb_textedit.h" />
-    <ClInclude Include="vendor\imguizmo\example\imstb_truetype.h" />
-    <ClInclude Include="vendor\imguizmo\example\stb_image.h" />
-    <ClInclude Include="vendor\imguizmo\vcpkg-example\ImApp.h" />
-    <ClInclude Include="vendor\stb_image\stb_image.h" />
-    <ClInclude Include="vendor\tinyobjloader\tiny_obj_loader.h" />
+    <CustomBuild Include="C:\dev\Debut\Debut\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/dev/Debut/Debut/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/dev/Debut/Debut -BC:/dev/Debut/Debut --check-stamp-file C:/dev/Debut/Debut/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeCCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeCXXCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeSystem.cmake;C:\dev\Debut\Debut\CMakeFiles\cmake.verify_globs;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\dev\Debut\Debut\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/dev/Debut/Debut/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/dev/Debut/Debut -BC:/dev/Debut/Debut --check-stamp-file C:/dev/Debut/Debut/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeCCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeCXXCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeSystem.cmake;C:\dev\Debut\Debut\CMakeFiles\cmake.verify_globs;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\dev\Debut\Debut\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/dev/Debut/Debut/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/dev/Debut/Debut -BC:/dev/Debut/Debut --check-stamp-file C:/dev/Debut/Debut/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeCCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeCXXCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeSystem.cmake;C:\dev\Debut\Debut\CMakeFiles\cmake.verify_globs;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\dev\Debut\Debut\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/dev/Debut/Debut/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/dev/Debut/Debut -BC:/dev/Debut/Debut --check-stamp-file C:/dev/Debut/Debut/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeCCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeCXXCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;C:\dev\Debut\Debut\CMakeFiles\3.23.1\CMakeSystem.cmake;C:\dev\Debut\Debut\CMakeFiles\cmake.verify_globs;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\dev\Debut\Debut\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Debut\AssetManager\AssetManager.cpp" />
-    <ClCompile Include="src\Debut\Core\Application.cpp" />
-    <ClCompile Include="src\Debut\Core\Layer.cpp" />
-    <ClCompile Include="src\Debut\Core\LayerStack.cpp" />
-    <ClCompile Include="src\Debut\Core\Log.cpp" />
-    <ClCompile Include="src\Debut\Core\UUID.cpp" />
-    <ClCompile Include="src\Debut\ImGui\ImGuiBuild.cpp" />
-    <ClCompile Include="src\Debut\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\Debut\ImGui\ImGuiUtils.cpp" />
-    <ClCompile Include="src\Debut\Math\Math.cpp" />
-    <ClCompile Include="src\Debut\Physics\PhysicsMaterial2D.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Material.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Renderer\RenderCommand.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Renderer\Renderer.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Renderer\Renderer2D.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Renderer\Renderer3D.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Renderer\RendererAPI.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Resources\Mesh.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Resources\Model.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Shader.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Structures\Buffer.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Structures\FrameBuffer.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Structures\VertexArray.cpp" />
-    <ClCompile Include="src\Debut\Rendering\SubTexture2D.cpp" />
-    <ClCompile Include="src\Debut\Rendering\Texture.cpp" />
-    <ClCompile Include="src\Debut\Scene\Entity.cpp" />
-    <ClCompile Include="src\Debut\Scene\Scene.cpp" />
-    <ClCompile Include="src\Debut\Scene\SceneCamera.cpp" />
-    <ClCompile Include="src\Debut\Scene\SceneSerializer.cpp" />
-    <ClCompile Include="src\Debut\dbtpch.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLFrameBuffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
-    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
-    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
-    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="vendor\glm\glm\detail\glm.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\imguizmo\GraphEditor.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\imguizmo\ImCurveEdit.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\imguizmo\ImGradient.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\imguizmo\ImGuizmo.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\imguizmo\ImSequencer.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\imguizmo\example\imgui.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\imguizmo\example\imgui_demo.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\imguizmo\example\imgui_draw.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\imguizmo\example\imgui_tables.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\imguizmo\example\imgui_widgets.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\stb_image\stb_image.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
+    <ClInclude Include="C:\dev\Debut\Debut\src\Debut.h" />
+    <None Include="C:\dev\Debut\Debut\vendor\entt\include">
+    </None>
+    <ClCompile Include="C:\dev\Debut\Debut\vendor\stb_image\stb_image.cpp" />
+    <ClInclude Include="C:\dev\Debut\Debut\vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="vendor\glfw\GLFW.vcxproj">
-      <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
+    <ProjectReference Include="C:\dev\Debut\Debut\ZERO_CHECK.vcxproj">
+      <Project>{FE790C21-82D8-3F65-BF44-1930CD2E25A1}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="vendor\glad\Glad.vcxproj">
-      <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
+    <ProjectReference Include="C:\dev\Debut\Debut\vendor\box2d\src\box2d.vcxproj">
+      <Project>{942F2393-1088-3B4B-8A9B-4E29D52A30D6}</Project>
+      <Name>box2d</Name>
     </ProjectReference>
-    <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
-      <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
+    <ProjectReference Include="C:\dev\Debut\Debut\vendor\glfw\src\glfw.vcxproj">
+      <Project>{66A4021F-3AB5-35A7-A510-86ABA852446E}</Project>
+      <Name>glfw</Name>
     </ProjectReference>
-    <ProjectReference Include="vendor\yaml-cpp\yaml-cpp.vcxproj">
-      <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
+    <ProjectReference Include="C:\dev\Debut\Debut\vendor\spdlog\spdlog.vcxproj">
+      <Project>{27DB879F-F0B8-3B9C-9F75-E0DC61430E75}</Project>
+      <Name>spdlog</Name>
     </ProjectReference>
-    <ProjectReference Include="vendor\box2d\Box2D.vcxproj">
-      <Project>{A434E80C-1049-10BE-D9CA-B31D459E0CEF}</Project>
+    <ProjectReference Include="C:\dev\Debut\Debut\vendor\yaml-cpp\yaml-cpp.vcxproj">
+      <Project>{223BAD6C-E14F-3ED5-A3EB-7DC4BE7726A2}</Project>
+      <Name>yaml-cpp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
