@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <Debut/Core/Core.h>
-#include <Debut/Renderer/Texture.h>
+#include <Debut/Rendering/Texture.h>
 #include <Debut/AssetManager/AssetCache.h>
 
 using namespace Debut;

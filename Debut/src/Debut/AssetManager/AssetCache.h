@@ -22,7 +22,7 @@ namespace Debut
 			if (m_Cache.find(id) != m_Cache.end())
 				return m_Cache[id];
 
-			Log.CoreError("Couldn't find the resource with id {0} in the {1} cache", id, m_Name);
+			Log.CoreWarn("Couldn't find the resource with id {0} in the {1} cache", id, m_Name);
 			return {};
 		}
 

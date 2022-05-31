@@ -2,7 +2,7 @@
 
 #include <entt.hpp>
 #include <Debut/Core/Core.h>
-#include <Debut/Renderer/Camera.h>
+#include <Debut/Rendering/Camera.h>
 #include <Debut/Core/UUID.h>
 #include "Debut/Core/Time.h"
 

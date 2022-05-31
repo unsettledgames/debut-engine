@@ -6,7 +6,7 @@
 #include "PropertiesPanel.h"
 #include <Debut/Scene/Scene.h>
 #include <Debut/Core/Core.h>
-#include <Debut/Renderer/Texture.h>
+#include <Debut/Rendering/Texture.h>
 #include <filesystem>
 #include "PropertiesPanel.h"
 

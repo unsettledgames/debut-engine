@@ -5,7 +5,7 @@
 namespace Debut
 {
 
-	static GLenum ShaderDataTypeToOpenGL(ShaderDataType type)
+	static GLenum ShaderAttribTypeToOpenGL(ShaderDataType type)
 	{
 		switch (type)
 		{
@@ -29,7 +29,7 @@ namespace Debut
 			return GL_BOOL;
 		}
 
-		DBT_ASSERT(false, "Can't convert unknown ShaderDataType");
+		DBT_ASSERT(false, "Can't convert unknown ShaderAttribType");
 		return GL_NONE;
 	}
 
@@ -73,7 +73,7 @@ namespace Debut
 				case ShaderDataType::Mat4:
 				{
 					glEnableVertexAttribArray(index);
-					glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGL(element.Type),
+					glVertexAttribPointer(index, element.GetComponentCount(), ShaderAttribTypeToOpenGL(element.Type),
 						element.Normalized ? GL_TRUE : GL_FALSE, buffer->GetLayout().GetStride(), (const void*)element.Offset);
 					index++;
 				}
@@ -85,7 +85,7 @@ namespace Debut
 				case ShaderDataType::Bool:
 				{
 					glEnableVertexAttribArray(index);
-					glVertexAttribIPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGL(element.Type),
+					glVertexAttribIPointer(index, element.GetComponentCount(), ShaderAttribTypeToOpenGL(element.Type),
 						buffer->GetLayout().GetStride(), (const void*)element.Offset);
 					index++;
 				}

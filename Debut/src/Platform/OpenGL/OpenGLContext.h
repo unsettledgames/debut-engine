@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Debut/Renderer/GraphicsContext.h"
+#include "Debut/Rendering/GraphicsContext.h"
 #include <GLFW/glfw3.h>
 
 namespace Debut

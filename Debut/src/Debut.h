@@ -27,20 +27,18 @@
 #include "Debut/ImGui/ImGuiLayer.h"
 
 /*********** Render ****************/
-#include "Debut/Renderer/Renderer.h"
-#include "Debut/Renderer/Renderer2D.h"
-#include "Debut/Renderer/RenderCommand.h"
-#include "Debut/OrthographicCameraController.h"
+#include "Debut/Rendering/Renderer/Renderer.h"
+#include "Debut/Rendering/Renderer/Renderer2D.h"
+#include "Debut/Rendering/Renderer/RenderCommand.h"
 
 /******** Rendering components *************/
-#include "Debut/Renderer/Shader.h"
-#include "Debut/Renderer/Texture.h"
-#include "Debut/Renderer/SubTexture2D.h"
-#include "Debut/Renderer/Buffer.h"
-#include "Debut/Renderer/VertexArray.h"
-#include "Debut/Renderer/FrameBuffer.h"
-#include "Debut/Renderer/OrthographicCamera.h"
-#include "Debut/Renderer/Camera.h"
+#include "Debut/Rendering/Shader.h"
+#include "Debut/Rendering/Texture.h"
+#include "Debut/Rendering/SubTexture2D.h"
+#include "Debut/Rendering/Structures/Buffer.h"
+#include "Debut/Rendering/Structures/VertexArray.h"
+#include "Debut/Rendering/Structures/FrameBuffer.h"
+#include "Debut/Rendering/Camera.h"
 
 /*********Scene and ECS********************/
 #include "Debut/Scene/Scene.h"

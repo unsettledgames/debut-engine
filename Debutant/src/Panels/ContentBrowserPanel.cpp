@@ -1,5 +1,6 @@
 #include "ContentBrowserPanel.h"
 
+#include <Debut/Rendering/Material.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include "Utils/EditorCache.h"
@@ -7,9 +8,6 @@
 
 using namespace Debut;
 
-/**
-	TODO: - Avoid super long names, trunk them after n characters
-*/
 namespace Debutant
 {
 	// TODO: change this when we have projects
@@ -31,8 +29,10 @@ namespace Debutant
 		// TODO: Right click menu
 		if (ImGui::BeginPopupContextWindow(0, 1, false))
 		{
-			if (ImGui::MenuItem("Create Physics Material 2D"))
+			if (ImGui::MenuItem("Create new Physics Material 2D"))
 				AssetManager::CreateAsset<PhysicsMaterial2D>(m_CurrDirectory.string() + "/NewPhysicsMaterial2D.physmat2d");
+			if (ImGui::MenuItem("Create new Material"))
+				AssetManager::CreateAsset<Material>(m_CurrDirectory.string() + "/NewMaterial.mat");
 			ImGui::EndPopup();
 		}
 		

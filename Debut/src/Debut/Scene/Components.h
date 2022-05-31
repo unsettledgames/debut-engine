@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
-#include <Debut/Renderer/Texture.h>
+#include <Debut/Rendering/Texture.h>
 #include <Debut/Core/Core.h>
 #include <Debut/Core/UUID.h>
 
@@ -35,8 +35,8 @@ namespace Debut
 
 	struct TransformComponent
 	{
-		glm::vec3 Translation;
-		glm::vec3 Rotation = glm::vec3(0,0,0);
+		glm::vec3 Translation = glm::vec3(0.0f);
+		glm::vec3 Rotation = glm::vec3(0.0f);
 		glm::vec3 Scale = glm::vec3(1.0f);
 
 		TransformComponent() = default;
@@ -69,12 +69,21 @@ namespace Debut
 	struct SpriteRendererComponent
 	{
 		glm::vec4 Color;
-		Ref<Texture2D> Texture = nullptr;
+		UUID Texture = 0;
 		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() : Color(glm::vec4(1.0f)) {}
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color) : Color(color) {}
+	};
+
+	struct MeshRendererComponent
+	{
+		UUID Material = 0;
+		UUID Mesh = 0;
+
+		MeshRendererComponent()  {}
+		MeshRendererComponent(const MeshRendererComponent&) = default;
 	};
 
 	// PHYSICS AND COLLIDERS
@@ -96,6 +105,8 @@ namespace Debut
 			if (type == "Static") return BodyType::Static;
 			if (type == "Dynamic") return BodyType::Dynamic;
 			if (type == "Kinematic") return BodyType::Kinematic;
+
+			return BodyType::Dynamic;
 		}
 	};
 

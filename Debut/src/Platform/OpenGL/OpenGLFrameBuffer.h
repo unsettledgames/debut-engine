@@ -1,5 +1,5 @@
 #pragma once
-#include "Debut/Renderer/FrameBuffer.h"
+#include "Debut/Rendering/Structures/FrameBuffer.h"
 
 namespace Debut
 {
