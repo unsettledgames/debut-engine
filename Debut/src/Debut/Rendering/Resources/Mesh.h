@@ -9,6 +9,7 @@ namespace Debut
 	{
 	public:
 		Mesh();
+		Mesh(const std::string& path) {};
 
 		UUID GetID() { return m_ID; }
 		
