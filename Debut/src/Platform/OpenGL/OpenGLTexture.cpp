@@ -133,13 +133,11 @@ namespace Debut
 
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	{
-		DBT_PROFILE_FUNCTION();
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_Format, GL_UNSIGNED_BYTE, data);
 	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
-		DBT_PROFILE_FUNCTION();
 		glBindTextureUnit(slot, m_RendererID);
 	}
 

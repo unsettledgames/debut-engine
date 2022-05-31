@@ -1,0 +1,31 @@
+Associations:
+  - ID: 14944834472144488678
+    Path: assets\textures\akita.png
+  - ID: 17434486806553253939
+    Path: assets\NewPhysicsMaterial2D-copy-copy-copy.physmat2d
+  - ID: 13176089378558113518
+    Path: assets\NewPhysicsMaterial2D-copy-copy.physmat2d
+  - ID: 7306195545097283145
+    Path: assets\NewPhysicsMaterial2D-copy.physmat2d
+  - ID: 9140592576541228310
+    Path: assets\textures\penguin.png
+  - ID: 14782759418488697461
+    Path: assets\shaders\line.glsl
+  - ID: 8653149696889396285
+    Path: assets\shaders\texture.glsl
+  - ID: 12157534753583906862
+    Path: assets\shaders\unlit.glsl
+  - ID: 6304827802734497039
+    Path: assets\materials\NewMaterial.mat
+  - ID: 11117274267211669238
+    Path: assets\shaders\Temp\texture2.glsl
+  - ID: 3838735425579894555
+    Path: assets\textures\WholeSketch.png
+  - ID: 2254251900848253897
+    Path: assets\textures\Icons.png
+  - ID: 0
+    Path: assets\icons\play.png
+  - ID: 17985255014677475054
+    Path: assets\icons\stop.png
+  - ID: 6940031442624376811
+    Path: assets\textures\checkerboard.png

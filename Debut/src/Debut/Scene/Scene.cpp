@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include "Debut/Scene/Entity.h"
 #include "Debut/Scene/Components.h"
-#include "Debut/Renderer/Renderer2D.h"
+#include "Debut/Rendering/Renderer/Renderer2D.h"
 #include "Debut/AssetManager/AssetManager.h"
 
 #include "box2d/b2_world.h"

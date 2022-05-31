@@ -4,7 +4,7 @@
 #include <imgui_internal.h>
 #include "Utils/EditorCache.h"
 #include <Debut/AssetManager/AssetManager.h>
-#include <Debut/Renderer/Texture.h>
+#include <Debut/Rendering/Texture.h>
 #include <filesystem>
 #include <Debut/ImGui/ImGuiUtils.h>
 
@@ -236,9 +236,9 @@ namespace Debut
 				// Texture
 				ImTextureID buttonTexture;
 				// Use a blank texture if the user hasn't already set one, otherwise use the one submitted by the user	
-				buttonTexture = component.Texture == nullptr ?
+				buttonTexture = component.Texture == 0 ?
 					(ImTextureID)EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID() :
-					(ImTextureID)component.Texture->GetRendererID();
+					(ImTextureID)AssetManager::Request<Texture2D>(component.Texture)->GetRendererID();
 
 				ImGuiUtils::StartColumns(3, {80, 100, 100});
 
@@ -254,7 +254,7 @@ namespace Debut
 						if (pathStr.extension() == ".png")
 						{
 							Ref<Texture2D> selectedTexture = AssetManager::Request<Texture2D>(pathStr.string());
-							component.Texture = selectedTexture;
+							component.Texture = selectedTexture->GetID();
 						}
 					}
 					ImGui::EndDragDropTarget();
@@ -287,9 +287,9 @@ namespace Debut
 
 				ImGuiUtils::VerticalSpace(10);
 
-				UUID material = ImGuiUtils::DragDestination<PhysicsMaterial2D>("Physics material", ".physmat2d", component.Material);
+				Ref<PhysicsMaterial2D> material = ImGuiUtils::DragDestination<PhysicsMaterial2D>("Physics material", ".physmat2d", component.Material);
 				if (material)
-					component.Material = material;
+					component.Material = material->GetID();
 			});
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)

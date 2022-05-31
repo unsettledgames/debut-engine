@@ -4,8 +4,8 @@
 #include "Input.h"
 
 #include "Log.h"
-#include "Debut/Renderer/RenderCommand.h"
-#include "Debut/Renderer/Renderer.h"
+#include "Debut/Rendering/Renderer/RenderCommand.h"
+#include "Debut/Rendering/Renderer/Renderer.h"
 
 namespace Debut
 {

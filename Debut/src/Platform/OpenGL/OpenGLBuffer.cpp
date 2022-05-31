@@ -58,6 +58,16 @@ namespace Debut
 		m_Count = count;
 	}
 
+	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t count)
+	{
+		DBT_PROFILE_FUNCTION();
+		glCreateBuffers(1, &m_RendererID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ARRAY_BUFFER, count, nullptr, GL_DYNAMIC_DRAW);
+
+		m_Count = 0;
+	}
+
 	void OpenGLIndexBuffer::Bind() const
 	{
 		DBT_PROFILE_FUNCTION();
@@ -72,5 +82,13 @@ namespace Debut
 	OpenGLIndexBuffer::~OpenGLIndexBuffer()
 	{
 		glDeleteBuffers(1, &m_RendererID);
+	}
+
+	void OpenGLIndexBuffer::SetData(const void* data, uint32_t count)
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT) * count, data, GL_STATIC_DRAW);
+
+		m_Count = count;
 	}
 }

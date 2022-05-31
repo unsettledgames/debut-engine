@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Debut/Renderer/Shader.h"
+#include "Debut/Rendering/Shader.h"
 #include <glm/glm.hpp>
 
 typedef unsigned int GLenum;
@@ -25,6 +25,7 @@ namespace Debut
 		virtual void SetFloat4(const std::string& name, const glm::vec4& uniform) override;
 
 		const std::string& GetName() const override { return m_Name; }
+		std::vector<ShaderUniform> GetUniforms() const override;
 
 		void UploadUniformMat3(const std::string& name, const glm::mat3& mat);
 		void UploadUniformMat4(const std::string& name, const glm::mat4& mat);

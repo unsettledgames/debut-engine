@@ -17,9 +17,35 @@ namespace Debut
 		return -1;
 	}
 
+	static ShaderDataType GLToDbtUniformType(GLenum type)
+	{
+		switch (type)
+		{
+		case GL_FLOAT: return ShaderDataType::Float;
+		case GL_FLOAT_VEC2: return ShaderDataType::Float2;
+		case GL_FLOAT_VEC3: return ShaderDataType::Float3;
+		case GL_FLOAT_VEC4: return ShaderDataType::Float4;
+
+		case GL_INT: return ShaderDataType::Int;
+		case GL_INT_VEC2: return ShaderDataType::Int2;
+		case GL_INT_VEC3: return ShaderDataType::Int3;
+		case GL_INT_VEC4: return ShaderDataType::Int4;
+
+		case GL_BOOL: return ShaderDataType::Bool;
+		case GL_SAMPLER_2D: return ShaderDataType::Sampler2D;
+		case GL_FLOAT_MAT3: return ShaderDataType::Mat3;
+		case GL_FLOAT_MAT4: return ShaderDataType::Mat4;
+		}
+
+		DBT_ASSERT(false, "Unsupported uniform type {0}", type);
+		return ShaderDataType::None;
+	}
+
 	OpenGLShader::OpenGLShader(const std::string& filePath)
 	{
 		DBT_PROFILE_FUNCTION();
+		CreateOrLoadMeta(filePath);
+
 		std::string src = ReadFile(filePath);
 		auto shaderSources = PreProcess(src);
 
@@ -154,6 +180,34 @@ namespace Debut
 	void OpenGLShader::Unbind() const
 	{
 		GLCall(glUseProgram(0));
+	}
+
+	std::vector<ShaderUniform> OpenGLShader::GetUniforms() const
+	{
+		std::vector<ShaderUniform> ret;
+
+		GLint i;
+		GLint count;
+
+		GLint size; // size of the variable
+		GLenum type; // type of the variable (float, vec3 or mat4, etc)
+
+		const GLsizei bufSize = 128; // maximum name length
+		GLchar name[bufSize]; // variable name in GLSL
+		GLsizei length; // name length
+
+		GLCall(glGetProgramiv(m_ProgramID, GL_ACTIVE_UNIFORMS, &count));
+		ret.resize(count);
+
+		for (i = 0; i < count; i++)
+		{
+			ShaderUniform::UniformData placeHolder;
+
+			GLCall(glGetActiveUniform(m_ProgramID, (GLuint)i, bufSize, &length, &size, &type, name));
+			ret[i] = { name, GLToDbtUniformType(type), placeHolder };
+		}
+
+		return ret;
 	}
 
 	void OpenGLShader::SetInt(const std::string& name, int uniform)

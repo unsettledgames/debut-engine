@@ -1,5 +1,5 @@
 #pragma once
-#include "Debut/Renderer/RendererAPI.h"
+#include "Debut/Rendering/Renderer/RendererAPI.h"
 
 namespace Debut
 {

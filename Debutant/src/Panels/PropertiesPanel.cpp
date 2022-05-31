@@ -1,12 +1,15 @@
 #include "PropertiesPanel.h"
 #include "Utils/EditorCache.h"
 #include <Debut/AssetManager/AssetManager.h>
-#include <Debut/Renderer/Texture.h>
+#include <Debut/Rendering/Texture.h>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
+#include <stack>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <imgui_internal.h>
 #include <Debut/ImGui/ImGuiUtils.h>
+#include <Debut/Rendering/Material.h>
+#include <Debut/Rendering/Shader.h>
 
 /**
 	TODO:
@@ -15,7 +18,7 @@
 
 namespace Debut
 {
-	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d"};
+	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d", ".glsl", ".mat"};
 
 	static int SetFileName(ImGuiInputTextCallbackData* data)
 	{
@@ -43,6 +46,14 @@ namespace Debut
 			else if (m_AssetPath.extension().string() == ".physmat2d")
 			{
 				DrawPhysicsMaterial2DProperties();
+			}
+			else if (m_AssetPath.extension().string() == ".glsl")
+			{
+				DrawShaderProperties();
+			}
+			else if (m_AssetPath.extension().string() == ".mat")
+			{
+				DrawMaterialProperties();
 			}
 		}
 
@@ -173,8 +184,161 @@ namespace Debut
 		}
 	}
 
+	void PropertiesPanel::DrawShaderProperties()
+	{
+		Ref<Shader> shader = AssetManager::Request<Shader>(m_AssetPath.string());
+		std::vector<ShaderUniform> uniforms = shader->GetUniforms();
+
+		ImGui::Text("Shader uniforms");
+
+		// Show uniforms
+		ImGuiUtils::StartColumns(2, { 150, 200 });
+		for (auto& uniform : uniforms)
+		{
+			ImGui::PushID(uniform.Name.c_str());
+			ImGui::Text(uniform.Name.c_str());
+			ImGui::NextColumn();
+			ImGui::Text(ShaderDataTypeToString(uniform.Type).c_str());
+			ImGui::PopID();
+			ImGui::NextColumn();
+		}
+		ImGuiUtils::ResetColumns();
+	}
+
+	void PropertiesPanel::DrawMaterialProperties()
+	{
+		MaterialConfig finalConfig;
+
+		Ref<Material> material = AssetManager::Request<Material>(m_AssetPath.string());
+		Ref<Shader> shader = AssetManager::Request<Shader>(material->GetShader());
+
+		// Shader selection combobox
+		std::vector<std::string> shaderStrings;
+		const char** shaders;
+		std::filesystem::path shaderFolder("assets\\shaders");
+
+		const char* currShader = shader == nullptr ? "None" : shader->GetName().c_str();
+		const char* ret = nullptr;
+
+		// BF visit to find all the shaders in the folder
+		std::stack<std::filesystem::path> pathsToVisit;
+		pathsToVisit.push(std::filesystem::path("assets\\shaders"));
+		std::filesystem::path currPath;
+
+		// TODO: cache paths
+		while (pathsToVisit.size() > 0)
+		{
+			currPath = pathsToVisit.top();
+			pathsToVisit.pop();
+
+			auto& dirIt = std::filesystem::directory_iterator(currPath);
+
+			for (auto entry : dirIt)
+			{
+				if (entry.is_directory())
+					pathsToVisit.push(entry.path());
+				else
+				{
+					std::string extension = entry.path().extension().string();
+					if (extension == ".glsl" || extension == ".hlsl")
+						shaderStrings.push_back(entry.path().string());
+				}
+			}
+		}
+
+		// Convert the strings to const char*s
+		shaders = new const char* [shaderStrings.size()];
+		for (uint32_t i = 0; i < shaderStrings.size(); i++)
+			shaders[i] = shaderStrings[i].c_str();
+
+		// Draw the combobox to choose the shader
+		if (ImGuiUtils::Combo("Shader", shaders, shaderStrings.size(), &currShader, &ret))
+		{
+			Ref<Shader> loadedShader = AssetManager::Request<Shader>(ret);
+			material->SetShader(loadedShader);
+		}
+		delete[] shaders;
+
+		if (ImGui::TreeNodeEx("mat_shader_props", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap
+			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding, "Properties"))
+		{
+			// Draw Material properties
+			for (auto uniform : material->GetUniforms())
+			{
+				switch (uniform.Type)
+				{
+				case ShaderDataType::Float:
+				{
+					float value = uniform.Data.Float;
+					if (ImGuiUtils::DragFloat(uniform.Name, &value, 0.15f))
+						material->SetFloat(uniform.Name, value);
+					break;
+				}
+				case ShaderDataType::Float2:
+				{
+					float a = uniform.Data.Vec2.x, b = uniform.Data.Vec2.y;
+					ImGuiUtils::RGBVec2(uniform.Name.c_str(), { "A","B" }, { &a, &b });
+					material->SetVec2(uniform.Name, { a, b });
+
+					break;
+				}
+				case ShaderDataType::Float3:
+				{
+					float a = uniform.Data.Vec3.x, b = uniform.Data.Vec3.y, c = uniform.Data.Vec3.z;
+					ImGuiUtils::RGBVec3(uniform.Name.c_str(), { "A","B","C" }, { &a, &b, &c });
+					material->SetVec3(uniform.Name, { a, b, c });
+
+					break;
+				}
+				case ShaderDataType::Float4:
+				{
+					float a = uniform.Data.Vec3.x, b = uniform.Data.Vec3.y, c = uniform.Data.Vec3.z, d = uniform.Data.Vec4.w;
+					ImGuiUtils::RGBVec4(uniform.Name.c_str(), { "A","B","C","D" }, { &a, &b, &c, &d });
+					material->SetVec4(uniform.Name, { a, b, c, d });
+
+					break;
+				}
+				case ShaderDataType::Sampler2D:
+				{
+					// Load the texture: if it doesn't exist, just use a white default texture
+					uint32_t rendererID;
+					Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.Data.Texture);
+					if (currTexture == nullptr)
+						rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
+					else
+						rendererID = currTexture->GetRendererID();
+
+					// Texture title
+					ImGuiUtils::BoldText("Texture " + uniform.Name);
+
+					// Texture preview button
+					Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 64, 64 });
+					if (newTexture != nullptr)
+						material->SetTexture(uniform.Name, newTexture);
+
+					// TODO: Size and offset?
+					break;
+				}
+
+				default:
+					break;
+				}
+			}
+
+			ImGui::TreePop();
+		}
+
+		if (ImGui::Button("Save settings"))
+		{
+			material->SaveSettings();
+		}
+		
+	}
+
 	void PropertiesPanel::SetAsset(std::filesystem::path path)
 	{
+		if (std::filesystem::is_directory(path))
+			return;
 		m_AssetPath = path;
 	}
 }

@@ -52,7 +52,8 @@ project "Debut"
 		"%{prj.name}/vendor/glm/glm/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.h",
 		"%{prj.name}/vendor/imguizmo/**.h",
-		"%{prj.name}/vendor/imguizmo/**.cpp"
+		"%{prj.name}/vendor/imguizmo/**.cpp",
+		"%{prj.name}/vendor/tinyobjloader/tiny_obj_loader.h"
 	}
 
 	removefiles
