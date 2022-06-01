@@ -6,12 +6,17 @@ OPTION(WINDOWS_BUILD "Enable to build for Windows" ON) # Enabled by default
 project(Debut VERSION 1.0.0)
 
 # Source files
-file(GLOB Debut_SRC
+file(GLOB_RECURSE Debut_SRC
      	"src/*.h"
      	"src/*.cpp"
-	"vendor/entt/include"
+)
+
+file (GLOB Debut_EXT
+	"vendor/entt/include/entt.hpp"
 	"vendor/stb_image/*.cpp"
 	"vendor/stb_image/*.h"
+	"vendor/imguizmo/*.cpp"
+	"vendor/imguizmo/*.h"
 )
 
 # Configure dependencies
@@ -21,27 +26,33 @@ set(YAML_BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
 set(YAML_CPP_INSTALL OFF CACHE INTERNAL "" FORCE)
 set(YAML_CPP_BUILD_TOOLS OFF CACHE INTERNAL "" FORCE)
 
+add_library(Debut ${Debut_SRC} ${Debut_EXT})
+
+set_property(TARGET Debut PROPERTY MSVC_RUNTIME_LIBRARY MultiThreaded)
+set_property(TARGET Debut PROPERTY CXX_STANDARD 17)
+
 # Include dependencies
+add_subdirectory(vendor/glad)
 add_subdirectory(vendor/box2d)
 add_subdirectory(vendor/glfw)
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/imgui)
+add_subdirectory(vendor/imguizmo)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/yaml-cpp)
 
-add_library(Debut ${Debut_SRC})
-
-set_property(TARGET Debut PROPERTY MSVC_RUNTIME_LIBRARY MultiThreaded)
 
 # Link dependencies 
 
 target_link_libraries(Debut 
 	PUBLIC box2d
+	PUBLIC glad
 	PUBLIC glfw
 	PUBLIC glm
 	PUBLIC imgui
 	PUBLIC spdlog
 	PUBLIC yaml-cpp
+	PRIVATE Dwmapi.dll
 )
 
 # Define variables
@@ -50,6 +61,7 @@ target_compile_definitions(Debut PUBLIC
 	GLFW_INCLUDE_NONE
 	_CRT_SECURE_NO_WARNINGS
 	YAML_CPP_STATIC_DEFINE
+	NOMINMAX
 )
 
 IF(WINDOWS_BUILD)
@@ -60,7 +72,12 @@ ENDIF(WINDOWS_BUILD)
 
 target_include_directories(Debut 
 	PUBLIC src
+	PRIVATE vendor/glad/include
 	PRIVATE vendor/box2d/include
 	PRIVATE vendor/glfw/include
+	PUBLIC vendor/imgui
+	PUBLIC vendor/imguizmo
+	PRIVATE vendor/stb_image
 	PUBLIC vendor/glm
+	PUBLIC vendor/entt/include
 )
