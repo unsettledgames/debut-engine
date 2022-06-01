@@ -1,5 +1,6 @@
 pushd .\..\Debut
 mkdir Build
-call cmake -G "Visual Studio 17 2022" -DBOX2D_BUILD_TESTBED=OFF
+cd Build
+call cmake -G "Visual Studio 17 2022" -DWINDOWS_BUILD=ON ./..
 popd
 PAUSE
