@@ -1,7 +1,0 @@
----
-Name: New Material
-Shader: 8653149696889396285
-Parameters:
-  u_TestVec4: [20, 20, 20, 20]
-  u_Textures[0]:
-    ID: 9140592576541228310

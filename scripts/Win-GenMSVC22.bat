@@ -1,4 +1,6 @@
-pushd .\..\
-call .\vendor\bin\premake\premake5.exe vs2022
+pushd .\..
+mkdir Build
+cd Build
+call cmake -G "Visual Studio 17 2022" -DWINDOWS_BUILD=ON ./..
 popd
 PAUSE

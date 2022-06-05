@@ -1,4 +1,4 @@
 pushd .\..\
-call .\vendor\bin\premake\premake5.exe vs2019
+call cmake -G "Visual Studio 19"
 popd
 PAUSE
