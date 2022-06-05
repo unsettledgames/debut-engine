@@ -64,7 +64,7 @@ target_link_libraries(Debut
 	PUBLIC spdlog
 	PUBLIC yaml-cpp
 	PRIVATE Dwmapi.dll
-	PRIVATE Assimp
+	PRIVATE ${ASSIMP_LIBRARIES}
 )
 
 # Define variables
