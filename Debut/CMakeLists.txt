@@ -20,11 +20,21 @@ file (GLOB Debut_EXT
 )
 
 # Configure dependencies
+# Box2D
 set(BOX2D_BUILD_TESTBED OFF CACHE INTERNAL "" FORCE)
 set(BOX2D_BUILD_UNIT_TESTS OFF CACHE INTERNAL "" FORCE)
+
+# YAML-cpp
 set(YAML_BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
 set(YAML_CPP_INSTALL OFF CACHE INTERNAL "" FORCE)
 set(YAML_CPP_BUILD_TOOLS OFF CACHE INTERNAL "" FORCE)
+
+# Assimp
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE INTERNAL "" FORCE)
+set(ASSIMP_NO_EXPORT ON CACHE INTERNAL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE INTERNAL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE INTERNAL "" FORCE)
 
 add_library(Debut ${Debut_SRC} ${Debut_EXT})
 
@@ -40,6 +50,7 @@ add_subdirectory(vendor/imgui)
 add_subdirectory(vendor/imguizmo)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/yaml-cpp)
+add_subdirectory(vendor/assimp)
 
 
 # Link dependencies 
@@ -53,6 +64,7 @@ target_link_libraries(Debut
 	PUBLIC spdlog
 	PUBLIC yaml-cpp
 	PRIVATE Dwmapi.dll
+	PRIVATE Assimp
 )
 
 # Define variables
@@ -80,6 +92,7 @@ target_include_directories(Debut
 	PRIVATE vendor/stb_image
 	PUBLIC vendor/glm
 	PUBLIC vendor/entt/include
+	PUBLIC vendor/assimp/include
 )
 
 # Keep the project structure
