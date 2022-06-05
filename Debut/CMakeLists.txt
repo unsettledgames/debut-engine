@@ -81,3 +81,6 @@ target_include_directories(Debut
 	PUBLIC vendor/glm
 	PUBLIC vendor/entt/include
 )
+
+# Keep the project structure
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Debut_SRC})

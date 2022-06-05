@@ -26,7 +26,7 @@ set(YAML_BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
 set(YAML_CPP_INSTALL OFF CACHE INTERNAL "" FORCE)
 set(YAML_CPP_BUILD_TOOLS OFF CACHE INTERNAL "" FORCE)
 
-add_library(Debut ${Debut_SRC})
+add_library(Debut ${Debut_SRC} ${Debut_EXT})
 
 set_property(TARGET Debut PROPERTY MSVC_RUNTIME_LIBRARY MultiThreaded)
 set_property(TARGET Debut PROPERTY CXX_STANDARD 17)
@@ -81,3 +81,6 @@ target_include_directories(Debut
 	PUBLIC vendor/glm
 	PUBLIC vendor/entt/include
 )
+
+# Create the source groups for source tree with root at CMAKE_CURRENT_SOURCE_DIR.
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Debut_SRC})

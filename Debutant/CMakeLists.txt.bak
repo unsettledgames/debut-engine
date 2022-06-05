@@ -15,8 +15,8 @@ file(GLOB_RECURSE Debutant_SRC
 add_subdirectory(../Debut ../Debut/Build)
 
 add_executable(Debutant ${Debutant_SRC})
-set_property(TARGET Debutant PROPERTY CXX_STANDARD 17)
 
+set_property(TARGET Debutant PROPERTY CXX_STANDARD 17)
 set_property(TARGET Debutant PROPERTY MSVC_RUNTIME_LIBRARY MultiThreaded)
 
 # Link dependencies 
@@ -35,3 +35,6 @@ target_include_directories(Debut
 	PUBLIC src
 	PRIVATE ../Debut/src
 )
+
+# Keep the project structure
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Debut_SRC})

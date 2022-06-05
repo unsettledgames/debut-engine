@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Debutant", "Debutant\Debutant.vcxproj", "{BCD50989-A8A2-6494-D1BB-523CBDE79922}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Box2D", "Debut\vendor\box2d\Box2D.vcxproj", "{A434E80C-1049-10BE-D9CA-B31D459E0CEF}"
@@ -11,9 +13,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFW", "Debut\vendor\glfw\G
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Glad", "Debut\vendor\glad\Glad.vcxproj", "{BDD6857C-A90D-870D-52FA-6C103E10030F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "Debut\vendor\imgui\ImGui.vcxproj", "{C0FF640D-2C14-8DBE-F595-301E616989EF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "Debut\vendor\imgui\ImGui.vcxproj", "{D843C0B6-8929-3A4D-BDAF-C794A71C27EC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yaml-cpp", "Debut\vendor\yaml-cpp\yaml-cpp.vcxproj", "{88F1A057-74BE-FB62-9DD7-E90A890331F1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yaml-cpp static", "Debut\vendor\yaml-cpp\yaml-cpp.vcxproj", "{223BAD6C-E14F-3ED5-A3EB-7DC4BE7726A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,20 +54,23 @@ Global
 		{BDD6857C-A90D-870D-52FA-6C103E10030F}.Dist|x64.Build.0 = Dist|x64
 		{BDD6857C-A90D-870D-52FA-6C103E10030F}.Release|x64.ActiveCfg = Release|x64
 		{BDD6857C-A90D-870D-52FA-6C103E10030F}.Release|x64.Build.0 = Release|x64
-		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Debug|x64.ActiveCfg = Debug|x64
-		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Debug|x64.Build.0 = Debug|x64
-		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Dist|x64.ActiveCfg = Dist|x64
-		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Dist|x64.Build.0 = Dist|x64
-		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Release|x64.ActiveCfg = Release|x64
-		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Release|x64.Build.0 = Release|x64
-		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Debug|x64.ActiveCfg = Debug|x64
-		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Debug|x64.Build.0 = Debug|x64
-		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Dist|x64.ActiveCfg = Dist|x64
-		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Dist|x64.Build.0 = Dist|x64
-		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Release|x64.ActiveCfg = Release|x64
-		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Release|x64.Build.0 = Release|x64
+		{D843C0B6-8929-3A4D-BDAF-C794A71C27EC}.Debug|x64.ActiveCfg = Debug|x64
+		{D843C0B6-8929-3A4D-BDAF-C794A71C27EC}.Debug|x64.Build.0 = Debug|x64
+		{D843C0B6-8929-3A4D-BDAF-C794A71C27EC}.Dist|x64.ActiveCfg = Dist|x64
+		{D843C0B6-8929-3A4D-BDAF-C794A71C27EC}.Dist|x64.Build.0 = Dist|x64
+		{D843C0B6-8929-3A4D-BDAF-C794A71C27EC}.Release|x64.ActiveCfg = Release|x64
+		{D843C0B6-8929-3A4D-BDAF-C794A71C27EC}.Release|x64.Build.0 = Release|x64
+		{223BAD6C-E14F-3ED5-A3EB-7DC4BE7726A2}.Debug|x64.ActiveCfg = Debug|x64
+		{223BAD6C-E14F-3ED5-A3EB-7DC4BE7726A2}.Debug|x64.Build.0 = Debug|x64
+		{223BAD6C-E14F-3ED5-A3EB-7DC4BE7726A2}.Dist|x64.ActiveCfg = Dist|x64
+		{223BAD6C-E14F-3ED5-A3EB-7DC4BE7726A2}.Dist|x64.Build.0 = Dist|x64
+		{223BAD6C-E14F-3ED5-A3EB-7DC4BE7726A2}.Release|x64.ActiveCfg = Release|x64
+		{223BAD6C-E14F-3ED5-A3EB-7DC4BE7726A2}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A33F9497-E4DA-4126-8DE1-5CEBD02B2547}
 	EndGlobalSection
 EndGlobal

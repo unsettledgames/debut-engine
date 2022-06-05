@@ -35,3 +35,6 @@ target_include_directories(Debut
 	PUBLIC src
 	PRIVATE ../Debut/src
 )
+
+# Keep the project structure
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${Debutant_SRC})
