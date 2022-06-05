@@ -1,0 +1,10 @@
+# Compile as static library 
+file(GLOB IMGUI_SOURCES
+    	src/glad.c
+    	include/glad/glad.h
+	include/KHR/khrplatform.h
+) 
+add_library("GLAD" STATIC ${IMGUI_SOURCES})
+target_include_directories("GLAD" 
+	PUBLIC include
+)
