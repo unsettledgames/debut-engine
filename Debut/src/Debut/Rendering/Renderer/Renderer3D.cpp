@@ -26,6 +26,7 @@ namespace Debut
 			AddBatch(model.Material);
 
 		Ref<Mesh> mesh = AssetManager::Request<Mesh>(model.Mesh);
+		Ref<Material> material = AssetManager::Request<Material>(model.Material);
 	}
 
 	void Renderer3D::EndScene()

@@ -14,6 +14,7 @@ namespace Debut
 		glm::vec3 Position;
 		glm::vec3 TexCoord;
 		glm::vec3 Normal;
+		glm::vec3 Tangent;
 	};
 
 	struct RenderBatch3D

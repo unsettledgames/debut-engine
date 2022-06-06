@@ -5,6 +5,8 @@
 
 namespace Debut
 {
+	struct MeshVertex;
+
 	class Mesh
 	{
 	public:
@@ -15,6 +17,6 @@ namespace Debut
 		
 	private:
 		UUID m_ID;
-		Ref<VertexArray> m_VertexArray;
+		std::vector<MeshVertex> m_Vertices;
 	};
 }
