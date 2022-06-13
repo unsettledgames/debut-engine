@@ -69,6 +69,15 @@ namespace Debut
 		static std::string GetPath(UUID id);
 		static void AddAssociationToFile(const UUID& id, const std::string& path);
 
+		template <typename T>
+		static void Submit(Ref<T> asset) {}
+
+		template <>
+		static void Submit(Ref<Mesh> asset)
+		{
+			s_MeshCache.Put(asset->GetPath(), asset);
+		}
+
 		template<typename T>
 		static void CreateAsset(const std::string& path)
 		{

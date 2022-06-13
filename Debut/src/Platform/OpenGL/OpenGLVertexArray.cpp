@@ -92,9 +92,6 @@ namespace Debut
 				break;
 
 			}
-			
-
-			
 		}
 		m_VertexBuffers.push_back(buffer);
 		

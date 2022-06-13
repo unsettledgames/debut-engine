@@ -12,7 +12,7 @@ namespace Debut
 	struct MeshVertex
 	{
 		glm::vec3 Position;
-		glm::vec3 TexCoord;
+		glm::vec2 TexCoord;
 		glm::vec3 Normal;
 		glm::vec3 Tangent;
 	};
