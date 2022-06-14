@@ -1,6 +1,7 @@
 #include "DebutantLayer.h"
 #include "Camera/EditorCamera.h"
 #include <Utils/EditorCache.h>
+#include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/Utils/PlatformUtils.h>
 
 #include <chrono>
@@ -41,6 +42,8 @@ namespace Debutant
 
         EditorCache::Textures().Put("assets\\icons\\play.png", m_IconPlay);
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
+        
+        ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
     }
 
     void DebutantLayer::OnDetach()

@@ -12,6 +12,7 @@ namespace Debut
 	AssetCache<std::string, Ref<Shader>> AssetManager::s_ShaderCache;
 	AssetCache<std::string, Ref<Material>> AssetManager::s_MaterialCache;
 	AssetCache<std::string, Ref<Mesh>> AssetManager::s_MeshCache;
+	AssetCache<std::string, Ref<Model>> AssetManager::s_ModelCache;
 
 	static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
 

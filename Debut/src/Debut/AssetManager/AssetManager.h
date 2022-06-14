@@ -9,6 +9,7 @@
 #include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Rendering/Shader.h>
 #include <Debut/Rendering/Material.h>
+#include <Debut/Rendering/Resources/Model.h>
 
 
 /* THINK
@@ -72,10 +73,19 @@ namespace Debut
 		template <typename T>
 		static void Submit(Ref<T> asset) {}
 
+		// TODO: make these 2 guys uise UUIDs instead of paths, make sure meta files are loaded correctly
 		template <>
 		static void Submit(Ref<Mesh> asset)
 		{
 			s_MeshCache.Put(asset->GetPath(), asset);
+		}
+
+		template <>
+		static void Submit(Ref<Model> asset)
+		{
+			std::ostringstream os;
+			os << asset->GetID();
+			s_ModelCache.Put(os.str(), asset);
 		}
 
 		template<typename T>
@@ -116,5 +126,6 @@ namespace Debut
 		static AssetCache<std::string, Ref<Shader>> s_ShaderCache;
 		static AssetCache<std::string, Ref<Material>> s_MaterialCache;
 		static AssetCache<std::string, Ref<Mesh>> s_MeshCache;
+		static AssetCache<std::string, Ref<Model>> s_ModelCache;
 	};
 }

@@ -54,7 +54,6 @@ namespace Debut
 		case ShaderDataType::Sampler2D: return "Texture";
 		}
 
-		Log.CoreWarn("Maybe the time to use Int vectors has come?");
 		return "None";
 	}
 

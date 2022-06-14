@@ -29,6 +29,9 @@
 */
 
 #include <Debut/Core/Core.h>
+
+#include <Debut/Rendering/Material.h>
+#include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Rendering/Resources/Model.h>
 
 #include <assimp/scene.h>
@@ -41,5 +44,7 @@ namespace Debut
 		static Ref<Model> ImportModel(const std::string& path);
 	private:
 		static Ref<Model> ImportNodes(aiNode* parent, const aiScene* scene);
+		static Ref<Mesh> ImportMesh(aiMesh* mesh, const std::string& name);
+		static Ref<Material> ImportMaterial(aiMaterial* material, const std::string& name);
 	};
 }

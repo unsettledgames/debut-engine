@@ -8,6 +8,7 @@ namespace Debut
 	class Model
 	{
 	public:
+		Model() {}
 		Model(std::vector<UUID> meshes, std::vector<UUID> materials, std::vector<UUID> subModels) :
 			m_Meshes(meshes), m_Materials(materials), m_SubModels(subModels) {}
 

@@ -35,8 +35,9 @@ set(ASSIMP_BUILD_TESTS OFF CACHE INTERNAL "" FORCE)
 set(ASSIMP_NO_EXPORT ON CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_TESTS OFF CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE INTERNAL "" FORCE)
+configure_file("${PROJECT_SOURCE_DIR}/vendor/assimp/include/assimp/config.h.in" "${PROJECT_SOURCE_DIR}/vendor/assimp/include/assimp/config.h")
 
-add_library(Debut ${Debut_SRC} ${Debut_EXT})
+add_library(Debut STATIC ${Debut_SRC} ${Debut_EXT})
 
 set_property(TARGET Debut PROPERTY MSVC_RUNTIME_LIBRARY MultiThreaded)
 set_property(TARGET Debut PROPERTY CXX_STANDARD 17)
@@ -63,8 +64,8 @@ target_link_libraries(Debut
 	PUBLIC imgui
 	PUBLIC spdlog
 	PUBLIC yaml-cpp
-	PRIVATE Dwmapi.dll
-	PRIVATE ${ASSIMP_LIBRARIES}
+	PUBLIC Dwmapi.dll
+	PUBLIC assimp
 )
 
 # Define variables

@@ -1,7 +1,6 @@
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Core/Log.h>
-#include <Debut/Rendering/Resources/Mesh.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -21,7 +20,7 @@ namespace Debut
 		if (scene != nullptr)
 		{
 			aiNode* rootNode = scene->mRootNode;
-			Ref<Model> ret = ImportNodes(rootNode, scene);
+			return ImportNodes(rootNode, scene);
 		}
 		else
 		{
@@ -47,54 +46,102 @@ namespace Debut
 		// Load meshes and materials
 		for (int i = 0; i < parent->mNumMeshes; i++)
 		{
+			// Import and submit the mesh
 			aiMesh* assimpMesh = scene->mMeshes[parent->mMeshes[i]];
+			AssetManager::Submit<Mesh>(ModelImporter::ImportMesh(assimpMesh, parent->mName.C_Str()));
+
+			// Import and submit the material
 			aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
-
-			Ref<Mesh> mesh = CreateRef<Mesh>(parent->mName);
-			mesh->m_Vertices.resize(assimpMesh->mNumVertices);
-
-			// Create mesh, start with the positions of the vertices
-			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
-				mesh->m_Vertices[i] = {assimpMesh->mVertices[i].x, assimpMesh->mVertices[i].y, assimpMesh->mVertices[i].z};
-			
-			// Load normals
-			if (assimpMesh->HasNormals())
-			{
-				mesh->m_Normals.resize(assimpMesh->mNormals->Length());
-				for (uint32_t i = 0; i < assimpMesh->mNormals->Length(); i++)
-					mesh->m_Normals[i] = { assimpMesh->mNormals[i].x, assimpMesh->mNormals[i].y, assimpMesh->mNormals[i].z };
-			}
-
-			// Load tangents / bitangents
-			if (assimpMesh->HasTangentsAndBitangents())
-			{
-				mesh->m_Tangents.resize(assimpMesh->mTangents->Length());
-				mesh->m_Bitangents.resize(assimpMesh->mBitangents->Length());
-
-				for (uint32_t i = 0; i < assimpMesh->mNormals->Length(); i++)
-				{
-					mesh->m_Tangents[i] = { assimpMesh->mTangents[i].x, assimpMesh->mTangents[i].y, assimpMesh->mTangents[i].z };
-					mesh->m_Bitangents[i] = { assimpMesh->mBitangents[i].x, assimpMesh->mBitangents[i].y, assimpMesh->mBitangents[i].z };
-				}
-			}
-
-			// Load texture coordinates
-			mesh->m_TexCoords.resize(assimpMesh->GetNumUVChannels());
-			for (uint32_t i = 0; i < assimpMesh->GetNumUVChannels(); i++)
-			{
-				mesh->m_TexCoords[i].resize(assimpMesh->mTextureCoords[i]->Length());
-
-				for (uint32_t j = 0; j < assimpMesh->mTextureCoords[i]->Length(); j++)
-					mesh->m_TexCoords[i][j] = { assimpMesh->mTextureCoords[i][j].x, assimpMesh->mTextureCoords[i][j].y };
-			}
-
-			// Submit the mesh
-			AssetManager::Submit<Mesh>(mesh);
-
-			// Create the material
-			aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
+			AssetManager::Submit<Material>(ModelImporter::ImportMaterial(assimpMaterial, assimpMaterial->GetName().C_Str()));
 		}
 
 		Ref<Model> ret = CreateRef<Model>(meshes, materials, models);
+		AssetManager::Submit<Model>(ret);
+		
+		return ret;
+	}
+
+	Ref<Mesh> ModelImporter::ImportMesh(aiMesh* assimpMesh, const std::string& name)
+	{
+		Ref<Mesh> mesh = CreateRef<Mesh>(name);
+		mesh->m_Vertices.resize(assimpMesh->mNumVertices);
+
+		// Create mesh, start with the positions of the vertices
+		for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+			mesh->m_Vertices[i] = { assimpMesh->mVertices[i].x, assimpMesh->mVertices[i].y, assimpMesh->mVertices[i].z };
+
+		// Load normals
+		if (assimpMesh->HasNormals())
+		{
+			mesh->m_Normals.resize(assimpMesh->mNumVertices);
+			for (uint32_t i = 0; i < assimpMesh->mNormals->Length(); i++)
+				mesh->m_Normals[i] = { assimpMesh->mNormals[i].x, assimpMesh->mNormals[i].y, assimpMesh->mNormals[i].z };
+		}
+
+		// Load tangents / bitangents
+		if (assimpMesh->HasTangentsAndBitangents())
+		{
+			mesh->m_Tangents.resize(assimpMesh->mNumVertices);
+			mesh->m_Bitangents.resize(assimpMesh->mNumVertices);
+
+			for (uint32_t i = 0; i < assimpMesh->mNormals->Length(); i++)
+			{
+				mesh->m_Tangents[i] = { assimpMesh->mTangents[i].x, assimpMesh->mTangents[i].y, assimpMesh->mTangents[i].z };
+				mesh->m_Bitangents[i] = { assimpMesh->mBitangents[i].x, assimpMesh->mBitangents[i].y, assimpMesh->mBitangents[i].z };
+			}
+		}
+
+		// Load texture coordinates
+		mesh->m_TexCoords.resize(assimpMesh->GetNumUVChannels());
+		for (uint32_t i = 0; i < assimpMesh->GetNumUVChannels(); i++)
+		{
+			mesh->m_TexCoords[i].resize(assimpMesh->mNumVertices);
+
+			for (uint32_t j = 0; j < assimpMesh->mTextureCoords[i]->Length(); j++)
+				mesh->m_TexCoords[i][j] = { assimpMesh->mTextureCoords[i][j].x, assimpMesh->mTextureCoords[i][j].y };
+		}
+
+		return mesh;
+	}
+
+	Ref<Material> ModelImporter::ImportMaterial(aiMaterial* assimpMaterial, const std::string& name)
+	{
+		// Configure the material
+		Ref<Material> material = CreateRef<Material>();
+
+		// Store / add properties
+		aiMaterialProperty** properties = assimpMaterial->mProperties;
+
+		// Colors
+		aiColor3D color;
+		assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+		material->SetVec3("u_DiffuseColor", { color.r, color.g, color.b });
+
+		assimpMaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
+		material->SetVec3("u_AmbientColor", { color.r, color.g, color.b });
+
+		// Textures
+		if (assimpMaterial->GetTextureCount(aiTextureType_DIFFUSE))
+		{
+			aiString path;
+			assimpMaterial->Get(AI_MATKEY_TEXTURE_DIFFUSE(0), path);
+			material->SetTexture("u_DiffuseTexture", AssetManager::Request<Texture2D>(path.C_Str()));
+		}
+
+		if (assimpMaterial->GetTextureCount(aiTextureType_NORMALS))
+		{
+			aiString path;
+			assimpMaterial->Get(AI_MATKEY_TEXTURE_NORMALS(0), path);
+			material->SetTexture("u_NormalMap", AssetManager::Request<Texture2D>(path.C_Str()));
+		}
+
+		if (assimpMaterial->GetTextureCount(aiTextureType_DISPLACEMENT))
+		{
+			aiString path;
+			assimpMaterial->Get(AI_MATKEY_TEXTURE_DISPLACEMENT(0), path);
+			material->SetTexture("u_DisplacementMap", AssetManager::Request<Texture2D>(path.C_Str()));
+		}
+
+		return material;
 	}
 }
