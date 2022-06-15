@@ -79,5 +79,8 @@ namespace Debutant
 
 		// Gizmos
 		ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+
+		// DEBUG ONLY
+		Ref<Model> m_Model;
 	};
 }

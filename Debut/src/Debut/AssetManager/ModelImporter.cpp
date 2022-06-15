@@ -20,7 +20,9 @@ namespace Debut
 		if (scene != nullptr)
 		{
 			aiNode* rootNode = scene->mRootNode;
-			return ImportNodes(rootNode, scene);
+			Ref<Model> ret = ImportNodes(rootNode, scene);
+			AssetManager::SubmitModel(ret, path);
+			return ret;
 		}
 		else
 		{
@@ -108,6 +110,7 @@ namespace Debut
 	{
 		// Configure the material
 		Ref<Material> material = CreateRef<Material>();
+		material->SetShader(AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl"));
 
 		// Store / add properties
 		aiMaterialProperty** properties = assimpMaterial->mProperties;

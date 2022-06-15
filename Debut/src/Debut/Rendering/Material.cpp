@@ -193,6 +193,42 @@ namespace Debut
 		out << emitter.c_str();
 	}
 
+	void Material::Use(const glm::mat4& cameraTransform)
+	{
+		Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
+		shader->Bind();
+
+		shader->SetMat4("u_ViewProjection", cameraTransform);
+		
+		for (auto& uniform : m_Uniforms)
+		{
+			switch (uniform.second.Type)
+			{
+			case ShaderDataType::Float:
+				shader->SetFloat(uniform.second.Name, uniform.second.Data.Float);
+				break;
+			case ShaderDataType::Float3:
+				shader->SetFloat3(uniform.second.Name, uniform.second.Data.Vec3);
+				break;
+			case ShaderDataType::Float4:
+				shader->SetFloat4(uniform.second.Name, uniform.second.Data.Vec4);
+				break;
+			case ShaderDataType::Sampler2D:
+				shader->SetInt(uniform.second.Name, AssetManager::Request<Texture2D>(uniform.second.Data.Texture)->GetID());
+				break;
+			default:
+				Log.CoreError("Shader data type not supported while trying to use material {0}", m_Name);
+				break;
+			}
+		}
+	}
+
+	void Material::Unuse()
+	{
+		Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
+		shader->Unbind();
+	}
+
 	void Material::SetShader(Ref<Shader> shader)
 	{
 		// Set the shader and the new uniforms

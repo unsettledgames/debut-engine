@@ -22,8 +22,9 @@ namespace Debut
 		MeshVertex* BufferBase;
 		MeshVertex* BufferPtr;
 
-		Ref<VertexBuffer> VertexBuffer;
-		Ref<IndexBuffer> IndexBuffer;
+		std::unordered_map<std::string, Ref<VertexBuffer>> Buffers;
+
+		std::vector<int> Indices;
 		Ref<VertexArray> VertexArray;
 		Ref<Material> Material;
 	};
@@ -36,6 +37,7 @@ namespace Debut
 		uint32_t MaxVerticesPerBatch = 360000;
 
 		std::vector<Ref<Texture2D>> Textures;
+		// One batch per Material
 		std::unordered_map<UUID, RenderBatch3D> Batches;
 
 		glm::mat4 CameraTransform;

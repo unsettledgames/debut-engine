@@ -87,6 +87,11 @@ namespace Debut
 			os << asset->GetID();
 			s_ModelCache.Put(os.str(), asset);
 		}
+		
+		static void SubmitModel(Ref<Model> model, std::string path)
+		{
+			s_ModelCache.Put(path, model);
+		}
 
 		template<typename T>
 		static void CreateAsset(const std::string& path)
@@ -117,7 +122,7 @@ namespace Debut
 
 			return Request<T>(s_AssetMap[id]);
 		}
-
+		static AssetCache<std::string, Ref<Model>> s_ModelCache;
 	private:
 		static void Reimport(const std::string& folder);
 
@@ -126,6 +131,6 @@ namespace Debut
 		static AssetCache<std::string, Ref<Shader>> s_ShaderCache;
 		static AssetCache<std::string, Ref<Material>> s_MaterialCache;
 		static AssetCache<std::string, Ref<Mesh>> s_MeshCache;
-		static AssetCache<std::string, Ref<Model>> s_ModelCache;
+		
 	};
 }

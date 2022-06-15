@@ -1,8 +1,10 @@
 #include "DebutantLayer.h"
 #include "Camera/EditorCamera.h"
 #include <Utils/EditorCache.h>
+#include <Debut/Rendering/Resources/Model.h>
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/Utils/PlatformUtils.h>
+#include <Debut/Rendering/Renderer/Renderer3D.h>
 
 #include <chrono>
 #include <imgui_internal.h>
@@ -11,6 +13,15 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_operation.hpp>
+
+/**
+    TODO:
+        - A model is only made by a mesh, a material and a list of submodels
+        - Remove vector of materials and vector of submodels
+
+        - Fix Request<Model> in AssetManager.cpp: first check if the file corresponds to a .meta file containing the data, otherwise
+            import the model. Same goes for Mesh: at this point the ModelImporter's ImportMesh method should be public
+*/
 
 
 namespace Debutant
@@ -42,8 +53,18 @@ namespace Debutant
 
         EditorCache::Textures().Put("assets\\icons\\play.png", m_IconPlay);
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
+
+        AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
         
         ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
+        for (auto& model : AssetManager::s_ModelCache.GetValues())
+        {
+            if (model->GetMaterials().size() > 0)
+            {
+                m_Model = model;
+                break;
+            }
+        }
     }
 
     void DebutantLayer::OnDetach()
@@ -79,6 +100,16 @@ namespace Debutant
             m_ActiveScene->OnEditorUpdate(ts, m_EditorCamera);
             break;
         }
+
+        Renderer3D::BeginScene(m_EditorCamera, m_EditorCamera.GetView());
+        MeshRendererComponent component;
+
+        component.Mesh = m_Model->GetMeshes()[0];
+        component.Material = m_Model->GetMaterials()[0];
+
+        Renderer3D::DrawModel(component, glm::mat4(1.0));
+
+        Renderer3D::EndScene();
 
         //Log.AppInfo("Frame time: {0}", (1.0f / ts));
         m_FrameBuffer->Unbind();

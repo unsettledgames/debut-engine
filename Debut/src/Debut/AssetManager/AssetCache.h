@@ -37,6 +37,16 @@ namespace Debut
 			m_Cache[id] = item;
 		}
 
+		inline std::vector<Value> GetValues()
+		{
+			std::vector<Value> ret;
+
+			for (auto& val : m_Cache)
+				ret.push_back(val.second);
+
+			return ret;
+		}
+
 		inline Value Remove(Key id)
 		{
 			if (m_Cache.find(id) != m_Cache.end())

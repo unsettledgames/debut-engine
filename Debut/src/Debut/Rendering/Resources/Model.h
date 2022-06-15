@@ -13,6 +13,9 @@ namespace Debut
 			m_Meshes(meshes), m_Materials(materials), m_SubModels(subModels) {}
 
 		UUID GetID() { return m_ID; }
+		std::vector<UUID> GetMeshes() { return m_Meshes; }
+		std::vector<UUID> GetMaterials () { return m_Materials; }
+		std::vector<UUID> GetSubmodels() { return m_SubModels; }
 
 	private:
 		UUID m_ID;

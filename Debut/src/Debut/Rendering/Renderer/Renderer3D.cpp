@@ -20,23 +20,36 @@ namespace Debut
 		s_Data.CameraTransform = camera.GetProjection() * glm::inverse(transform);
 	}
 
-	void Renderer3D::DrawModel(const MeshRendererComponent& model, const glm::mat4& transform)
+	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform)
 	{
-		if (s_Data.Batches.find(model.Material) == s_Data.Batches.end())
-			AddBatch(model.Material);
+		if (s_Data.Batches.find(meshComponent.Material) == s_Data.Batches.end())
+			AddBatch(meshComponent.Material);
 
-		Ref<Mesh> mesh = AssetManager::Request<Mesh>(model.Mesh);
-		Ref<Material> material = AssetManager::Request<Material>(model.Material);
+		Ref<Mesh> mesh = AssetManager::Request<Mesh>(meshComponent.Mesh);
+		Ref<Material> material = AssetManager::Request<Material>(meshComponent.Material);
+
+		RenderBatch3D* currBatch = &s_Data.Batches[meshComponent.Material];
+
+		// Ideally,
+		currBatch->Buffers["Position"]->PushData(mesh->GetPositions().data(), sizeof(glm::vec3) * mesh->GetPositions().size());
+		currBatch->Indices.insert(currBatch->Indices.end(), mesh->GetIndices().begin(), mesh->GetIndices().end());
 	}
 
 	void Renderer3D::EndScene()
 	{
-
+		Flush();
 	}
 
 	void Renderer3D::Flush()
 	{
-
+		for (auto& batch : s_Data.Batches)
+		{
+			batch.second.Material->Use(s_Data.CameraTransform);
+			batch.second.Buffers["Position"]->SubmitData();
+			batch.second.Material->Unuse();
+		}
+		// Delete the buffers for the previous batches
+		// OPTIMIZABLE: leave the buffers, just clear them and reuse them if the material is used in the next frame (very likely)
 	}
 
 	void Renderer3D::Shutdown()
@@ -55,11 +68,14 @@ namespace Debut
 
 		RenderBatch3D newBatch;
 
+		// Add material
+		newBatch.Material = AssetManager::Request<Material>(id);
+
+		// Setup buffers
 		newBatch.BufferBase = new MeshVertex[s_Data.MaxVerticesPerBatch];
 		newBatch.BufferPtr = newBatch.BufferBase;
-		newBatch.VertexBuffer = VertexBuffer::Create(s_Data.MaxVerticesPerBatch);
-		newBatch.IndexBuffer = IndexBuffer::Create(s_Data.MaxVerticesPerBatch);
-
-		newBatch.Material = AssetManager::Request<Material>(id);
+		
+		// Add batch
+		s_Data.Batches[newBatch.Material->GetID()] = newBatch;
 	}
 }

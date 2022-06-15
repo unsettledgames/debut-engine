@@ -112,7 +112,7 @@ namespace Debut
 		DBT_PROFILE_FUNCTION();
 		if (s_Data.QuadIndexCount)
 		{
-			uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
+			uint32_t dataSize = (uint32_t*)s_Data.QuadVertexBufferPtr - (uint32_t*)s_Data.QuadVertexBufferBase;
 			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 			s_Data.TextureShader->Bind();

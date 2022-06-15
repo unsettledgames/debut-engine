@@ -16,6 +16,8 @@ namespace Debut
 		virtual void Unbind() const override;
 
 		virtual void SetData(const void* data, uint32_t size) override;
+		virtual void PushData(const void* data, uint32_t size) override;
+		virtual void SubmitData() override;
 
 		virtual inline void SetLayout(const BufferLayout& layout) override { m_Layout = layout; }
 		virtual inline BufferLayout& GetLayout() override { return m_Layout; }
@@ -24,6 +26,10 @@ namespace Debut
 	private:
 		BufferLayout m_Layout;
 		unsigned int m_RendererID;
+
+		void* m_Data;
+		uint32_t m_DataIndex = 0;
+		uint32_t m_DataSize = 4096;
 	};
 
 	////////////////////////////////////////////////////// INDEX BUFFER /////////////////////////////////////////////////////

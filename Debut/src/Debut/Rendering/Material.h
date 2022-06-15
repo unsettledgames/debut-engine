@@ -22,6 +22,9 @@ namespace Debut
 		Material() = default;
 		Material(const std::string& path);
 
+		void Use(const glm::mat4& cameraTransform);
+		void Unuse();
+
 		void SetShader(Ref<Shader> shader);
 
 		void SetConfig(const MaterialConfig& config);

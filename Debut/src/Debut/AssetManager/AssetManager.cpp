@@ -2,6 +2,7 @@
 #include <yaml-cpp/yaml.h>
 #include <imgui.h>
 #include <filesystem>
+#include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/AssetManager/AssetManager.h>
 
 namespace Debut
@@ -221,7 +222,7 @@ namespace Debut
 
 		return toAdd;
 	}
-	
+
 	template <>
 	Ref<Mesh> AssetManager::Request<Mesh>(const std::string& id)
 	{
@@ -239,6 +240,25 @@ namespace Debut
 		}
 
 		return toAdd;
+	}
+	
+	template <>
+	Ref<Model> AssetManager::Request<Model>(const std::string& id)
+	{
+		if (s_ModelCache.Has(id))
+			return s_ModelCache.Get(id);
+
+		/*Ref<Model> toAdd = ModelImporter::Impor
+
+		// Update the asset map if the entry wasn't there
+		s_ModelCache.Put(id, toAdd);
+		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+		{
+			s_AssetMap[toAdd->GetID()] = id;
+			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
+		}*/
+
+		return nullptr;
 	}
 	
 }
