@@ -13,18 +13,18 @@
 	-	
 
 	So, roadmap:
-		1 - Load stuff with assimp
-		2 - Get the necessary attributes
-		3 - Pack the attributes in a vector of MeshVertices
+		1 - Load stuff with assimp DONE
+		2 - Get the necessary attributes DONE
+		3 - Pack the attributes in a vector of MeshVertices DONE
 		4 - Load the model
 			4.1 - Submit a model to the renderer, copy the vector data so that it can be rendered
 		5 - Save the new format!
-			5.1 - Compress the vector
+			5.1 - Compress the vector (optional)
 			5.2 - Create the .meta file
 			5.3 - Save the metadata and the compressed vector
 		6 - Load the model from the .meta file
 			6.1 - Get the meta file and prepare the mesh
-			6.2 - Decompress the vertex data
+			6.2 - Decompress the vertex data (optional)
 			6.3 - Store it in the mesh and prepare it for rendering
 */
 
@@ -43,8 +43,8 @@ namespace Debut
 	public:
 		static Ref<Model> ImportModel(const std::string& path);
 	private:
-		static Ref<Model> ImportNodes(aiNode* parent, const aiScene* scene);
-		static Ref<Mesh> ImportMesh(aiMesh* mesh, const std::string& name);
-		static Ref<Material> ImportMaterial(aiMaterial* material, const std::string& name);
+		static Ref<Model> ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder);
+		static Ref<Mesh> ImportMesh(aiMesh* mesh, const std::string& name, const std::string& saveFolder);
+		static Ref<Material> ImportMaterial(aiMaterial* material, const std::string& name, const std::string& saveFolder);
 	};
 }

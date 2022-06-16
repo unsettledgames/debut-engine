@@ -26,6 +26,8 @@ namespace Debut
 		void Unuse();
 
 		void SetShader(Ref<Shader> shader);
+		void SetName(const std::string& name) { m_Name = name; }
+		void SetPath(const std::string& path) { m_Path = path; }
 
 		void SetConfig(const MaterialConfig& config);
 		void SaveSettings();
@@ -43,6 +45,8 @@ namespace Debut
 
 		UUID GetID() { return m_ID; }
 		UUID GetShader() { return m_Shader; }
+		std::string GetName() { return m_Name; }
+		std::string GetPath() { return m_Path; }
 		std::vector<ShaderUniform> GetUniforms();
 
 	private:

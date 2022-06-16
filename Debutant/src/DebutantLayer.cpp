@@ -104,8 +104,8 @@ namespace Debutant
         Renderer3D::BeginScene(m_EditorCamera, m_EditorCamera.GetView());
         MeshRendererComponent component;
 
-        component.Mesh = m_Model->GetMeshes()[0];
-        component.Material = m_Model->GetMaterials()[0];
+        component.Mesh = m_Model->GetMeshes()[1];
+        component.Material = m_Model->GetMaterials()[1];
 
         Renderer3D::DrawModel(component, glm::mat4(1.0));
 
