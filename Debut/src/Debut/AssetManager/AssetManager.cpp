@@ -247,7 +247,13 @@ namespace Debut
 		if (s_ModelCache.Has(id))
 			return s_ModelCache.Get(id);
 
-		/*Ref<Model> toAdd = ModelImporter::Impor
+		Ref<Model> toAdd = CreateRef<Model>(id);
+		if (toAdd->IsValid())
+		{
+			// Load submodels too
+			for (uint32_t i = 0; i < toAdd->GetSubmodels().size(); i++)
+				AssetManager::Request<Model>(toAdd->GetSubmodels()[i]);
+		}
 
 		// Update the asset map if the entry wasn't there
 		s_ModelCache.Put(id, toAdd);
@@ -255,9 +261,9 @@ namespace Debut
 		{
 			s_AssetMap[toAdd->GetID()] = id;
 			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
-		}*/
+		}
 
-		return nullptr;
+		return toAdd;
 	}
 	
 }

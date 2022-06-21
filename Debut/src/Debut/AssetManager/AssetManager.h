@@ -78,14 +78,12 @@ namespace Debut
 		static void Submit(Ref<Mesh> asset)
 		{
 			s_MeshCache.Put(asset->GetPath(), asset);
-			AddAssociationToFile(asset->GetID(), asset->GetPath());
 		}
 
 		template <>
 		static void Submit(Ref<Material> asset)
 		{
 			s_MaterialCache.Put(asset->GetPath(), asset);
-			AddAssociationToFile(asset->GetID(), asset->GetPath());
 		}
 		
 		template <>

@@ -77,7 +77,7 @@ namespace Debut
 		YAML::Emitter metaEmitter;
 
 		metaEmitter << YAML::BeginDoc << YAML::BeginMap;
-		metaEmitter << YAML::Key << "ID" << YAML::Value;
+		metaEmitter << YAML::Key << "ID" << YAML::Value << m_ID;
 		metaEmitter << YAML::Key << "NumVertices" << YAML::Value << m_Vertices.size();
 		metaEmitter << YAML::Key << "NumIndices" << YAML::Value << m_Indices.size();
 		metaEmitter << YAML::Key << "NumTexCoords" << YAML::Value << m_TexCoords.size();

@@ -79,6 +79,7 @@ namespace Debut
 
 		Ref<Model> ret = CreateRef<Model>(meshes, materials, models);
 		ret->SetPath(saveFolder + "\\" + parent->mName.C_Str() + ".model");
+		ret->SaveSettings();
 		AssetManager::Submit<Model>(ret);
 		
 		return ret;
@@ -94,11 +95,10 @@ namespace Debut
 			meshPath = saveFolder + "\\" + assimpMesh->mName.C_Str() + ".mesh";
 
 		Ref<Mesh> mesh = AssetManager::Request<Mesh>(meshPath);
-		if (mesh != nullptr)
+		if (mesh->IsValid())
 			return mesh;
 
 		// Otherwise import it as usual
-		mesh = CreateRef<Mesh>(meshPath);
 		mesh->m_Vertices.resize(assimpMesh->mNumVertices);
 		mesh->SetName(assimpMesh->mName.C_Str());
 
@@ -166,11 +166,10 @@ namespace Debut
 			materialPath = saveFolder + "\\" + assimpMaterial->GetName().C_Str() + ".mat";
 
 		Ref<Material> material = AssetManager::Request<Material>(materialPath);
-		if (material != nullptr)
+		if (material->IsValid())
 			return material;
 
 		// Otherwise import the material as usual
-		material = CreateRef<Material>();
 		material->SetShader(AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl"));
 		material->SetName(assimpMaterial->GetName().C_Str());
 
