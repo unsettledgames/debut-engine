@@ -78,19 +78,21 @@ namespace Debut
 		static void Submit(Ref<Mesh> asset)
 		{
 			s_MeshCache.Put(asset->GetPath(), asset);
+			AddAssociationToFile(asset->GetID(), asset->GetPath());
 		}
 
 		template <>
-		static void Submit(Ref<Model> asset)
+		static void Submit(Ref<Material> asset)
 		{
-			std::ostringstream os;
-			os << asset->GetID();
-			s_ModelCache.Put(os.str(), asset);
+			s_MaterialCache.Put(asset->GetPath(), asset);
+			AddAssociationToFile(asset->GetID(), asset->GetPath());
 		}
 		
-		static void SubmitModel(Ref<Model> model, std::string path)
+		template <>
+		static void Submit(Ref<Model> model)
 		{
-			s_ModelCache.Put(path, model);
+			s_ModelCache.Put(model->GetPath(), model);
+			AddAssociationToFile(model->GetID(), model->GetPath());
 		}
 
 		template<typename T>

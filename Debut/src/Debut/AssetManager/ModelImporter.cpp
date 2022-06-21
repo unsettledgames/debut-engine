@@ -38,7 +38,6 @@ namespace Debut
 			// Import the model
 			aiNode* rootNode = scene->mRootNode;
 			Ref<Model> ret = ImportNodes(rootNode, scene, folder);
-			AssetManager::SubmitModel(ret, path);
 
 			return ret;
 		}
@@ -61,7 +60,10 @@ namespace Debut
 
 		// Load dependencies
 		for (int i = 0; i < parent->mNumChildren; i++)
-			models[i] = ModelImporter::ImportNodes(parent->mChildren[i], scene, saveFolder)->GetID();
+		{
+			Ref<Model> currModel = ImportNodes(parent->mChildren[i], scene, saveFolder);
+			models[i] = currModel->GetID();
+		}
 
 		// Load meshes and materials
 		for (int i = 0; i < parent->mNumMeshes; i++)
@@ -76,6 +78,7 @@ namespace Debut
 		}
 
 		Ref<Model> ret = CreateRef<Model>(meshes, materials, models);
+		ret->SetPath(saveFolder + "\\" + parent->mName.C_Str() + ".model");
 		AssetManager::Submit<Model>(ret);
 		
 		return ret;
@@ -86,16 +89,16 @@ namespace Debut
 		// Check if the mesh has already been imported: if so, just return the already present version
 		std::string meshPath;
 		if (assimpMesh->mName.C_Str() == "")
-			meshPath = saveFolder + "\\" + name;
+			meshPath = saveFolder + "\\" + name + ".mesh";
 		else
-			meshPath = saveFolder + "\\" + assimpMesh->mName.C_Str();
+			meshPath = saveFolder + "\\" + assimpMesh->mName.C_Str() + ".mesh";
 
 		Ref<Mesh> mesh = AssetManager::Request<Mesh>(meshPath);
 		if (mesh != nullptr)
 			return mesh;
 
 		// Otherwise import it as usual
-		mesh = CreateRef<Mesh>(name);
+		mesh = CreateRef<Mesh>(meshPath);
 		mesh->m_Vertices.resize(assimpMesh->mNumVertices);
 		mesh->SetName(assimpMesh->mName.C_Str());
 
@@ -134,10 +137,20 @@ namespace Debut
 				mesh->m_TexCoords[i][j] = { assimpMesh->mTextureCoords[i][j].x, assimpMesh->mTextureCoords[i][j].y };
 		}
 
+		// Load indices
+		mesh->m_Indices.resize(assimpMesh->mNumFaces * 3);
+		uint32_t indexIndex = 0;
+		for (uint32_t i = 0; i < assimpMesh->mNumFaces; i++)
+		{
+			for (uint32_t j = 0; j < assimpMesh->mFaces[i].mNumIndices; j++)
+			{
+				mesh->m_Indices[indexIndex] = assimpMesh->mFaces[i].mIndices[j];
+				indexIndex++;
+			}
+		}
+
 		// Save the mesh on disk + meta file
-		if (mesh->GetName() == "")
-			mesh->SetName(name);
-		mesh->SetPath(saveFolder + "\\" + mesh->GetName());
+		mesh->SetPath(meshPath);
 		mesh->SaveSettings();
 
 		return mesh;
@@ -148,9 +161,9 @@ namespace Debut
 		// Check if the material has already been imported: if so, just return the already present version
 		std::string materialPath;
 		if (assimpMaterial->GetName().C_Str() == "")
-			materialPath = saveFolder + "\\" + name;
+			materialPath = saveFolder + "\\" + name + ".mat";
 		else
-			materialPath = saveFolder + "\\" + assimpMaterial->GetName().C_Str();
+			materialPath = saveFolder + "\\" + assimpMaterial->GetName().C_Str() + ".mat";
 
 		Ref<Material> material = AssetManager::Request<Material>(materialPath);
 		if (material != nullptr)
@@ -195,12 +208,8 @@ namespace Debut
 		}
 
 		// Save the material on disk + meta file
-		if (material->GetName() == "")
-			material->SetName(name);
-		material->SetPath(saveFolder + "\\" + material->GetName());
+		material->SetPath(materialPath);
 		material->SaveSettings();
-		// Add the association in the asset manager
-		AssetManager::AddAssociationToFile(material->GetID(), material->GetPath());
 
 		return material;
 	}

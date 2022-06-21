@@ -48,13 +48,16 @@ namespace Debut
 		std::string GetName() { return m_Name; }
 		std::string GetPath() { return m_Path; }
 		std::vector<ShaderUniform> GetUniforms();
+		bool IsValid() { return m_Valid; }
 
 	private:
 		UUID m_ID;
+		bool m_Valid;
+
 		UUID m_Shader;
+		std::unordered_map<std::string, ShaderUniform> m_Uniforms;
 
 		std::string m_Path;
 		std::string m_Name;
-		std::unordered_map<std::string, ShaderUniform> m_Uniforms;
 	};
 }

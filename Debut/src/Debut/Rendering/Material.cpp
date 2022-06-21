@@ -105,6 +105,8 @@ namespace Debut
 					break;
 				}
 			}
+
+			m_Valid = true;
 		}
 		else
 		{
@@ -119,6 +121,7 @@ namespace Debut
 
 			// Save the default configuration for this material
 			Material::SaveSettings(path, { "Untitled Material", 0, {} });
+			m_Valid = false;
 		}
 	}
 
@@ -152,6 +155,13 @@ namespace Debut
 			config.Uniforms.push_back(uniform.second);
 
 		SaveSettings(m_Path, config);
+
+		// Update / create .meta file too
+		YAML::Emitter metaEmitter;
+		std::ofstream out(m_Path + ".meta");
+
+		metaEmitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
+		out << metaEmitter.c_str();
 	}
 
 	void Material::SaveSettings(const std::string& path, const MaterialConfig& config)
@@ -189,8 +199,9 @@ namespace Debut
 		}
 
 		emitter << YAML::EndMap << YAML::EndDoc;
-
 		out << emitter.c_str();
+		out.close();
+
 	}
 
 	void Material::Use(const glm::mat4& cameraTransform)

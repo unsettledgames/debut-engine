@@ -109,6 +109,8 @@ namespace Debut
 		YAML::Node currYaml;
 		YAML::Node newNode;
 
+		s_AssetMap[id] = path;
+
 		// Read the file, load the old content
 		ss << currFile.rdbuf();
 		currYaml = YAML::Load(ss.str().c_str());
@@ -208,9 +210,9 @@ namespace Debut
 	Ref<Material> AssetManager::Request<Material>(const std::string& id)
 	{
 		if (s_MaterialCache.Has(id))
-			return s_MaterialCache.Get(id);
+			return s_MaterialCache.Get(id);	
 
-		Ref<Material> toAdd = CreateRef<Material>(id);
+		Ref<Material> toAdd = CreateRef<Material>();
 
 		// Update the asset map if the entry wasn't there
 		s_MaterialCache.Put(id, toAdd);
@@ -230,9 +232,6 @@ namespace Debut
 			return s_MeshCache.Get(id);
 
 		Ref<Mesh> toAdd = CreateRef<Mesh>(id);
-
-		// Update the asset map if the entry wasn't there
-		s_MeshCache.Put(id, toAdd);
 		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
 		{
 			s_AssetMap[toAdd->GetID()] = id;

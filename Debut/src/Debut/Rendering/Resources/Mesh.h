@@ -2,6 +2,7 @@
 
 #include <Debut/Core/UUID.h>
 #include <Debut/Rendering/Structures/VertexArray.h>
+#include <yaml-cpp/yaml.h>
 
 namespace Debut
 {
@@ -18,7 +19,8 @@ namespace Debut
 
 		UUID GetID() { return m_ID; }
 		std::string GetName() { return m_Name; }
-		std::string GetName() { return m_Path; }
+		std::string GetPath() { return m_Path; }
+		bool IsValid() { return m_Valid; }
 
 		std::vector<glm::vec3> GetPositions() { return m_Vertices; }
 		std::vector<glm::vec3> GetNormals() { return m_Normals; }
@@ -29,9 +31,14 @@ namespace Debut
 
 		void SetName(const std::string& name) { m_Name = name; }
 		void SetPath(const std::string& path) { m_Path = path; }
+
+	private:
+		void Load(YAML::Node yaml);
 		
 	private:
 		UUID m_ID;
+		bool m_Valid;
+
 		std::string m_Name;
 		std::string m_Path;
 
