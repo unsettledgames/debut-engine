@@ -2,12 +2,22 @@
 #include <Debut/Rendering/Resources/Mesh.h>
 
 #include <yaml-cpp/yaml.h>
+#include <Debut/Utils/YamlUtils.h>
 
 namespace Debut
 {
 	Mesh::Mesh()
 	{
 
+	}
+
+	template <typename T>
+	static void EmitBuffer(std::vector<T> buffer, YAML::Emitter& emitter)
+	{
+		emitter << YAML::BeginSeq;
+		for (uint32_t i = 0; i < buffer.size(); i++)
+			emitter << buffer[i];
+		emitter << YAML::EndSeq;
 	}
 
 	Mesh::Mesh(const std::string& path)
@@ -33,7 +43,10 @@ namespace Debut
 				m_TexCoords[i].resize(m_Vertices.size());
 
 			// Load rest of the model
-			Load(YAML::Load(path));
+			std::ifstream meshFile(path);
+			ss.str("");
+			ss << meshFile.rdbuf();
+			Load(YAML::Load(ss.str()));
 
 			m_Valid = true;
 		}
@@ -59,15 +72,15 @@ namespace Debut
 
 		emitter << YAML::BeginDoc << YAML::BeginMap;
 		emitter << YAML::Key << "Name" << YAML::Value << m_Name;
-		emitter << YAML::Key << "Vertices" << YAML::Value << YAML::Binary((unsigned char*)m_Vertices.data(), sizeof(m_Vertices.data()));
-		emitter << YAML::Key << "Normals" << YAML::Value << YAML::Binary((unsigned char*)m_Normals.data(), sizeof(m_Normals.data()));
-		emitter << YAML::Key << "Tangents" << YAML::Value << YAML::Binary((unsigned char*)m_Tangents.data(), sizeof(m_Tangents.data()));
-		emitter << YAML::Key << "Bitangents" << YAML::Value << YAML::Binary((unsigned char*)m_Bitangents.data(), sizeof(m_Bitangents.data()));
-		emitter << YAML::Key << "Indices" << YAML::Value << YAML::Binary((unsigned char*)m_Indices.data(), sizeof(m_Indices.data()));
+		emitter << YAML::Key << "Vertices" << YAML::Value; EmitBuffer<glm::vec3>(m_Vertices, emitter);
+		emitter << YAML::Key << "Normals" << YAML::Value; EmitBuffer<glm::vec3>(m_Normals, emitter);
+		emitter << YAML::Key << "Tangents" << YAML::Value; EmitBuffer<glm::vec3>(m_Tangents, emitter);
+		emitter << YAML::Key << "Bitangents" << YAML::Value; EmitBuffer<glm::vec3>(m_Bitangents, emitter);
+		emitter << YAML::Key << "Indices" << YAML::Value; EmitBuffer<int>(m_Indices, emitter);
 		
 		emitter << YAML::Key << "TexCoords" << YAML::Value << YAML::BeginSeq;
 		for (uint32_t i = 0; i < m_TexCoords.size(); i++)
-			emitter << YAML::Binary((unsigned char*)m_TexCoords[i].data(), sizeof(m_TexCoords[i].data()));
+			EmitBuffer<glm::vec2>(m_TexCoords[i], emitter);
 
 		emitter << YAML::EndSeq << YAML::EndMap << YAML::EndDoc;
 		outFile << emitter.c_str();
@@ -87,25 +100,19 @@ namespace Debut
 
 	void Mesh::Load(YAML::Node yaml)
 	{
-		YAML::Binary binaryData = yaml["Vertices"].as<YAML::Binary>();
-		memcpy(m_Vertices.data(), (const void*)binaryData.data(), binaryData.size());
-
-		binaryData = yaml["Normals"].as<YAML::Binary>();
-		memcpy(m_Normals.data(), (const void*)binaryData.data(), binaryData.size());
-
-		binaryData = yaml["Tangents"].as<YAML::Binary>();
-		memcpy(m_Tangents.data(), (const void*)binaryData.data(), binaryData.size());
-
-		binaryData = yaml["Bitangents"].as<YAML::Binary>();
-		memcpy(m_Bitangents.data(), (const void*)binaryData.data(), binaryData.size());
-
-		binaryData = yaml["Indices"].as<YAML::Binary>();
-		memcpy(m_Indices.data(), (const void*)binaryData.data(), binaryData.size());
+		for (uint32_t i = 0; i < m_Vertices.size(); i++)
+		{
+			m_Vertices[i] = yaml["Vertices"][i].as<glm::vec3>();
+			m_Normals[i] = yaml["Normals"][i].as<glm::vec3>();
+			m_Normals[i] = yaml["Tangents"][i].as<glm::vec3>();
+			m_Normals[i] = yaml["Bitangents"][i].as<glm::vec3>();
+		}
+		
+		for (uint32_t i = 0; i < m_Indices.size(); i++)
+			m_Indices[i] = yaml["Indices"][i].as<int>();
 
 		for (uint32_t i = 0; i < m_TexCoords.size(); i++)
-		{
-			binaryData = yaml["TexCoords"][i].as<YAML::Binary>();
-			memcpy(m_TexCoords[i].data(), (const void*)binaryData.data(), binaryData.size());
-		}
+			for (uint32_t j = 0; j < m_TexCoords[i].size(); j++)
+				m_TexCoords[i][j] = yaml["TexCoords"][i][j].as<glm::vec3>();
 	}
 }

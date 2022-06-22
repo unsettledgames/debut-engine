@@ -56,7 +56,7 @@ namespace Debutant
 
         AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
         
-        //ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
+        ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
         m_Model = AssetManager::Request<Model>(
             AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);
     }

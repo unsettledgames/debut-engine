@@ -10,15 +10,7 @@
 	TODO
 		- Integrare ModelImporter con AssetManager
 
-		- Salvare le informazioni di materiali e mesh su disco con file .meta, da questo punto in poi l'integrazione è quasi completa
-			probabilmente
-		- Infine, salvare le informazioni del modello
-		- Al caricamento di un modello, verificare che non sia già stato importato
-		- Modificare Request in AssetManager per i template del caso
 		- Opzioni di importazione / dati nella sezione properties
-
-	ALTRE NOTE:
-		- Un modello non è altro che un singolo file che descrive la gerarchia del modello usando gli UUID
 */
 
 namespace Debut
@@ -28,7 +20,7 @@ namespace Debut
 		// TODO: have a look at importer settings
 		Assimp::Importer importer;
 
-		const aiScene* scene = importer.ReadFile(path, aiProcess_CalcTangentSpace | aiProcess_Triangulate |
+		const aiScene* scene = importer.ReadFile(path, aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate |
 												aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 		std::string folder = path.substr(0, path.find_last_of('\\'));
 		std::string fileName;
@@ -70,11 +62,15 @@ namespace Debut
 		{
 			// Import and submit the mesh
 			aiMesh* assimpMesh = scene->mMeshes[parent->mMeshes[i]];
-			AssetManager::Submit<Mesh>(ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, saveFolder));
+			Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, saveFolder);
+			AssetManager::Submit<Mesh>(mesh);
+			meshes[i] = mesh->GetID();
 
 			// Import and submit the material
 			aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
-			AssetManager::Submit<Material>(ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, saveFolder));
+			Ref<Material> material = ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, saveFolder);
+			AssetManager::Submit<Material>(material);
+			materials[i] = material->GetID();
 		}
 
 		Ref<Model> ret = CreateRef<Model>(meshes, materials, models);
@@ -110,7 +106,8 @@ namespace Debut
 		if (assimpMesh->HasNormals())
 		{
 			mesh->m_Normals.resize(assimpMesh->mNumVertices);
-			for (uint32_t i = 0; i < assimpMesh->mNormals->Length(); i++)
+			Log.CoreInfo("N normals {0}", assimpMesh->mNormals->Length());
+			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
 				mesh->m_Normals[i] = { assimpMesh->mNormals[i].x, assimpMesh->mNormals[i].y, assimpMesh->mNormals[i].z };
 		}
 
@@ -120,7 +117,7 @@ namespace Debut
 			mesh->m_Tangents.resize(assimpMesh->mNumVertices);
 			mesh->m_Bitangents.resize(assimpMesh->mNumVertices);
 
-			for (uint32_t i = 0; i < assimpMesh->mNormals->Length(); i++)
+			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
 			{
 				mesh->m_Tangents[i] = { assimpMesh->mTangents[i].x, assimpMesh->mTangents[i].y, assimpMesh->mTangents[i].z };
 				mesh->m_Bitangents[i] = { assimpMesh->mBitangents[i].x, assimpMesh->mBitangents[i].y, assimpMesh->mBitangents[i].z };
@@ -133,7 +130,7 @@ namespace Debut
 		{
 			mesh->m_TexCoords[i].resize(assimpMesh->mNumVertices);
 
-			for (uint32_t j = 0; j < assimpMesh->mTextureCoords[i]->Length(); j++)
+			for (uint32_t j = 0; j < assimpMesh->mNumVertices; j++)
 				mesh->m_TexCoords[i][j] = { assimpMesh->mTextureCoords[i][j].x, assimpMesh->mTextureCoords[i][j].y };
 		}
 
