@@ -21,7 +21,7 @@ namespace Debut
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 		m_DataSize = size;
-		m_Data = new unsigned char(size);
+		m_Data = new unsigned char[size];
 	}
 
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()
@@ -52,12 +52,14 @@ namespace Debut
 			m_DataSize = newDataSize;
 		}
 
-		memcpy(m_Data + m_DataIndex, data, size);
+		memcpy(m_Data + m_DataIndex, (unsigned char*)data, size);
 		m_DataIndex += size;
 	}
 
 	void OpenGLVertexBuffer::SubmitData()
 	{
+		if (m_DataIndex == 0)
+			return;
 		SetData(m_Data, m_DataIndex);
 		m_DataIndex = 0;
 		// Don't? Keep the same size and avoid reallocations
