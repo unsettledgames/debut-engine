@@ -12,7 +12,7 @@ namespace Debut
 	}
 
 	template<typename T>
-	static void EmitBuffer(std::vector<T> buffer, YAML::Emitter& emitter)
+	static void EmitBuffer(std::vector<T>& buffer, YAML::Emitter& emitter)
 	{
 		const unsigned char* byteArrayBegin = reinterpret_cast<unsigned char*>(buffer.data());
 		uint32_t size = buffer.size() * sizeof(T);
@@ -21,7 +21,7 @@ namespace Debut
 	}
 
 	template<typename T>
-	static void LoadBuffer(std::vector<T> buffer, YAML::Node& node, const std::string& name, uint32_t nElements)
+	static void LoadBuffer(std::vector<T>& buffer, YAML::Node& node, const std::string& name, uint32_t nElements)
 	{
 		YAML::Binary binaryData = node[name].as<YAML::Binary>();
 		memcpy(buffer.data(), binaryData.data(), binaryData.size());

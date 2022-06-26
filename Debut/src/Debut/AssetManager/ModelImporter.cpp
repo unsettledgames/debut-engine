@@ -103,9 +103,7 @@ namespace Debut
 			for (uint32_t j = 0; j < 3; j++)
 			{
 				uint32_t index = i * 3 + j;
-				mesh->m_Vertices[index] = assimpMesh->mVertices[i].x;
-				mesh->m_Vertices[index] = assimpMesh->mVertices[i].y;
-				mesh->m_Vertices[index] = assimpMesh->mVertices[i].z;
+				mesh->m_Vertices[index] = assimpMesh->mVertices[i][j];
 			}
 
 		// Load normals
@@ -116,9 +114,7 @@ namespace Debut
 				for (uint32_t j = 0; j < 3; j++)
 				{
 					uint32_t index = i * 3 + j;
-					mesh->m_Normals[index] = assimpMesh->mNormals[i].x;
-					mesh->m_Normals[index] = assimpMesh->mNormals[i].y;
-					mesh->m_Normals[index] = assimpMesh->mNormals[i].z;
+					mesh->m_Normals[index] = assimpMesh->mNormals[i][j];
 				}
 		}
 
@@ -133,9 +129,7 @@ namespace Debut
 				for (uint32_t j = 0; j < 3; j++)
 				{
 					uint32_t index = i * 3 + j;
-					mesh->m_Tangents[index] = assimpMesh->mTangents[i].x;
-					mesh->m_Tangents[index] = assimpMesh->mTangents[i].y;
-					mesh->m_Tangents[index] = assimpMesh->mTangents[i].z;
+					mesh->m_Tangents[index] = assimpMesh->mTangents[i][j];
 				}
 			}
 
@@ -144,9 +138,7 @@ namespace Debut
 				for (uint32_t j = 0; j < 3; j++)
 				{
 					uint32_t index = i * 3 + j;
-					mesh->m_Bitangents[index] = assimpMesh->mBitangents[i].x;
-					mesh->m_Bitangents[index] = assimpMesh->mBitangents[i].y;
-					mesh->m_Bitangents[index] = assimpMesh->mBitangents[i].z;
+					mesh->m_Bitangents[index] = assimpMesh->mBitangents[i][j];
 				}
 			}
 		}
@@ -161,9 +153,7 @@ namespace Debut
 				for (uint32_t k = 0; k < 3; k++)
 				{
 					uint32_t index = j * 3 + k;
-					mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j].x;
-					mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j].z;
-					mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j].y;
+					mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j][k];
 				}
 		}
 
