@@ -79,6 +79,9 @@ namespace Debut
 				case ShaderDataType::Float4: 
 					m_Uniforms[uniform.Name].Data.Vec4 = matParams[uniform.Name].as<glm::vec4>();
 					break;
+				case ShaderDataType::Mat4:
+					m_Uniforms[uniform.Name].Data.Mat4 = matParams[uniform.Name].as<glm::mat4>();
+					break;
 
 				case ShaderDataType::Int: 
 					m_Uniforms[uniform.Name].Data.Int = matParams[uniform.Name].as<int>();
@@ -184,6 +187,7 @@ namespace Debut
 			case ShaderDataType::Float3: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Vec3; break;
 			case ShaderDataType::Float4: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Vec4; break;
 
+			case ShaderDataType::Mat4: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Mat4; break;
 			case ShaderDataType::Bool: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Bool; break;
 			case ShaderDataType::Int: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Int; break;
 			case ShaderDataType::Sampler2D:

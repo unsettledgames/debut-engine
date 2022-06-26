@@ -6,7 +6,6 @@
 #include <Debut/Rendering/Renderer/RenderCommand.h>
 
 
-
 namespace Debut
 {
 	Renderer3DStorage Renderer3D::s_Data;
@@ -108,16 +107,27 @@ namespace Debut
 
 		// Setup buffers
 		newBatch.Buffers["Position"] = VertexBuffer::Create(s_Data.StartupBufferSize);
+		newBatch.Buffers["Position"]->SetLayout({ { ShaderDataType::Float, "a_Position", false } });
+
 		newBatch.Buffers["Normals"] = VertexBuffer::Create(s_Data.StartupBufferSize);
+		newBatch.Buffers["Normals"]->SetLayout({ { ShaderDataType::Float, "a_Normal", false } });
+
 		newBatch.Buffers["Tangents"] = VertexBuffer::Create(s_Data.StartupBufferSize);
+		newBatch.Buffers["Tangents"]->SetLayout({ { ShaderDataType::Float, "a_Tangent", false } });
+
 		newBatch.Buffers["Bitangents"] = VertexBuffer::Create(s_Data.StartupBufferSize);
+		newBatch.Buffers["Bitangents"]->SetLayout({ { ShaderDataType::Float, "a_Bitangent", false } });
+
 		newBatch.Buffers["TexCoords0"] = VertexBuffer::Create(s_Data.StartupBufferSize);
+		newBatch.Buffers["TexCoords0"]->SetLayout({ { ShaderDataType::Float, "a_TexCoords0", false } });
 
 		// Create and configure vertex array
 		newBatch.VertexArray = VertexArray::Create();
 		newBatch.IndexBuffer = IndexBuffer::Create();
 		for (auto& buffer : newBatch.Buffers)
+		{
 			newBatch.VertexArray->AddVertexBuffer(buffer.second);
+		}
 		newBatch.VertexArray->AddIndexBuffer(newBatch.IndexBuffer);
 		
 		// Add batch

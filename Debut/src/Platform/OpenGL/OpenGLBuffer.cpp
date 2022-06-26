@@ -1,6 +1,7 @@
 #include "Debut/dbtpch.h"
 #include <glad/glad.h>
 #include "OpenGLBuffer.h"
+#include "OpenGLError.h"
 
 namespace Debut
 {
@@ -31,8 +32,8 @@ namespace Debut
 
 	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
+		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, size, data));
 	}
 
 	void OpenGLVertexBuffer::PushData(const void* data, uint32_t size)
@@ -60,7 +61,8 @@ namespace Debut
 	{
 		if (m_DataIndex == 0)
 			return;
-		SetData(m_Data, m_DataIndex);
+
+		SetData(reinterpret_cast<float*>(m_Data), m_DataIndex);
 		m_DataIndex = 0;
 		// Don't? Keep the same size and avoid reallocations
 		m_DataSize /= 2;
@@ -117,8 +119,8 @@ namespace Debut
 
 	void OpenGLIndexBuffer::SetData(const void* data, uint32_t count)
 	{
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT) * count, data, GL_STATIC_DRAW);
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
+		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT) * count, data, GL_STATIC_DRAW));
 
 		m_Count = count;
 	}
