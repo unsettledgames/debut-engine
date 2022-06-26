@@ -57,9 +57,17 @@ namespace Debutant
 
         AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
         
-        //ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
+        /*ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
         m_Model = AssetManager::Request<Model>(
-            AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);
+            AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);*/
+
+        m_Model = AssetManager::Request<Model>(
+            AssetManager::Request<Model>("assets\\models\\cube\\untitled.obj.model")->GetSubmodels()[0]);
+
+            /*
+        ModelImporter::ImportModel("assets\\models\\car\\car.obj");
+        m_Model = AssetManager::Request<Model>(
+            AssetManager::Request<Model>("assets\\models\\car\\car.obj.model")->GetSubmodels()[0]);*/
     }
 
     void DebutantLayer::OnDetach()
