@@ -60,7 +60,6 @@ namespace Debut
 		glBindVertexArray(m_RendererID);
 		buffer->Bind();
 
-		uint32_t index = 0;
 		for (const auto& element : buffer->GetLayout())
 		{
 			switch (element.Type)
@@ -72,10 +71,10 @@ namespace Debut
 				case ShaderDataType::Mat3:
 				case ShaderDataType::Mat4:
 				{
-					glEnableVertexAttribArray(index);
-					glVertexAttribPointer(index, element.GetComponentCount(), ShaderAttribTypeToOpenGL(element.Type),
+					glEnableVertexAttribArray(m_AttributeIndex);
+					glVertexAttribPointer(m_AttributeIndex, element.GetComponentCount(), ShaderAttribTypeToOpenGL(element.Type),
 						element.Normalized ? GL_TRUE : GL_FALSE, buffer->GetLayout().GetStride(), (const void*)element.Offset);
-					index++;
+					m_AttributeIndex++;
 				}
 				break;
 				case ShaderDataType::Int:
@@ -84,10 +83,10 @@ namespace Debut
 				case ShaderDataType::Int4:
 				case ShaderDataType::Bool:
 				{
-					glEnableVertexAttribArray(index);
-					glVertexAttribIPointer(index, element.GetComponentCount(), ShaderAttribTypeToOpenGL(element.Type),
+					glEnableVertexAttribArray(m_AttributeIndex);
+					glVertexAttribIPointer(m_AttributeIndex, element.GetComponentCount(), ShaderAttribTypeToOpenGL(element.Type),
 						buffer->GetLayout().GetStride(), (const void*)element.Offset);
-					index++;
+					m_AttributeIndex++;
 				}
 				break;
 

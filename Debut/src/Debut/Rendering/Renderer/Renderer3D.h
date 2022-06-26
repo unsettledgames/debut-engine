@@ -15,6 +15,7 @@ namespace Debut
 		std::vector<int> Indices;
 
 		Ref<VertexArray> VertexArray;
+		Ref<IndexBuffer> IndexBuffer;
 		Ref<Material> Material;
 	};
 

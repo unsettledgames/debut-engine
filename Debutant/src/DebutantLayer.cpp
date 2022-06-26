@@ -96,17 +96,16 @@ namespace Debutant
             break;
         }
 
-        Renderer3D::BeginScene(m_EditorCamera, m_EditorCamera.GetView());
+        Renderer3D::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
         MeshRendererComponent component;
 
         component.Mesh = m_Model->GetMeshes()[0];
         component.Material = m_Model->GetMaterials()[0];
 
         Renderer3D::DrawModel(component, glm::mat4(1.0));
-
         Renderer3D::EndScene();
 
-        Log.AppInfo("Frame time: {0}", (1.0f / ts));
+        Log.AppInfo("FPS: {0}", (1.0f / ts));
         m_FrameBuffer->Unbind();
     }
 

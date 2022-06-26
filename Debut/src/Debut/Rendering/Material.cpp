@@ -208,8 +208,7 @@ namespace Debut
 	{
 		Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
 		shader->Bind();
-
-		shader->SetMat4("u_ViewProjection", cameraTransform);
+		SetMat4("u_ViewProjection", cameraTransform);
 		
 		for (auto& uniform : m_Uniforms)
 		{
@@ -281,6 +280,13 @@ namespace Debut
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::Float4);
 		m_Uniforms[name].Data.Vec4 = vec;
+	}
+
+	void Material::SetMat4(const std::string& name, const glm::mat4& mat)
+	{
+		FIND_UNIFORM(name);
+		CHECK_TYPE(name, ShaderDataType::Mat4);
+		m_Uniforms[name].Data.Mat4 = mat;
 	}
 
 	void Material::SetInt(const std::string& name, int val)

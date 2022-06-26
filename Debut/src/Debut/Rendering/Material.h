@@ -39,6 +39,8 @@ namespace Debut
 		void SetVec3(const std::string& name, const glm::vec3& vec);
 		void SetVec4(const std::string& name, const glm::vec4& vec);
 
+		void SetMat4(const std::string& name, const glm::mat4& mat);
+
 		void SetInt(const std::string& name, int val);
 		void SetBool(const std::string& name, bool val);
 		void SetTexture(const std::string& name, const Ref<Texture2D> texture);

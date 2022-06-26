@@ -3,6 +3,7 @@
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
 #include <Debut/Core/Instrumentor.h>
+#include <Debut/Rendering/Renderer/RenderCommand.h>
 
 
 
@@ -42,20 +43,16 @@ namespace Debut
 			DBT_PROFILE_SCOPE("Renderer3D::GetMaterial");
 			material = AssetManager::Request<Material>(meshComponent.Material);
 		}
-		
 
 		RenderBatch3D* currBatch = &s_Data.Batches[meshComponent.Material];
 
 		// Send data to buffers
 		{
-			DBT_PROFILE_SCOPE("Renderer3D::PushVertices");
+			DBT_PROFILE_SCOPE("Renderer3D::PushData");
 			currBatch->Buffers["Position"]->PushData(mesh->GetPositions().data(), sizeof(float) * mesh->GetPositions().size());
-		}
-		
 
-		// Add indices
-		{
-			DBT_PROFILE_SCOPE("Renderer3D::PushIndices");
+			// Add indices
+			// This kinda sucks, the vector is reallocated every time a mesh is submitted (100 * 60 = 6000 times per second to be optimist)
 			uint32_t currIndicesSize = currBatch->Indices.size();
 			currBatch->Indices.resize(currBatch->Indices.size() + mesh->GetIndices().size());
 			memcpy(currBatch->Indices.data() + currIndicesSize, mesh->GetIndices().data(), mesh->GetIndices().size() * sizeof(int));
@@ -74,13 +71,19 @@ namespace Debut
 		for (auto& batch : s_Data.Batches)
 		{
 			batch.second.Material->Use(s_Data.CameraTransform);
-			batch.second.Buffers["Position"]->SubmitData();
+
+			// Setup buffers
+			for (auto& buffer : batch.second.Buffers)
+				buffer.second->SubmitData();
+			batch.second.IndexBuffer->SetData(batch.second.Indices.data(), batch.second.Indices.size());
+
+			// Issue draw call
+			RenderCommand::DrawIndexed(batch.second.VertexArray, batch.second.Indices.size());
 			batch.second.Material->Unuse();
+
+			// Clear buffers
+			batch.second.Indices.clear();
 		}
-
-		// Clear the buffers
-
-		// OPTIMIZABLE: leave the buffers, just clear them and reuse them if the material is used in the next frame (very likely)
 	}
 
 	void Renderer3D::Shutdown()
@@ -109,6 +112,13 @@ namespace Debut
 		newBatch.Buffers["Tangents"] = VertexBuffer::Create(s_Data.StartupBufferSize);
 		newBatch.Buffers["Bitangents"] = VertexBuffer::Create(s_Data.StartupBufferSize);
 		newBatch.Buffers["TexCoords0"] = VertexBuffer::Create(s_Data.StartupBufferSize);
+
+		// Create and configure vertex array
+		newBatch.VertexArray = VertexArray::Create();
+		newBatch.IndexBuffer = IndexBuffer::Create();
+		for (auto& buffer : newBatch.Buffers)
+			newBatch.VertexArray->AddVertexBuffer(buffer.second);
+		newBatch.VertexArray->AddIndexBuffer(newBatch.IndexBuffer);
 		
 		// Add batch
 		s_Data.Batches[newBatch.Material->GetID()] = newBatch;

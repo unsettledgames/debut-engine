@@ -25,7 +25,7 @@ namespace Debut
 		BufferLayout m_Layout;
 		unsigned int m_RendererID;
 
-		void* m_Data;
+		unsigned char* m_Data;
 		uint32_t m_DataIndex = 0;
 		uint32_t m_DataSize = 4096;
 	};
@@ -36,7 +36,7 @@ namespace Debut
 	{
 	public:
 		OpenGLIndexBuffer(int* indices, unsigned int size);
-		OpenGLIndexBuffer(uint32_t count);
+		OpenGLIndexBuffer();
 		virtual ~OpenGLIndexBuffer();
 
 		virtual void Bind() const override;

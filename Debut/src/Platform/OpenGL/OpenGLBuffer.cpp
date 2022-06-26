@@ -21,7 +21,7 @@ namespace Debut
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 		m_DataSize = size;
-		m_Data = new char(size);
+		m_Data = new unsigned char(size);
 	}
 
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()
@@ -44,7 +44,7 @@ namespace Debut
 
 		if (newDataSize != m_DataSize)
 		{
-			char* newData = new char[newDataSize];
+			unsigned char* newData = new unsigned char[newDataSize];
 			memcpy(newData, m_Data, m_DataSize);
 
 			delete m_Data;
@@ -52,7 +52,7 @@ namespace Debut
 			m_DataSize = newDataSize;
 		}
 
-		memcpy((char*)m_Data + m_DataIndex, data, size);
+		memcpy(m_Data + m_DataIndex, data, size);
 		m_DataIndex += size;
 	}
 
@@ -61,7 +61,7 @@ namespace Debut
 		SetData(m_Data, m_DataIndex);
 		m_DataIndex = 0;
 		// Don't? Keep the same size and avoid reallocations
-		m_DataSize = 4096;
+		m_DataSize /= 2;
 	}
 
 	void OpenGLVertexBuffer::Bind() const
@@ -89,7 +89,7 @@ namespace Debut
 		m_Count = count;
 	}
 
-	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t count)
+	OpenGLIndexBuffer::OpenGLIndexBuffer()
 	{
 		DBT_PROFILE_FUNCTION();
 		glCreateBuffers(1, &m_RendererID);
