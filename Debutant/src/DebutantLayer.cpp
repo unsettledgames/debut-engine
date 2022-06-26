@@ -1,4 +1,5 @@
 #include "DebutantLayer.h"
+#include "Debut/Core/Instrumentor.h"
 #include "Camera/EditorCamera.h"
 #include <Utils/EditorCache.h>
 #include <Debut/Rendering/Resources/Model.h>
@@ -56,7 +57,7 @@ namespace Debutant
 
         AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
         
-        ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
+        //ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
         m_Model = AssetManager::Request<Model>(
             AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);
     }
@@ -105,7 +106,7 @@ namespace Debutant
 
         Renderer3D::EndScene();
 
-        //Log.AppInfo("Frame time: {0}", (1.0f / ts));
+        Log.AppInfo("Frame time: {0}", (1.0f / ts));
         m_FrameBuffer->Unbind();
     }
 

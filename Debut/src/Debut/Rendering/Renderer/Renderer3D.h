@@ -9,32 +9,22 @@
 
 namespace Debut
 {
-	struct MeshVertex
-	{
-		glm::vec3 Position;
-		glm::vec2 TexCoord;
-		glm::vec3 Normal;
-		glm::vec3 Tangent;
-	};
-
 	struct RenderBatch3D
 	{
-		MeshVertex* BufferBase;
-		MeshVertex* BufferPtr;
-
 		std::unordered_map<std::string, Ref<VertexBuffer>> Buffers;
-
 		std::vector<int> Indices;
+
 		Ref<VertexArray> VertexArray;
 		Ref<Material> Material;
 	};
 
 	struct Renderer3DStorage
 	{
+		uint32_t StartupBufferSize = 4096;
 		uint32_t MaxTextures = 32;
 		uint32_t MaxBatches = 64;
 		uint32_t MaxMeshesPerBatch = 16384;
-		uint32_t MaxVerticesPerBatch = 360000;
+		uint32_t MaxVerticesPerBatch = 36000000;
 
 		std::vector<Ref<Texture2D>> Textures;
 		// One batch per Material

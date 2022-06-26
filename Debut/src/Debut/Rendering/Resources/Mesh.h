@@ -22,11 +22,11 @@ namespace Debut
 		std::string GetPath() { return m_Path; }
 		bool IsValid() { return m_Valid; }
 
-		std::vector<glm::vec3> GetPositions() { return m_Vertices; }
-		std::vector<glm::vec3> GetNormals() { return m_Normals; }
-		std::vector<glm::vec3> GetTangents() { return m_Tangents; }
-		std::vector<glm::vec3> GetBitangents() { return m_Bitangents; }
-		std::vector<glm::vec2> GetTexCoords(uint32_t index) { return m_TexCoords[index]; }
+		std::vector<float> GetPositions() { return m_Vertices; }
+		std::vector<float> GetNormals() { return m_Normals; }
+		std::vector<float> GetTangents() { return m_Tangents; }
+		std::vector<float> GetBitangents() { return m_Bitangents; }
+		std::vector<float> GetTexCoords(uint32_t index) { return m_TexCoords[index]; }
 		std::vector<int> GetIndices() { return m_Indices; }
 
 		void SetName(const std::string& name) { m_Name = name; }
@@ -42,11 +42,11 @@ namespace Debut
 		std::string m_Name;
 		std::string m_Path;
 
-		std::vector<glm::vec3> m_Vertices;
-		std::vector<glm::vec3> m_Normals;
-		std::vector<glm::vec3> m_Tangents;
-		std::vector<glm::vec3> m_Bitangents;
-		std::vector<std::vector<glm::vec2>> m_TexCoords;
+		std::vector<float> m_Vertices;
+		std::vector<float> m_Normals;
+		std::vector<float> m_Tangents;
+		std::vector<float> m_Bitangents;
+		std::vector<std::vector<float>> m_TexCoords;
 
 		std::vector<int> m_Indices;
 	};

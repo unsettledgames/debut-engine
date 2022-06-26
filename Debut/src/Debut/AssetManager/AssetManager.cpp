@@ -212,7 +212,7 @@ namespace Debut
 		if (s_MaterialCache.Has(id))
 			return s_MaterialCache.Get(id);	
 
-		Ref<Material> toAdd = CreateRef<Material>();
+		Ref<Material> toAdd = CreateRef<Material>(id);
 
 		// Update the asset map if the entry wasn't there
 		s_MaterialCache.Put(id, toAdd);
@@ -232,6 +232,8 @@ namespace Debut
 			return s_MeshCache.Get(id);
 
 		Ref<Mesh> toAdd = CreateRef<Mesh>(id);
+
+		s_MeshCache.Put(id, toAdd);
 		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
 		{
 			s_AssetMap[toAdd->GetID()] = id;

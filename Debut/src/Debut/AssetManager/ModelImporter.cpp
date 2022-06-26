@@ -95,32 +95,59 @@ namespace Debut
 			return mesh;
 
 		// Otherwise import it as usual
-		mesh->m_Vertices.resize(assimpMesh->mNumVertices);
+		mesh->m_Vertices.resize(assimpMesh->mNumVertices * 3);
 		mesh->SetName(assimpMesh->mName.C_Str());
 
 		// Create mesh, start with the positions of the vertices
 		for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
-			mesh->m_Vertices[i] = { assimpMesh->mVertices[i].x, assimpMesh->mVertices[i].y, assimpMesh->mVertices[i].z };
+			for (uint32_t j = 0; j < 3; j++)
+			{
+				uint32_t index = i * 3 + j;
+				mesh->m_Vertices[index] = assimpMesh->mVertices[i].x;
+				mesh->m_Vertices[index] = assimpMesh->mVertices[i].y;
+				mesh->m_Vertices[index] = assimpMesh->mVertices[i].z;
+			}
 
 		// Load normals
 		if (assimpMesh->HasNormals())
 		{
-			mesh->m_Normals.resize(assimpMesh->mNumVertices);
-			Log.CoreInfo("N normals {0}", assimpMesh->mNormals->Length());
+			mesh->m_Normals.resize(assimpMesh->mNumVertices * 3);
 			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
-				mesh->m_Normals[i] = { assimpMesh->mNormals[i].x, assimpMesh->mNormals[i].y, assimpMesh->mNormals[i].z };
+				for (uint32_t j = 0; j < 3; j++)
+				{
+					uint32_t index = i * 3 + j;
+					mesh->m_Normals[index] = assimpMesh->mNormals[i].x;
+					mesh->m_Normals[index] = assimpMesh->mNormals[i].y;
+					mesh->m_Normals[index] = assimpMesh->mNormals[i].z;
+				}
 		}
 
 		// Load tangents / bitangents
 		if (assimpMesh->HasTangentsAndBitangents())
 		{
-			mesh->m_Tangents.resize(assimpMesh->mNumVertices);
-			mesh->m_Bitangents.resize(assimpMesh->mNumVertices);
+			mesh->m_Tangents.resize(assimpMesh->mNumVertices * 3);
+			mesh->m_Bitangents.resize(assimpMesh->mNumVertices * 3);
 
 			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
 			{
-				mesh->m_Tangents[i] = { assimpMesh->mTangents[i].x, assimpMesh->mTangents[i].y, assimpMesh->mTangents[i].z };
-				mesh->m_Bitangents[i] = { assimpMesh->mBitangents[i].x, assimpMesh->mBitangents[i].y, assimpMesh->mBitangents[i].z };
+				for (uint32_t j = 0; j < 3; j++)
+				{
+					uint32_t index = i * 3 + j;
+					mesh->m_Tangents[index] = assimpMesh->mTangents[i].x;
+					mesh->m_Tangents[index] = assimpMesh->mTangents[i].y;
+					mesh->m_Tangents[index] = assimpMesh->mTangents[i].z;
+				}
+			}
+
+			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+			{
+				for (uint32_t j = 0; j < 3; j++)
+				{
+					uint32_t index = i * 3 + j;
+					mesh->m_Bitangents[index] = assimpMesh->mBitangents[i].x;
+					mesh->m_Bitangents[index] = assimpMesh->mBitangents[i].y;
+					mesh->m_Bitangents[index] = assimpMesh->mBitangents[i].z;
+				}
 			}
 		}
 
@@ -128,10 +155,16 @@ namespace Debut
 		mesh->m_TexCoords.resize(assimpMesh->GetNumUVChannels());
 		for (uint32_t i = 0; i < assimpMesh->GetNumUVChannels(); i++)
 		{
-			mesh->m_TexCoords[i].resize(assimpMesh->mNumVertices);
+			mesh->m_TexCoords[i].resize(assimpMesh->mNumVertices * 3);
 
 			for (uint32_t j = 0; j < assimpMesh->mNumVertices; j++)
-				mesh->m_TexCoords[i][j] = { assimpMesh->mTextureCoords[i][j].x, assimpMesh->mTextureCoords[i][j].y };
+				for (uint32_t k = 0; k < 3; k++)
+				{
+					uint32_t index = j * 3 + k;
+					mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j].x;
+					mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j].z;
+					mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j].y;
+				}
 		}
 
 		// Load indices

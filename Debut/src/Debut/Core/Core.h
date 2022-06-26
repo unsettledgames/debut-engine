@@ -19,8 +19,8 @@
 #endif
 
 #ifdef DBT_DEBUG
-	#define DBT_ASSERTS
-	#define DBT_PROFILE
+	#define DBT_ASSERTS 1
+	#define DBT_PROFILE 1
 #endif 
 
 #define BIT(x) (1 << x)

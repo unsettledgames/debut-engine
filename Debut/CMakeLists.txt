@@ -77,6 +77,12 @@ target_compile_definitions(Debut PUBLIC
 	NOMINMAX
 )
 
+target_compile_definitions(Debut PUBLIC
+	$<$<CONFIG:Debug>:DBT_DEBUG=1>
+	$<$<CONFIG:Release>:DBT_RELEASE=1>
+)
+
+
 IF(WINDOWS_BUILD)
     ADD_DEFINITIONS(-DDBT_PLATFORM_WINDOWS)
 ENDIF(WINDOWS_BUILD)

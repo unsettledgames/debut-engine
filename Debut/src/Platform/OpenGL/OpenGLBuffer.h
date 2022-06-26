@@ -21,8 +21,6 @@ namespace Debut
 
 		virtual inline void SetLayout(const BufferLayout& layout) override { m_Layout = layout; }
 		virtual inline BufferLayout& GetLayout() override { return m_Layout; }
-
-		//static VertexBuffer* Create(float* vertices, unsigned int size);
 	private:
 		BufferLayout m_Layout;
 		unsigned int m_RendererID;

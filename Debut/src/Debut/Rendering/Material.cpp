@@ -224,8 +224,12 @@ namespace Debut
 			case ShaderDataType::Float4:
 				shader->SetFloat4(uniform.second.Name, uniform.second.Data.Vec4);
 				break;
+			case ShaderDataType::Mat4:
+				shader->SetMat4(uniform.second.Name, uniform.second.Data.Mat4);
+				break;
 			case ShaderDataType::Sampler2D:
-				shader->SetInt(uniform.second.Name, AssetManager::Request<Texture2D>(uniform.second.Data.Texture)->GetID());
+				if (uniform.second.Data.Texture != 0)
+					shader->SetInt(uniform.second.Name, AssetManager::Request<Texture2D>(uniform.second.Data.Texture)->GetID());
 				break;
 			default:
 				Log.CoreError("Shader data type not supported while trying to use material {0}", m_Name);
