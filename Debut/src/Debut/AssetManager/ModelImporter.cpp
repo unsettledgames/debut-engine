@@ -8,8 +8,6 @@
 
 /*
 	TODO
-		- Integrare ModelImporter con AssetManager
-
 		- Opzioni di importazione / dati nella sezione properties
 */
 

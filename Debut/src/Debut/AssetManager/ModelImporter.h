@@ -13,19 +13,39 @@
 	-	
 
 	So, roadmap:
-		1 - Load stuff with assimp DONE
-		2 - Get the necessary attributes DONE
-		3 - Pack the attributes in a vector of MeshVertices DONE
-		4 - Load the model
-			4.1 - Submit a model to the renderer, copy the vector data so that it can be rendered
-		5 - Save the new format!
-			5.1 - Compress the vector (optional)
-			5.2 - Create the .meta file
-			5.3 - Save the metadata and the compressed vector
-		6 - Load the model from the .meta file
-			6.1 - Get the meta file and prepare the mesh
-			6.2 - Decompress the vertex data (optional)
-			6.3 - Store it in the mesh and prepare it for rendering
+DONE		1 - Load stuff with assimp DONE
+DONE		2 - Get the necessary attributes DONE
+DONE		3 - Pack the attributes in a vector of MeshVertices DONE
+DONE		4 - Load the model
+DONE			4.1 - Submit a model to the renderer, copy the vector data so that it can be rendered DONE
+DONE		5 - Save the new format!
+TODO			5.1 - Compress the vector
+DONE			5.2 - Create the .meta file	DONE
+DONISH			5.3 - Save the metadata and the compressed vector
+DONE		6 - Load the model from the .meta file
+DONE			6.1 - Get the meta file and prepare the mesh
+TODO			6.2 - Decompress the vertex data 
+DONE			6.3 - Store it in the mesh and prepare it for rendering
+
+	Let's go! Most of the stuff, at least regarding meshes is done.
+	Now, before getting to shading and textures, I'd like to improve the current system a little bit. Here's a list of problems:
+	
+	1 - Loading models takes relatively a lot. How to address this?
+		- YAML::Load is the current bottleneck. The first solution would be to compress the data before saving it, then decompressing.
+		  I could probably decompress the data straight into the buffer to set to spare a memcpy.
+	
+	2 - The rendering process can probably be sped up a bit.
+		- Avoid reallocating the index buffer every time new indices are submitted
+		- Profile the PushData function, which is what takes the most
+
+	3 - Find some way to have less files when importing a model
+		- Unity keeps the same hierarchy in the scene view
+		- Unity doesn't create files for materials or meshes????
+		- In my case I could just create a "Meshes", "Materials" and "Models" folders
+		- In Unity, you can't import a part of a model, however you can import it, put it in the scene and then delete / hide submodels
+		- A nice start could be to have all the model data into a single .model file
+
+	4 - Find out why sometimes textures don't load
 */
 
 #include <Debut/Core/Core.h>
