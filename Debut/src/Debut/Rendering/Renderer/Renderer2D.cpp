@@ -35,7 +35,7 @@ namespace Debut
 		delete[] quadIndices;
 
 		// Initialize vertex buffer
-		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
+		s_Data.QuadVertexBuffer = VertexBuffer::Create((uint32_t)0, s_Data.MaxVertices * sizeof(QuadVertex));
 		s_Data.QuadVertexArray = VertexArray::Create();
 		BufferLayout squareLayout = {
 			{ShaderDataType::Float3, "a_Position", false},
@@ -53,7 +53,7 @@ namespace Debut
 		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
 
 		s_Data.LineVertexArray = VertexArray::Create();
-		s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(LineVertex));
+		s_Data.LineVertexBuffer = VertexBuffer::Create((uint32_t)0, s_Data.MaxVertices * sizeof(LineVertex));
 		BufferLayout lineLayout = {
 			{ShaderDataType::Float3, "a_Position", false},
 			{ShaderDataType::Float4, "a_Color", false}

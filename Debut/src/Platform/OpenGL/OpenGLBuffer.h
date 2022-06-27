@@ -8,7 +8,7 @@ namespace Debut
 	class OpenGLVertexBuffer : public VertexBuffer
 	{
 	public:
-		OpenGLVertexBuffer(uint32_t size);
+		OpenGLVertexBuffer(uint32_t size, uint32_t maxBufferSize);
 		OpenGLVertexBuffer(float* vertices, unsigned int size);
 		virtual ~OpenGLVertexBuffer();
 

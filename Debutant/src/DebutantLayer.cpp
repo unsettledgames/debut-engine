@@ -61,9 +61,12 @@ namespace Debutant
         m_Model = AssetManager::Request<Model>(
             AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);*/
 
-        //ModelImporter::ImportModel("assets\\models\\cube\\untitled.obj");
+        /*ModelImporter::ImportModel("assets\\models\\cube\\untitled.obj");
         m_Model = AssetManager::Request<Model>(
-            AssetManager::Request<Model>("assets\\models\\cube\\untitled.obj.model")->GetSubmodels()[0]);
+            AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);*/
+
+        //ModelImporter::ImportModel("assets\\models\\pyramid\\source\\1.obj");
+        m_Model = AssetManager::Request<Model>(AssetManager::Request<Model>("assets\\models\\pyramid\\source\\1.obj.model")->GetSubmodels()[0]);
 
             /*
         ModelImporter::ImportModel("assets\\models\\car\\car.obj");
@@ -114,7 +117,6 @@ namespace Debutant
         Renderer3D::DrawModel(component, glm::mat4(1.0));
         Renderer3D::EndScene();
 
-        //Log.AppInfo("FPS: {0}", (1.0f / ts));
         m_FrameBuffer->Unbind();
     }
 

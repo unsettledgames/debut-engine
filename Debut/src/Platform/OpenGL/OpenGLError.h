@@ -24,7 +24,23 @@ namespace Debut
     {
         while (GLenum error = glGetError())
         {
-            Log.CoreError("[OpenGL Error] in {0}: {1} in function {2} (ERROR CODE 0x{3:x})", file, line, function, error);
+            std::string err;
+            switch (error)
+            {
+            case GL_INVALID_ENUM:
+                err = "GL_INVALID_ENUM";
+                break;
+            case GL_INVALID_OPERATION:
+                err = "GL_INVALID_OPERATION";
+                break;
+            case GL_INVALID_VALUE:
+                err = "GL_INVALID_VALUE";
+                break;
+            default:
+                err = "Un altro infame";
+                break;
+            }
+            Log.CoreError("[OpenGL Error] in {0}: {1} in function {2} (ERROR CODE 0x{3:x}, {4}", file, line, function, error, err);
             return false;
         }
 

@@ -31,7 +31,7 @@ namespace Debut
 			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 		}
 
-		DBT_CORE_ASSERT(data, "Failed to load png image");
+		Log.CoreError("Failed to load png image {0}", path);
 
 		m_Width = width;
 		m_Height = height;

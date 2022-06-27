@@ -127,7 +127,7 @@ namespace Debut
 		virtual void PushData(const void* data, uint32_t size) = 0;
 		virtual void SubmitData() = 0;
 
-		static Ref<VertexBuffer> Create(uint32_t size);
+		static Ref<VertexBuffer> Create(uint32_t size, uint32_t bufferSize);
 		static Ref<VertexBuffer> Create(float* vertices, unsigned int count);
 	private:
 	};

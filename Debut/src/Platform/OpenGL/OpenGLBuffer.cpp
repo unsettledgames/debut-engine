@@ -15,12 +15,12 @@ namespace Debut
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * count, vertices, GL_STATIC_DRAW);
 	}
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size, uint32_t maxBufferSize)
 	{
 		DBT_PROFILE_FUNCTION();
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, maxBufferSize, nullptr, GL_DYNAMIC_DRAW);
 		m_DataSize = size;
 		m_Data = new unsigned char[size];
 	}
@@ -35,6 +35,8 @@ namespace Debut
 		/*for (uint32_t i = 0; i < size / 4; i++)
 			Log.CoreInfo("Char: {0}", ((float*)data)[i]);*/
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
+		int bufferSize;
+		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
 		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, size, data));
 	}
 
