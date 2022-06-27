@@ -32,6 +32,8 @@ namespace Debut
 
 	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
 	{
+		/*for (uint32_t i = 0; i < size / 4; i++)
+			Log.CoreInfo("Char: {0}", ((float*)data)[i]);*/
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
 		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, size, data));
 	}
@@ -53,7 +55,7 @@ namespace Debut
 			m_DataSize = newDataSize;
 		}
 
-		memcpy(m_Data + m_DataIndex, (unsigned char*)data, size);
+		memcpy(m_Data + m_DataIndex, reinterpret_cast<unsigned char*>((void*)data), size);
 		m_DataIndex += size;
 	}
 
@@ -62,7 +64,7 @@ namespace Debut
 		if (m_DataIndex == 0)
 			return;
 
-		SetData(reinterpret_cast<float*>(m_Data), m_DataIndex);
+		SetData(m_Data, m_DataIndex);
 		m_DataIndex = 0;
 		// Don't? Keep the same size and avoid reallocations
 		m_DataSize /= 2;

@@ -1,6 +1,7 @@
 #include "Debut/dbtpch.h"
 #include <glad/glad.h>
 #include "OpenGLVertexArray.h"
+#include <Platform/OpenGL/OpenGLError.h>
 
 namespace Debut
 {
@@ -57,7 +58,7 @@ namespace Debut
 
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& buffer)
 	{
-		glBindVertexArray(m_RendererID);
+		GLCall(glBindVertexArray(m_RendererID));
 		buffer->Bind();
 
 		for (const auto& element : buffer->GetLayout())
@@ -71,9 +72,9 @@ namespace Debut
 				case ShaderDataType::Mat3:
 				case ShaderDataType::Mat4:
 				{
-					glEnableVertexAttribArray(m_AttributeIndex);
-					glVertexAttribPointer(m_AttributeIndex, element.GetComponentCount(), ShaderAttribTypeToOpenGL(element.Type),
-						element.Normalized ? GL_TRUE : GL_FALSE, buffer->GetLayout().GetStride(), (const void*)element.Offset);
+					GLCall(glEnableVertexAttribArray(m_AttributeIndex));
+					GLCall(glVertexAttribPointer(m_AttributeIndex, element.GetComponentCount(), ShaderAttribTypeToOpenGL(element.Type),
+						element.Normalized ? GL_TRUE : GL_FALSE, buffer->GetLayout().GetStride(), (const void*)element.Offset));
 					m_AttributeIndex++;
 				}
 				break;

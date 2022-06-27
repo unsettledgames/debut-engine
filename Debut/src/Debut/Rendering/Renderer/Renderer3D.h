@@ -29,7 +29,7 @@ namespace Debut
 
 		std::vector<Ref<Texture2D>> Textures;
 		// One batch per Material
-		std::unordered_map<UUID, RenderBatch3D> Batches;
+		std::unordered_map<UUID, RenderBatch3D*> Batches;
 
 		glm::mat4 CameraTransform;
 	};
