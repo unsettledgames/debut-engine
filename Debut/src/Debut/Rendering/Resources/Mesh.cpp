@@ -36,13 +36,9 @@ namespace Debut
 	static void LoadBuffer(std::vector<T>& buffer, YAML::Node& node, const std::string& name, uint32_t nElements)
 	{
 		YAML::Binary binaryData = node[name].as<YAML::Binary>();
-		unsigned char* uncompressedData = new unsigned char[nElements * sizeof(T)];
 		size_t decompressedSize;
 
-		BrotliDecoderDecompress(binaryData.size(), binaryData.data(), &decompressedSize, uncompressedData);
-		memcpy(buffer.data(), uncompressedData, decompressedSize);
-
-		delete[] uncompressedData;
+		BrotliDecoderDecompress(binaryData.size(), binaryData.data(), &decompressedSize, (uint8_t*)buffer.data());
 	}
 
 

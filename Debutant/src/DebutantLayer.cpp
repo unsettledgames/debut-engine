@@ -15,16 +15,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_operation.hpp>
 
-/**
-    TODO:
-        - Implement Mesh / Material / Model loading from disk: Material should've already been implemented
-        - Find out why the saved Mesh / Material / Model files don't have the right extension, check that the meta file generation is
-            correct
-        - Fix Request<Model> in AssetManager.cpp: first check if the file corresponds to a .meta file containing the data, otherwise
-            import the model. Same goes for Mesh: at this point the ModelImporter's ImportMesh method should be public
-*/
-
-
 namespace Debutant
 {
     void DebutantLayer::OnAttach()

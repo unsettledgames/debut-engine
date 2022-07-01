@@ -10,29 +10,12 @@
 
 			-> Save metadata for each mesh
 			-> Save metadata for a whole model
-	-	
-
-	So, roadmap:
-DONE		1 - Load stuff with assimp DONE
-DONE		2 - Get the necessary attributes DONE
-DONE		3 - Pack the attributes in a vector of MeshVertices DONE
-DONE		4 - Load the model
-DONE			4.1 - Submit a model to the renderer, copy the vector data so that it can be rendered DONE
-DONE		5 - Save the new format!
-TODO			5.1 - Compress the vector
-DONE			5.2 - Create the .meta file	DONE
-DONISH			5.3 - Save the metadata and the compressed vector
-DONE		6 - Load the model from the .meta file
-DONE			6.1 - Get the meta file and prepare the mesh
-TODO			6.2 - Decompress the vertex data 
-DONE			6.3 - Store it in the mesh and prepare it for rendering
 
 	Let's go! Most of the stuff, at least regarding meshes is done.
 	Now, before getting to shading and textures, I'd like to improve the current system a little bit. Here's a list of problems:
 	
 	1 - Loading models takes relatively a lot. How to address this?
-		- YAML::Load is the current bottleneck. The first solution would be to compress the data before saving it, then decompressing.
-		  I could probably decompress the data straight into the buffer to set to spare a memcpy.
+		- YAML::Load is the current bottleneck. The only solution is to get rid of YAML and have my own data format.
 	
 	2 - The rendering process can probably be sped up a bit.
 		- Avoid reallocating the index buffer every time new indices are submitted
