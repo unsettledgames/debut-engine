@@ -41,6 +41,13 @@ DONE			6.3 - Store it in the mesh and prepare it for rendering
 	3 - Find some way to have less files when importing a model
 		- Unity keeps the same hierarchy in the scene view
 		- Unity doesn't create files for materials or meshes????
+			- Unity does create intermediate files. It saves them in the Library/Artifacts folder. It might be better to postpone
+			  optimizing the amount of files created until I implement Projects.
+			- This also explains why loading textures in Unity is easier! They get compressed so that when using them as icons, the 
+			  loading times are lower.
+			- In that way, I can also get rid of YAML and just use binary files
+			- In addition, I don't need to have .meta files for Materials and Meshes: in fact, they just contain the ID of the resource,
+			  which is unnecessary if I save the resource file using its UUID as the name
 		- In my case I could just create a "Meshes", "Materials" and "Models" folders
 		- In Unity, you can't import a part of a model, however you can import it, put it in the scene and then delete / hide submodels
 		- A nice start could be to have all the model data into a single .model file

@@ -36,6 +36,7 @@ set(ASSIMP_NO_EXPORT ON CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_TESTS OFF CACHE INTERNAL "" FORCE)
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE INTERNAL "" FORCE)
 configure_file("${PROJECT_SOURCE_DIR}/vendor/assimp/include/assimp/config.h.in" "${PROJECT_SOURCE_DIR}/vendor/assimp/include/assimp/config.h")
+configure_file("${PROJECT_SOURCE_DIR}/vendor/assimp/contrib/zlib/zconf.h.cmakein" "vendor/assimp/contrib/zlib/zconf.h")
 
 add_library(Debut STATIC ${Debut_SRC} ${Debut_EXT})
 
@@ -66,6 +67,7 @@ target_link_libraries(Debut
 	PUBLIC yaml-cpp
 	PUBLIC Dwmapi.dll
 	PUBLIC assimp
+
 )
 
 # Define variables
@@ -100,6 +102,7 @@ target_include_directories(Debut
 	PUBLIC vendor/glm
 	PUBLIC vendor/entt/include
 	PUBLIC vendor/assimp/include
+	PRIVATE ${PROJECT_SOURCE_DIR}/vendor/assimp/contrib/zlib
 )
 
 # Keep the project structure

@@ -1,4 +1,5 @@
 #include <Debut/dbtpch.h>
+#include <../assimp/contrib/zlib/zlib.h>
 #include <Debut/Rendering/Resources/Mesh.h>
 
 #include <yaml-cpp/yaml.h>

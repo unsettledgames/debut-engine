@@ -25,3 +25,6 @@
 [submodule "Debut/vendor/assimp"]
 	path = Debut/vendor/assimp
 	url = https://github.com/assimp/assimp
+[submodule "Debut/vendor/zlib"]
+	path = Debut/vendor/zlib
+	url = https://github.com/madler/zlib

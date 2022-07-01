@@ -3,6 +3,10 @@
 #include <memory>
 
 #ifdef DBT_PLATFORM_WINDOWS
+	#include <fcntl.h>
+	#include <io.h>
+	#define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
+
 	#ifdef DBT_DYNAMIC_LINK
 		// Export names if you're building the dll
 		#ifdef DBT_BUILD_DLL
@@ -15,6 +19,7 @@
 		#define DBT_API
 	#endif
 #else
+	#define SET_BINARY_MODE(file)
 	#error Debut only supports Windows atm
 #endif
 
