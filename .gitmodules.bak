@@ -1,9 +1,6 @@
 [submodule "Debut/vendor/glfw"]
 	path = Debut/vendor/glfw
 	url = https://github.com/TheCherno/glfw/
-[submodule "Debut/vendor/imgui"]
-	path = Debut/vendor/imgui
-	url = https://github.com/TheCherno/imgui
 [submodule "Debut/vendor/spdlog"]
 	path = Debut/vendor/spdlog
 	url = https://github.com/gabime/spdlog
@@ -19,3 +16,15 @@
 [submodule "Debut/vendor/imguizmo"]
 	path = Debut/vendor/imguizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo
+[submodule "Debut/vendor/imgui"]
+	path = Debut/vendor/imgui
+	url = https://github.com/ocornut/imgui
+[submodule "Debut/vendor/box2d"]
+	path = Debut/vendor/box2d
+	url = https://github.com/erincatto/box2d
+[submodule "Debut/vendor/assimp"]
+	path = Debut/vendor/assimp
+	url = https://github.com/assimp/assimp
+[submodule "Debut/vendor/zlib"]
+	path = Debut/vendor/zlib
+	url = https://github.com/madler/zlib
