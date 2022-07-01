@@ -1,6 +1,8 @@
 #include <Debut/dbtpch.h>
-#include <../assimp/contrib/zlib/zlib.h>
 #include <Debut/Rendering/Resources/Mesh.h>
+
+#include <brotli/encode.h>
+#include <brotli/decode.h>
 
 #include <yaml-cpp/yaml.h>
 #include <Debut/Utils/YamlUtils.h>
@@ -15,17 +17,32 @@ namespace Debut
 	template<typename T>
 	static void EmitBuffer(std::vector<T>& buffer, YAML::Emitter& emitter)
 	{
-		const unsigned char* byteArrayBegin = reinterpret_cast<unsigned char*>(buffer.data());
-		uint32_t size = buffer.size() * sizeof(T);
+		size_t uncompressedSize = sizeof(T) * buffer.size();
+		size_t compressedSize;
 
-		emitter << YAML::Binary(byteArrayBegin, size);
+		const unsigned char* byteArrayBegin = reinterpret_cast<unsigned char*>(buffer.data());
+		unsigned char* compressedByteArray = new unsigned char[uncompressedSize];
+		
+
+		BrotliEncoderCompress(BROTLI_MAX_QUALITY, BROTLI_DEFAULT_WINDOW, BrotliEncoderMode::BROTLI_MODE_GENERIC,
+			buffer.size() * sizeof(T), byteArrayBegin, &compressedSize, compressedByteArray);
+
+		emitter << YAML::Binary(compressedByteArray, compressedSize);
+
+		delete[] compressedByteArray;
 	}
 
 	template<typename T>
 	static void LoadBuffer(std::vector<T>& buffer, YAML::Node& node, const std::string& name, uint32_t nElements)
 	{
 		YAML::Binary binaryData = node[name].as<YAML::Binary>();
-		memcpy(buffer.data(), binaryData.data(), binaryData.size());
+		unsigned char* uncompressedData = new unsigned char[nElements * sizeof(T)];
+		size_t decompressedSize;
+
+		BrotliDecoderDecompress(binaryData.size(), binaryData.data(), &decompressedSize, uncompressedData);
+		memcpy(buffer.data(), uncompressedData, decompressedSize);
+
+		delete[] uncompressedData;
 	}
 
 

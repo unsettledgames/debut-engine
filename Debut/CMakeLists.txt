@@ -38,6 +38,9 @@ set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE INTERNAL "" FORCE)
 configure_file("${PROJECT_SOURCE_DIR}/vendor/assimp/include/assimp/config.h.in" "${PROJECT_SOURCE_DIR}/vendor/assimp/include/assimp/config.h")
 configure_file("${PROJECT_SOURCE_DIR}/vendor/assimp/contrib/zlib/zconf.h.cmakein" "vendor/assimp/contrib/zlib/zconf.h")
 
+# Brotli
+set(BROTLI_EMSCRIPTEN OFF CACHE INTERNAL "" FORCE)
+
 add_library(Debut STATIC ${Debut_SRC} ${Debut_EXT})
 
 set_property(TARGET Debut PROPERTY MSVC_RUNTIME_LIBRARY MultiThreaded)
@@ -53,6 +56,7 @@ add_subdirectory(vendor/imguizmo)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/yaml-cpp)
 add_subdirectory(vendor/assimp)
+add_subdirectory(vendor/brotli)
 
 
 # Link dependencies 
@@ -67,7 +71,8 @@ target_link_libraries(Debut
 	PUBLIC yaml-cpp
 	PUBLIC Dwmapi.dll
 	PUBLIC assimp
-
+	PRIVATE brotlienc-static
+	PRIVATE brotlidec-static
 )
 
 # Define variables
@@ -102,7 +107,7 @@ target_include_directories(Debut
 	PUBLIC vendor/glm
 	PUBLIC vendor/entt/include
 	PUBLIC vendor/assimp/include
-	PRIVATE ${PROJECT_SOURCE_DIR}/vendor/assimp/contrib/zlib
+	PRIVATE vendor/brotli/c/include
 )
 
 # Keep the project structure

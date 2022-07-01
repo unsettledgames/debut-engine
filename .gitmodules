@@ -25,3 +25,6 @@
 [submodule "Debut/vendor/assimp"]
 	path = Debut/vendor/assimp
 	url = https://github.com/assimp/assimp
+[submodule "Debut/vendor/brotli"]
+	path = Debut/vendor/brotli
+	url = https://github.com/google/brotli
