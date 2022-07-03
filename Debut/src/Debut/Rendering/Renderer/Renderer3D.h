@@ -7,6 +7,12 @@
 #include <Debut/Rendering/Texture.h>
 #include <Debut/Rendering/Camera.h>
 
+/*
+	OPTIMIZATIONS:
+	- Instead of switching shaders for each Material, prefer rendering things that use the same shader: in that way you can avoid
+		binding and unbinding shaders and just change the uniforms instead.
+*/
+
 namespace Debut
 {
 	struct RenderBatch3D

@@ -7,9 +7,12 @@
 
 namespace Debut
 {
-	Ref<Texture2D> Texture2D::Create(const std::string& path)
+	Ref<Texture2D> Texture2D::Create(const std::string& path, const std::string& metaFilePath)
 	{
-		std::ifstream metaFile(path + ".meta");
+		std::string correctMeta = metaFilePath;
+		if (correctMeta == "")
+			correctMeta = path + ".meta";
+		std::ifstream metaFile(metaFilePath);
 		std::stringstream strStream;
 
 		Texture2DConfig texParams = { Texture2DParameter::FILTERING_LINEAR, Texture2DParameter::WRAP_CLAMP };

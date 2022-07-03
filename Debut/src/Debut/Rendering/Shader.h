@@ -82,7 +82,7 @@ namespace Debut
 		UUID GetID() { return m_ID; }
 
 		static Ref<Shader> Create(const std::string& name, const std::string& vertSrc, const std::string& fragSrc);
-		static Ref<Shader> Create(const std::string& filePath);
+		static Ref<Shader> Create(const std::string& filePath, const std::string& metaFile = "");
 	
 	protected:
 		void CreateOrLoadMeta(const std::string& path);

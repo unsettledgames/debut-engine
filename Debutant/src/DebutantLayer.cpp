@@ -40,7 +40,7 @@ namespace Debutant
         m_IconPlay = Texture2D::Create("assets\\icons\\play.png");
         m_IconStop = Texture2D::Create("assets\\icons\\stop.png");
 
-        AssetManager::Init();
+        AssetManager::Init(".");
 
         EditorCache::Textures().Put("assets\\icons\\play.png", m_IconPlay);
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
@@ -55,7 +55,7 @@ namespace Debutant
         m_Model = AssetManager::Request<Model>(
             AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);*/
 
-        //ModelImporter::ImportModel("assets\\models\\pyramid\\source\\1.obj");
+        ModelImporter::ImportModel("assets\\models\\pyramid\\source\\1.obj");
         m_Model = AssetManager::Request<Model>(AssetManager::Request<Model>("assets\\models\\pyramid\\source\\1.obj.model")->GetSubmodels()[0]);
 
             /*

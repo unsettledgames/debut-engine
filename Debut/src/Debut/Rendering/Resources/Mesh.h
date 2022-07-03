@@ -13,7 +13,7 @@ namespace Debut
 		friend class ModelImporter;
 	public:
 		Mesh();
-		Mesh(const std::string& path);
+		Mesh(const std::string& path, const std::string& metaPath);
 
 		void SaveSettings();
 
@@ -33,7 +33,7 @@ namespace Debut
 		void SetPath(const std::string& path) { m_Path = path; }
 
 	private:
-		void Load(YAML::Node yaml);
+		void Load(std::ifstream& inFile);
 		
 	private:
 		UUID m_ID;
@@ -41,6 +41,7 @@ namespace Debut
 
 		std::string m_Name;
 		std::string m_Path;
+		std::string m_MetaPath;
 
 		std::vector<float> m_Vertices;
 		std::vector<float> m_Normals;

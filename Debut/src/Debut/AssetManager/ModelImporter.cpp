@@ -15,31 +15,48 @@ namespace Debut
 {
 	Ref<Model> ModelImporter::ImportModel(const std::string& path)
 	{
-		// TODO: have a look at importer settings
-		Assimp::Importer importer;
+		std::ifstream meta(path + ".model.meta");
 
-		const aiScene* scene = importer.ReadFile(path, aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate |
-												aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-		std::string folder = path.substr(0, path.find_last_of('\\'));
-		std::string fileName;
-
-		if (scene != nullptr)
+		if (!meta.good())
 		{
-			// Import the model
-			aiNode* rootNode = scene->mRootNode;
-			Ref<Model> ret = ImportNodes(rootNode, scene, folder);
+			Assimp::Importer importer;
 
-			return ret;
+			const aiScene* scene = importer.ReadFile(path, aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate |
+				aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+			std::string folder = AssetManager::s_IntAssetsDir;
+			std::string fileName;
+
+			if (scene != nullptr)
+			{
+				// Import the model
+				aiNode* rootNode = scene->mRootNode;
+				Ref<Model> ret = ImportNodes(rootNode, scene, path.substr(0, path.find_last_of("\\")));
+
+				return ret;
+			}
+			else
+			{
+				Log.CoreError("Error while importing model {0}: {1}", path, importer.GetErrorString());
+				return nullptr;
+			}
 		}
 		else
 		{
-			Log.CoreError("Error while importing model {0}: {1}", path, importer.GetErrorString());
-			return nullptr;
+			// Load the already present model
 		}
+
+		meta.close();
+		return nullptr;
 	}
 
 	Ref<Model> ModelImporter::ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder)
 	{
+		// Save the root model in the folder of the asset, save the generated assets in Lib
+		std::string submodelsFolder = saveFolder;
+		std::string assetsFolder = AssetManager::s_IntAssetsDir;
+		if (parent->mParent != nullptr)
+			submodelsFolder = AssetManager::s_IntAssetsDir;
+
 		std::vector<UUID> models;
 		std::vector<UUID> meshes;
 		std::vector<UUID> materials;
@@ -51,7 +68,7 @@ namespace Debut
 		// Load dependencies
 		for (int i = 0; i < parent->mNumChildren; i++)
 		{
-			Ref<Model> currModel = ImportNodes(parent->mChildren[i], scene, saveFolder);
+			Ref<Model> currModel = ImportNodes(parent->mChildren[i], scene, submodelsFolder);
 			models[i] = currModel->GetID();
 		}
 
@@ -60,19 +77,19 @@ namespace Debut
 		{
 			// Import and submit the mesh
 			aiMesh* assimpMesh = scene->mMeshes[parent->mMeshes[i]];
-			Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, saveFolder);
+			Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, assetsFolder);
 			AssetManager::Submit<Mesh>(mesh);
 			meshes[i] = mesh->GetID();
 
 			// Import and submit the material
 			aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
-			Ref<Material> material = ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, saveFolder);
+			Ref<Material> material = ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, assetsFolder);
 			AssetManager::Submit<Material>(material);
 			materials[i] = material->GetID();
 		}
 
 		Ref<Model> ret = CreateRef<Model>(meshes, materials, models);
-		ret->SetPath(saveFolder + "\\" + parent->mName.C_Str() + ".model");
+		ret->SetPath(submodelsFolder + "\\" + parent->mName.C_Str() + ".model");
 		ret->SaveSettings();
 		AssetManager::Submit<Model>(ret);
 		
@@ -81,14 +98,7 @@ namespace Debut
 
 	Ref<Mesh> ModelImporter::ImportMesh(aiMesh* assimpMesh, const std::string& name, const std::string& saveFolder)
 	{
-		// Check if the mesh has already been imported: if so, just return the already present version
-		std::string meshPath;
-		if (assimpMesh->mName.C_Str() == "")
-			meshPath = saveFolder + "\\" + name + ".mesh";
-		else
-			meshPath = saveFolder + "\\" + assimpMesh->mName.C_Str() + ".mesh";
-
-		Ref<Mesh> mesh = AssetManager::Request<Mesh>(meshPath);
+		Ref<Mesh> mesh = CreateRef<Mesh>();
 		if (mesh->IsValid())
 			return mesh;
 
@@ -168,7 +178,9 @@ namespace Debut
 		}
 
 		// Save the mesh on disk + meta file
-		mesh->SetPath(meshPath);
+		std::stringstream ss;
+		ss << saveFolder << "\\" << mesh->GetID();
+		mesh->SetPath(ss.str());
 		mesh->SaveSettings();
 
 		return mesh;
@@ -176,19 +188,12 @@ namespace Debut
 
 	Ref<Material> ModelImporter::ImportMaterial(aiMaterial* assimpMaterial, const std::string& name, const std::string& saveFolder)
 	{
-		// Check if the material has already been imported: if so, just return the already present version
-		std::string materialPath;
-		if (assimpMaterial->GetName().C_Str() == "")
-			materialPath = saveFolder + "\\" + name + ".mat";
-		else
-			materialPath = saveFolder + "\\" + assimpMaterial->GetName().C_Str() + ".mat";
-
-		Ref<Material> material = AssetManager::Request<Material>(materialPath);
+		Ref<Material> material = CreateRef<Material>();
 		if (material->IsValid())
 			return material;
 
 		// Otherwise import the material as usual
-		material->SetShader(AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl"));
+		material->SetShader(AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl", "assets\\shaders\\default-3d.glsl.meta"));
 		material->SetName(assimpMaterial->GetName().C_Str());
 
 		// Store / add properties
@@ -207,25 +212,31 @@ namespace Debut
 		{
 			aiString path;
 			assimpMaterial->Get(AI_MATKEY_TEXTURE_DIFFUSE(0), path);
-			material->SetTexture("u_DiffuseTexture", AssetManager::Request<Texture2D>(path.C_Str()));
+			material->SetTexture("u_DiffuseTexture", AssetManager::Request<Texture2D>(path.C_Str(), std::string(path.C_Str()) + ".meta"));
 		}
 
 		if (assimpMaterial->GetTextureCount(aiTextureType_NORMALS))
 		{
 			aiString path;
 			assimpMaterial->Get(AI_MATKEY_TEXTURE_NORMALS(0), path);
-			material->SetTexture("u_NormalMap", AssetManager::Request<Texture2D>(path.C_Str()));
+			material->SetTexture("u_NormalMap", AssetManager::Request<Texture2D>(path.C_Str(), std::string(path.C_Str()) + ".meta"));
 		}
 
 		if (assimpMaterial->GetTextureCount(aiTextureType_DISPLACEMENT))
 		{
 			aiString path;
 			assimpMaterial->Get(AI_MATKEY_TEXTURE_DISPLACEMENT(0), path);
-			material->SetTexture("u_DisplacementMap", AssetManager::Request<Texture2D>(path.C_Str()));
+			material->SetTexture("u_DisplacementMap", AssetManager::Request<Texture2D>(path.C_Str(), std::string(path.C_Str()) + ".meta"));
 		}
 
 		// Save the material on disk + meta file
-		material->SetPath(materialPath);
+		// Save the mesh on disk + meta file
+		std::stringstream ss;
+		ss << saveFolder << "\\" << material->GetID();
+		material->SetPath(ss.str());
+		ss.str("");
+		ss << AssetManager::s_ProjectDir << "\\Lib\\Metadata\\" << material->GetID() << ".meta";
+		material->SetMetaPath(ss.str());
 		material->SaveSettings();
 
 		return material;

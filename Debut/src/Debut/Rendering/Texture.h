@@ -71,7 +71,7 @@ namespace Debut
 		UUID m_ID;
 
 	public:
-		static Ref<Texture2D> Create(const std::string& path);
+		static Ref<Texture2D> Create(const std::string& path, const std::string& metaFile = "");
 		static Ref<Texture2D> Create(uint32_t width, uint32_t height);
 		static void SaveDefaultConfig(const std::string& path);
 		static void SaveSettings(const Texture2DConfig& config, const std::string& path);

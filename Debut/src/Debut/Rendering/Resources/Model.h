@@ -9,7 +9,7 @@ namespace Debut
 	{
 	public:
 		Model() {}
-		Model(const std::string& model);
+		Model(const std::string& model, const std::string& metaFile = "");
 		Model(std::vector<UUID> meshes, std::vector<UUID> materials, std::vector<UUID> subModels) :
 			m_Meshes(meshes), m_Materials(materials), m_SubModels(subModels) {}
 

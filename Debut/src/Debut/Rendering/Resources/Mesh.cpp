@@ -1,5 +1,6 @@
 #include <Debut/dbtpch.h>
 #include <Debut/Rendering/Resources/Mesh.h>
+#include <Debut/AssetManager/AssetManager.h>
 
 #include <brotli/encode.h>
 #include <brotli/decode.h>
@@ -11,11 +12,11 @@ namespace Debut
 {
 	Mesh::Mesh()
 	{
-
+		m_Valid = false;
 	}
 
 	template<typename T>
-	static void EmitBuffer(std::vector<T>& buffer, YAML::Emitter& emitter)
+	static void EmitBuffer(std::vector<T>& buffer, std::ofstream& file)
 	{
 		size_t uncompressedSize = sizeof(T) * buffer.size();
 		size_t compressedSize;
@@ -27,27 +28,35 @@ namespace Debut
 		BrotliEncoderCompress(BROTLI_MAX_QUALITY, BROTLI_DEFAULT_WINDOW, BrotliEncoderMode::BROTLI_MODE_GENERIC,
 			buffer.size() * sizeof(T), byteArrayBegin, &compressedSize, compressedByteArray);
 
-		emitter << YAML::Binary(compressedByteArray, compressedSize);
+		file << compressedSize;
+		file.write((const char*)compressedByteArray, compressedSize);
 
 		delete[] compressedByteArray;
 	}
 
 	template<typename T>
-	static void LoadBuffer(std::vector<T>& buffer, YAML::Node& node, const std::string& name, uint32_t nElements)
+	static void LoadBuffer(std::vector<T>& buffer, std::ifstream& file, uint32_t nElements)
 	{
-		YAML::Binary binaryData = node[name].as<YAML::Binary>();
+		std::string string;
+		std::string binaryData;
+
+		size_t compressedSize;
 		size_t decompressedSize;
 
-		BrotliDecoderDecompress(binaryData.size(), binaryData.data(), &decompressedSize, (uint8_t*)buffer.data());
+		file >> string;
+		file >> compressedSize;
+		file.read((char*)buffer.data(), compressedSize);
+		file >> binaryData;
+
+		BrotliDecoderDecompress(compressedSize, (const uint8_t*)buffer.data(), &decompressedSize, (uint8_t*)buffer.data());
 	}
 
 
-	Mesh::Mesh(const std::string& path)
+	Mesh::Mesh(const std::string& path, const std::string& metaPath) : m_Path(path), m_MetaPath(metaPath)
 	{
 		DBT_PROFILE_FUNCTION("Mesh::Constructor");
-		std::ifstream meta(path + ".meta");
-		m_Path = path;
-
+		
+		std::ifstream meta(m_MetaPath);
 		// If the meta file exists, load its info
 		if (meta.good())
 		{
@@ -68,28 +77,8 @@ namespace Debut
 			for (uint32_t i = 0; i < m_TexCoords.size(); i++)
 				m_TexCoords[i].resize(nPoints);
 
-
-			std::ifstream meshFile;
-			// Load rest of the model
-			{
-				DBT_PROFILE_SCOPE("Mesh::OpenMeshFile");
-				meshFile.open(path);
-			}
-			
-			{
-				DBT_PROFILE_SCOPE("Mesh::ReadFileBuffer");
-				ss.str("");
-				ss << meshFile.rdbuf();
-			}
-
-			YAML::Node node;
-			{
-				DBT_PROFILE_SCOPE("Mesh::YamlLoad2");
-				node = YAML::Load(ss.str());
-			}
-			
-			
-			Load(node);
+			std::ifstream meshFile(m_Path);
+			Load(meshFile);
 
 			m_Valid = true;
 		}
@@ -97,7 +86,7 @@ namespace Debut
 		else
 		{
 			meta.close();
-			std::ofstream newMeta(path + ".meta");
+			std::ofstream newMeta(m_MetaPath);
 			YAML::Emitter emitter;
 			
 			emitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
@@ -111,25 +100,27 @@ namespace Debut
 	void Mesh::SaveSettings()
 	{
 		std::ofstream outFile(m_Path);
-		YAML::Emitter emitter;
+		std::stringstream ss;
+		ss << AssetManager::s_ProjectDir + "\\Lib\\Metadata\\" << m_ID << ".meta";
+		std::string metaPath = ss.str();
 
-		emitter << YAML::BeginDoc << YAML::BeginMap;
-		emitter << YAML::Key << "Name" << YAML::Value << m_Name;
-		emitter << YAML::Key << "Vertices" << YAML::Value; EmitBuffer<float>(m_Vertices, emitter);
-		emitter << YAML::Key << "Normals" << YAML::Value; EmitBuffer<float>(m_Normals, emitter);
-		emitter << YAML::Key << "Tangents" << YAML::Value; EmitBuffer<float>(m_Tangents, emitter);
-		emitter << YAML::Key << "Bitangents" << YAML::Value; EmitBuffer<float>(m_Bitangents, emitter);
-		emitter << YAML::Key << "Indices" << YAML::Value; EmitBuffer<int>(m_Indices, emitter);
+		outFile << "Name" << m_Name;
+		outFile << "\nVertices" << "\n"; EmitBuffer<float>(m_Vertices, outFile);
+		outFile << "\nNormals" << "\n"; EmitBuffer<float>(m_Normals, outFile);
+		outFile << "\nTangents" << "\n"; EmitBuffer<float>(m_Tangents, outFile);
+		outFile << "\nBitangents" << "\n"; EmitBuffer<float>(m_Bitangents, outFile);
+		outFile << "\nIndices" << "\n"; EmitBuffer<int>(m_Indices, outFile);
 		
-		emitter << YAML::Key << "TexCoords" << YAML::Value << YAML::BeginSeq;
+		outFile << "\nTexCoords" << "\n";
+
 		for (uint32_t i = 0; i < m_TexCoords.size(); i++)
-			EmitBuffer<float>(m_TexCoords[i], emitter);
+		{
+			outFile << "\nTexCoords" + i << "\n";
+			EmitBuffer<float>(m_TexCoords[i], outFile);
+		}
 
-		emitter << YAML::EndSeq << YAML::EndMap << YAML::EndDoc;
-		outFile << emitter.c_str();
 		outFile.close();
-
-		outFile.open(m_Path + ".meta");
+		outFile.open(metaPath);
 		YAML::Emitter metaEmitter;
 
 		metaEmitter << YAML::BeginDoc << YAML::BeginMap;
@@ -141,31 +132,23 @@ namespace Debut
 		outFile << metaEmitter.c_str();
 	}
 
-	void Mesh::Load(YAML::Node yaml)
+	void Mesh::Load(std::ifstream& inFile)
 	{
 		DBT_PROFILE_FUNCTION("Mesh:Load");
 		{
 			DBT_PROFILE_SCOPE("Mesh:LoadVertices");
 			
-			LoadBuffer<float>(m_Vertices, yaml, "Vertices", m_Vertices.size());
-			LoadBuffer<float>(m_Normals, yaml, "Normals", m_Normals.size());
-			LoadBuffer<float>(m_Tangents, yaml, "Tangents", m_Tangents.size());
-			LoadBuffer<float>(m_Bitangents, yaml, "Bitangents", m_Bitangents.size());
-		}
-		
-		{
-			DBT_PROFILE_SCOPE("Mesh:LoadIndices");
-			LoadBuffer<int>(m_Indices, yaml, "Indices", m_Indices.size());
-		}
+			std::string dummy;
+			inFile >> dummy;
+			
+			LoadBuffer<float>(m_Vertices, inFile, m_Vertices.size());
+			LoadBuffer<float>(m_Normals, inFile, m_Normals.size());
+			LoadBuffer<float>(m_Tangents, inFile, m_Tangents.size());
+			LoadBuffer<float>(m_Bitangents, inFile, m_Bitangents.size());
+			LoadBuffer<int>(m_Indices, inFile, m_Indices.size());
 
-		{
-			DBT_PROFILE_SCOPE("Mesh:LoadTexCoords");
-			YAML::Binary binaryData;
 			for (uint32_t i = 0; i < m_TexCoords.size(); i++)
-			{
-				binaryData = yaml["TexCoords"][i].as<YAML::Binary>();
-				memcpy(m_TexCoords[i].data(), binaryData.data(), binaryData.size());
-			}
+				LoadBuffer<float>(m_TexCoords[i], inFile, m_TexCoords[i].size());
 		}
 	}
 }

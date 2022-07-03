@@ -4,10 +4,14 @@
 
 namespace Debut
 {
-	Model::Model(const std::string& path)
+	Model::Model(const std::string& path, const std::string& metaFile)
 	{
+		std::string correctMeta = metaFile;
+		if (correctMeta == "")
+			correctMeta = path + ".meta";
+
 		// Check meta etc etc
-		std::ifstream meta(path + ".meta");
+		std::ifstream meta(correctMeta);
 		if (meta.good())
 		{
 			std::stringstream ss;

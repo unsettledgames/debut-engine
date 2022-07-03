@@ -20,7 +20,7 @@ namespace Debut
 	{
 	public:
 		Material() = default;
-		Material(const std::string& path);
+		Material(const std::string& path, const std::string& metaPath);
 
 		void Use(const glm::mat4& cameraTransform);
 		void Unuse();
@@ -28,6 +28,7 @@ namespace Debut
 		void SetShader(Ref<Shader> shader);
 		void SetName(const std::string& name) { m_Name = name; }
 		void SetPath(const std::string& path) { m_Path = path; }
+		void SetMetaPath(const std::string& metaPath) { m_MetaPath = metaPath; }
 
 		void SetConfig(const MaterialConfig& config);
 		void SaveSettings();
@@ -60,6 +61,7 @@ namespace Debut
 		std::unordered_map<std::string, ShaderUniform> m_Uniforms;
 
 		std::string m_Path;
+		std::string m_MetaPath;
 		std::string m_Name;
 	};
 }

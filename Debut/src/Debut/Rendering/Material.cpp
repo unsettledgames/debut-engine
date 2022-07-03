@@ -33,7 +33,7 @@
 
 namespace Debut
 {
-	Material::Material(const std::string& path) : m_Path(path)
+	Material::Material(const std::string& path, const std::string& metaPath) : m_Path(path), m_MetaPath(metaPath)
 	{
 		// Load material if it exists, otherwise create a .meta file
 		std::ifstream matFile(path);
@@ -42,10 +42,13 @@ namespace Debut
 		if (matFile.good())
 		{
 			ss << matFile.rdbuf();
+			Log.CoreInfo("Material contents:");
+			Log.CoreInfo("{0}", ss.str());
+
 			YAML::Node inYaml = YAML::Load(ss.str());
 
 			// Load the ID from the meta file
-			std::ifstream meta(path + ".meta");
+			std::ifstream meta(metaPath);
 			ss.str("");
 			ss << meta.rdbuf();
 			YAML::Node metaNode = YAML::Load(ss.str());
@@ -115,7 +118,7 @@ namespace Debut
 		{
 			// Create the .meta file
 			matFile.close();
-			std::ofstream metaFile(path + ".meta");
+			std::ofstream metaFile(m_MetaPath);
 
 			YAML::Emitter metaEmitter;
 			metaEmitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
@@ -161,7 +164,7 @@ namespace Debut
 
 		// Update / create .meta file too
 		YAML::Emitter metaEmitter;
-		std::ofstream out(m_Path + ".meta");
+		std::ofstream out(m_MetaPath);
 
 		metaEmitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
 		out << metaEmitter.c_str();
