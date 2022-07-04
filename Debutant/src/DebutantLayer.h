@@ -82,5 +82,6 @@ namespace Debutant
 
 		// DEBUG ONLY
 		Ref<Model> m_Model;
+		Ref<Model> m_Model2;
 	};
 }

@@ -47,9 +47,9 @@ namespace Debutant
 
         AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
         
-        /*ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
-        m_Model = AssetManager::Request<Model>(
-            AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);*/
+        ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
+        m_Model2 = AssetManager::Request<Model>(
+            AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);
 
         /*ModelImporter::ImportModel("assets\\models\\cube\\untitled.obj");
         m_Model = AssetManager::Request<Model>(
@@ -103,8 +103,12 @@ namespace Debutant
 
         component.Mesh = m_Model->GetMeshes()[0];
         component.Material = m_Model->GetMaterials()[0];
-
         Renderer3D::DrawModel(component, glm::mat4(1.0));
+
+        component.Mesh = m_Model2->GetMeshes()[0];
+        component.Material = m_Model2->GetMaterials()[0];
+        //Renderer3D::DrawModel(component, glm::translate(glm::mat4(1.0), glm::vec3(50.0, 0, 0)));
+
         Renderer3D::EndScene();
 
         m_FrameBuffer->Unbind();

@@ -8,9 +8,21 @@
 #include <Debut/Rendering/Camera.h>
 
 /*
-	OPTIMIZATIONS:
-	- Instead of switching shaders for each Material, prefer rendering things that use the same shader: in that way you can avoid
-		binding and unbinding shaders and just change the uniforms instead.
+	Ok, so, real talk. Batch rendering in 3D isn't that useful for general purpose.
+		- One draw call per model IS reasonable, even if the geometry is different but the material is the same
+		- Batch rendering in 3D is useful for instanced rendering. I've basically implemented half instanced rendering
+
+		- Sooo, right now I want to focus on rendering as many models I want. So I'll have to get rid of the current "batch rendering"
+		  system. Not getting rid of it entirely, just stop using them for general purpose: in the future I'd like to add some kind
+		  of "instantiate" button for a model, so that instanced rendering can work for those models.
+
+		- The shader binding optimization should still be applied though: when switching model, don't unbind the shader and save the
+		  UUID of the last shader that was being used. Then, instead of rebinding it, just submit new uniforms before rendering.
+
+	Renderer3D:
+		- Have a VertexArray that is reserved to drawing one model at a time
+		- When DrawModel is called, we check whether or not the model is static: if it is, we batch render it, otherwise we just draw
+		  it normally.
 */
 
 namespace Debut
