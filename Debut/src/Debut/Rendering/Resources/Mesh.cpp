@@ -45,8 +45,7 @@ namespace Debut
 
 		file >> string;
 		file >> compressedSize;
-		file.read((char*)buffer.data(), compressedSize);
-		file >> binaryData;
+		file.read(reinterpret_cast<char*>(buffer.data()), compressedSize);
 
 		BrotliDecoderDecompress(compressedSize, (const uint8_t*)buffer.data(), &decompressedSize, (uint8_t*)buffer.data());
 	}
@@ -77,7 +76,7 @@ namespace Debut
 			for (uint32_t i = 0; i < m_TexCoords.size(); i++)
 				m_TexCoords[i].resize(nPoints);
 
-			std::ifstream meshFile(m_Path);
+			std::ifstream meshFile(m_Path, std::ios::in | std::ios::binary);
 			Load(meshFile);
 
 			m_Valid = true;
@@ -99,7 +98,7 @@ namespace Debut
 
 	void Mesh::SaveSettings()
 	{
-		std::ofstream outFile(m_Path);
+		std::ofstream outFile(m_Path, std::ios::out | std::ios::binary);
 		std::stringstream ss;
 		ss << AssetManager::s_ProjectDir + "\\Lib\\Metadata\\" << m_ID << ".meta";
 		std::string metaPath = ss.str();

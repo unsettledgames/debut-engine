@@ -42,9 +42,6 @@ namespace Debut
 		if (matFile.good())
 		{
 			ss << matFile.rdbuf();
-			Log.CoreInfo("Material contents:");
-			Log.CoreInfo("{0}", ss.str());
-
 			YAML::Node inYaml = YAML::Load(ss.str());
 
 			// Load the ID from the meta file
