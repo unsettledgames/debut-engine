@@ -38,7 +38,6 @@ namespace Debut
 	static void LoadBuffer(std::vector<T>& buffer, std::ifstream& file, uint32_t nElements)
 	{
 		std::string string;
-		std::string binaryData;
 
 		size_t compressedSize;
 		size_t decompressedSize;

@@ -13,8 +13,6 @@
 
 namespace Debut
 {
-	// TODO: maintain a file containing the UUID -> path associations for assets
-	// After this one is done I could probably add some automatic asset import!
 	class AssetManager
 	{
 	public:

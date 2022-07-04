@@ -441,9 +441,12 @@ namespace Debutant
                 if (hoveredID < 0)
                     m_HoveredEntity = {};
                 else
+                {
                     m_HoveredEntity = { (entt::entity)hoveredID, m_ActiveScene.get() };
 
-                m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
+                    if (m_HoveredEntity.IsValid())
+                        m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
+                }
             }
         }
 
