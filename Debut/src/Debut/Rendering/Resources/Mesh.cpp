@@ -134,8 +134,6 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION("Mesh:Load");
 		{
-			DBT_PROFILE_SCOPE("Mesh:LoadVertices");
-			
 			std::string dummy;
 			inFile >> dummy;
 			

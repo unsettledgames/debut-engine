@@ -31,8 +31,6 @@ namespace Debut
 			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 		}
 
-		Log.CoreError("Failed to load png image {0}", path);
-
 		m_Width = width;
 		m_Height = height;
 		m_FilteringMode = config.Filtering;

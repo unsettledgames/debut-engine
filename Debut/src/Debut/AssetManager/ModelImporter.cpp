@@ -40,10 +40,6 @@ namespace Debut
 				return nullptr;
 			}
 		}
-		else
-		{
-			// Load the already present model
-		}
 
 		meta.close();
 		return nullptr;

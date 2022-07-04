@@ -42,23 +42,29 @@ namespace Debut
 
 	void OpenGLVertexBuffer::PushData(const void* data, uint32_t size)
 	{
-		uint32_t newDataSize = m_DataSize;
-		// Increase buffer size if necessary
-		while (m_DataIndex + size >= newDataSize)
-			newDataSize *= 2;
-
-		if (newDataSize != m_DataSize)
 		{
-			unsigned char* newData = new unsigned char[newDataSize];
-			memcpy(newData, m_Data, m_DataSize);
+			DBT_PROFILE_SCOPE("PushData::Reallocate");
+			uint32_t newDataSize = m_DataSize;
+			// Increase buffer size if necessary
+			while (m_DataIndex + size >= newDataSize)
+				newDataSize *= 2;
 
-			delete m_Data;
-			m_Data = newData;
-			m_DataSize = newDataSize;
+			if (newDataSize != m_DataSize)
+			{
+				unsigned char* newData = new unsigned char[newDataSize];
+				memcpy(newData, m_Data, m_DataSize);
+
+				delete m_Data;
+				m_Data = newData;
+				m_DataSize = newDataSize;
+			}
 		}
 
-		memcpy(m_Data + m_DataIndex, reinterpret_cast<unsigned char*>((void*)data), size);
-		m_DataIndex += size;
+		{
+			DBT_PROFILE_SCOPE("PushData::CopyData");
+			memcpy(m_Data + m_DataIndex, reinterpret_cast<unsigned char*>((void*)data), size);
+			m_DataIndex += size;
+		}
 	}
 
 	void OpenGLVertexBuffer::SubmitData()
