@@ -82,6 +82,8 @@ namespace Debut
 		UUID Material = 0;
 		UUID Mesh = 0;
 
+		bool Instanced = false;
+
 		MeshRendererComponent()  {}
 		MeshRendererComponent(const MeshRendererComponent&) = default;
 	};

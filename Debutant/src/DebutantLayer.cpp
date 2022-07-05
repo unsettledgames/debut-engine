@@ -55,7 +55,7 @@ namespace Debutant
         m_Model = AssetManager::Request<Model>(
             AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);*/
 
-        //ModelImporter::ImportModel("assets\\models\\pyramid\\source\\1.obj");
+        ModelImporter::ImportModel("assets\\models\\pyramid\\source\\1.obj");
         m_Model = AssetManager::Request<Model>(AssetManager::Request<Model>("assets\\models\\pyramid\\source\\1.obj.model")->GetSubmodels()[0]);
 
             /*
@@ -107,7 +107,7 @@ namespace Debutant
 
         component.Mesh = m_Model2->GetMeshes()[0];
         component.Material = m_Model2->GetMaterials()[0];
-        //Renderer3D::DrawModel(component, glm::translate(glm::mat4(1.0), glm::vec3(50.0, 0, 0)));
+        Renderer3D::DrawModel(component, glm::translate(glm::mat4(1.0), glm::vec3(50.0, 0, 0)));
 
         Renderer3D::EndScene();
 

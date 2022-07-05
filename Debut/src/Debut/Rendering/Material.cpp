@@ -17,22 +17,10 @@
 									return;	\
 								}
 
-
-/**
-	Material structure:
-		- Name: Name
-		- Shader: UUID
-		- Params:
-			uniform: Value
-			uniform: Value
-			.
-			.
-			.
-	
-*/
-
 namespace Debut
 {
+	UUID Material::s_PrevShader;
+
 	Material::Material(const std::string& path, const std::string& metaPath) : m_Path(path), m_MetaPath(metaPath)
 	{
 		// Load material if it exists, otherwise create a .meta file
@@ -210,8 +198,10 @@ namespace Debut
 
 	void Material::Use(const glm::mat4& cameraTransform)
 	{
+		// OPTIMIZABLE: Cache this?
 		Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
-		shader->Bind();
+		if (shader->GetID() != s_PrevShader)
+			shader->Bind();
 		SetMat4("u_ViewProjection", cameraTransform);
 		
 		for (auto& uniform : m_Uniforms)

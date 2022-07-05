@@ -21,7 +21,7 @@
 
 	Renderer3D:
 		- Have a VertexArray that is reserved to drawing one model at a time
-		- When DrawModel is called, we check whether or not the model is static: if it is, we batch render it, otherwise we just draw
+		- When DrawModel is called, we check whether or not the model is instanced: if it is, we batch render it, otherwise we just draw
 		  it normally.
 */
 
@@ -44,6 +44,10 @@ namespace Debut
 		uint32_t MaxBatches = 64;
 		uint32_t MaxMeshesPerBatch = 16384;
 		uint32_t MaxVerticesPerBatch = 36000000;
+
+		Ref<VertexArray> VertexArray;
+		Ref<IndexBuffer> IndexBuffer;
+		std::unordered_map<std::string, Ref<VertexBuffer>> VertexBuffers;
 
 		std::vector<Ref<Texture2D>> Textures;
 		// One batch per Material

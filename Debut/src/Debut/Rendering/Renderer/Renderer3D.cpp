@@ -16,6 +16,22 @@ namespace Debut
 
 		// Reserve space for the textures
 		s_Data.Textures.resize(s_Data.MaxTextures);
+		// Create generic VertexArray and IndexBuffer
+		s_Data.VertexArray = VertexArray::Create();
+		s_Data.IndexBuffer = IndexBuffer::Create();
+
+		// Attach buffers to VertexArray
+		ShaderDataType types[] = { ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2 };
+		std::string attribNames[] = { "a_Position", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0" };
+		std::string names[] = { "Positions", "Normals", "Tangents", "Bitangents", "TexCoords0" };
+		
+		for (uint32_t i = 0; i < sizeof(types); i++)
+		{
+			s_Data.VertexBuffers[names[i]] = VertexBuffer::Create(s_Data.StartupBufferSize * sizeof(float), s_Data.MaxVerticesPerBatch * sizeof(float));
+			s_Data.VertexBuffers[names[i]]->SetLayout({ {types[i], attribNames[i], false} });
+			s_Data.VertexArray->AddVertexBuffer(s_Data.VertexBuffers[names[i]]);
+		}
+		s_Data.VertexArray->AddIndexBuffer(s_Data.IndexBuffer);
 	}
 
 	void Renderer3D::BeginScene(Camera& camera, glm::mat4& transform)
@@ -26,9 +42,6 @@ namespace Debut
 	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform)
 	{
 		DBT_PROFILE_FUNCTION();
-
-		if (s_Data.Batches.find(meshComponent.Material) == s_Data.Batches.end())
-			AddBatch(meshComponent.Material);
 
 		Ref<Mesh> mesh;
 		Ref<Material> material;
@@ -43,18 +56,35 @@ namespace Debut
 			material = AssetManager::Request<Material>(meshComponent.Material);
 		}
 
-		RenderBatch3D* currBatch = s_Data.Batches[meshComponent.Material];
-
-		// Send data to buffers
+		// Instanced rendering if the MeshRenderer is instanced
+		if (meshComponent.Instanced)
 		{
-			DBT_PROFILE_SCOPE("Renderer3D::PushData");
-			currBatch->Buffers["Position"]->PushData(mesh->GetPositions().data(), sizeof(float) * mesh->GetPositions().size());
+			if (s_Data.Batches.find(meshComponent.Material) == s_Data.Batches.end())
+				AddBatch(meshComponent.Material);
+			RenderBatch3D* currBatch = s_Data.Batches[meshComponent.Material];
 
-			// Add indices
-			// This kinda sucks, the vector is reallocated every time a mesh is submitted (100 * 60 = 6000 times per second to be optimist)
-			uint32_t currIndicesSize = currBatch->Indices.size();
-			currBatch->Indices.resize(currBatch->Indices.size() + mesh->GetIndices().size());
-			memcpy(currBatch->Indices.data() + currIndicesSize, mesh->GetIndices().data(), mesh->GetIndices().size() * sizeof(int));
+			// Send data to buffers
+			{
+				DBT_PROFILE_SCOPE("Renderer3D::PushData");
+				currBatch->Buffers["Position"]->PushData(mesh->GetPositions().data(), sizeof(float) * mesh->GetPositions().size());
+
+				// Add indices
+				// This kinda sucks, the vector is reallocated every time a mesh is submitted (100 * 60 = 6000 times per second to be optimist)
+				uint32_t currIndicesSize = currBatch->Indices.size();
+				currBatch->Indices.resize(currBatch->Indices.size() + mesh->GetIndices().size());
+				memcpy(currBatch->Indices.data() + currIndicesSize, mesh->GetIndices().data(), mesh->GetIndices().size() * sizeof(int));
+			}
+		}
+		// Just draw the model otherwise
+		else
+		{
+			s_Data.VertexBuffers["Positions"]->SetData(mesh->GetPositions().data(), mesh->GetPositions().size() * sizeof(float));
+			s_Data.IndexBuffer->SetData(mesh->GetIndices().data(), mesh->GetIndices().size());
+
+			material->SetMat4("u_Transform", transform);
+			material->Use(s_Data.CameraTransform);
+
+			RenderCommand::DrawIndexed(s_Data.VertexArray, mesh->GetIndices().size());
 		}
 	}
 
@@ -81,8 +111,6 @@ namespace Debut
 
 			// Issue draw call
 			RenderCommand::DrawIndexed(batch.second->VertexArray, batch.second->Indices.size());
-			batch.second->Material->Unuse();
-
 			// Clear buffers
 			batch.second->Indices.clear();
 		}

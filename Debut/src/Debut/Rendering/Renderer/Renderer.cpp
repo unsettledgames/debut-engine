@@ -2,6 +2,7 @@
 #include "Renderer.h"
 #include "RenderCommand.h"
 #include "Renderer2D.h"
+#include "Renderer3D.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Debut
@@ -12,6 +13,7 @@ namespace Debut
 	{
 		RenderCommand::Init();
 		Renderer2D::Init();
+		Renderer3D::Init();
 	}
 
 	void Renderer::OnWindowResized(uint32_t width, uint32_t height)
