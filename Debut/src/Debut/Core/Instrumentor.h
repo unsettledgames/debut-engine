@@ -35,6 +35,7 @@ namespace Debut
         void BeginSession(const std::string& name, const std::string& filepath = "results.json")
         {
             m_OutputStream.open(filepath);
+            m_ProfileCount = 0;
             WriteHeader();
             m_CurrentSession = new InstrumentationSession{ name };
         }

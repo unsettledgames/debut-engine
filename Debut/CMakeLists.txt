@@ -20,13 +20,28 @@ file (GLOB Debut_EXT
 )
 
 # Configure dependencies
+# Box2D
 set(BOX2D_BUILD_TESTBED OFF CACHE INTERNAL "" FORCE)
 set(BOX2D_BUILD_UNIT_TESTS OFF CACHE INTERNAL "" FORCE)
+
+# YAML-cpp
 set(YAML_BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
 set(YAML_CPP_INSTALL OFF CACHE INTERNAL "" FORCE)
 set(YAML_CPP_BUILD_TOOLS OFF CACHE INTERNAL "" FORCE)
 
-add_library(Debut ${Debut_SRC} ${Debut_EXT})
+# Assimp
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE INTERNAL "" FORCE)
+set(ASSIMP_NO_EXPORT ON CACHE INTERNAL "" FORCE)
+set(ASSIMP_BUILD_TESTS OFF CACHE INTERNAL "" FORCE)
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE INTERNAL "" FORCE)
+configure_file("${PROJECT_SOURCE_DIR}/vendor/assimp/include/assimp/config.h.in" "${PROJECT_SOURCE_DIR}/vendor/assimp/include/assimp/config.h")
+configure_file("${PROJECT_SOURCE_DIR}/vendor/assimp/contrib/zlib/zconf.h.cmakein" "vendor/assimp/contrib/zlib/zconf.h")
+
+# Brotli
+set(BROTLI_EMSCRIPTEN OFF CACHE INTERNAL "" FORCE)
+
+add_library(Debut STATIC ${Debut_SRC} ${Debut_EXT})
 
 set_property(TARGET Debut PROPERTY MSVC_RUNTIME_LIBRARY MultiThreaded)
 set_property(TARGET Debut PROPERTY CXX_STANDARD 17)
@@ -40,6 +55,8 @@ add_subdirectory(vendor/imgui)
 add_subdirectory(vendor/imguizmo)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/yaml-cpp)
+add_subdirectory(vendor/assimp)
+add_subdirectory(vendor/brotli)
 
 
 # Link dependencies 
@@ -52,7 +69,10 @@ target_link_libraries(Debut
 	PUBLIC imgui
 	PUBLIC spdlog
 	PUBLIC yaml-cpp
-	PRIVATE Dwmapi.dll
+	PUBLIC Dwmapi.dll
+	PUBLIC assimp
+	PRIVATE brotlienc-static
+	PRIVATE brotlidec-static
 )
 
 # Define variables
@@ -63,6 +83,12 @@ target_compile_definitions(Debut PUBLIC
 	YAML_CPP_STATIC_DEFINE
 	NOMINMAX
 )
+
+target_compile_definitions(Debut PUBLIC
+	$<$<CONFIG:Debug>:DBT_DEBUG=1>
+	$<$<CONFIG:Release>:DBT_RELEASE=1>
+)
+
 
 IF(WINDOWS_BUILD)
     ADD_DEFINITIONS(-DDBT_PLATFORM_WINDOWS)
@@ -80,6 +106,8 @@ target_include_directories(Debut
 	PRIVATE vendor/stb_image
 	PUBLIC vendor/glm
 	PUBLIC vendor/entt/include
+	PUBLIC vendor/assimp/include
+	PRIVATE vendor/brotli/c/include
 )
 
 # Keep the project structure

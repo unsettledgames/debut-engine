@@ -30,6 +30,8 @@ namespace Debut
 			glm::vec3 Vec3;
 			glm::vec4 Vec4;
 
+			glm::mat4 Mat4;
+
 			UUID Texture = 0;
 
 			UniformData() {}
@@ -54,7 +56,6 @@ namespace Debut
 		case ShaderDataType::Sampler2D: return "Texture";
 		}
 
-		Log.CoreWarn("Maybe the time to use Int vectors has come?");
 		return "None";
 	}
 
@@ -81,7 +82,7 @@ namespace Debut
 		UUID GetID() { return m_ID; }
 
 		static Ref<Shader> Create(const std::string& name, const std::string& vertSrc, const std::string& fragSrc);
-		static Ref<Shader> Create(const std::string& filePath);
+		static Ref<Shader> Create(const std::string& filePath, const std::string& metaFile = "");
 	
 	protected:
 		void CreateOrLoadMeta(const std::string& path);

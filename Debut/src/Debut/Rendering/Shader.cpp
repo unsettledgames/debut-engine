@@ -9,8 +9,12 @@
 
 namespace Debut
 {
-	Ref<Shader> Shader::Create(const std::string& filePath)
+	Ref<Shader> Shader::Create(const std::string& filePath, const std::string& metaFile)
 	{
+		std::string correctMeta = metaFile;
+		if (correctMeta == "")
+			correctMeta = filePath + ".meta";
+
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:

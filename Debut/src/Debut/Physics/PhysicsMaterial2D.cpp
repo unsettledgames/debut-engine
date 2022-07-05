@@ -6,7 +6,7 @@ namespace Debut
 {
 	PhysicsMaterial2DConfig PhysicsMaterial2D::DefaultSettings;
 
-	PhysicsMaterial2D::PhysicsMaterial2D(const std::string& path)
+	PhysicsMaterial2D::PhysicsMaterial2D(const std::string& path, const std::string& metaFile)
 	{
 		PhysicsMaterial2DConfig config;
 		std::stringstream strStream;

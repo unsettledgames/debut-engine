@@ -25,7 +25,7 @@ namespace Debut
 		return nullptr;
 	}
 
-	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size, uint32_t bufferSize)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -33,7 +33,7 @@ namespace Debut
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLVertexBuffer>(size);
+			return std::make_shared<OpenGLVertexBuffer>((uint32_t)size, bufferSize);
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
@@ -55,7 +55,7 @@ namespace Debut
 		return nullptr;
 	}
 
-	Ref<IndexBuffer> IndexBuffer::Create(uint32_t count)
+	Ref<IndexBuffer> IndexBuffer::Create()
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -63,7 +63,7 @@ namespace Debut
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLIndexBuffer>(count);
+			return std::make_shared<OpenGLIndexBuffer>();
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");

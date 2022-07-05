@@ -53,6 +53,8 @@ namespace Debut
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
+		inline bool IsValid() { return m_Scene->m_Registry.valid(m_EntityHandle); }
+
 		TransformComponent& Transform();
 		uint64_t ID();
 

@@ -1,7 +1,11 @@
 #include "DebutantLayer.h"
+#include "Debut/Core/Instrumentor.h"
 #include "Camera/EditorCamera.h"
 #include <Utils/EditorCache.h>
+#include <Debut/Rendering/Resources/Model.h>
+#include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/Utils/PlatformUtils.h>
+#include <Debut/Rendering/Renderer/Renderer3D.h>
 
 #include <chrono>
 #include <imgui_internal.h>
@@ -10,7 +14,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_operation.hpp>
-
 
 namespace Debutant
 {
@@ -37,10 +40,28 @@ namespace Debutant
         m_IconPlay = Texture2D::Create("assets\\icons\\play.png");
         m_IconStop = Texture2D::Create("assets\\icons\\stop.png");
 
-        AssetManager::Init();
+        AssetManager::Init(".");
 
         EditorCache::Textures().Put("assets\\icons\\play.png", m_IconPlay);
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
+
+        AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
+        
+        ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
+        m_Model2 = AssetManager::Request<Model>(
+            AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);
+
+        /*ModelImporter::ImportModel("assets\\models\\cube\\untitled.obj");
+        m_Model = AssetManager::Request<Model>(
+            AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);*/
+
+        ModelImporter::ImportModel("assets\\models\\pyramid\\source\\1.obj");
+        m_Model = AssetManager::Request<Model>(AssetManager::Request<Model>("assets\\models\\pyramid\\source\\1.obj.model")->GetSubmodels()[0]);
+
+            /*
+        ModelImporter::ImportModel("assets\\models\\car\\car.obj");
+        m_Model = AssetManager::Request<Model>(
+            AssetManager::Request<Model>("assets\\models\\car\\car.obj.model")->GetSubmodels()[0]);*/
     }
 
     void DebutantLayer::OnDetach()
@@ -77,7 +98,19 @@ namespace Debutant
             break;
         }
 
-        //Log.AppInfo("Frame time: {0}", (1.0f / ts));
+        Renderer3D::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
+        MeshRendererComponent component;
+
+        component.Mesh = m_Model->GetMeshes()[0];
+        component.Material = m_Model->GetMaterials()[0];
+        Renderer3D::DrawModel(component, glm::mat4(1.0));
+
+        component.Mesh = m_Model2->GetMeshes()[0];
+        component.Material = m_Model2->GetMaterials()[0];
+        Renderer3D::DrawModel(component, glm::translate(glm::mat4(1.0), glm::vec3(50.0, 0, 0)));
+
+        Renderer3D::EndScene();
+
         m_FrameBuffer->Unbind();
     }
 
@@ -412,9 +445,12 @@ namespace Debutant
                 if (hoveredID < 0)
                     m_HoveredEntity = {};
                 else
+                {
                     m_HoveredEntity = { (entt::entity)hoveredID, m_ActiveScene.get() };
 
-                m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
+                    if (m_HoveredEntity.IsValid())
+                        m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
+                }
             }
         }
 

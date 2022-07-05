@@ -8,7 +8,7 @@ namespace Debut
 	class OpenGLVertexBuffer : public VertexBuffer
 	{
 	public:
-		OpenGLVertexBuffer(uint32_t size);
+		OpenGLVertexBuffer(uint32_t size, uint32_t maxBufferSize);
 		OpenGLVertexBuffer(float* vertices, unsigned int size);
 		virtual ~OpenGLVertexBuffer();
 
@@ -16,14 +16,18 @@ namespace Debut
 		virtual void Unbind() const override;
 
 		virtual void SetData(const void* data, uint32_t size) override;
+		virtual void PushData(const void* data, uint32_t size) override;
+		virtual void SubmitData() override;
 
 		virtual inline void SetLayout(const BufferLayout& layout) override { m_Layout = layout; }
 		virtual inline BufferLayout& GetLayout() override { return m_Layout; }
-
-		//static VertexBuffer* Create(float* vertices, unsigned int size);
 	private:
 		BufferLayout m_Layout;
 		unsigned int m_RendererID;
+
+		unsigned char* m_Data;
+		uint32_t m_DataIndex = 0;
+		uint32_t m_DataSize = 4096;
 	};
 
 	////////////////////////////////////////////////////// INDEX BUFFER /////////////////////////////////////////////////////
@@ -32,7 +36,7 @@ namespace Debut
 	{
 	public:
 		OpenGLIndexBuffer(int* indices, unsigned int size);
-		OpenGLIndexBuffer(uint32_t count);
+		OpenGLIndexBuffer();
 		virtual ~OpenGLIndexBuffer();
 
 		virtual void Bind() const override;

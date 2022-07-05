@@ -7,35 +7,34 @@
 #include <Debut/Rendering/Texture.h>
 #include <Debut/Rendering/Camera.h>
 
+
 namespace Debut
 {
-	struct MeshVertex
-	{
-		glm::vec3 Position;
-		glm::vec3 TexCoord;
-		glm::vec3 Normal;
-	};
-
 	struct RenderBatch3D
 	{
-		MeshVertex* BufferBase;
-		MeshVertex* BufferPtr;
+		std::unordered_map<std::string, Ref<VertexBuffer>> Buffers;
+		std::vector<int> Indices;
 
-		Ref<VertexBuffer> VertexBuffer;
-		Ref<IndexBuffer> IndexBuffer;
 		Ref<VertexArray> VertexArray;
+		Ref<IndexBuffer> IndexBuffer;
 		Ref<Material> Material;
 	};
 
 	struct Renderer3DStorage
 	{
+		uint32_t StartupBufferSize = 4096;
 		uint32_t MaxTextures = 32;
 		uint32_t MaxBatches = 64;
 		uint32_t MaxMeshesPerBatch = 16384;
-		uint32_t MaxVerticesPerBatch = 360000;
+		uint32_t MaxVerticesPerBatch = 36000000;
+
+		Ref<VertexArray> VertexArray;
+		Ref<IndexBuffer> IndexBuffer;
+		std::unordered_map<std::string, Ref<VertexBuffer>> VertexBuffers;
 
 		std::vector<Ref<Texture2D>> Textures;
-		std::unordered_map<UUID, RenderBatch3D> Batches;
+		// One batch per Material
+		std::unordered_map<UUID, RenderBatch3D*> Batches;
 
 		glm::mat4 CameraTransform;
 	};

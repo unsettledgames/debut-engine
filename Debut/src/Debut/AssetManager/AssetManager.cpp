@@ -2,21 +2,30 @@
 #include <yaml-cpp/yaml.h>
 #include <imgui.h>
 #include <filesystem>
+#include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/AssetManager/AssetManager.h>
 
 namespace Debut
 {
 	std::unordered_map<UUID, std::string> AssetManager::s_AssetMap;
+	std::string AssetManager::s_ProjectDir;
+	std::string AssetManager::s_IntAssetsDir;
 
 	AssetCache<std::string, Ref<Texture2D>> AssetManager::s_TextureCache;
 	AssetCache<std::string, Ref<Shader>> AssetManager::s_ShaderCache;
 	AssetCache<std::string, Ref<Material>> AssetManager::s_MaterialCache;
 	AssetCache<std::string, Ref<Mesh>> AssetManager::s_MeshCache;
+	AssetCache<std::string, Ref<Model>> AssetManager::s_ModelCache;
 
 	static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
 
-	void AssetManager::Init()
+	void AssetManager::Init(const std::string& projectDir)
 	{
+		s_ProjectDir = projectDir;
+		s_IntAssetsDir = s_ProjectDir + "\\Lib\\Assets";
+
+		CreateLibDirs();
+
 		// Check if the database file exists
 		std::ifstream mapFile("Debut\\AssetMap.yaml");
 		std::stringstream ss;
@@ -54,6 +63,21 @@ namespace Debut
 			toCreate.close();
 
 			Reimport("assets");
+		}
+	}
+
+	void AssetManager::CreateLibDirs()
+	{
+		std::filesystem::path workingDir(s_ProjectDir + "\\Lib");
+
+		if (!std::filesystem::exists(workingDir))
+		{
+			std::filesystem::create_directory(workingDir);
+			std::filesystem::path assetDir(s_ProjectDir + "\\Lib\\Assets");
+			std::filesystem::create_directory(assetDir);
+
+			std::filesystem::path metaDir(s_ProjectDir + "\\Lib\\Metadata");
+			std::filesystem::create_directory(metaDir);
 		}
 	}
 
@@ -107,6 +131,8 @@ namespace Debut
 		YAML::Node currYaml;
 		YAML::Node newNode;
 
+		s_AssetMap[id] = path;
+
 		// Read the file, load the old content
 		ss << currFile.rdbuf();
 		currYaml = YAML::Load(ss.str().c_str());
@@ -137,13 +163,13 @@ namespace Debut
 	// ASSET REQUESTS
 
 	template <typename T>
-	Ref<T> AssetManager::Request(const std::string& id)
+	Ref<T> AssetManager::Request(const std::string& id, const std::string& metaFile)
 	{
 
 	}
 
 	template<>
-	Ref<Texture2D> AssetManager::Request<Texture2D>(const std::string& id)
+	Ref<Texture2D> AssetManager::Request<Texture2D>(const std::string& id, const std::string& metaFile)
 	{
 		if (s_TextureCache.Has(id))
 			return s_TextureCache.Get(id);
@@ -152,7 +178,7 @@ namespace Debut
 		if (id == "")
 			toAdd = Texture2D::Create(1, 1);
 		else
-			toAdd = Texture2D::Create(id);
+			toAdd = Texture2D::Create(id, metaFile);
 
 		s_TextureCache.Put(id, toAdd);
 		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
@@ -165,12 +191,12 @@ namespace Debut
 	}
 
 	template<>
-	Ref<PhysicsMaterial2D> AssetManager::Request<PhysicsMaterial2D>(const std::string& id)
+	Ref<PhysicsMaterial2D> AssetManager::Request<PhysicsMaterial2D>(const std::string& id, const std::string& metaFile)
 	{
 		if (s_PhysicsMaterial2DCache.Has(id))
 			return s_PhysicsMaterial2DCache.Get(id);
 
-		Ref<PhysicsMaterial2D> toAdd = CreateRef<PhysicsMaterial2D>(id);
+		Ref<PhysicsMaterial2D> toAdd = CreateRef<PhysicsMaterial2D>(id, metaFile);
 
 		// Update the asset map if the entry wasn't there
 		s_PhysicsMaterial2DCache.Put(id, toAdd);
@@ -184,12 +210,12 @@ namespace Debut
 	}
 
 	template <>
-	Ref<Shader> AssetManager::Request<Shader>(const std::string& id)
+	Ref<Shader> AssetManager::Request<Shader>(const std::string& id, const std::string& metaFile)
 	{
 		if (s_ShaderCache.Has(id))
 			return s_ShaderCache.Get(id);
 
-		Ref<Shader> toAdd = Shader::Create(id);
+		Ref<Shader> toAdd = Shader::Create(id, metaFile);
 
 		// Update the asset map if the entry wasn't there
 		s_ShaderCache.Put(id, toAdd);
@@ -203,12 +229,12 @@ namespace Debut
 	}
 
 	template <>
-	Ref<Material> AssetManager::Request<Material>(const std::string& id)
+	Ref<Material> AssetManager::Request<Material>(const std::string& id, const std::string& metaFile)
 	{
 		if (s_MaterialCache.Has(id))
-			return s_MaterialCache.Get(id);
+			return s_MaterialCache.Get(id);	
 
-		Ref<Material> toAdd = CreateRef<Material>(id);
+		Ref<Material> toAdd = CreateRef<Material>(id, metaFile);
 
 		// Update the asset map if the entry wasn't there
 		s_MaterialCache.Put(id, toAdd);
@@ -220,17 +246,41 @@ namespace Debut
 
 		return toAdd;
 	}
-	
+
 	template <>
-	Ref<Mesh> AssetManager::Request<Mesh>(const std::string& id)
+	Ref<Mesh> AssetManager::Request<Mesh>(const std::string& id, const std::string& metaFile)
 	{
 		if (s_MeshCache.Has(id))
 			return s_MeshCache.Get(id);
 
-		Ref<Mesh> toAdd = CreateRef<Mesh>(id);
+		Ref<Mesh> toAdd = CreateRef<Mesh>(id, metaFile);
+
+		s_MeshCache.Put(id, toAdd);
+		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+		{
+			s_AssetMap[toAdd->GetID()] = id;
+			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
+		}
+
+		return toAdd;
+	}
+	
+	template <>
+	Ref<Model> AssetManager::Request<Model>(const std::string& id, const std::string& metaFile)
+	{
+		if (s_ModelCache.Has(id))
+			return s_ModelCache.Get(id);
+
+		Ref<Model> toAdd = CreateRef<Model>(id, metaFile);
+		if (toAdd->IsValid())
+		{
+			// Load submodels too
+			for (uint32_t i = 0; i < toAdd->GetSubmodels().size(); i++)
+				AssetManager::Request<Model>(toAdd->GetSubmodels()[i]);
+		}
 
 		// Update the asset map if the entry wasn't there
-		s_MeshCache.Put(id, toAdd);
+		s_ModelCache.Put(id, toAdd);
 		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
 		{
 			s_AssetMap[toAdd->GetID()] = id;

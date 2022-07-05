@@ -21,7 +21,7 @@ namespace Debut
 		static PhysicsMaterial2DConfig DefaultSettings;
 
 		PhysicsMaterial2D() = default;
-		PhysicsMaterial2D(const std::string& path);
+		PhysicsMaterial2D(const std::string& path, const std::string& metaFile = "");
 		PhysicsMaterial2D(const std::string& path, const PhysicsMaterial2DConfig& config);
 
 		static void SaveDefaultConfig(const std::string& path);

@@ -17,23 +17,11 @@
 									return;	\
 								}
 
-
-/**
-	Material structure:
-		- Name: Name
-		- Shader: UUID
-		- Params:
-			uniform: Value
-			uniform: Value
-			.
-			.
-			.
-	
-*/
-
 namespace Debut
 {
-	Material::Material(const std::string& path) : m_Path(path)
+	UUID Material::s_PrevShader;
+
+	Material::Material(const std::string& path, const std::string& metaPath) : m_Path(path), m_MetaPath(metaPath)
 	{
 		// Load material if it exists, otherwise create a .meta file
 		std::ifstream matFile(path);
@@ -45,7 +33,7 @@ namespace Debut
 			YAML::Node inYaml = YAML::Load(ss.str());
 
 			// Load the ID from the meta file
-			std::ifstream meta(path + ".meta");
+			std::ifstream meta(metaPath);
 			ss.str("");
 			ss << meta.rdbuf();
 			YAML::Node metaNode = YAML::Load(ss.str());
@@ -79,6 +67,9 @@ namespace Debut
 				case ShaderDataType::Float4: 
 					m_Uniforms[uniform.Name].Data.Vec4 = matParams[uniform.Name].as<glm::vec4>();
 					break;
+				case ShaderDataType::Mat4:
+					m_Uniforms[uniform.Name].Data.Mat4 = matParams[uniform.Name].as<glm::mat4>();
+					break;
 
 				case ShaderDataType::Int: 
 					m_Uniforms[uniform.Name].Data.Int = matParams[uniform.Name].as<int>();
@@ -105,12 +96,14 @@ namespace Debut
 					break;
 				}
 			}
+
+			m_Valid = true;
 		}
 		else
 		{
 			// Create the .meta file
 			matFile.close();
-			std::ofstream metaFile(path + ".meta");
+			std::ofstream metaFile(m_MetaPath);
 
 			YAML::Emitter metaEmitter;
 			metaEmitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
@@ -119,6 +112,7 @@ namespace Debut
 
 			// Save the default configuration for this material
 			Material::SaveSettings(path, { "Untitled Material", 0, {} });
+			m_Valid = false;
 		}
 	}
 
@@ -152,6 +146,13 @@ namespace Debut
 			config.Uniforms.push_back(uniform.second);
 
 		SaveSettings(m_Path, config);
+
+		// Update / create .meta file too
+		YAML::Emitter metaEmitter;
+		std::ofstream out(m_MetaPath);
+
+		metaEmitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
+		out << metaEmitter.c_str();
 	}
 
 	void Material::SaveSettings(const std::string& path, const MaterialConfig& config)
@@ -174,6 +175,7 @@ namespace Debut
 			case ShaderDataType::Float3: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Vec3; break;
 			case ShaderDataType::Float4: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Vec4; break;
 
+			case ShaderDataType::Mat4: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Mat4; break;
 			case ShaderDataType::Bool: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Bool; break;
 			case ShaderDataType::Int: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Int; break;
 			case ShaderDataType::Sampler2D:
@@ -189,8 +191,50 @@ namespace Debut
 		}
 
 		emitter << YAML::EndMap << YAML::EndDoc;
-
 		out << emitter.c_str();
+		out.close();
+
+	}
+
+	void Material::Use(const glm::mat4& cameraTransform)
+	{
+		// OPTIMIZABLE: Cache this?
+		Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
+		if (shader->GetID() != s_PrevShader)
+			shader->Bind();
+		SetMat4("u_ViewProjection", cameraTransform);
+		
+		for (auto& uniform : m_Uniforms)
+		{
+			switch (uniform.second.Type)
+			{
+			case ShaderDataType::Float:
+				shader->SetFloat(uniform.second.Name, uniform.second.Data.Float);
+				break;
+			case ShaderDataType::Float3:
+				shader->SetFloat3(uniform.second.Name, uniform.second.Data.Vec3);
+				break;
+			case ShaderDataType::Float4:
+				shader->SetFloat4(uniform.second.Name, uniform.second.Data.Vec4);
+				break;
+			case ShaderDataType::Mat4:
+				shader->SetMat4(uniform.second.Name, uniform.second.Data.Mat4);
+				break;
+			case ShaderDataType::Sampler2D:
+				if (uniform.second.Data.Texture != 0)
+					shader->SetInt(uniform.second.Name, AssetManager::Request<Texture2D>(uniform.second.Data.Texture)->GetID());
+				break;
+			default:
+				Log.CoreError("Shader data type not supported while trying to use material {0}", m_Name);
+				break;
+			}
+		}
+	}
+
+	void Material::Unuse()
+	{
+		Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
+		shader->Unbind();
 	}
 
 	void Material::SetShader(Ref<Shader> shader)
@@ -230,6 +274,13 @@ namespace Debut
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::Float4);
 		m_Uniforms[name].Data.Vec4 = vec;
+	}
+
+	void Material::SetMat4(const std::string& name, const glm::mat4& mat)
+	{
+		FIND_UNIFORM(name);
+		CHECK_TYPE(name, ShaderDataType::Mat4);
+		m_Uniforms[name].Data.Mat4 = mat;
 	}
 
 	void Material::SetInt(const std::string& name, int val)
