@@ -8,6 +8,7 @@
 
 #include <assimp/scene.h>
 
+
 namespace Debut
 {
 	class ModelImporter

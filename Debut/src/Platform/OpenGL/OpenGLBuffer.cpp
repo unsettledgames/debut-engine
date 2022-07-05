@@ -32,6 +32,7 @@ namespace Debut
 
 	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
 	{
+		DBT_PROFILE_FUNCTION();
 		/*for (uint32_t i = 0; i < size / 4; i++)
 			Log.CoreInfo("Char: {0}", ((float*)data)[i]);*/
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
@@ -129,6 +130,7 @@ namespace Debut
 
 	void OpenGLIndexBuffer::SetData(const void* data, uint32_t count)
 	{
+		DBT_PROFILE_FUNCTION();
 		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
 		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT) * count, data, GL_STATIC_DRAW));
 

@@ -78,13 +78,24 @@ namespace Debut
 		// Just draw the model otherwise
 		else
 		{
-			s_Data.VertexBuffers["Positions"]->SetData(mesh->GetPositions().data(), mesh->GetPositions().size() * sizeof(float));
-			s_Data.IndexBuffer->SetData(mesh->GetIndices().data(), mesh->GetIndices().size());
-
-			material->SetMat4("u_Transform", transform);
-			material->Use(s_Data.CameraTransform);
-
-			RenderCommand::DrawIndexed(s_Data.VertexArray, mesh->GetIndices().size());
+			{
+				DBT_PROFILE_SCOPE("DrawModel::SetDataAndIndices");
+				std::vector<float>& positions = mesh->GetPositions();
+				std::vector<int>& indices = mesh->GetIndices();
+				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
+				s_Data.IndexBuffer->SetData(mesh->GetIndices().data(), mesh->GetIndices().size());
+			}
+			
+			{
+				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
+				material->SetMat4("u_Transform", transform);
+				material->Use(s_Data.CameraTransform);
+			}
+			
+			{
+				DBT_PROFILE_SCOPE("DrawModel::DrawIndexed");
+				RenderCommand::DrawIndexed(s_Data.VertexArray, mesh->GetIndices().size());
+			}
 		}
 	}
 
