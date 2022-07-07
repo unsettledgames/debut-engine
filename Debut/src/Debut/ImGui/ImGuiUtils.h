@@ -22,6 +22,7 @@ namespace Debut
 		static bool ImageButton(Ref<Texture2D> texture, ImVec2 size, ImVec4 color = {0.1, 0.2, 0.4, 1});
 		static void BoldText(const std::string& label);
 		static bool Combo(const char* id, const char* selectables[], uint32_t nSelectables, const char** currSelected, const char** ret);
+		static bool ImageTreeNode(const char* id, ImTextureID texture);
 
 		template <typename T>
 		static Ref<T> DragDestination(const std::string& label, const std::string& acceptedExtension, UUID currentID)

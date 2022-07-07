@@ -4,6 +4,7 @@
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include "Utils/EditorCache.h"
+#include <Debut/ImGui/ImGuiUtils.h>
 #include <imgui.h>
 
 using namespace Debut;
@@ -12,11 +13,15 @@ namespace Debutant
 {
 	// TODO: change this when we have projects
 	static const std::filesystem::path s_AssetsPath = "assets";
+	ContentBrowserSettings ContentBrowserPanel::s_Settings;
 
 	ContentBrowserPanel::ContentBrowserPanel() : m_CurrDirectory(s_AssetsPath)
 	{
 		EditorCache::Textures().Put("cb-genericfile", Texture2D::Create("assets/icons/file.png"));
 		EditorCache::Textures().Put("cb-directory", Texture2D::Create("assets/icons/directory.png"));
+		EditorCache::Textures().Put("cb-menu", Texture2D::Create("assets/icons/menu.png"));
+		EditorCache::Textures().Put("cb-back", Texture2D::Create("assets/icons/back.png"));
+		EditorCache::Textures().Put("cb-search", Texture2D::Create("assets/icons/search.png"));
 
 		m_Icons["txt"] = "cb-genericfile";
 		m_Icons["dir"] = "cb-directory";
@@ -26,7 +31,7 @@ namespace Debutant
 	{
 		ImGui::Begin("Content browser");
 
-		// TODO: Right click menu
+		// Right click menu
 		if (ImGui::BeginPopupContextWindow(0, 1, false))
 		{
 			if (ImGui::MenuItem("Create new Physics Material 2D"))
@@ -36,8 +41,8 @@ namespace Debutant
 			ImGui::EndPopup();
 		}
 		
-		static float padding = 4.0f;
-		static float iconSize = 64.0f;
+		static float padding = s_Settings.padding;
+		static float iconSize = s_Settings.IconSize;
 		float cellSize = iconSize + padding;
 
 		float panelWidth = ImGui::GetContentRegionAvail().x;
@@ -46,17 +51,30 @@ namespace Debutant
 		if (columnCount < 1)
 			columnCount = 1;
 
-		// Put current path and back button to the top
-		if (m_CurrDirectory != s_AssetsPath)
+		DrawTopBar();
+
+		if (ImGui::BeginPopup("ContentLayoutMenu"))
 		{
-			if (ImGui::Button("Back"))
-				m_CurrDirectory = m_CurrDirectory.parent_path();
-			ImGui::SameLine();
+			ImGui::Text("Browser layout options");
+			ImGui::Separator();
+
+			if (ImGui::Selectable("Grid layout"))
+				m_CurrLayout = ContentBrowserLayout::Grid;
+			if (ImGui::Selectable("List layout"))
+				m_CurrLayout = ContentBrowserLayout::List;
+
+			ImGui::EndPopup();
 		}
-		ImGui::Text(m_CurrDirectory.string().c_str());
+
+		ImGui::Dummy({0, 4});
+		ImGui::Separator();
+
+		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap
+			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 
 		// Draw contents 
-		ImGui::Columns(columnCount, 0, false);
+		if (m_CurrLayout == ContentBrowserLayout::Grid)
+			ImGui::Columns(columnCount, 0, false);
 		// TODO: cache this so you don't have to keep accessing the filesystem
 		for (auto dirEntry : std::filesystem::directory_iterator(m_CurrDirectory))
 		{
@@ -65,17 +83,29 @@ namespace Debutant
 			if (path.extension().string() == ".meta")
 				continue;
 
-			std::string pathName = path.string();
+			DrawEntry(path, dirEntry.is_directory());
 
-			auto relativePath = std::filesystem::relative(path, s_AssetsPath);
-			std::string relativePathString = relativePath.string();
+			if (m_CurrLayout == ContentBrowserLayout::Grid)
+				ImGui::NextColumn();
+		}
 
-			Ref<Texture2D> icon = dirEntry.is_directory() ? EditorCache::Textures().Get("cb-directory") : GetFileIcon(dirEntry.path());
+		ImGui::End();
+	}
 
-			ImGui::PushID(pathName.c_str());
+	void ContentBrowserPanel::DrawEntry(const std::filesystem::path& path, bool isDir)
+	{
+		std::string pathName = path.string();
 
+		auto relativePath = std::filesystem::relative(path, s_AssetsPath);
+		std::string relativePathString = relativePath.string();
+
+		Ref<Texture2D> icon = isDir ? EditorCache::Textures().Get("cb-directory") : GetFileIcon(path);
+		ImGui::PushID(pathName.c_str());
+
+		if (m_CurrLayout == ContentBrowserLayout::Grid)
+		{
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { iconSize, iconSize }, { 0, 1 }, { 1, 0 }))
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { s_Settings.IconSize, s_Settings.IconSize }, { 0, 1 }, { 1, 0 }))
 			{
 				m_PropertiesPanel->SetAsset(path);
 			}
@@ -90,7 +120,7 @@ namespace Debutant
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
-				if (dirEntry.is_directory())
+				if (isDir)
 					m_CurrDirectory /= path.filename();
 			}
 
@@ -98,15 +128,60 @@ namespace Debutant
 			if (fileName.length() > 17)
 				fileName = fileName.substr(0, 17) + "...";
 			ImGui::TextWrapped(fileName.c_str());
-			ImGui::PopID();
-
-			ImGui::NextColumn();
 		}
+		else
+		{
+			const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap
+				| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 
-		ImGui::End();
+			if (ImGuiUtils::ImageTreeNode(path.filename().string().c_str(), (ImTextureID)icon->GetRendererID()))
+			{
+				ImGui::TreePop();
+			}
+		}
+		
+		ImGui::PopID();
 	}
 
-	// TODO: show texture preview! Should probably pass the whole path
+	void ContentBrowserPanel::DrawTopBar()
+	{
+		// Layout menu
+		float iconHeight = ImGui::GetTextLineHeight();
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+		if (ImGui::ImageButton((ImTextureID)EditorCache::Textures().Get("cb-menu")->GetRendererID(),
+			{ ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() }, { 0,1 }, { 1, 0 }))
+			ImGui::OpenPopup("ContentLayoutMenu");
+
+		// Back arrow
+		ImGui::SameLine();
+		if (ImGui::ImageButton((ImTextureID)EditorCache::Textures().Get("cb-back")->GetRendererID(),
+			{ ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() }, { 0, 1 }, { 1, 0 }) && m_CurrDirectory != s_AssetsPath)
+			m_CurrDirectory = m_CurrDirectory.parent_path();
+
+		// Pop 0 item spacing
+		ImGui::PopStyleVar();
+
+		ImGui::SameLine();
+
+		// Search bar
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 2, 2 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.0);
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ImGui::GetTextLineHeight() - 4);
+		char searchBar[256] = "";
+		ImGui::InputText("##Searchbar", searchBar, 256);
+		ImGui::PopItemWidth();
+		ImGui::PopStyleVar();
+
+		// Search bar icon
+		ImGui::SameLine();
+		ImGui::ImageButton((ImTextureID)EditorCache::Textures().Get("cb-search")->GetRendererID(),
+			{ iconHeight ,iconHeight }, { 0, 1 }, { 1, 0 });
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor();
+	}
+
 	Ref<Texture2D> ContentBrowserPanel::GetFileIcon(const std::filesystem::path& path)
 	{
 		std::string extension = path.extension().string();

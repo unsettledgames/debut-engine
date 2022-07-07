@@ -20,6 +20,7 @@ namespace Debut
 		void DrawTextureProperties();
 		void DrawShaderProperties();
 		void DrawMaterialProperties();
+		void DrawModelProperties();
 
 		void DrawPhysicsMaterial2DProperties();
 

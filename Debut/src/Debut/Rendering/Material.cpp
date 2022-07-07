@@ -23,6 +23,8 @@ namespace Debut
 
 	Material::Material(const std::string& path, const std::string& metaPath) : m_Path(path), m_MetaPath(metaPath)
 	{
+		if (m_MetaPath == "")
+			m_MetaPath = m_Path + ".meta";
 		// Load material if it exists, otherwise create a .meta file
 		std::ifstream matFile(path);
 		std::stringstream ss;
@@ -33,7 +35,7 @@ namespace Debut
 			YAML::Node inYaml = YAML::Load(ss.str());
 
 			// Load the ID from the meta file
-			std::ifstream meta(metaPath);
+			std::ifstream meta(m_MetaPath);
 			ss.str("");
 			ss << meta.rdbuf();
 			YAML::Node metaNode = YAML::Load(ss.str());

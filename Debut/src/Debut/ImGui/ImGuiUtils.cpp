@@ -1,9 +1,10 @@
 #include <Debut/dbtpch.h>
 #include <Debut/ImGui/ImGuiUtils.h>
 
+#include <imgui_internal.h>
+
 #include <Debut/AssetManager/AssetManager.h>
 #include <filesystem>
-#include <imgui_internal.h>
 
 namespace Debut
 {
@@ -318,5 +319,33 @@ namespace Debut
 		ImGuiUtils::ResetColumns();
 
 		return changed;
+	}
+
+	bool ImGuiUtils::ImageTreeNode(const char* label, ImTextureID texture)
+	{
+		ImGuiContext& g = *GImGui;
+		ImGuiWindow* window = g.CurrentWindow;
+
+		ImGuiID id = window->GetID(label);
+		ImVec2 pos = window->DC.CursorPos;
+		ImRect bb(pos, ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
+		bool opened = ImGui::TreeNodeBehaviorIsOpen(id);
+		bool hovered, held;
+		if (ImGui::ButtonBehavior(bb, id, &hovered, &held, true))
+			window->DC.StateStorage->SetInt(id, opened ? 0 : 1);
+		if (hovered || held || opened)
+			window->DrawList->AddRectFilled(bb.Min, bb.Max, ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[held ? ImGuiCol_HeaderActive : ImGuiCol_HeaderHovered]));
+
+		// Icon, text
+		float button_sz = g.FontSize + g.Style.FramePadding.y * 2;
+		window->DrawList->AddImage(texture, {pos.x, pos.y}, {pos.x + button_sz, pos.y + button_sz}, { 0, 1 }, { 1, 0 });
+		ImGui::RenderText(ImVec2(pos.x + button_sz + g.Style.ItemInnerSpacing.x, pos.y + g.Style.FramePadding.y), label);
+
+		ImGui::ItemSize(bb, g.Style.FramePadding.y);
+		ImGui::ItemAdd(bb, id);
+
+		if (opened)
+			ImGui::TreePush(label);
+		return opened;
 	}
 }

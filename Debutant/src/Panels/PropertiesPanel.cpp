@@ -19,6 +19,8 @@
 namespace Debut
 {
 	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d", ".glsl", ".mat"};
+	static std::vector<std::string> s_ModelExtensions = { ".obj", ".fbx", ".dae", ".gltf", ".glb", ".blend", ".3ds", ".ase",
+		".ifc", ".xgl", ".zgl", ".ply", ".dxf", ".lwo", ".lws", ".lxo", ".stl", ".x", ".ac", ".ms3d", ".cob", ".scn"};
 
 	static int SetFileName(ImGuiInputTextCallbackData* data)
 	{
@@ -54,6 +56,10 @@ namespace Debut
 			else if (m_AssetPath.extension().string() == ".mat")
 			{
 				DrawMaterialProperties();
+			}
+			else if (std::find(s_ModelExtensions.begin(), s_ModelExtensions.end(), m_AssetPath.extension().string()) != s_ModelExtensions.end())
+			{
+				DrawModelProperties();
 			}
 		}
 
@@ -91,7 +97,11 @@ namespace Debut
 
 		ImGuiUtils::ResetColumns();
 		ImGui::PopID();
-		
+	}
+
+	void PropertiesPanel::DrawModelProperties()
+	{
+
 	}
 
 	void PropertiesPanel::DrawPhysicsMaterial2DProperties()

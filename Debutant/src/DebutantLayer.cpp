@@ -71,6 +71,7 @@ namespace Debutant
 
     void DebutantLayer::OnUpdate(Timestep ts)
     {
+        //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
         if (m_ViewportFocused)
             m_EditorCamera.OnUpdate(ts);
@@ -101,9 +102,16 @@ namespace Debutant
         Renderer3D::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
         MeshRendererComponent component;
 
-        component.Mesh = m_Model->GetMeshes()[0];
-        component.Material = m_Model->GetMaterials()[0];
-        Renderer3D::DrawModel(component, glm::mat4(1.0));
+        for (uint32_t i = 0; i < 1; i++)
+        {
+            for (uint32_t j = 0; j < 1; j++)
+            {
+                component.Mesh = m_Model->GetMeshes()[0];
+                component.Material = m_Model->GetMaterials()[0];
+                Renderer3D::DrawModel(component, glm::translate(glm::mat4(1.0), glm::vec3(50 * i, 50 * j, 0)));
+            }
+        }
+        
 
         component.Mesh = m_Model2->GetMeshes()[0];
         component.Material = m_Model2->GetMaterials()[0];
