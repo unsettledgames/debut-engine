@@ -13,16 +13,29 @@
 
 namespace Debut
 {
-	Ref<Model> ModelImporter::ImportModel(const std::string& path)
+	Ref<Model> ModelImporter::ImportModel(const std::string& path, const ModelImportSettings& settings)
 	{
 		std::ifstream meta(path + ".model.meta");
+		unsigned int pFlags = aiProcess_RemoveRedundantMaterials;
 
 		if (!meta.good())
 		{
 			Assimp::Importer importer;
 
-			const aiScene* scene = importer.ReadFile(path, aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate |
-				aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+			if (settings.ImproveRenderingSpeed)
+				pFlags |= aiProcess_ImproveCacheLocality;
+			if (settings.JoinVertices)
+				pFlags |= aiProcess_JoinIdenticalVertices;
+			if (settings.Normals)
+				pFlags |= aiProcess_GenNormals;
+			if (settings.TangentSpace)
+				pFlags |= aiProcess_CalcTangentSpace;
+			if (settings.OptimizeMeshes)
+				pFlags |= aiProcess_OptimizeMeshes;
+			if (settings.OptimizeScene)
+				pFlags |= aiProcess_OptimizeGraph;
+
+			const aiScene* scene = importer.ReadFile(path, pFlags);
 			std::string folder = AssetManager::s_IntAssetsDir;
 			std::string fileName;
 

@@ -1,8 +1,6 @@
 #include <Debut/dbtpch.h>
 #include <Debut/ImGui/ImGuiUtils.h>
 
-#include <imgui_internal.h>
-
 #include <Debut/AssetManager/AssetManager.h>
 #include <filesystem>
 
@@ -28,6 +26,13 @@ namespace Debut
 	void ImGuiUtils::VerticalSpace(uint32_t amount)
 	{
 		ImGui::Dummy({0, (float)amount});
+	}
+
+	void ImGuiUtils::Separator()
+	{
+		ImGui::Dummy({ 0, 3 });
+		ImGui::Separator();
+		ImGui::Dummy({ 0, 3 });
 	}
 
 	bool ImGuiUtils::DragFloat(const std::string& label, float* value, float power, float min, float max)
@@ -319,6 +324,74 @@ namespace Debut
 		ImGuiUtils::ResetColumns();
 
 		return changed;
+	}
+
+	bool ImGuiUtils::BeginDragDropSourceCustom(ImGuiDragDropFlags flags)
+	{
+		ImGuiContext& g = *GImGui;
+		ImGuiWindow* window = g.CurrentWindow;
+		ImGuiMouseButton mouse_button = ImGuiMouseButton_Left;
+
+		bool source_drag_active = false;
+		ImGuiID id = ImGui::GetHoveredID();
+		if (id == 0)
+			return false;
+		ImGuiID source_id = id;
+		ImGuiID source_parent_id = id;
+
+		if (!(flags & ImGuiDragDropFlags_SourceExtern))
+		{
+			ImGui::SetActiveID(id, window);
+			ImGui::KeepAliveID(id);
+
+			source_drag_active = ImGui::IsMouseDragging(mouse_button);
+			// Disable navigation and key inputs while dragging + cancel existing request if any
+			ImGui::SetActiveIdUsingNavAndKeys();
+		}
+		else
+		{
+			window = NULL;
+			source_id = ImHashStr("#SourceExtern");
+			source_drag_active = true;
+		}
+
+		if (source_drag_active)
+		{
+			if (!g.DragDropActive)
+			{
+				IM_ASSERT(source_id != 0);
+				ImGui::ClearDragDrop();
+				ImGuiPayload& payload = g.DragDropPayload;
+				payload.SourceId = source_id;
+				payload.SourceParentId = source_parent_id;
+				g.DragDropActive = true;
+				g.DragDropSourceFlags = flags;
+				g.DragDropMouseButton = mouse_button;
+				if (payload.SourceId == g.ActiveId)
+					g.ActiveIdNoClearOnFocusLoss = true;
+			}
+			g.DragDropSourceFrameCount = g.FrameCount;
+			g.DragDropWithinSource = true;
+
+			if (!(flags & ImGuiDragDropFlags_SourceNoPreviewTooltip))
+			{
+				// Target can request the Source to not display its tooltip (we use a dedicated flag to make this request explicit)
+				// We unfortunately can't just modify the source flags and skip the call to BeginTooltip, as caller may be emitting contents.
+				ImGui::BeginTooltip();
+				if (g.DragDropAcceptIdPrev && (g.DragDropAcceptFlags & ImGuiDragDropFlags_AcceptNoPreviewTooltip))
+				{
+					ImGuiWindow* tooltip_window = g.CurrentWindow;
+					tooltip_window->Hidden = tooltip_window->SkipItems = true;
+					tooltip_window->HiddenFramesCanSkipItems = 1;
+				}
+			}
+
+			if (!(flags & ImGuiDragDropFlags_SourceNoDisableHover) && !(flags & ImGuiDragDropFlags_SourceExtern))
+				g.LastItemData.StatusFlags &= ~ImGuiItemStatusFlags_HoveredRect;
+
+			return true;
+		}
+		return false;
 	}
 
 	bool ImGuiUtils::ImageTreeNode(const char* label, ImTextureID texture)

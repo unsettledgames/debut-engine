@@ -29,6 +29,7 @@ namespace Debutant
 
 	void ContentBrowserPanel::OnImGuiRender()
 	{
+		std::vector<std::filesystem::path> dirs, files;
 		ImGui::Begin("Content browser");
 
 		// Right click menu
@@ -52,41 +53,55 @@ namespace Debutant
 			columnCount = 1;
 
 		DrawTopBar();
-
-		if (ImGui::BeginPopup("ContentLayoutMenu"))
-		{
-			ImGui::Text("Browser layout options");
-			ImGui::Separator();
-
-			if (ImGui::Selectable("Grid layout"))
-				m_CurrLayout = ContentBrowserLayout::Grid;
-			if (ImGui::Selectable("List layout"))
-				m_CurrLayout = ContentBrowserLayout::List;
-
-			ImGui::EndPopup();
-		}
-
-		ImGui::Dummy({0, 4});
-		ImGui::Separator();
+		DrawLayoutMenu();
 
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap
 			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 
-		// Draw contents 
-		if (m_CurrLayout == ContentBrowserLayout::Grid)
-			ImGui::Columns(columnCount, 0, false);
-		// TODO: cache this so you don't have to keep accessing the filesystem
-		for (auto dirEntry : std::filesystem::directory_iterator(m_CurrDirectory))
+		// Get contents: this is used to show folder first and then files
+		for (auto& dirEntry : std::filesystem::directory_iterator(m_CurrDirectory))
 		{
-			const std::filesystem::path& path = dirEntry.path();
 			// Don't show meta files
-			if (path.extension().string() == ".meta")
+			if (dirEntry.path().extension() == ".meta")
 				continue;
 
-			DrawEntry(path, dirEntry.is_directory());
+			// Sort the entry
+			if (dirEntry.is_directory())
+				dirs.push_back(dirEntry);
+			else
+				files.push_back(dirEntry);
+		}
 
-			if (m_CurrLayout == ContentBrowserLayout::Grid)
+		// Draw contents 
+		if (m_CurrLayout == ContentBrowserLayout::Grid)
+		{
+			ImGui::Columns(columnCount, 0, false);
+
+			for (auto& path : dirs)
+			{
+				DrawEntry(path, true);
 				ImGui::NextColumn();
+			}
+
+			for (auto& path : files)
+			{
+				DrawEntry(path, false);
+				ImGui::NextColumn();
+			}
+		}
+		else
+		{
+			for (auto& path : dirs)
+			{
+				RenderListView(path, true);
+				ImGui::NextColumn();
+			}
+
+			for (auto& path : files)
+			{
+				RenderListView(path, false);
+				ImGui::NextColumn();
+			}
 		}
 
 		ImGui::End();
@@ -102,45 +117,101 @@ namespace Debutant
 		Ref<Texture2D> icon = isDir ? EditorCache::Textures().Get("cb-directory") : GetFileIcon(path);
 		ImGui::PushID(pathName.c_str());
 
-		if (m_CurrLayout == ContentBrowserLayout::Grid)
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { s_Settings.IconSize, s_Settings.IconSize }, { 0, 1 }, { 1, 0 }))
 		{
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { s_Settings.IconSize, s_Settings.IconSize }, { 0, 1 }, { 1, 0 }))
-			{
-				m_PropertiesPanel->SetAsset(path);
-			}
-			ImGui::PopStyleColor();
-
-			if (ImGui::BeginDragDropSource())
-			{
-				const wchar_t* itemPath = path.c_str();
-				ImGui::SetDragDropPayload("CONTENT_BROWSER_DATA", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
-				ImGui::EndDragDropSource();
-			}
-
-			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-			{
-				if (isDir)
-					m_CurrDirectory /= path.filename();
-			}
-
-			std::string fileName = relativePath.filename().string();
-			if (fileName.length() > 17)
-				fileName = fileName.substr(0, 17) + "...";
-			ImGui::TextWrapped(fileName.c_str());
+			m_PropertiesPanel->SetAsset(path);
 		}
-		else
+		ImGui::PopStyleColor();
+
+		if (!isDir)
+			AddDragSource(path);
+
+		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 		{
-			const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap
-				| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
-			if (ImGuiUtils::ImageTreeNode(path.filename().string().c_str(), (ImTextureID)icon->GetRendererID()))
-			{
-				ImGui::TreePop();
-			}
+			if (isDir)
+				m_CurrDirectory /= path.filename();
 		}
+
+		std::string fileName = relativePath.filename().string();
+		if (fileName.length() > 17)
+			fileName = fileName.substr(0, 17) + "...";
+		ImGui::TextWrapped(fileName.c_str());
 		
 		ImGui::PopID();
+	}
+
+	void ContentBrowserPanel::DrawLayoutMenu()
+	{
+		if (ImGui::BeginPopup("ContentLayoutMenu"))
+		{
+			ImGui::Text("Browser layout options");
+			ImGui::Separator();
+
+			if (ImGui::Selectable("Grid layout"))
+				m_CurrLayout = ContentBrowserLayout::Grid;
+			if (ImGui::Selectable("List layout"))
+				m_CurrLayout = ContentBrowserLayout::List;
+
+			ImGui::EndPopup();
+		}
+	}
+
+	void ContentBrowserPanel::RenderListView(std::filesystem::path path, bool isDir)
+	{
+		Ref<Texture2D> icon = isDir ? EditorCache::Textures().Get("cb-directory") : GetFileIcon(path);
+		ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap
+			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+		auto openFolder = std::find(m_OpenDirs.begin(), m_OpenDirs.end(), path.filename().string());
+
+		// Open the current node if it's been opened
+		if (openFolder != m_OpenDirs.end())
+			treeNodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
+
+
+		// Use invisible buttons
+		ImVec2 cursorPos = ImGui::GetCursorPos();
+		// Render the tree node
+		ImGui::SetItemAllowOverlap();
+		if (ImGuiUtils::ImageTreeNode(path.filename().string().c_str(), (ImTextureID)icon->GetRendererID()))
+		{
+			// Toggle the current node if it's been clicked
+			if (openFolder != m_OpenDirs.end())
+				m_OpenDirs.erase(openFolder);
+			else
+				m_OpenDirs.push_back(path.filename().string());
+
+			for (auto& dirEntry : std::filesystem::directory_iterator(path))
+			{
+				const std::filesystem::path& otherPath = dirEntry.path();
+				// Don't show meta files
+				if (otherPath.extension().string() == ".meta")
+					continue;
+
+				RenderListView(otherPath, dirEntry.is_directory());
+			}
+
+			ImGui::TreePop();
+		}
+		ImVec2 finalCursorPos = ImGui::GetCursorPos();
+		ImVec2 size = ImGui::GetItemRectSize();
+
+		if (!isDir)
+		{
+			ImGui::SetCursorPos(cursorPos);
+			ImGui::SetItemAllowOverlap();
+
+			if (ImGui::InvisibleButton(("##" + path.string()).c_str(), size))
+			{
+				// Set properties panel path
+				m_PropertiesPanel->SetAsset(path);
+			}
+
+			AddDragSource(path);
+
+			ImGui::SetCursorPos(finalCursorPos);
+		}
+		
 	}
 
 	void ContentBrowserPanel::DrawTopBar()
@@ -180,6 +251,19 @@ namespace Debutant
 			{ iconHeight ,iconHeight }, { 0, 1 }, { 1, 0 });
 		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
+
+		ImGui::Dummy({ 0, 4 });
+		ImGui::Separator();
+	}
+
+	void ContentBrowserPanel::AddDragSource(const std::filesystem::path path)
+	{
+		if (ImGui::BeginDragDropSource())
+		{
+			const wchar_t* itemPath = path.c_str();
+			ImGui::SetDragDropPayload("CONTENT_BROWSER_DATA", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
+			ImGui::EndDragDropSource();
+		}
 	}
 
 	Ref<Texture2D> ContentBrowserPanel::GetFileIcon(const std::filesystem::path& path)

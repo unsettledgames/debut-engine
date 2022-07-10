@@ -1,15 +1,20 @@
-#include "PropertiesPanel.h"
-#include "Utils/EditorCache.h"
-#include <Debut/AssetManager/AssetManager.h>
-#include <Debut/Rendering/Texture.h>
+#include <imgui_internal.h>
+#include <Debut/ImGui/ImGuiUtils.h>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
 #include <stack>
-#include <Debut/Physics/PhysicsMaterial2D.h>
-#include <imgui_internal.h>
-#include <Debut/ImGui/ImGuiUtils.h>
+
+#include "PropertiesPanel.h"
+#include "Utils/EditorCache.h"
+#include <Debut/AssetManager/ModelImporter.h>
+#include <Debut/AssetManager/AssetManager.h>
+
 #include <Debut/Rendering/Material.h>
 #include <Debut/Rendering/Shader.h>
+#include <Debut/Physics/PhysicsMaterial2D.h>
+#include <Debut/Rendering/Texture.h>
+
+
 
 /**
 	TODO:
@@ -101,7 +106,67 @@ namespace Debut
 
 	void PropertiesPanel::DrawModelProperties()
 	{
+		if (std::find(s_ModelExtensions.begin(), s_ModelExtensions.end(), m_AssetPath.extension().string()) != s_ModelExtensions.end())
+		{
+			std::ifstream modelFile(m_AssetPath.string() + ".model");
+			Log.CoreInfo("Stem: {0}", m_AssetPath.string() + ".model");
+			
+			static ModelImportSettings settings = {};
+			static bool normals = false, tangentSpace = false;
+			static bool triangulate = false, joinVertices = false;
+			// Prompt for importing
+			ImGuiUtils::BoldText(m_AssetPath.filename().string() + " import settings");
+			if (!modelFile.good())
+				ImGui::TextWrapped("The selected object hasn't been imported. Customize the settings and hit \"Import\" to use the generated .model file.");
+			ImGuiUtils::Separator();
 
+			ImGuiUtils::StartColumns(2, { 200, (uint32_t)ImGui::GetContentRegionAvail().x - 200 });
+
+			// Normals and tangent space
+			ImGui::Text("Generate normals");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##gennormals", &settings.Normals);
+			ImGuiUtils::NextColumn();
+
+			ImGui::Text("Generate tangent space");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##gentangentspace", &settings.TangentSpace);
+			ImGuiUtils::NextColumn();
+
+			ImGuiUtils::Separator();
+
+			// Triangulation
+			ImGui::Text("Triangulate");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##triangulate", &settings.Triangulate);
+			ImGuiUtils::NextColumn();
+
+			ImGui::Text("Join identical vertices");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##joinvertices", &settings.JoinVertices);
+			ImGuiUtils::NextColumn();
+
+			ImGuiUtils::Separator();
+
+			// Optimizations
+			ImGui::Text("Optimize meshes");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##optimizemeshes", &settings.OptimizeMeshes);
+			ImGuiUtils::NextColumn();
+
+			ImGui::Text("Optimize scene");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##joinvertices", &settings.OptimizeScene);
+			ImGuiUtils::NextColumn();
+
+			ImGuiUtils::ResetColumns();
+
+			if (ImGui::Button("Import"))
+			{
+				ModelImporter::ImportModel(m_AssetPath.string(), settings);
+				settings = {};
+			}
+		}
 	}
 
 	void PropertiesPanel::DrawPhysicsMaterial2DProperties()

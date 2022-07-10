@@ -1,5 +1,7 @@
 #pragma once
 #include <imgui.h>
+#include <imgui_internal.h>
+
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/Rendering/Texture.h>
 
@@ -12,6 +14,7 @@ namespace Debut
 		static void NextColumn();
 		static void ResetColumns();
 		static void VerticalSpace(uint32_t amount);
+		static void Separator();
 
 		static bool DragFloat(const std::string& label, float* value, float power, float min = -100000.0f, float max = 100000.0f);
 		static void RGBVec2(const char* id, std::vector<const char*>labels, std::vector<float*>values, float resetValue = 0, uint32_t columnWidth = 100);
@@ -23,6 +26,8 @@ namespace Debut
 		static void BoldText(const std::string& label);
 		static bool Combo(const char* id, const char* selectables[], uint32_t nSelectables, const char** currSelected, const char** ret);
 		static bool ImageTreeNode(const char* id, ImTextureID texture);
+
+		static bool BeginDragDropSourceCustom(ImGuiDragDropFlags flags = 0);
 
 		template <typename T>
 		static Ref<T> DragDestination(const std::string& label, const std::string& acceptedExtension, UUID currentID)
