@@ -6,6 +6,7 @@
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/Utils/PlatformUtils.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
+#include "Panels/ProgressPanel.h"
 
 #include <chrono>
 #include <imgui_internal.h>
@@ -62,6 +63,9 @@ namespace Debutant
         ModelImporter::ImportModel("assets\\models\\car\\car.obj");
         m_Model = AssetManager::Request<Model>(
             AssetManager::Request<Model>("assets\\models\\car\\car.obj.model")->GetSubmodels()[0]);*/
+
+        ProgressPanel::SubmitTask("Importing model...");
+        ProgressPanel::SubmitTask("Compressing mesh...");
     }
 
     void DebutantLayer::OnDetach()
@@ -208,6 +212,7 @@ namespace Debutant
             m_SceneHierarchy.OnImGuiRender();
             m_ContentBrowser.OnImGuiRender();
             m_PropertiesPanel.OnImGuiRender();
+            ProgressPanel::OnImGuiRender();
 
             DrawViewport();
             DrawUIToolbar();
