@@ -5,6 +5,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
+#include <Debut/ImGui/ProgressPanel.h>
 
 /*
 	TODO
@@ -15,6 +16,8 @@ namespace Debut
 {
 	Ref<Model> ModelImporter::ImportModel(const std::string& path, const ModelImportSettings& settings)
 	{
+		ProgressPanel::SubmitTask("modelimport", "Importing model...");
+
 		std::ifstream meta(path + ".model.meta");
 		unsigned int pFlags = aiProcess_RemoveRedundantMaterials;
 
@@ -26,6 +29,8 @@ namespace Debut
 				pFlags |= aiProcess_ImproveCacheLocality;
 			if (settings.JoinVertices)
 				pFlags |= aiProcess_JoinIdenticalVertices;
+			if (settings.Triangulate)
+				pFlags |= aiProcess_Triangulate;
 			if (settings.Normals)
 				pFlags |= aiProcess_GenNormals;
 			if (settings.TangentSpace)
@@ -54,6 +59,8 @@ namespace Debut
 			}
 		}
 
+		ProgressPanel::CompleteTask("modelimport");
+
 		meta.close();
 		return nullptr;
 	}
@@ -77,8 +84,10 @@ namespace Debut
 		// Load dependencies
 		for (int i = 0; i < parent->mNumChildren; i++)
 		{
+			ProgressPanel::ProgressTask("modelimport", i / parent->mNumChildren);
 			Ref<Model> currModel = ImportNodes(parent->mChildren[i], scene, submodelsFolder);
-			models[i] = currModel->GetID();
+			if (currModel != nullptr)
+				models[i] = currModel->GetID();
 		}
 
 		// Load meshes and materials
@@ -88,13 +97,15 @@ namespace Debut
 			aiMesh* assimpMesh = scene->mMeshes[parent->mMeshes[i]];
 			Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, assetsFolder);
 			AssetManager::Submit<Mesh>(mesh);
-			meshes[i] = mesh->GetID();
+			if (mesh != nullptr)
+				meshes[i] = mesh->GetID();
 
 			// Import and submit the material
 			aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
 			Ref<Material> material = ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, assetsFolder);
 			AssetManager::Submit<Material>(material);
-			materials[i] = material->GetID();
+			if (material != nullptr)
+				materials[i] = material->GetID();
 		}
 
 		Ref<Model> ret = CreateRef<Model>(meshes, materials, models);
@@ -107,6 +118,8 @@ namespace Debut
 
 	Ref<Mesh> ModelImporter::ImportMesh(aiMesh* assimpMesh, const std::string& name, const std::string& saveFolder)
 	{
+		ProgressPanel::SubmitTask("meshimport", "Importing mesh...");
+
 		Ref<Mesh> mesh = CreateRef<Mesh>();
 		if (mesh->IsValid())
 			return mesh;
@@ -122,6 +135,7 @@ namespace Debut
 				uint32_t index = i * 3 + j;
 				mesh->m_Vertices[index] = assimpMesh->mVertices[i][j];
 			}
+		ProgressPanel::ProgressTask("meshimport", 0.17);
 
 		// Load normals
 		if (assimpMesh->HasNormals())
@@ -134,6 +148,7 @@ namespace Debut
 					mesh->m_Normals[index] = assimpMesh->mNormals[i][j];
 				}
 		}
+		ProgressPanel::ProgressTask("meshimport", 0.17);
 
 		// Load tangents / bitangents
 		if (assimpMesh->HasTangentsAndBitangents())
@@ -149,6 +164,7 @@ namespace Debut
 					mesh->m_Tangents[index] = assimpMesh->mTangents[i][j];
 				}
 			}
+			ProgressPanel::ProgressTask("meshimport", 0.17);
 
 			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
 			{
@@ -158,6 +174,7 @@ namespace Debut
 					mesh->m_Bitangents[index] = assimpMesh->mBitangents[i][j];
 				}
 			}
+			ProgressPanel::ProgressTask("meshimport", 0.17);
 		}
 
 		// Load texture coordinates
@@ -173,6 +190,7 @@ namespace Debut
 					mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j][k];
 				}
 		}
+		ProgressPanel::ProgressTask("meshimport", 0.17);
 
 		// Load indices
 		mesh->m_Indices.resize(assimpMesh->mNumFaces * 3);
@@ -185,12 +203,15 @@ namespace Debut
 				indexIndex++;
 			}
 		}
+		ProgressPanel::ProgressTask("meshimport", 0.17);
 
 		// Save the mesh on disk + meta file
 		std::stringstream ss;
 		ss << saveFolder << "\\" << mesh->GetID();
 		mesh->SetPath(ss.str());
 		mesh->SaveSettings();
+
+		ProgressPanel::CompleteTask("meshimport");
 
 		return mesh;
 	}

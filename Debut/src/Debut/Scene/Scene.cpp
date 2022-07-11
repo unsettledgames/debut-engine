@@ -4,6 +4,7 @@
 #include "Debut/Scene/Entity.h"
 #include "Debut/Scene/Components.h"
 #include "Debut/Rendering/Renderer/Renderer2D.h"
+#include "Debut/Rendering/Renderer/Renderer3D.h"
 #include "Debut/AssetManager/AssetManager.h"
 
 #include "box2d/b2_world.h"
@@ -58,6 +59,8 @@ namespace Debut
 	void Scene::OnComponentAdded(CircleCollider2DComponent& bc2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(MeshRendererComponent& bc2d, Entity entity) { }
 
 	template <typename Component>
 	static void CopyComponent(entt::registry& dst, const entt::registry& src, const std::unordered_map<UUID, entt::entity> enttMap)
@@ -105,6 +108,8 @@ namespace Debut
 	void Scene::OnEditorUpdate(Timestep ts, Camera& camera)
 	{
 		DBT_PROFILE_SCOPE("Editor update");
+
+		// 2D Rendering
 		Renderer2D::BeginScene(camera, glm::inverse(camera.GetView()));
 
 		auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
@@ -125,6 +130,18 @@ namespace Debut
 		}
 
 		Renderer2D::EndScene();
+
+		// 3D Rendering
+		Renderer3D::BeginScene(camera, glm::inverse(camera.GetView()));
+
+		auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
+		for (auto entity : group3D)
+		{
+			auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
+			Renderer3D::DrawModel(mesh, transform.GetTransform());
+		}
+
+		Renderer3D::EndScene();
 	}
 	
 
@@ -191,17 +208,35 @@ namespace Debut
 
 		if (mainCamera)
 		{
-			DBT_PROFILE_SCOPE("Renderer2D update");
-			Renderer2D::BeginScene(*mainCamera, cameraTransform);
-
-			auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
-			for (auto entity : group)
+			// 2D Rendering
 			{
-				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				DBT_PROFILE_SCOPE("Renderer2D update");
+				Renderer2D::BeginScene(*mainCamera, cameraTransform);
+
+				auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
+				for (auto entity : group)
+				{
+					auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				}
+
+				Renderer2D::EndScene();
 			}
 
-			Renderer2D::EndScene();
+			// 3D Rendering
+			{
+				DBT_PROFILE_SCOPE("Renderer3D update");
+				Renderer3D::BeginScene(*mainCamera, cameraTransform);
+
+				auto group = m_Registry.group<TransformComponent, MeshRendererComponent>();
+				for (auto entity : group)
+				{
+					auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
+					Renderer3D::DrawModel(mesh, transform.GetTransform());
+				}
+
+				Renderer3D::EndScene();
+			}
 		}
 	}
 

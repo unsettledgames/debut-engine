@@ -53,7 +53,6 @@ namespace Debutant
 			columnCount = 1;
 
 		DrawTopBar();
-		DrawLayoutMenu();
 
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap
 			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
@@ -216,6 +215,9 @@ namespace Debutant
 
 	void ContentBrowserPanel::DrawTopBar()
 	{
+		ImGui::BeginGroup();
+
+		DrawLayoutMenu();
 		// Layout menu
 		float iconHeight = ImGui::GetTextLineHeight();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
@@ -254,6 +256,8 @@ namespace Debutant
 
 		ImGui::Dummy({ 0, 4 });
 		ImGui::Separator();
+
+		ImGui::EndGroup();
 	}
 
 	void ContentBrowserPanel::AddDragSource(const std::filesystem::path path)

@@ -109,7 +109,6 @@ namespace Debut
 		if (std::find(s_ModelExtensions.begin(), s_ModelExtensions.end(), m_AssetPath.extension().string()) != s_ModelExtensions.end())
 		{
 			std::ifstream modelFile(m_AssetPath.string() + ".model");
-			Log.CoreInfo("Stem: {0}", m_AssetPath.string() + ".model");
 			
 			static ModelImportSettings settings = {};
 			static bool normals = false, tangentSpace = false;

@@ -46,6 +46,9 @@ namespace Debutant
 		void DrawViewport();
 		void DrawTopBar();
 
+		// Drag & droppable objects
+		void LoadModel(const std::filesystem::path path);
+
 	private:
 
 		// Viewport data

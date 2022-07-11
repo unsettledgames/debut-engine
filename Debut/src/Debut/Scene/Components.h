@@ -86,6 +86,7 @@ namespace Debut
 
 		MeshRendererComponent()  {}
 		MeshRendererComponent(const MeshRendererComponent&) = default;
+		MeshRendererComponent(UUID mesh, UUID material) : Material(material), Mesh(mesh), Instanced(false) {}
 	};
 
 	// PHYSICS AND COLLIDERS

@@ -6,7 +6,6 @@
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/Utils/PlatformUtils.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
-#include "Panels/ProgressPanel.h"
 
 #include <chrono>
 #include <imgui_internal.h>
@@ -47,25 +46,6 @@ namespace Debutant
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
 
         AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
-        
-        ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj", {});
-        m_Model2 = AssetManager::Request<Model>(
-            AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);
-
-        /*ModelImporter::ImportModel("assets\\models\\cube\\untitled.obj");
-        m_Model = AssetManager::Request<Model>(
-            AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);*/
-
-        ModelImporter::ImportModel("assets\\models\\pyramid\\source\\1.obj", {});
-        m_Model = AssetManager::Request<Model>(AssetManager::Request<Model>("assets\\models\\pyramid\\source\\1.obj.model")->GetSubmodels()[0]);
-
-            /*
-        ModelImporter::ImportModel("assets\\models\\car\\car.obj");
-        m_Model = AssetManager::Request<Model>(
-            AssetManager::Request<Model>("assets\\models\\car\\car.obj.model")->GetSubmodels()[0]);*/
-
-        ProgressPanel::SubmitTask("Importing model...");
-        ProgressPanel::SubmitTask("Compressing mesh...");
     }
 
     void DebutantLayer::OnDetach()
@@ -102,26 +82,6 @@ namespace Debutant
             m_ActiveScene->OnEditorUpdate(ts, m_EditorCamera);
             break;
         }
-
-        Renderer3D::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
-        MeshRendererComponent component;
-
-        for (uint32_t i = 0; i < 1; i++)
-        {
-            for (uint32_t j = 0; j < 1; j++)
-            {
-                component.Mesh = m_Model->GetMeshes()[0];
-                component.Material = m_Model->GetMaterials()[0];
-                Renderer3D::DrawModel(component, glm::translate(glm::mat4(1.0), glm::vec3(50 * i, 50 * j, 0)));
-            }
-        }
-        
-
-        component.Mesh = m_Model2->GetMeshes()[0];
-        component.Material = m_Model2->GetMaterials()[0];
-        Renderer3D::DrawModel(component, glm::translate(glm::mat4(1.0), glm::vec3(50.0, 0, 0)));
-
-        Renderer3D::EndScene();
 
         m_FrameBuffer->Unbind();
     }
@@ -212,7 +172,6 @@ namespace Debutant
             m_SceneHierarchy.OnImGuiRender();
             m_ContentBrowser.OnImGuiRender();
             m_PropertiesPanel.OnImGuiRender();
-            ProgressPanel::OnImGuiRender();
 
             DrawViewport();
             DrawUIToolbar();
@@ -318,7 +277,11 @@ namespace Debutant
                 const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA");
                 if (payload != nullptr)
                 {
-                    OpenScene(std::filesystem::path((const wchar_t*)payload->Data));
+                    std::filesystem::path path((const wchar_t*)payload->Data);
+                    if (path.extension() == ".debut")
+                        OpenScene(path);
+                    else if (path.extension() == ".model")
+                        LoadModel(path);
                     ImGui::EndDragDropTarget();
                 }
 
@@ -336,6 +299,16 @@ namespace Debutant
             ImGui::PopStyleVar();
         }
         ImGui::End();
+    }
+
+    void DebutantLayer::LoadModel(const std::filesystem::path path)
+    {
+        Ref<Model> model = AssetManager::Request<Model>(AssetManager::Request<Model>(path.string())->GetSubmodels()[0]);
+        // Create entity
+        Entity modelEntity = m_ActiveScene->CreateEntity(path.filename().string());
+
+        // Add MeshRendererComponent
+        modelEntity.AddComponent<MeshRendererComponent>(model->GetMeshes()[0], model->GetMaterials()[0]);
     }
 
     void DebutantLayer::DrawGizmos()
