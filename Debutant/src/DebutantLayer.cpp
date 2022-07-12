@@ -305,7 +305,7 @@ namespace Debutant
     {
         Ref<Model> model = AssetManager::Request<Model>(AssetManager::Request<Model>(path.string())->GetSubmodels()[0]);
         // Create entity
-        Entity modelEntity = m_ActiveScene->CreateEntity(path.filename().string());
+        Entity modelEntity = m_ActiveScene->CreateEntity(nullptr, path.filename().string());
 
         // Add MeshRendererComponent
         modelEntity.AddComponent<MeshRendererComponent>(model->GetMeshes()[0], model->GetMaterials()[0]);
@@ -477,6 +477,8 @@ namespace Debutant
 
         SceneSerializer ss(m_EditorScene);
         ss.DeserializeText(path.string());
+
+        m_SceneHierarchy.RebuildSceneGraph();
 
         m_ScenePath = path.string();
         m_ActiveScene = m_EditorScene;

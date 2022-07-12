@@ -279,7 +279,7 @@ namespace Debut
 			{
 				// Create a new entity, set the tag and name
 				auto tc = yamlEntity["TagComponent"];
-				Entity entity = m_Scene->CreateEntity(tc["Name"].as<std::string>());
+				Entity entity = m_Scene->CreateEntity(nullptr, tc["Name"].as<std::string>());
 				entity.GetComponent<TagComponent>().Tag = tc["Tag"].as<std::string>();
 
 				// Deserialize the other components

@@ -33,11 +33,8 @@ namespace Debut
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		m_Context->m_Registry.each([=](auto entity)
-		{
-			Entity entt = { entity, m_Context.get() };
-			DrawEntityNode(entt);
-		});
+		for (uint32_t i=0; i<m_CachedSceneGraph.Children.size(); i++)
+			DrawEntityNode(m_CachedSceneGraph.Children[i]);
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectionContext = {};
@@ -46,7 +43,10 @@ namespace Debut
 		if (ImGui::BeginPopupContextWindow(0, 1, false))
 		{
 			if (ImGui::MenuItem("New Entity"))
-				m_SelectionContext = m_Context->CreateEntity();
+			{
+				m_SelectionContext = m_Context->CreateEntity(nullptr);
+				RebuildSceneGraph();
+			}
 			ImGui::EndPopup();
 		}
 
@@ -62,44 +62,67 @@ namespace Debut
 		ImGui::End();
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity& entity)
+	void SceneHierarchyPanel::DrawEntityNode(SceneNode& node)
 	{
-		bool entityDeleted = false;
-		auto& tc = entity.GetComponent<TagComponent>();
-		ImGuiTreeNodeFlags flags = (m_SelectionContext == entity ? ImGuiTreeNodeFlags_OpenOnArrow : 0);
-		flags |= ImGuiTreeNodeFlags_Selected;
-		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+		if (m_RebuiltGraph)
+			return;
 
-		// TODO: HACKY
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tc.Name.c_str());
+		bool entityDeleted = false;
+		auto& tc = node.ParentEntity.GetComponent<TagComponent>();
+		ImGuiTreeNodeFlags flags = (m_SelectionContext == node.ParentEntity ? ImGuiTreeNodeFlags_OpenOnArrow : 0);
+		flags |= ImGuiTreeNodeFlags_Selected;
+		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
+
+		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.ParentEntity, flags, tc.Name.c_str());
 		if (ImGui::IsItemClicked())
-		{
-			m_SelectionContext = entity;
-		}
+			m_SelectionContext = node.ParentEntity;
 
 		// Right click on blank space
 		if (ImGui::BeginPopupContextItem())
 		{
+			if (ImGui::MenuItem("New Entity"))
+			{
+				m_SelectionContext = m_Context->CreateEntity(&node.ParentEntity.Transform());
+				RebuildSceneGraph();
+
+				ImGui::EndPopup();
+				if (opened)
+					ImGui::TreePop();	
+				return;
+			}
+			if (ImGui::MenuItem("Duplicate"))
+			{
+				m_Context->DuplicateEntity(node.ParentEntity);
+				RebuildSceneGraph();
+
+				ImGui::EndPopup();
+				if (opened)
+					ImGui::TreePop();
+				return;
+			}
 			if (ImGui::MenuItem("Destroy"))
 				entityDeleted = true;
-			if (ImGui::MenuItem("Duplicate"))
-				m_Context->DuplicateEntity(entity);
 
 			ImGui::EndPopup();
 		}
 
+		if (entityDeleted)
+		{
+			m_Context->DestroyEntity(node.ParentEntity);
+			if (m_SelectionContext == node.ParentEntity)
+				m_SelectionContext = {};
+			RebuildSceneGraph();
+			return;
+		}
+
 		if (opened)
 		{
-			ImGui::Text("TODO: transform trees");
+			for (uint32_t i = 0; i < node.Children.size(); i++)
+				DrawEntityNode(node.Children[i]);
 			ImGui::TreePop();
 		}
 
-		if (entityDeleted)
-		{
-			m_Context->DestroyEntity(entity);
-			if (m_SelectionContext == entity)
-				m_SelectionContext = {};
-		}
+		m_RebuiltGraph = false;
 	}
 
 	template<typename T, typename UIFunction>
@@ -306,5 +329,33 @@ namespace Debut
 				ImGuiUtils::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
 				ImGuiUtils::DragFloat("Restitution threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 			});
+	}
+
+	SceneNode SceneHierarchyPanel::RebuildSceneGraph()
+	{
+		SceneNode scene(true, {});
+		std::unordered_map<entt::entity, SceneNode> nodes;
+		auto transforms = m_Context->m_Registry.view<TransformComponent>();
+
+		for (auto entity : transforms)
+			nodes[entity] = SceneNode(false, Entity(entity, m_Context.get()));
+
+		for (auto entity : transforms)
+		{
+			auto& transform = transforms.get<TransformComponent>(entity);
+
+			// If the object doesn't have a parent, then the parent is the root node
+			if (transform.Parent == nullptr)
+				scene.Children.push_back(nodes[entity]);
+			// Otherwise, set the entity as the child of its parent in the scene graph
+			else
+			{
+				entt::entity parentEntity = entt::to_entity(m_Context->m_Registry, *transform.Parent);
+				nodes[entt::to_entity(m_Context->m_Registry, *transform.Parent)].Children.push_back(nodes[entity]);
+			}
+		}
+
+		m_CachedSceneGraph = scene;
+		return scene;
 	}
 }

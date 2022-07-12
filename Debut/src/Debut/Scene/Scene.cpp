@@ -147,7 +147,6 @@ namespace Debut
 
 	void Scene::OnRuntimeUpdate(Timestep ts)
 	{
-		
 		// Update scripts
 		{
 			DBT_PROFILE_SCOPE("Scene: Script Update");
@@ -228,7 +227,7 @@ namespace Debut
 				DBT_PROFILE_SCOPE("Renderer3D update");
 				Renderer3D::BeginScene(*mainCamera, cameraTransform);
 
-				auto group = m_Registry.group<TransformComponent, MeshRendererComponent>();
+				auto group = m_Registry.view<TransformComponent, MeshRendererComponent>();
 				for (auto entity : group)
 				{
 					auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
@@ -326,7 +325,7 @@ namespace Debut
 		if (!entity)
 			return;
 
-		Entity duplicate = CreateEntity(entity.GetComponent<TagComponent>().Name + " Copy");
+		Entity duplicate = CreateEntity(nullptr, entity.GetComponent<TagComponent>().Name + " Copy");
 		
 		CopyComponentIfExists<TransformComponent>(duplicate, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(duplicate, entity);
@@ -335,9 +334,11 @@ namespace Debut
 		CopyComponentIfExists<CircleCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CameraComponent>(duplicate, entity);
 		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
+		
+		duplicate.Transform().Parent = duplicate.Transform().Parent;
 	}
 
-	Entity Scene::CreateEntity(const std::string& name)
+	Entity Scene::CreateEntity(TransformComponent* parent, const std::string& name)
 	{
 		Entity ret = { m_Registry.create(), this };
 
@@ -345,17 +346,21 @@ namespace Debut
 		ret.AddComponent<TagComponent>(name);
 		ret.AddComponent<IDComponent>();
 
+		ret.Transform().Parent = parent;
+
 		return ret;
 	}
 
-	Entity Scene::CreateEntity(const UUID& id, const std::string& name)
+	Entity Scene::CreateEntity(TransformComponent* parent, const UUID& id, const std::string& name)
 	{
 		Entity ret = { m_Registry.create(), this };
 
-		ret.AddComponent<TransformComponent>();
-		ret.AddComponent<TagComponent>(name);
 		IDComponent idC = ret.AddComponent<IDComponent>();
 		idC.ID = id;
+		ret.AddComponent<TransformComponent>();
+		ret.AddComponent<TagComponent>(name);
+
+		ret.Transform().Parent = parent;
 
 		return ret;
 	}
@@ -384,7 +389,7 @@ namespace Debut
 			UUID id = srcSceneRegistry.get<IDComponent>(e).ID;
 			auto& name = srcSceneRegistry.get<TagComponent>(e).Name;
 
-			Entity newEntity = newScene->CreateEntity(id, name);
+			Entity newEntity = newScene->CreateEntity(nullptr, id, name);
 			enttMap[id] = newEntity;
 		}
 

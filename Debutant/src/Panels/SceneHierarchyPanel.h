@@ -1,10 +1,21 @@
 #pragma once
 
 #include "Debut.h"
+#include <vector>
 
 
 namespace Debut
 {
+	struct SceneNode
+	{
+		bool IsRoot = false;
+		Entity ParentEntity;
+		std::vector<SceneNode> Children;
+
+		SceneNode(bool root, Entity parent) : IsRoot(root), ParentEntity(parent), Children({}) {}
+		SceneNode() : ParentEntity({}), Children({}) {}
+	};
+
 	class SceneHierarchyPanel
 	{
 
@@ -13,13 +24,14 @@ namespace Debut
 
 		void SetContext(const Ref<Scene>& scene);
 		void SetSelectedEntity(const Entity& entity);
+		SceneNode RebuildSceneGraph();
 
 		void OnImGuiRender();
 
 		Entity GetSelectionContext() const { return m_SelectionContext; }
 
 	private:
-		void DrawEntityNode(Entity& entity);
+		void DrawEntityNode(SceneNode& entity);
 		void DrawComponents(Entity& entity);
 
 		template <typename T>
@@ -38,5 +50,7 @@ namespace Debut
 	private:
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
+		SceneNode m_CachedSceneGraph;
+		bool m_RebuiltGraph = false;
 	};
 }

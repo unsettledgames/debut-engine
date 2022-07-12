@@ -8,8 +8,11 @@
 
 class b2World;
 
+
 namespace Debut
 {
+	class TransformComponent;
+
 	class Scene
 	{
 	friend class Entity;
@@ -28,8 +31,8 @@ namespace Debut
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		Entity CreateEntity(const std::string& name = "New Entity");
-		Entity CreateEntity(const UUID& id, const std::string& name = "New Entity");
+		Entity CreateEntity(TransformComponent* parent, const std::string& name = "New Entity");
+		Entity CreateEntity(TransformComponent* parent, const UUID& id, const std::string& name = "New Entity");
 
 		void DuplicateEntity(Entity& entity);
 		void DestroyEntity(Entity entity);

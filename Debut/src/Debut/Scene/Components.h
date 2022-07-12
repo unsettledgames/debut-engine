@@ -39,19 +39,33 @@ namespace Debut
 		glm::vec3 Rotation = glm::vec3(0.0f);
 		glm::vec3 Scale = glm::vec3(1.0f);
 
+		TransformComponent* Parent = nullptr;
+
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
 		TransformComponent(const glm::vec3& translation) : Translation(translation) {}
 
 		glm::mat4 GetTransform() const
 		{
+			// Get the parent matrix
+			glm::mat4 worldMatrix;
+			if (Parent == nullptr)
+				worldMatrix = glm::mat4(1.0);
+			else
+				worldMatrix = Parent->GetTransform();
+
+			// Compose the local matrix
 			glm::mat4 transform(1.0f);
 			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
-
-			return glm::translate(transform, Translation) 
+			
+			// Apply the parent matrix
+			return worldMatrix * (glm::translate(transform, Translation) 
 				* rotation 
-				* glm::scale(glm::mat4(1.0f), Scale);
+				* glm::scale(glm::mat4(1.0f), Scale));
 		}
+
+		void SetParent(TransformComponent* parent) { Parent = parent; }
+		void SetChild(TransformComponent& child) { child.Parent = this; }
 	};
 
 	// RENDERING
