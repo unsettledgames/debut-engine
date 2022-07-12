@@ -64,6 +64,18 @@ namespace Debut
 				* glm::scale(glm::mat4(1.0f), Scale));
 		}
 
+		glm::mat4 GetLocalTransform() const
+		{
+			// Compose the local matrix
+			glm::mat4 transform(1.0f);
+			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
+
+			// Apply the parent matrix
+			return (glm::translate(transform, Translation)
+				* rotation
+				* glm::scale(glm::mat4(1.0f), Scale));
+		}
+
 		void SetParent(TransformComponent* parent) { Parent = parent; }
 		void SetChild(TransformComponent& child) { child.Parent = this; }
 	};

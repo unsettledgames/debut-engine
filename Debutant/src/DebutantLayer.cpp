@@ -343,6 +343,7 @@ namespace Debutant
             if (ImGuizmo::IsUsing())
             {
                 glm::vec3 finalTrans, finalRot, finalScale;
+                transform = (tc.Parent == nullptr ? glm::mat4(1.0) : glm::inverse(tc.Parent->GetTransform())) * transform;
                 Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
 
                 glm::vec3 deltaRot = finalRot - tc.Rotation;
