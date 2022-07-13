@@ -10,9 +10,6 @@
 
 /*
 	TODO:
-		- Fix bugs:
-			- System not working with physics
-			- Treenode not displaying correctly
 		- Polish UI by having 
 			- non-highlighted entries if they aren't selected
 			- entries without arrow if they don't have children
@@ -80,10 +77,27 @@ namespace Debut
 		bool entityDeleted = false;
 		auto& tc = node.ParentEntity.GetComponent<TagComponent>();
 		ImGuiTreeNodeFlags flags = (m_SelectionContext == node.ParentEntity ? ImGuiTreeNodeFlags_OpenOnArrow : 0);
-		flags |= ImGuiTreeNodeFlags_Selected;
-		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth;
+		flags |= ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed;
 
+		// Don't let the user expand a node if it doesn't have children
+		if (node.Children.size() == 0)
+			flags |= ImGuiTreeNodeFlags_Leaf;
+		// Highlight the selected node
+		if (node.ParentEntity == m_SelectionContext)
+		{
+			flags |= ImGuiTreeNodeFlags_Selected;
+		}
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 2, 2 });
+		if ((uint32_t)node.ParentEntity != (uint32_t)m_SelectionContext)
+			ImGui::PushStyleColor(ImGuiCol_Header, { 0.0, 0.0, 0.0, 0.0 });
+		else
+			ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered]);
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.ParentEntity, flags, tc.Name.c_str());
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
+
 		if (ImGui::IsItemClicked())
 			m_SelectionContext = node.ParentEntity;
 

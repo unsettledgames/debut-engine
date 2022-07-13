@@ -51,9 +51,9 @@ namespace Debut
 		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
 		*/
 		// Headers
-		colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.31f, 1.0f };
-		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.41f, 1.0f };
-		colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.251f, 1.0f };
+		colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.41f, 1.0f };
+		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.51f, 1.0f };
+		colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.351f, 1.0f };
 
 		// Buttons
 		colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.31f, 1.0f };
@@ -144,8 +144,8 @@ namespace Debut
 	void ImGuiLayer::OnImGuiRender()
 	{
 		ProgressPanel::OnImGuiRender();
-		/*static bool showDemo = true;
-		ImGui::ShowDemoWindow(&showDemo);*/
+		static bool showDemo = true;
+		ImGui::ShowDemoWindow(&showDemo);
 	}
 
 	void ImGuiLayer::End()
