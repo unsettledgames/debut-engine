@@ -304,12 +304,39 @@ namespace Debutant
 
     void DebutantLayer::LoadModel(const std::filesystem::path path)
     {
-        Ref<Model> model = AssetManager::Request<Model>(AssetManager::Request<Model>(path.string())->GetSubmodels()[0]);
-        // Create entity
+        Ref<Model> model = AssetManager::Request<Model>(path.string());
         Entity modelEntity = m_ActiveScene->CreateEntity({}, path.filename().string());
 
-        // Add MeshRendererComponent
-        modelEntity.AddComponent<MeshRendererComponent>(model->GetMeshes()[0], model->GetMaterials()[0]);
+        modelEntity.Transform().Parent = {};
+        LoadModelNode(model, modelEntity);
+    }
+    void DebutantLayer::LoadModelNode(Ref<Model> model, Entity& parent)
+    {
+        std::string path, extension, folder, name;
+        path = model->GetPath();
+        if (path != "")
+        {
+            extension = path.substr(path.find_last_of("."), path.length());
+            folder = path.substr(path.find_last_of("\\"), path.length());
+            name = folder.substr(path.find_last_of("\\"), folder.length() - extension.length());
+        }
+        else
+            name = "Submodel";
+
+        // Create entity
+        Entity modelEntity = m_ActiveScene->CreateEntity({}, name);
+        // Parent it
+        modelEntity.Transform().Parent = parent;
+
+        // Add MeshRendererComponent if necessary
+        if (model->GetMeshes().size() > 0)
+            modelEntity.AddComponent<MeshRendererComponent>(model->GetMeshes()[0], model->GetMaterials()[0]);   
+
+        // Add submodels as children
+        for (uint32_t i = 0; i < model->GetSubmodels().size(); i++)
+            LoadModelNode(AssetManager::Request<Model>(model->GetSubmodels()[i]), modelEntity);
+
+        m_ActiveScene->RebuildSceneGraph();
     }
 
     void DebutantLayer::DrawGizmos()

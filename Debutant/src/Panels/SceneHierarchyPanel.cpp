@@ -85,10 +85,9 @@ namespace Debut
 			flags |= ImGuiTreeNodeFlags_Leaf;
 		// Highlight the selected node
 		if (node.ParentEntity == m_SelectionContext)
-		{
 			flags |= ImGuiTreeNodeFlags_Selected;
-		}
 
+		// Color the node differently if it's selected
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 2, 2 });
 		if ((uint32_t)node.ParentEntity != (uint32_t)m_SelectionContext)
 			ImGui::PushStyleColor(ImGuiCol_Header, { 0.0, 0.0, 0.0, 0.0 });

@@ -48,6 +48,7 @@ namespace Debutant
 
 		// Drag & droppable objects
 		void LoadModel(const std::filesystem::path path);
+		void LoadModelNode(Ref<Model> model, Entity& parent);
 
 	private:
 
