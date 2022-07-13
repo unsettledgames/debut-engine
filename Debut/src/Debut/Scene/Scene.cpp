@@ -356,7 +356,7 @@ namespace Debut
 	{
 		Entity ret = { m_Registry.create(), this };
 
-		IDComponent idC = ret.AddComponent<IDComponent>();
+		IDComponent& idC = ret.AddComponent<IDComponent>();
 		idC.ID = id;
 		ret.AddComponent<TransformComponent>();
 		ret.AddComponent<TagComponent>(name);
@@ -414,6 +414,15 @@ namespace Debut
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+
+		// Restore transforms
+		auto transformView = dstSceneRegistry.view<TransformComponent>();
+		for (auto e : transformView)
+		{
+			TransformComponent& tc = dstSceneRegistry.get<TransformComponent>(e);
+			if (tc.Parent)
+				tc.Parent = newScene->GetEntityByID(tc.Parent.GetComponent<IDComponent>().ID);
+		}
 
 		return newScene;
 	}

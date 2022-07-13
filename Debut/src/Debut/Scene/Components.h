@@ -42,8 +42,7 @@ namespace Debut
 		Entity Parent = {};
 
 		TransformComponent() = default;
-		TransformComponent(const TransformComponent& other) : 
-			Translation(other.Translation), Rotation(other.Rotation), Scale(other.Scale), Parent(other.Parent) {}
+		TransformComponent(const TransformComponent& other) = default;
 		TransformComponent(const glm::vec3& translation) : Translation(translation) {}
 
 		glm::mat4 GetTransform()
