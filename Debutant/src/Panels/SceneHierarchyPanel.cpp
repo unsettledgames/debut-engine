@@ -43,8 +43,8 @@ namespace Debut
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		for (uint32_t i=0; i<m_CachedSceneGraph.Children.size(); i++)
-			DrawEntityNode(m_CachedSceneGraph.Children[i]);
+		for (uint32_t i=0; i<m_Context->m_CachedSceneGraph->Children.size(); i++)
+			DrawEntityNode(m_Context->m_CachedSceneGraph->Children[i]);
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectionContext = {};
@@ -55,7 +55,7 @@ namespace Debut
 			if (ImGui::MenuItem("New Entity"))
 			{
 				m_SelectionContext = m_Context->CreateEntity({});
-				RebuildSceneGraph();
+				m_Context->RebuildSceneGraph();
 			}
 			ImGui::EndPopup();
 		}
@@ -72,7 +72,7 @@ namespace Debut
 		ImGui::End();
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(SceneNode& node)
+	void SceneHierarchyPanel::DrawEntityNode(EntitySceneNode& node)
 	{
 		if (m_RebuiltGraph)
 			return;
@@ -93,7 +93,7 @@ namespace Debut
 			if (ImGui::MenuItem("New Entity"))
 			{
 				m_SelectionContext = m_Context->CreateEntity(node.ParentEntity);
-				RebuildSceneGraph();
+				m_Context->RebuildSceneGraph();
 
 				ImGui::EndPopup();
 				if (opened)
@@ -103,7 +103,7 @@ namespace Debut
 			if (ImGui::MenuItem("Duplicate"))
 			{
 				m_Context->DuplicateEntity(node.ParentEntity);
-				RebuildSceneGraph();
+				m_Context->RebuildSceneGraph();
 
 				ImGui::EndPopup();
 				if (opened)
@@ -121,7 +121,7 @@ namespace Debut
 			m_Context->DestroyEntity(node.ParentEntity);
 			if (m_SelectionContext == node.ParentEntity)
 				m_SelectionContext = {};
-			RebuildSceneGraph();
+			m_Context->RebuildSceneGraph();
 			return;
 		}
 
@@ -339,33 +339,5 @@ namespace Debut
 				ImGuiUtils::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
 				ImGuiUtils::DragFloat("Restitution threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 			});
-	}
-
-	SceneNode SceneHierarchyPanel::RebuildSceneGraph()
-	{
-		SceneNode scene(true, {});
-		std::unordered_map<entt::entity, SceneNode> nodes;
-		auto transforms = m_Context->m_Registry.view<TransformComponent>();
-
-		for (auto entity : transforms)
-			nodes[entity] = SceneNode(false, Entity(entity, m_Context.get()));
-
-		for (auto entity : transforms)
-		{
-			auto& transform = transforms.get<TransformComponent>(entity);
-
-			// If the object doesn't have a parent, then the parent is the root node
-			if (!transform.Parent)
-				scene.Children.push_back(nodes[entity]);
-			// Otherwise, set the entity as the child of its parent in the scene graph
-			else
-			{
-				entt::entity parentEntity = entt::to_entity(m_Context->m_Registry, transform.Parent);
-				nodes[transform.Parent].Children.push_back(nodes[entity]);
-			}
-		}
-
-		m_CachedSceneGraph = scene;
-		return scene;
 	}
 }

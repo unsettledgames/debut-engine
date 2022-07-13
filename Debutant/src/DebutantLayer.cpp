@@ -480,10 +480,9 @@ namespace Debutant
         SceneSerializer ss(m_EditorScene);
         ss.DeserializeText(path.string());
 
-        m_SceneHierarchy.RebuildSceneGraph();
-
         m_ScenePath = path.string();
         m_ActiveScene = m_EditorScene;
+        m_ActiveScene->RebuildSceneGraph();
     }
 
     void DebutantLayer::SaveScene()

@@ -30,11 +30,12 @@ namespace Debut
 	
 	Scene::Scene()
 	{
+		m_CachedSceneGraph = new EntitySceneNode();
 	}
 
 	Scene::~Scene()
 	{
-
+		delete m_CachedSceneGraph;
 	}
 
 	template<typename T>
@@ -415,6 +416,33 @@ namespace Debut
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		return newScene;
+	}
+
+	void Scene::RebuildSceneGraph()
+	{
+		EntitySceneNode scene(true, {});
+		std::unordered_map<entt::entity, EntitySceneNode> nodes;
+		auto transforms = m_Registry.view<TransformComponent>();
+
+		for (auto entity : transforms)
+			nodes[entity] = EntitySceneNode(false, Entity(entity, this));
+
+		for (auto entity : transforms)
+		{
+			auto& transform = transforms.get<TransformComponent>(entity);
+
+			// If the object doesn't have a parent, then the parent is the root node
+			if (!transform.Parent)
+				scene.Children.push_back(nodes[entity]);
+			// Otherwise, set the entity as the child of its parent in the scene graph
+			else
+			{
+				entt::entity parentEntity = entt::to_entity(m_Registry, transform.Parent);
+				nodes[transform.Parent].Children.push_back(nodes[entity]);
+			}
+		}
+
+		*m_CachedSceneGraph = scene;
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)

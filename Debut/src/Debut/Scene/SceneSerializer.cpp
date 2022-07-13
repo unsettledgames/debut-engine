@@ -2,7 +2,6 @@
 #include "SceneSerializer.h"
 #include "Components.h"
 #include "Debut/Utils/CppUtils.h"
-#include <yaml-cpp/yaml.h>
 #include <Debut/Utils/YamlUtils.h>
 #include <Debut/AssetManager/AssetManager.h>
 
@@ -54,12 +53,12 @@ namespace Debut
 		out << YAML::Key << "Tag" << YAML::Value << t.Tag;
 	}
 
-	static void SerializeComponent(const TransformComponent& t, YAML::Emitter& out)
+	static void SerializeComponent(TransformComponent& t, YAML::Emitter& out)
 	{
 		out << YAML::Key << "Translation" << YAML::Value << t.Translation;
 		out << YAML::Key << "Rotation" << YAML::Value << t.Rotation;
 		out << YAML::Key << "Scale" << YAML::Value << t.Scale;
-		out << YAML::Key << "Parent" << YAML::Value << (uint32_t)t.Parent;
+		out << YAML::Key << "Parent" << YAML::Value << (!t.Parent ? 0 : (uint64_t)t.Parent.GetComponent<IDComponent>().ID);
 	}
 
 	static void SerializeComponent(const CameraComponent& c, YAML::Emitter& out)
@@ -144,7 +143,7 @@ namespace Debut
 		transform.Translation = in["Translation"].as<glm::vec3>();
 		transform.Rotation = in["Rotation"].as<glm::vec3>();
 		transform.Scale = in["Scale"].as<glm::vec3>();
-		transform.Parent = in["Parent"] ? Entity((entt::entity)in["Parent"].as<uint32_t>(), scene.get()) : Entity(entt::null, nullptr);
+		transform.Parent = in["Parent"] ? scene->GetEntityByID(in["Parent"].as<uint64_t>()) : Entity(entt::null, nullptr);
 	}
 
 	template <>
@@ -218,8 +217,9 @@ namespace Debut
 		bc2d.Radius = in["Radius"].as<float>();
 	}
 
-	void SceneSerializer::SerializeEntity(Entity& entity, YAML::Emitter& out)
+	void SceneSerializer::SerializeEntity(EntitySceneNode& node, YAML::Emitter& out)
 	{
+		Entity entity = node.ParentEntity;
 		out << YAML::BeginMap << YAML::Key << "Entity: " << YAML::Value << entity.ID();
 
 		SerializeComponent<IDComponent>(entity, "IDComponent", out);
@@ -230,6 +230,11 @@ namespace Debut
 		SerializeComponent<Rigidbody2DComponent>(entity, "Rigidbody2DComponent", out);
 		SerializeComponent<BoxCollider2DComponent>(entity, "BoxCollider2DComponent", out);
 		SerializeComponent<CircleCollider2DComponent>(entity, "CircleCollider2DComponent", out);
+
+		out << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
+		for (uint32_t i = 0; i < node.Children.size(); i++)
+			SerializeEntity(node.Children[i], out);
+		out << YAML::EndSeq;
 
 		out << YAML::EndMap;
 	}
@@ -243,11 +248,8 @@ namespace Debut
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled scene";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
-		m_Scene->m_Registry.each([&](auto entityId) 
-		{ 
-			Entity entity(entityId, m_Scene.get());
-			SerializeEntity(entity, out);
-		});
+		for (uint32_t i = 0; i < m_Scene->m_CachedSceneGraph->Children.size(); i++)
+			SerializeEntity(m_Scene->m_CachedSceneGraph->Children[i],out);
 
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
@@ -278,22 +280,31 @@ namespace Debut
 		{
 			for (auto yamlEntity : entities)
 			{
-				// Create a new entity, set the tag and name
-				auto tc = yamlEntity["TagComponent"];
-				Entity entity = m_Scene->CreateEntity({}, tc["Name"].as<std::string>());
-				entity.GetComponent<TagComponent>().Tag = tc["Tag"].as<std::string>();
-
-				// Deserialize the other components
-				DeserializeComponent<TransformComponent>(entity, yamlEntity["TransformComponent"], m_Scene);
-				DeserializeComponent<CameraComponent>(entity, yamlEntity["CameraComponent"]);
-				DeserializeComponent<SpriteRendererComponent>(entity, yamlEntity["SpriteRendererComponent"]);
-				DeserializeComponent<Rigidbody2DComponent>(entity, yamlEntity["Rigidbody2DComponent"]);
-				DeserializeComponent<BoxCollider2DComponent>(entity, yamlEntity["BoxCollider2DComponent"]);
-				DeserializeComponent<CircleCollider2DComponent>(entity, yamlEntity["CircleCollider2DComponent"]);
-				DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
+				DeserializeEntity(yamlEntity);
 			}
 		}
 
 		return true;
+	}
+
+	void SceneSerializer::DeserializeEntity(YAML::Node& yamlEntity)
+	{
+		// Create a new entity, set the tag and name
+		auto tc = yamlEntity["TagComponent"];
+		Entity entity = m_Scene->CreateEntity({}, tc["Name"].as<std::string>());
+		entity.GetComponent<TagComponent>().Tag = tc["Tag"].as<std::string>();
+
+		// Deserialize the other components
+		DeserializeComponent<TransformComponent>(entity, yamlEntity["TransformComponent"], m_Scene);
+		DeserializeComponent<CameraComponent>(entity, yamlEntity["CameraComponent"]);
+		DeserializeComponent<SpriteRendererComponent>(entity, yamlEntity["SpriteRendererComponent"]);
+		DeserializeComponent<Rigidbody2DComponent>(entity, yamlEntity["Rigidbody2DComponent"]);
+		DeserializeComponent<BoxCollider2DComponent>(entity, yamlEntity["BoxCollider2DComponent"]);
+		DeserializeComponent<CircleCollider2DComponent>(entity, yamlEntity["CircleCollider2DComponent"]);
+		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
+
+		auto children = yamlEntity["Children"];
+		for (auto child : children)
+			DeserializeEntity(child);
 	}
 }
