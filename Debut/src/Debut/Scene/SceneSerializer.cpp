@@ -59,6 +59,7 @@ namespace Debut
 		out << YAML::Key << "Translation" << YAML::Value << t.Translation;
 		out << YAML::Key << "Rotation" << YAML::Value << t.Rotation;
 		out << YAML::Key << "Scale" << YAML::Value << t.Scale;
+		out << YAML::Key << "Parent" << YAML::Value << (uint32_t)t.Parent;
 	}
 
 	static void SerializeComponent(const CameraComponent& c, YAML::Emitter& out)
@@ -80,7 +81,6 @@ namespace Debut
 		out << YAML::EndMap;
 	}
 
-	// TODO: textures as resources? Or wait for materials?
 	static void SerializeComponent(const SpriteRendererComponent& s, YAML::Emitter& out)
 	{
 		out << YAML::Key << "Color" << YAML::Value << s.Color;
@@ -121,13 +121,13 @@ namespace Debut
 	}
 
 	template <typename T>
-	static void DeserializeComponent(Entity e, YAML::Node& in)
+	static void DeserializeComponent(Entity e, YAML::Node& in, Ref<Scene> scene = nullptr)
 	{
-		DeserializeComponent<T>(e, in);
+		DeserializeComponent<T>(e, in, scene);
 	}
 
 	template <>
-	static void DeserializeComponent<IDComponent>(Entity e, YAML::Node& in)
+	static void DeserializeComponent<IDComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in) return;
 		IDComponent& id = e.GetComponent<IDComponent>();
@@ -135,7 +135,7 @@ namespace Debut
 	}
 
 	template <>
-	static void DeserializeComponent<TransformComponent>(Entity e, YAML::Node& in)
+	static void DeserializeComponent<TransformComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in)
 			return;
@@ -144,10 +144,11 @@ namespace Debut
 		transform.Translation = in["Translation"].as<glm::vec3>();
 		transform.Rotation = in["Rotation"].as<glm::vec3>();
 		transform.Scale = in["Scale"].as<glm::vec3>();
+		transform.Parent = in["Parent"] ? Entity((entt::entity)in["Parent"].as<uint32_t>(), scene.get()) : Entity(entt::null, nullptr);
 	}
 
 	template <>
-	static void DeserializeComponent<CameraComponent>(Entity e, YAML::Node& in)
+	static void DeserializeComponent<CameraComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in)
 			return;
@@ -168,7 +169,7 @@ namespace Debut
 	}
 
 	template<>
-	static void DeserializeComponent<SpriteRendererComponent>(Entity e, YAML::Node& in)
+	static void DeserializeComponent<SpriteRendererComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in)
 			return;
@@ -179,7 +180,7 @@ namespace Debut
 	}
 
 	template<>
-	static void DeserializeComponent<Rigidbody2DComponent>(Entity e, YAML::Node& in)
+	static void DeserializeComponent<Rigidbody2DComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in)
 			return;
@@ -189,7 +190,7 @@ namespace Debut
 	}
 
 	template<>
-	static void DeserializeComponent<BoxCollider2DComponent>(Entity e, YAML::Node& in)
+	static void DeserializeComponent<BoxCollider2DComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in)
 			return;
@@ -202,7 +203,7 @@ namespace Debut
 	}
 
 	template<>
-	static void DeserializeComponent<CircleCollider2DComponent>(Entity e, YAML::Node& in)
+	static void DeserializeComponent<CircleCollider2DComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in)
 			return;
@@ -279,11 +280,11 @@ namespace Debut
 			{
 				// Create a new entity, set the tag and name
 				auto tc = yamlEntity["TagComponent"];
-				Entity entity = m_Scene->CreateEntity(nullptr, tc["Name"].as<std::string>());
+				Entity entity = m_Scene->CreateEntity({}, tc["Name"].as<std::string>());
 				entity.GetComponent<TagComponent>().Tag = tc["Tag"].as<std::string>();
 
 				// Deserialize the other components
-				DeserializeComponent<TransformComponent>(entity, yamlEntity["TransformComponent"]);
+				DeserializeComponent<TransformComponent>(entity, yamlEntity["TransformComponent"], m_Scene);
 				DeserializeComponent<CameraComponent>(entity, yamlEntity["CameraComponent"]);
 				DeserializeComponent<SpriteRendererComponent>(entity, yamlEntity["SpriteRendererComponent"]);
 				DeserializeComponent<Rigidbody2DComponent>(entity, yamlEntity["Rigidbody2DComponent"]);

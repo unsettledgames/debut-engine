@@ -325,7 +325,7 @@ namespace Debut
 		if (!entity)
 			return;
 
-		Entity duplicate = CreateEntity(nullptr, entity.GetComponent<TagComponent>().Name + " Copy");
+		Entity duplicate = CreateEntity({}, entity.GetComponent<TagComponent>().Name + " Copy");
 		
 		CopyComponentIfExists<TransformComponent>(duplicate, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(duplicate, entity);
@@ -338,7 +338,7 @@ namespace Debut
 		duplicate.Transform().Parent = duplicate.Transform().Parent;
 	}
 
-	Entity Scene::CreateEntity(TransformComponent* parent, const std::string& name)
+	Entity Scene::CreateEntity(Entity parent, const std::string& name)
 	{
 		Entity ret = { m_Registry.create(), this };
 
@@ -351,7 +351,7 @@ namespace Debut
 		return ret;
 	}
 
-	Entity Scene::CreateEntity(TransformComponent* parent, const UUID& id, const std::string& name)
+	Entity Scene::CreateEntity(Entity parent, const UUID& id, const std::string& name)
 	{
 		Entity ret = { m_Registry.create(), this };
 
@@ -363,6 +363,19 @@ namespace Debut
 		ret.Transform().Parent = parent;
 
 		return ret;
+	}
+
+	Entity Scene::GetEntityByID(uint64_t id)
+	{
+		auto view = m_Registry.view<IDComponent>();
+		for (auto& entity : view)
+		{
+			IDComponent& idComp = view.get<IDComponent>(entity);
+			if (idComp.ID == id)
+				return { entity, this };
+		}
+
+		return {};
 	}
 
 	void Scene::DestroyEntity(Entity entity)
@@ -389,7 +402,7 @@ namespace Debut
 			UUID id = srcSceneRegistry.get<IDComponent>(e).ID;
 			auto& name = srcSceneRegistry.get<TagComponent>(e).Name;
 
-			Entity newEntity = newScene->CreateEntity(nullptr, id, name);
+			Entity newEntity = newScene->CreateEntity({}, id, name);
 			enttMap[id] = newEntity;
 		}
 

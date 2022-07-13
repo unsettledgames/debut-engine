@@ -91,6 +91,7 @@ namespace Debutant
         m_SceneState = SceneState::Play;
 
         // TODO: textures aren't updated in the runtime scene
+
         m_RuntimeScene = Scene::Copy(m_ActiveScene);
         m_RuntimeScene->OnRuntimeStart();
 
@@ -305,7 +306,7 @@ namespace Debutant
     {
         Ref<Model> model = AssetManager::Request<Model>(AssetManager::Request<Model>(path.string())->GetSubmodels()[0]);
         // Create entity
-        Entity modelEntity = m_ActiveScene->CreateEntity(nullptr, path.filename().string());
+        Entity modelEntity = m_ActiveScene->CreateEntity({}, path.filename().string());
 
         // Add MeshRendererComponent
         modelEntity.AddComponent<MeshRendererComponent>(model->GetMeshes()[0], model->GetMaterials()[0]);
@@ -334,7 +335,7 @@ namespace Debutant
             ImGuizmo::SetDrawlist();
             ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
 
-            auto& tc = currSelection.GetComponent<TransformComponent>();
+            auto& tc = currSelection.Transform();
             glm::mat4 transform = tc.GetTransform();
 
             ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
@@ -343,7 +344,7 @@ namespace Debutant
             if (ImGuizmo::IsUsing())
             {
                 glm::vec3 finalTrans, finalRot, finalScale;
-                transform = (tc.Parent == nullptr ? glm::mat4(1.0) : glm::inverse(tc.Parent->GetTransform())) * transform;
+                transform = (tc.Parent ? glm::inverse(tc.Parent.Transform().GetTransform()) : glm::mat4(1.0)) * transform;
                 Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
 
                 glm::vec3 deltaRot = finalRot - tc.Rotation;

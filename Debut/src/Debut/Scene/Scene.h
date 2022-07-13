@@ -31,8 +31,10 @@ namespace Debut
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		Entity CreateEntity(TransformComponent* parent, const std::string& name = "New Entity");
-		Entity CreateEntity(TransformComponent* parent, const UUID& id, const std::string& name = "New Entity");
+		Entity CreateEntity(Entity parent, const std::string& name = "New Entity");
+		Entity CreateEntity(Entity parent, const UUID& id, const std::string& name = "New Entity");
+
+		Entity GetEntityByID(uint64_t id);
 
 		void DuplicateEntity(Entity& entity);
 		void DestroyEntity(Entity entity);

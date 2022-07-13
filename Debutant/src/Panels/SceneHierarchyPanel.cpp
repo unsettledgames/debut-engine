@@ -8,6 +8,16 @@
 #include <filesystem>
 #include <Debut/ImGui/ImGuiUtils.h>
 
+/*
+	TODO:
+		- Fix bugs:
+			- System not working with physics
+			- Treenode not displaying correctly
+		- Polish UI by having 
+			- non-highlighted entries if they aren't selected
+			- entries without arrow if they don't have children
+*/
+
 namespace Debut
 {
 	SceneHierarchyPanel::SceneHierarchyPanel()
@@ -44,7 +54,7 @@ namespace Debut
 		{
 			if (ImGui::MenuItem("New Entity"))
 			{
-				m_SelectionContext = m_Context->CreateEntity(nullptr);
+				m_SelectionContext = m_Context->CreateEntity({});
 				RebuildSceneGraph();
 			}
 			ImGui::EndPopup();
@@ -82,7 +92,7 @@ namespace Debut
 		{
 			if (ImGui::MenuItem("New Entity"))
 			{
-				m_SelectionContext = m_Context->CreateEntity(&node.ParentEntity.Transform());
+				m_SelectionContext = m_Context->CreateEntity(node.ParentEntity);
 				RebuildSceneGraph();
 
 				ImGui::EndPopup();
@@ -345,13 +355,13 @@ namespace Debut
 			auto& transform = transforms.get<TransformComponent>(entity);
 
 			// If the object doesn't have a parent, then the parent is the root node
-			if (transform.Parent == nullptr)
+			if (!transform.Parent)
 				scene.Children.push_back(nodes[entity]);
 			// Otherwise, set the entity as the child of its parent in the scene graph
 			else
 			{
-				entt::entity parentEntity = entt::to_entity(m_Context->m_Registry, *transform.Parent);
-				nodes[entt::to_entity(m_Context->m_Registry, *transform.Parent)].Children.push_back(nodes[entity]);
+				entt::entity parentEntity = entt::to_entity(m_Context->m_Registry, transform.Parent);
+				nodes[transform.Parent].Children.push_back(nodes[entity]);
 			}
 		}
 
