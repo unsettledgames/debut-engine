@@ -318,7 +318,7 @@ namespace Debutant
         {
             extension = path.substr(path.find_last_of("."), path.length());
             folder = path.substr(path.find_last_of("\\"), path.length());
-            name = folder.substr(path.find_last_of("\\"), folder.length() - extension.length());
+            name = folder.substr(folder.find_last_of("\\"), folder.length() - extension.length());
         }
         else
             name = "Submodel";
@@ -328,9 +328,16 @@ namespace Debutant
         // Parent it
         modelEntity.Transform().Parent = parent;
 
-        // Add MeshRendererComponent if necessary
-        if (model->GetMeshes().size() > 0)
-            modelEntity.AddComponent<MeshRendererComponent>(model->GetMeshes()[0], model->GetMaterials()[0]);   
+        // Add MeshRendererComponent: if there are more than 1 mesh, add children
+        if (model->GetMeshes().size() == 1)
+            modelEntity.AddComponent<MeshRendererComponent>(model->GetMeshes()[0], model->GetMaterials()[0]);
+        else
+            for (uint32_t i = 1; i < model->GetMeshes().size(); i++)
+            {
+                Entity additional = m_ActiveScene->CreateEntity({}, name + " i");
+                additional.Transform().Parent = modelEntity;
+                additional.AddComponent<MeshRendererComponent>(model->GetMeshes()[i], model->GetMaterials()[i]);
+            }
 
         // Add submodels as children
         for (uint32_t i = 0; i < model->GetSubmodels().size(); i++)

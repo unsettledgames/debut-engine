@@ -22,6 +22,7 @@ namespace Debut
 			m_SubModels.resize(node["NumSubModels"].as<uint32_t>());
 			m_Meshes.resize(node["NumMeshes"].as<uint32_t>());
 			m_Materials.resize(node["NumMaterials"].as<uint32_t>());
+			m_Path = node["Path"].as<std::string>();
 
 			meta.close();
 			ss.str("");
@@ -80,6 +81,7 @@ namespace Debut
 		metaEmitter << YAML::BeginDoc << YAML::BeginMap;
 		
 		metaEmitter << YAML::Key << "ID" << YAML::Value << m_ID;
+		metaEmitter << YAML::Key << "Path" << YAML::Value << m_Path;
 		metaEmitter << YAML::Key << "NumSubModels" << YAML::Value << m_SubModels.size();
 		metaEmitter << YAML::Key << "NumMeshes" << YAML::Value << m_Meshes.size();
 		metaEmitter << YAML::Key << "NumMaterials" << YAML::Value << m_Materials.size();

@@ -49,6 +49,7 @@ namespace Debut
 				// Import the model
 				aiNode* rootNode = scene->mRootNode;
 				Ref<Model> ret = ImportNodes(rootNode, scene, path.substr(0, path.find_last_of("\\")));
+				ret->SetPath(path);
 
 				return ret;
 			}
