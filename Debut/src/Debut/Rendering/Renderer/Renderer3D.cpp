@@ -66,7 +66,8 @@ namespace Debut
 			// Send data to buffers
 			{
 				DBT_PROFILE_SCOPE("Renderer3D::PushData");
-				currBatch->Buffers["Position"]->PushData(mesh->GetPositions().data(), sizeof(float) * mesh->GetPositions().size());
+				currBatch->Buffers["Positions"]->PushData(mesh->GetPositions().data(), sizeof(float) * mesh->GetPositions().size());
+				currBatch->Buffers["Normals"]->PushData(mesh->GetNormals().data(), sizeof(float) * mesh->GetNormals().size());
 
 				// Add indices
 				// This kinda sucks, the vector is reallocated every time a mesh is submitted (100 * 60 = 6000 times per second to be optimist)
@@ -81,8 +82,10 @@ namespace Debut
 			{
 				DBT_PROFILE_SCOPE("DrawModel::SetDataAndIndices");
 				std::vector<float>& positions = mesh->GetPositions();
+				std::vector<float>& normals = mesh->GetNormals();
 				std::vector<int>& indices = mesh->GetIndices();
 				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
+				s_Data.VertexBuffers["Normals"]->SetData(normals.data(), normals.size() * sizeof(float));
 				s_Data.IndexBuffer->SetData(mesh->GetIndices().data(), mesh->GetIndices().size());
 			}
 			

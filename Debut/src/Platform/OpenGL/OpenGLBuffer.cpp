@@ -33,11 +33,7 @@ namespace Debut
 	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
 	{
 		DBT_PROFILE_FUNCTION();
-		/*for (uint32_t i = 0; i < size / 4; i++)
-			Log.CoreInfo("Char: {0}", ((float*)data)[i]);*/
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
-		int bufferSize;
-		glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);
 		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, size, data));
 	}
 

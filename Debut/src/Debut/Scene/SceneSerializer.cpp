@@ -219,7 +219,7 @@ namespace Debut
 
 	void SceneSerializer::SerializeEntity(EntitySceneNode& node, YAML::Emitter& out)
 	{
-		Entity entity = node.ParentEntity;
+		Entity entity = node.EntityData;
 		out << YAML::BeginMap << YAML::Key << "Entity: " << YAML::Value << entity.ID();
 
 		SerializeComponent<IDComponent>(entity, "IDComponent", out);

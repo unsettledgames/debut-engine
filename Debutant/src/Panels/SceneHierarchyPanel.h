@@ -43,6 +43,8 @@ namespace Debut
 			}
 		}
 
+		void DestroySceneNode(EntitySceneNode& node);
+
 	private:
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;

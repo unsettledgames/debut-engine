@@ -332,7 +332,7 @@ namespace Debutant
         if (model->GetMeshes().size() == 1)
             modelEntity.AddComponent<MeshRendererComponent>(model->GetMeshes()[0], model->GetMaterials()[0]);
         else
-            for (uint32_t i = 1; i < model->GetMeshes().size(); i++)
+            for (uint32_t i = 0; i < model->GetMeshes().size(); i++)
             {
                 Entity additional = m_ActiveScene->CreateEntity({}, name + " i");
                 additional.Transform().Parent = modelEntity;

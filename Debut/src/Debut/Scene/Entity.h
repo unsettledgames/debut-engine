@@ -73,11 +73,11 @@ namespace Debut
 	struct EntitySceneNode
 	{
 		bool IsRoot = false;
-		Entity ParentEntity;
+		Entity EntityData;
 		std::vector<EntitySceneNode> Children;
 
-		EntitySceneNode(bool root, Entity parent) : IsRoot(root), ParentEntity(parent), Children({}) {}
-		EntitySceneNode() : ParentEntity({}), Children({}) {}
+		EntitySceneNode(bool root, Entity parent) : IsRoot(root), EntityData(parent), Children({}) {}
+		EntitySceneNode() : EntityData({}), Children({}) {}
 	};
 }
 

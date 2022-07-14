@@ -8,13 +8,6 @@
 #include <filesystem>
 #include <Debut/ImGui/ImGuiUtils.h>
 
-/*
-	TODO:
-		- Polish UI by having 
-			- non-highlighted entries if they aren't selected
-			- entries without arrow if they don't have children
-*/
-
 namespace Debut
 {
 	SceneHierarchyPanel::SceneHierarchyPanel()
@@ -75,8 +68,8 @@ namespace Debut
 			return;
 
 		bool entityDeleted = false;
-		auto& tc = node.ParentEntity.GetComponent<TagComponent>();
-		ImGuiTreeNodeFlags flags = (m_SelectionContext == node.ParentEntity ? ImGuiTreeNodeFlags_OpenOnArrow : 0);
+		auto& tc = node.EntityData.GetComponent<TagComponent>();
+		ImGuiTreeNodeFlags flags = (m_SelectionContext == node.EntityData ? ImGuiTreeNodeFlags_OpenOnArrow : 0);
 		flags |= ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed;
 
@@ -84,28 +77,28 @@ namespace Debut
 		if (node.Children.size() == 0)
 			flags |= ImGuiTreeNodeFlags_Leaf;
 		// Highlight the selected node
-		if (node.ParentEntity == m_SelectionContext)
+		if (node.EntityData == m_SelectionContext)
 			flags |= ImGuiTreeNodeFlags_Selected;
 
 		// Color the node differently if it's selected
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 2, 2 });
-		if ((uint32_t)node.ParentEntity != (uint32_t)m_SelectionContext)
+		if ((uint32_t)node.EntityData != (uint32_t)m_SelectionContext)
 			ImGui::PushStyleColor(ImGuiCol_Header, { 0.0, 0.0, 0.0, 0.0 });
 		else
 			ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered]);
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.ParentEntity, flags, tc.Name.c_str());
+		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, tc.Name.c_str());
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 
 		if (ImGui::IsItemClicked())
-			m_SelectionContext = node.ParentEntity;
+			m_SelectionContext = node.EntityData;
 
 		// Right click on blank space
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("New Entity"))
 			{
-				m_SelectionContext = m_Context->CreateEntity(node.ParentEntity);
+				m_SelectionContext = m_Context->CreateEntity(node.EntityData);
 				m_Context->RebuildSceneGraph();
 
 				ImGui::EndPopup();
@@ -115,7 +108,7 @@ namespace Debut
 			}
 			if (ImGui::MenuItem("Duplicate"))
 			{
-				m_Context->DuplicateEntity(node.ParentEntity);
+				m_Context->DuplicateEntity(node.EntityData);
 				m_Context->RebuildSceneGraph();
 
 				ImGui::EndPopup();
@@ -131,10 +124,11 @@ namespace Debut
 
 		if (entityDeleted)
 		{
-			m_Context->DestroyEntity(node.ParentEntity);
-			if (m_SelectionContext == node.ParentEntity)
-				m_SelectionContext = {};
+			DestroySceneNode(node);
 			m_Context->RebuildSceneGraph();
+
+			if (opened)
+				ImGui::TreePop();
 			return;
 		}
 
@@ -352,5 +346,16 @@ namespace Debut
 				ImGuiUtils::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
 				ImGuiUtils::DragFloat("Restitution threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 			});
+	}
+
+	void SceneHierarchyPanel::DestroySceneNode(EntitySceneNode& node)
+	{
+		// Destroy children
+		for (uint32_t i = 0; i < node.Children.size(); i++)
+			DestroySceneNode(node.Children[i]);
+
+		m_Context->DestroyEntity(node.EntityData);
+		if (m_SelectionContext == node.EntityData)
+			m_SelectionContext = {};
 	}
 }
