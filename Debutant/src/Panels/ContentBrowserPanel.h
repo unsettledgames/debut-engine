@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_set>
 #include <unordered_map>
 
 #include "PropertiesPanel.h"
@@ -41,8 +42,6 @@ namespace Debutant
 		float padding = 4.0;
 	};
 
-	enum ContentBrowserLayout {Grid, List};
-
 	class ContentBrowserPanel
 	{
 	public:
@@ -57,19 +56,16 @@ namespace Debutant
 
 		void DrawEntry(const std::filesystem::path& path, bool isDirectory);
 		void DrawTopBar();
-		void DrawLayoutMenu();
-
-		void RenderListView(std::filesystem::path path, bool isDir);
+		void DrawHierarchy(std::filesystem::path path, bool isDir);
 
 		void AddDragSource(const std::filesystem::path path);
 
 	private:
 		static ContentBrowserSettings s_Settings;
-		ContentBrowserLayout m_CurrLayout = ContentBrowserLayout::List;
 		bool m_LayoutMenuOpen = false;
 
 		std::filesystem::path m_CurrDirectory;
-		std::vector<std::string> m_OpenDirs;
+		std::unordered_set<std::string> m_OpenDirs;
 		std::unordered_map<std::string, std::string> m_Icons;
 
 		std::string m_SelectedAsset;

@@ -147,4 +147,23 @@ namespace Debut
 				LoadBuffer<float>(m_TexCoords[i], inFile, m_TexCoords[i].size());
 		}
 	}
+
+	MeshMetadata Mesh::GetMetadata(UUID id)
+	{
+		MeshMetadata ret = {};
+		std::stringstream ss;
+		ss << AssetManager::s_ProjectDir << "\\Lib\\Metadata\\" << id + ".meta";
+		std::ifstream metaFile(ss.str());
+		
+		if (metaFile.good())
+		{
+			std::stringstream ss;
+			ss << metaFile.rdbuf();
+
+			ret.ID = id;
+			ret.Name = YAML::Load(ss.str())["Name"].as<std::string>();
+		}
+
+		return ret;
+	}
 }

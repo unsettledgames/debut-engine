@@ -394,7 +394,7 @@ namespace Debut
 		return false;
 	}
 
-	bool ImGuiUtils::ImageTreeNode(const char* label, ImTextureID texture)
+	bool ImGuiUtils::ImageTreeNode(const char* label, ImTextureID texture, bool open)
 	{
 		ImGuiContext& g = *GImGui;
 		ImGuiWindow* window = g.CurrentWindow;
@@ -402,9 +402,11 @@ namespace Debut
 		ImGuiID id = window->GetID(label);
 		ImVec2 pos = window->DC.CursorPos;
 		ImRect bb(pos, ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
-		bool opened = ImGui::TreeNodeBehaviorIsOpen(id);
+		bool opened = open;
 		bool hovered, held;
-		if (ImGui::ButtonBehavior(bb, id, &hovered, &held, true))
+		bool ret = ImGui::ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClickRelease);
+		
+		if (ret)
 			window->DC.StateStorage->SetInt(id, opened ? 0 : 1);
 		if (hovered || held || opened)
 			window->DrawList->AddRectFilled(bb.Min, bb.Max, ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[held ? ImGuiCol_HeaderActive : ImGuiCol_HeaderHovered]));
@@ -417,8 +419,9 @@ namespace Debut
 		ImGui::ItemSize(bb, g.Style.FramePadding.y);
 		ImGui::ItemAdd(bb, id);
 
-		if (opened)
+		if (opened || ret)
 			ImGui::TreePush(label);
-		return opened;
+
+		return ret;
 	}
 }

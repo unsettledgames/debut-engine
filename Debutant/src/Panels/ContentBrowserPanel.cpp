@@ -72,35 +72,16 @@ namespace Debutant
 		}
 
 		// Draw contents 
-		if (m_CurrLayout == ContentBrowserLayout::Grid)
+		for (auto& path : dirs)
 		{
-			ImGui::Columns(columnCount, 0, false);
-
-			for (auto& path : dirs)
-			{
-				DrawEntry(path, true);
-				ImGui::NextColumn();
-			}
-
-			for (auto& path : files)
-			{
-				DrawEntry(path, false);
-				ImGui::NextColumn();
-			}
+			DrawHierarchy(path, true);
+			ImGui::NextColumn();
 		}
-		else
-		{
-			for (auto& path : dirs)
-			{
-				RenderListView(path, true);
-				ImGui::NextColumn();
-			}
 
-			for (auto& path : files)
-			{
-				RenderListView(path, false);
-				ImGui::NextColumn();
-			}
+		for (auto& path : files)
+		{
+			DrawHierarchy(path, false);
+			ImGui::NextColumn();
 		}
 
 		ImGui::End();
@@ -140,45 +121,25 @@ namespace Debutant
 		ImGui::PopID();
 	}
 
-	void ContentBrowserPanel::DrawLayoutMenu()
-	{
-		if (ImGui::BeginPopup("ContentLayoutMenu"))
-		{
-			ImGui::Text("Browser layout options");
-			ImGui::Separator();
-
-			if (ImGui::Selectable("Grid layout"))
-				m_CurrLayout = ContentBrowserLayout::Grid;
-			if (ImGui::Selectable("List layout"))
-				m_CurrLayout = ContentBrowserLayout::List;
-
-			ImGui::EndPopup();
-		}
-	}
-
-	void ContentBrowserPanel::RenderListView(std::filesystem::path path, bool isDir)
+	void ContentBrowserPanel::DrawHierarchy(std::filesystem::path path, bool isDir)
 	{
 		Ref<Texture2D> icon = isDir ? EditorCache::Textures().Get("cb-directory") : GetFileIcon(path);
 		ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap
 			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 		auto openFolder = std::find(m_OpenDirs.begin(), m_OpenDirs.end(), path.filename().string());
-
+		bool folderOpen = openFolder != m_OpenDirs.end();
 		// Open the current node if it's been opened
-		if (openFolder != m_OpenDirs.end())
+		if (folderOpen)
 			treeNodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
 
-
-		// Use invisible buttons
-		ImVec2 cursorPos = ImGui::GetCursorPos();
-		// Render the tree node
-		ImGui::SetItemAllowOverlap();
-		if (ImGuiUtils::ImageTreeNode(path.filename().string().c_str(), (ImTextureID)icon->GetRendererID()))
+		bool treeNodeClicked = ImGuiUtils::ImageTreeNode(path.filename().string().c_str(), (ImTextureID)icon->GetRendererID(), folderOpen);
+		if (treeNodeClicked || folderOpen)
 		{
 			// Toggle the current node if it's been clicked
-			if (openFolder != m_OpenDirs.end())
+			if (folderOpen && treeNodeClicked)
 				m_OpenDirs.erase(openFolder);
 			else
-				m_OpenDirs.push_back(path.filename().string());
+				m_OpenDirs.insert(path.filename().string());
 
 			for (auto& dirEntry : std::filesystem::directory_iterator(path))
 			{
@@ -187,48 +148,23 @@ namespace Debutant
 				if (otherPath.extension().string() == ".meta")
 					continue;
 
-				RenderListView(otherPath, dirEntry.is_directory());
+				DrawHierarchy(otherPath, dirEntry.is_directory());
 			}
-
+			
 			ImGui::TreePop();
 		}
-		ImVec2 finalCursorPos = ImGui::GetCursorPos();
-		ImVec2 size = ImGui::GetItemRectSize();
 
-		if (!isDir)
-		{
-			ImGui::SetCursorPos(cursorPos);
-			ImGui::SetItemAllowOverlap();
-
-			if (ImGui::InvisibleButton(("##" + path.string()).c_str(), size))
-			{
-				// Set properties panel path
-				m_PropertiesPanel->SetAsset(path);
-			}
-
-			AddDragSource(path);
-
-			ImGui::SetCursorPos(finalCursorPos);
-		}
-		
+		AddDragSource(path);
 	}
 
 	void ContentBrowserPanel::DrawTopBar()
 	{
 		ImGui::BeginGroup();
-
-		DrawLayoutMenu();
 		// Layout menu
 		float iconHeight = ImGui::GetTextLineHeight();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-		if (ImGui::ImageButton((ImTextureID)EditorCache::Textures().Get("cb-menu")->GetRendererID(),
-			{ ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() }, { 0,1 }, { 1, 0 }))
-			ImGui::OpenPopup("ContentLayoutMenu");
-
-		// Back arrow
-		ImGui::SameLine();
 		if (ImGui::ImageButton((ImTextureID)EditorCache::Textures().Get("cb-back")->GetRendererID(),
 			{ ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() }, { 0, 1 }, { 1, 0 }) && m_CurrDirectory != s_AssetsPath)
 			m_CurrDirectory = m_CurrDirectory.parent_path();
@@ -264,6 +200,7 @@ namespace Debutant
 	{
 		if (ImGui::BeginDragDropSource())
 		{
+			Log.CoreInfo("Dragging {0}", path.string());
 			const wchar_t* itemPath = path.c_str();
 			ImGui::SetDragDropPayload("CONTENT_BROWSER_DATA", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
 			ImGui::EndDragDropSource();

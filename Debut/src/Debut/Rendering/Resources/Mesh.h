@@ -6,7 +6,11 @@
 
 namespace Debut
 {
-	struct MeshVertex;
+	struct MeshMetadata
+	{
+		std::string Name;
+		UUID ID;
+	};
 
 	class Mesh
 	{
@@ -31,6 +35,9 @@ namespace Debut
 
 		void SetName(const std::string& name) { m_Name = name; }
 		void SetPath(const std::string& path) { m_Path = path; }
+		void SetID(const UUID& id) { m_ID = id; }
+
+		static MeshMetadata GetMetadata(UUID id);
 
 	private:
 		void Load(std::ifstream& inFile);
