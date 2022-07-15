@@ -7,6 +7,7 @@
 #include "PropertiesPanel.h"
 #include <Debut/Scene/Scene.h>
 #include <Debut/Core/Core.h>
+#include <Debut/Rendering/Resources/Model.h>
 #include <Debut/Rendering/Texture.h>
 #include <filesystem>
 #include "PropertiesPanel.h"
@@ -54,11 +55,11 @@ namespace Debutant
 	private:
 		Ref<Texture2D> GetFileIcon(const std::filesystem::path& path);
 
-		void DrawEntry(const std::filesystem::path& path, bool isDirectory);
 		void DrawTopBar();
-		void DrawHierarchy(std::filesystem::path path, bool isDir);
+		void DrawHierarchy(const std::filesystem::path& path, bool isDir);
+		void DrawModelHierarchy(const Ref<Model>& model);
 
-		void AddDragSource(const std::filesystem::path path);
+		void AddDragSource(const std::filesystem::path& path);
 
 	private:
 		static ContentBrowserSettings s_Settings;

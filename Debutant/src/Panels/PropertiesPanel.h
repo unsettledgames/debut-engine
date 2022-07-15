@@ -14,6 +14,8 @@ namespace Debut
 
 		void SetAsset(std::filesystem::path path);
 
+		std::filesystem::path GetAsset() { return m_AssetPath; }
+
 	private:
 		void DrawName();
 

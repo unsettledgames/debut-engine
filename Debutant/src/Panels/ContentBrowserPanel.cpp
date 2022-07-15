@@ -87,74 +87,56 @@ namespace Debutant
 		ImGui::End();
 	}
 
-	void ContentBrowserPanel::DrawEntry(const std::filesystem::path& path, bool isDir)
-	{
-		std::string pathName = path.string();
-
-		auto relativePath = std::filesystem::relative(path, s_AssetsPath);
-		std::string relativePathString = relativePath.string();
-
-		Ref<Texture2D> icon = isDir ? EditorCache::Textures().Get("cb-directory") : GetFileIcon(path);
-		ImGui::PushID(pathName.c_str());
-
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { s_Settings.IconSize, s_Settings.IconSize }, { 0, 1 }, { 1, 0 }))
-		{
-			m_PropertiesPanel->SetAsset(path);
-		}
-		ImGui::PopStyleColor();
-
-		if (!isDir)
-			AddDragSource(path);
-
-		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
-		{
-			if (isDir)
-				m_CurrDirectory /= path.filename();
-		}
-
-		std::string fileName = relativePath.filename().string();
-		if (fileName.length() > 17)
-			fileName = fileName.substr(0, 17) + "...";
-		ImGui::TextWrapped(fileName.c_str());
-		
-		ImGui::PopID();
-	}
-
-	void ContentBrowserPanel::DrawHierarchy(std::filesystem::path path, bool isDir)
+	void ContentBrowserPanel::DrawHierarchy(const std::filesystem::path& path, bool isDir)
 	{
 		Ref<Texture2D> icon = isDir ? EditorCache::Textures().Get("cb-directory") : GetFileIcon(path);
-		ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap
-			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 		auto openFolder = std::find(m_OpenDirs.begin(), m_OpenDirs.end(), path.filename().string());
-		bool folderOpen = openFolder != m_OpenDirs.end();
-		// Open the current node if it's been opened
-		if (folderOpen)
-			treeNodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
+		bool folderOpen = openFolder != m_OpenDirs.end() || path.string() == m_PropertiesPanel->GetAsset().string();
+
+		if (path.string() == m_PropertiesPanel->GetAsset().string())
+			std::cout << "LOL";
 
 		bool treeNodeClicked = ImGuiUtils::ImageTreeNode(path.filename().string().c_str(), (ImTextureID)icon->GetRendererID(), folderOpen);
 		if (treeNodeClicked || folderOpen)
 		{
 			// Toggle the current node if it's been clicked
-			if (folderOpen && treeNodeClicked)
-				m_OpenDirs.erase(openFolder);
+			if (isDir)
+				if (folderOpen && treeNodeClicked)
+					m_OpenDirs.erase(openFolder);
+				else
+					m_OpenDirs.insert(path.filename().string());
 			else
-				m_OpenDirs.insert(path.filename().string());
+				m_PropertiesPanel->SetAsset(path);
 
-			for (auto& dirEntry : std::filesystem::directory_iterator(path))
+			// Recursively render the rest of the hierarchy
+			if (isDir)
 			{
-				const std::filesystem::path& otherPath = dirEntry.path();
-				// Don't show meta files
-				if (otherPath.extension().string() == ".meta")
-					continue;
+				for (auto& dirEntry : std::filesystem::directory_iterator(path))
+				{
+					const std::filesystem::path& otherPath = dirEntry.path();
+					// Don't show meta files
+					if (otherPath.extension().string() == ".meta")
+						continue;
 
-				DrawHierarchy(otherPath, dirEntry.is_directory());
+					DrawHierarchy(otherPath, dirEntry.is_directory());
+				}
 			}
+			else if (path.extension() == ".model")
+			{
+				// Print submodels, meshes and materials
+				DrawModelHierarchy(AssetManager::Request<Model>(path.string()));
+			}
+			
 			
 			ImGui::TreePop();
 		}
 
 		AddDragSource(path);
+	}
+
+	void ContentBrowserPanel::DrawModelHierarchy(const Ref<Model>& model)
+	{
+		// Render 
 	}
 
 	void ContentBrowserPanel::DrawTopBar()
@@ -196,7 +178,7 @@ namespace Debutant
 		ImGui::EndGroup();
 	}
 
-	void ContentBrowserPanel::AddDragSource(const std::filesystem::path path)
+	void ContentBrowserPanel::AddDragSource(const std::filesystem::path& path)
 	{
 		if (ImGui::BeginDragDropSource())
 		{
