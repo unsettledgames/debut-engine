@@ -174,6 +174,11 @@ namespace Debutant
             m_ContentBrowser.OnImGuiRender();
             m_PropertiesPanel.OnImGuiRender();
 
+#ifdef DBT_DEBUG
+            if (m_AssetMapOpen)
+                DrawAssetMapWindow();
+#endif
+
             DrawViewport();
             DrawUIToolbar();
 
@@ -212,6 +217,57 @@ namespace Debutant
         ImGui::End();
     }
 
+    void DebutantLayer::DrawAssetMapWindow()
+    {
+        const auto& assetMap = AssetManager::GetAssetMap();
+        uint32_t i = 0;
+        ImGui::Begin("Asset map", &m_AssetMapOpen, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_Modal);
+
+        for (auto& entry : assetMap)
+        {
+            std::stringstream ss;
+            ss << entry.first << ":\t\t  " << entry.second;
+            bool selected = (m_StartIndex != -1 && m_EndIndex != -1 && (i > m_StartIndex && i <= m_EndIndex)) || i == m_StartIndex;
+            
+            if (ImGui::Selectable(ss.str().c_str(), &selected, ImGuiSelectableFlags_SpanAvailWidth))
+            {
+                Log.CoreInfo("Shift clicked: {0}", Input::IsKeyPressed(DBT_KEY_LEFT_SHIFT) || Input::IsKeyPressed(DBT_KEY_RIGHT_SHIFT));
+                if (ImGui::IsKeyPressed(ImGuiKey_LeftShift) || ImGui::IsKeyPressed(ImGuiKey_RightShift))
+                    m_EndIndex = i;
+                else
+                {
+                    m_StartIndex = i;
+                    m_EndIndex = -1;
+                }
+            }
+
+            ImGui::Separator();
+            i++;
+        }
+
+        ImGui::End();
+
+        if (m_StartIndex > m_EndIndex)
+        {
+            uint32_t tmp = m_StartIndex;
+            m_StartIndex = m_EndIndex;
+            m_EndIndex = tmp;
+        }
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Delete))
+        {
+            std::vector<Debut::UUID> toDel;
+
+            for (uint32_t i = m_StartIndex; i < m_EndIndex; i++)
+                toDel.push_back(assetMap[i].first);
+
+            AssetManager::DeleteAssociations(toDel);
+
+            m_StartIndex = -1;
+            m_EndIndex = -1;
+        }
+    }
+
     void DebutantLayer::DrawTopBar()
     {
         if (ImGui::BeginMenuBar())
@@ -238,6 +294,8 @@ namespace Debutant
             {
                 if (ImGui::MenuItem("Reimport"))
                     AssetManager::Reimport();
+                if (ImGui::MenuItem("Asset map"))
+                    m_AssetMapOpen = true;
                 ImGui::EndMenu();
             }
 

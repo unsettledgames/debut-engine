@@ -45,6 +45,7 @@ namespace Debutant
 		void DrawGizmos();
 		void DrawViewport();
 		void DrawTopBar();
+		void DrawAssetMapWindow();
 
 		// Drag & droppable objects
 		void LoadModel(const std::filesystem::path path);
@@ -75,6 +76,10 @@ namespace Debutant
 		std::string m_ScenePath = "";
 		Entity m_HoveredEntity;
 		SceneState m_SceneState = SceneState::Edit;
+
+		bool m_AssetMapOpen = false;
+		uint32_t m_StartIndex = -1;
+		uint32_t m_EndIndex = -1;
 
 		// Textures
 		AssetCache<std::string, Ref<Texture2D>> m_TextureCache;

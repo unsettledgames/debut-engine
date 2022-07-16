@@ -87,6 +87,9 @@ namespace Debut
 			return Request<T>(s_AssetMap[id], s_AssetMap[id] + ".meta");
 		}
 
+		static std::vector<std::pair<UUID, std::string>> GetAssetMap();
+		static void DeleteAssociations(std::vector<UUID>& id);
+
 	public:
 		// Working directory for the currently opened project
 		static std::string s_ProjectDir;

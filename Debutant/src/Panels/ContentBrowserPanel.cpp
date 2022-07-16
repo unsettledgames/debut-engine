@@ -89,14 +89,17 @@ namespace Debutant
 
 	void ContentBrowserPanel::DrawHierarchy(const std::filesystem::path& path, bool isDir)
 	{
+		if (path.extension() == ".model")
+		{
+			DrawModelHierarchy(AssetManager::Request<Model>(path.string()));
+			return;
+		}
+
 		Ref<Texture2D> icon = isDir ? EditorCache::Textures().Get("cb-directory") : GetFileIcon(path);
 		auto openFolder = std::find(m_OpenDirs.begin(), m_OpenDirs.end(), path.filename().string());
 		bool folderOpen = openFolder != m_OpenDirs.end() || path.string() == m_PropertiesPanel->GetAsset().string();
-
-		if (path.string() == m_PropertiesPanel->GetAsset().string())
-			std::cout << "LOL";
-
 		bool treeNodeClicked = ImGuiUtils::ImageTreeNode(path.filename().string().c_str(), (ImTextureID)icon->GetRendererID(), folderOpen);
+
 		if (treeNodeClicked || folderOpen)
 		{
 			// Toggle the current node if it's been clicked
@@ -121,12 +124,6 @@ namespace Debutant
 					DrawHierarchy(otherPath, dirEntry.is_directory());
 				}
 			}
-			else if (path.extension() == ".model")
-			{
-				// Print submodels, meshes and materials
-				DrawModelHierarchy(AssetManager::Request<Model>(path.string()));
-			}
-			
 			
 			ImGui::TreePop();
 		}
@@ -136,7 +133,40 @@ namespace Debutant
 
 	void ContentBrowserPanel::DrawModelHierarchy(const Ref<Model>& model)
 	{
-		// Render 
+		Ref<Texture2D> modelIcon = GetFileIcon(".model");
+		std::string path = std::filesystem::path(model->GetPath()).filename().string();
+		auto openFolder = std::find(m_OpenDirs.begin(), m_OpenDirs.end(), model->GetPath());
+		bool folderOpen = openFolder != m_OpenDirs.end() || model->GetPath() == m_PropertiesPanel->GetAsset().string();
+		if (path == "")
+			path = "Submodel";
+
+		bool treeNodeClicked = ImGuiUtils::ImageTreeNode(path.c_str(), (ImTextureID)modelIcon->GetRendererID(), folderOpen);
+
+		if (treeNodeClicked || folderOpen)
+		{
+			// Toggle the current node if it's been clicked
+			if (folderOpen && treeNodeClicked)
+			{
+				m_OpenDirs.erase(openFolder);
+				m_PropertiesPanel->SetAsset(model->GetPath());
+			}
+			else
+				m_OpenDirs.insert(model->GetPath());
+				
+
+			// Recursively render submodels
+			for (Debut::UUID model : model->GetSubmodels())
+				DrawModelHierarchy(AssetManager::Request<Model>(model));
+
+			// Meshes
+			// Materials
+
+			ImGui::TreePop();
+		}
+
+		std::stringstream ss;
+		ss << model->GetID();
+		AddDragSource(model->GetPath());
 	}
 
 	void ContentBrowserPanel::DrawTopBar()

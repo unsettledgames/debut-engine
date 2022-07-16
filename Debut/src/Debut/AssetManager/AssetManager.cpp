@@ -289,5 +289,53 @@ namespace Debut
 
 		return toAdd;
 	}
+
+	std::vector<std::pair<UUID, std::string>> AssetManager::GetAssetMap()
+	{
+		std::vector<std::pair<UUID, std::string>> ret;
+
+		for (auto& entry : s_AssetMap)
+			ret.push_back(std::make_pair(entry.first, entry.second));
+
+		std::sort(ret.begin(), ret.end(), 
+			[](const std::pair<UUID, std::string>& lhs, const std::pair<UUID, std::string>& rhs) {
+				return lhs.second.compare(rhs.second) < 0; 
+			});
+
+		return ret;
+	}
+
+	void AssetManager::DeleteAssociations(std::vector<UUID>& id)
+	{
+#ifdef DBT_DEBUG
+		std::stringstream ss;
+		std::fstream currFile("Debut\\AssetMap.yaml", std::ios::in | std::ios::out);
+		YAML::Emitter emitter;
+		YAML::Emitter testEmitter;
+		YAML::Node currYaml;
+		YAML::Node newNode;
+
+		// Read the file, load the old content
+		ss << currFile.rdbuf();
+		currYaml = YAML::Load(ss.str().c_str())["Associations"];
+		for (auto& node : currYaml)
+		{
+			if (std::find(id.begin(), id.end(), node["ID"].as<uint64_t>()) != id.end())
+			{
+				s_AssetMap.erase(node["ID"].as<uint64_t>());
+				currYaml.remove(node.as<YAML::Node>());
+			}
+		}
+
+		// Write the final document
+
+		emitter << YAML::BeginMap << YAML::Key << "Associations" << YAML::Value << currYaml << YAML::EndMap;
+
+		currFile.close();
+		currFile.open("Debut\\AssetMap.yaml", std::ios::out | std::ios::trunc);
+		currFile << emitter.c_str();
+
+#endif
+	}
 	
 }
