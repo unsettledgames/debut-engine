@@ -210,6 +210,7 @@ namespace Debut
 			DrawAddComponentEntry<Rigidbody2DComponent>("Rigidbody2D");
 			DrawAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DrawAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
+			DrawAddComponentEntry<MeshRendererComponent>("Mesh Renderer");
 
 			ImGui::EndPopup();
 		}
@@ -266,6 +267,25 @@ namespace Debut
 					if (ImGuiUtils::DragFloat("Far clip", &orthoFar, 0.15f))
 						camera.SetOrthoFarClip(orthoFar);
 				}
+			});
+
+		
+		DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [](auto& component)
+			{
+				ImGuiUtils::StartColumns(2, { 100, (uint32_t)ImGui::GetContentRegionAvail().x - 100 });
+
+				// Mesh reference
+				ImGui::LabelText("##mesh", "Mesh");
+				ImGui::NextColumn();
+				if (ImGui::Button(AssetManager::Request<Mesh>(component.Mesh)->GetName().c_str()))
+					Log.CoreInfo("Mesh ID: {0}", component.Mesh);
+
+				ImGui::NextColumn();
+
+				// Material reference
+				ImGui::LabelText("##material", "Material");
+				ImGui::NextColumn();
+				ImGui::Button(AssetManager::Request<Material>(component.Material)->GetName().c_str());
 			});
 
 

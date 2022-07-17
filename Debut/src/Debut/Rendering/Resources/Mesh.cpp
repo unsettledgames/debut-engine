@@ -63,6 +63,7 @@ namespace Debut
 			YAML::Node meta = YAML::Load(ss.str());
 
 			m_ID = meta["ID"].as<uint64_t>();
+			m_Name = meta["Name"].as<std::string>();
 
 			float nPoints = meta["NumVertices"].as<uint32_t>();
 
@@ -102,8 +103,7 @@ namespace Debut
 		ss << AssetManager::s_ProjectDir + "\\Lib\\Metadata\\" << m_ID << ".meta";
 		std::string metaPath = ss.str();
 
-		outFile << "Name" << m_Name;
-		outFile << "\nVertices" << "\n"; EmitBuffer<float>(m_Vertices, outFile);
+		outFile << "Vertices" << "\n"; EmitBuffer<float>(m_Vertices, outFile);
 		outFile << "\nNormals" << "\n"; EmitBuffer<float>(m_Normals, outFile);
 		outFile << "\nTangents" << "\n"; EmitBuffer<float>(m_Tangents, outFile);
 		outFile << "\nBitangents" << "\n"; EmitBuffer<float>(m_Bitangents, outFile);
@@ -123,6 +123,7 @@ namespace Debut
 
 		metaEmitter << YAML::BeginDoc << YAML::BeginMap;
 		metaEmitter << YAML::Key << "ID" << YAML::Value << m_ID;
+		metaEmitter << YAML::Key << "Name" << YAML::Value << m_Name;
 		metaEmitter << YAML::Key << "NumVertices" << YAML::Value << m_Vertices.size();
 		metaEmitter << YAML::Key << "NumIndices" << YAML::Value << m_Indices.size();
 		metaEmitter << YAML::Key << "NumTexCoords" << YAML::Value << m_TexCoords.size();
@@ -134,9 +135,6 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION("Mesh:Load");
 		{
-			std::string dummy;
-			inFile >> dummy;
-			
 			LoadBuffer<float>(m_Vertices, inFile, m_Vertices.size());
 			LoadBuffer<float>(m_Normals, inFile, m_Normals.size());
 			LoadBuffer<float>(m_Tangents, inFile, m_Tangents.size());

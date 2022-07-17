@@ -9,7 +9,8 @@
 
 /*
 	TODO
-		- Opzioni di importazione / dati nella sezione properties
+		- Bug: impossibile trascinare certi sottomodelli
+		- Bug: i modelli non caricano :skull:
 */
 
 namespace Debut
@@ -49,7 +50,7 @@ namespace Debut
 				// Import the model
 				aiNode* rootNode = scene->mRootNode;
 				Ref<Model> ret = ImportNodes(rootNode, scene, path.substr(0, path.find_last_of("\\")));
-				ret->SetPath(path);
+				ret->SetPath(path + ".model");
 
 				return ret;
 			}
@@ -68,6 +69,10 @@ namespace Debut
 
 	Ref<Model> ModelImporter::ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder)
 	{
+		// Don't import empty models
+		if (parent->mNumMeshes == 0 && parent->mNumChildren == 0)
+			return nullptr;
+
 		// Save the root model in the folder of the asset, save the generated assets in Lib
 		std::string submodelsFolder = saveFolder;
 		std::string assetsFolder = AssetManager::s_IntAssetsDir;
@@ -89,7 +94,10 @@ namespace Debut
 			Ref<Model> currModel = ImportNodes(parent->mChildren[i], scene, submodelsFolder);
 			if (currModel != nullptr)
 				models[i] = currModel->GetID();
+			else
+				models[i] = 0;
 		}
+		models.erase(std::remove(models.begin(), models.end(), 0), models.end());
 
 		// Load meshes and materials
 		for (int i = 0; i < parent->mNumMeshes; i++)
@@ -108,12 +116,14 @@ namespace Debut
 			if (material != nullptr)
 				materials[i] = material->GetID();
 		}
+		meshes.erase(std::remove(meshes.begin(), meshes.end(), 0), meshes.end());
+		materials.erase(std::remove(materials.begin(), materials.end(), 0), materials.end());
 
 		Ref<Model> ret = CreateRef<Model>(meshes, materials, models);
 		ret->SetPath(submodelsFolder + "\\" + parent->mName.C_Str() + ".model");
 		ret->SaveSettings();
 		AssetManager::Submit<Model>(ret);
-		
+
 		return ret;
 	}
 
@@ -210,6 +220,7 @@ namespace Debut
 		std::stringstream ss;
 		ss << saveFolder << "\\" << mesh->GetID();
 		mesh->SetPath(ss.str());
+		mesh->SetName(assimpMesh->mName.C_Str());
 		mesh->SaveSettings();
 
 		ProgressPanel::CompleteTask("meshimport");
