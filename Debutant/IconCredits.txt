@@ -1,3 +1,6 @@
 Menu icon: <a href="https://www.flaticon.com/free-icons/three-lines" title="three lines icons">Three lines icons created by Ayub Irawan - Flaticon</a>
 Undo icon: <a href="https://www.flaticon.com/free-icons/undo" title="undo icons">Undo icons created by Pixel perfect - Flaticon</a>
 Search icon: <a href="https://www.flaticon.com/free-icons/search" title="search icons">Search icons created by Freepik - Flaticon</a>
+Material icon: <a href="https://www.flaticon.com/free-icon/circle-with-curves-pattern_44924#" title="pattern icons">Pattern icons created by Freepik - Flaticon</a>
+3D model icon: <a href="https://www.flaticon.com/premium-icon/model_2048461">3D model icon by FreePik - Flaticon</a>
+Mesh icon: <a href="https://www.flaticon.com/free-icon/grid_6934388">Mesh icon by th studio - Flaticon</a>

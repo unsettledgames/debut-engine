@@ -6,11 +6,18 @@
 #include <assimp/postprocess.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
 #include <Debut/ImGui/ProgressPanel.h>
+#include <Debut/Utils/CppUtils.h>
 
 /*
 	TODO
-		- Bug: impossibile trascinare certi sottomodelli
-		- Bug: i modelli non caricano :skull:
+		- UX
+			- Let the user reimport a model:
+				- Delete Lib entries (in Assets and in Metadata)
+				- Delete AssetMap entries
+				- Delete meta and model files
+				- OPTIONAL: save a map <meshName, ID>; if during the reimporting, a mesh with the same name of the previous
+					import is found, use the previous ID to save references
+				- Reimport
 */
 
 namespace Debut
@@ -120,7 +127,9 @@ namespace Debut
 		materials.erase(std::remove(materials.begin(), materials.end(), 0), materials.end());
 
 		Ref<Model> ret = CreateRef<Model>(meshes, materials, models);
-		ret->SetPath(submodelsFolder + "\\" + parent->mName.C_Str() + ".model");
+		std::stringstream ss;
+		std::string name = CppUtils::FileSystem::CorrectFileName(parent->mName.C_Str());
+		ret->SetPath(submodelsFolder + "\\" + name + ".model");
 		ret->SaveSettings();
 		AssetManager::Submit<Model>(ret);
 

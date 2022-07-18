@@ -376,7 +376,7 @@ namespace Debutant
         {
             extension = path.substr(path.find_last_of("."), path.length());
             folder = path.substr(path.find_last_of("\\"), path.length());
-            name = folder.substr(folder.find_last_of("\\"), folder.length() - extension.length());
+            name = folder.substr(folder.find_last_of("\\") + 1, folder.length() - extension.length());
         }
         else
             name = "Submodel";

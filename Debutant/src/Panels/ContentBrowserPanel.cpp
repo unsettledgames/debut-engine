@@ -99,6 +99,7 @@ namespace Debutant
 		auto openFolder = std::find(m_OpenDirs.begin(), m_OpenDirs.end(), path.filename().string());
 		bool folderOpen = openFolder != m_OpenDirs.end() || path.string() == m_PropertiesPanel->GetAsset().string();
 		bool treeNodeClicked = ImGuiUtils::ImageTreeNode(path.filename().string().c_str(), (ImTextureID)icon->GetRendererID(), folderOpen);
+		AddDragSource(path);
 
 		if (treeNodeClicked || folderOpen)
 		{
@@ -127,8 +128,6 @@ namespace Debutant
 			
 			ImGui::TreePop();
 		}
-
-		AddDragSource(path);
 	}
 
 	void ContentBrowserPanel::DrawModelHierarchy(const Ref<Model>& model)
@@ -141,6 +140,7 @@ namespace Debutant
 			path = "Submodel";
 
 		bool treeNodeClicked = ImGuiUtils::ImageTreeNode(path.c_str(), (ImTextureID)modelIcon->GetRendererID(), folderOpen);
+		AddDragSource(model->GetPath());
 
 		if (treeNodeClicked || folderOpen)
 		{
@@ -163,10 +163,6 @@ namespace Debutant
 
 			ImGui::TreePop();
 		}
-
-		std::stringstream ss;
-		ss << model->GetID();
-		AddDragSource(model->GetPath());
 	}
 
 	void ContentBrowserPanel::DrawTopBar()
