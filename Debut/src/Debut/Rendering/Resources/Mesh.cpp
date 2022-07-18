@@ -150,7 +150,7 @@ namespace Debut
 	{
 		MeshMetadata ret = {};
 		std::stringstream ss;
-		ss << AssetManager::s_ProjectDir << "\\Lib\\Metadata\\" << id + ".meta";
+		ss << AssetManager::s_ProjectDir << "\\Lib\\Metadata\\" << id << ".meta";
 		std::ifstream metaFile(ss.str());
 		
 		if (metaFile.good())

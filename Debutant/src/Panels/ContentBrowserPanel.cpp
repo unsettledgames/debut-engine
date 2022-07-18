@@ -22,9 +22,18 @@ namespace Debutant
 		EditorCache::Textures().Put("cb-menu", Texture2D::Create("assets/icons/menu.png"));
 		EditorCache::Textures().Put("cb-back", Texture2D::Create("assets/icons/back.png"));
 		EditorCache::Textures().Put("cb-search", Texture2D::Create("assets/icons/search.png"));
+		EditorCache::Textures().Put("cb-model", Texture2D::Create("assets/icons/model.png"));
+		EditorCache::Textures().Put("cb-mesh", Texture2D::Create("assets/icons/mesh.png"));
+		EditorCache::Textures().Put("cb-material", Texture2D::Create("assets/icons/material.png"));
+		EditorCache::Textures().Put("cb-unimported-model", Texture2D::Create("assets/icons/unimported_model.png"));
 
-		m_Icons["txt"] = "cb-genericfile";
+		m_Icons[".txt"] = "cb-genericfile";
 		m_Icons["dir"] = "cb-directory";
+		m_Icons[".model"] = "cb-model";
+		m_Icons[".mesh"] = "cb-mesh";
+		m_Icons[".mat"] = "cb-material";
+		m_Icons[".obj"] = "cb-unimported-model";
+		m_Icons[".fbx"] = "cb-unimported-model";
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
@@ -132,10 +141,10 @@ namespace Debutant
 
 	void ContentBrowserPanel::DrawModelHierarchy(const Ref<Model>& model)
 	{
-		Ref<Texture2D> modelIcon = GetFileIcon(".model");
+		Ref<Texture2D> modelIcon = GetFileIcon("x.model");
 		std::string path = std::filesystem::path(model->GetPath()).filename().string();
 		auto openFolder = std::find(m_OpenDirs.begin(), m_OpenDirs.end(), model->GetPath());
-		bool folderOpen = openFolder != m_OpenDirs.end() || model->GetPath() == m_PropertiesPanel->GetAsset().string();
+		bool folderOpen = openFolder != m_OpenDirs.end();
 		if (path == "")
 			path = "Submodel";
 
@@ -159,7 +168,27 @@ namespace Debutant
 				DrawModelHierarchy(AssetManager::Request<Model>(model));
 
 			// Meshes
+			for (Debut::UUID mesh : model->GetMeshes())
+			{
+				auto meshData = Mesh::GetMetadata(mesh);
+				std::stringstream ss;
+				ss << AssetManager::s_ProjectDir << "\\Lib\\Assets\\" << mesh;
+
+				if (ImGuiUtils::ImageTreeNode(meshData.Name.c_str(), (ImTextureID)GetFileIcon("x.mesh")->GetRendererID(), 
+					ss.str() == m_PropertiesPanel->GetAsset()))
+				{
+					m_PropertiesPanel->SetAsset(ss.str());
+					ImGui::TreePop();
+				}
+			}
+
 			// Materials
+			for (Debut::UUID material : model->GetMaterials())
+			{/*
+				auto materialData = Material::GetMetadata(material);
+				ImGuiUtils::ImageTreeNode(materialData.Name.c_str(), (ImTextureID)GetFileIcon(".mesh")->GetRendererID(), false);
+				*/
+			}
 
 			ImGui::TreePop();
 		}
