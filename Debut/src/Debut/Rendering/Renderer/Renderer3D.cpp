@@ -53,7 +53,11 @@ namespace Debut
 
 		{
 			DBT_PROFILE_SCOPE("Renderer3D::GetMaterial");
+			if (meshComponent.Material == 18224448360203886318)
+				std::cout << "yo";
 			material = AssetManager::Request<Material>(meshComponent.Material);
+			if (material->GetShader() == 0)
+				std::cout << "sas";
 		}
 
 		// Instanced rendering if the MeshRenderer is instanced

@@ -46,23 +46,23 @@ namespace Debut
 			}
 
 			// Put extensions as static members of Texture2D and PhysicsMaterial2D?
-			if (m_AssetPath.extension().string() == ".png")
+			if (m_AssetType == AssetType::Texture2D)
 			{
 				DrawTextureProperties();
 			}
-			else if (m_AssetPath.extension().string() == ".physmat2d")
+			else if (m_AssetType == AssetType::PhysicsMaterial2D)
 			{
 				DrawPhysicsMaterial2DProperties();
 			}
-			else if (m_AssetPath.extension().string() == ".glsl")
+			else if (m_AssetType == AssetType::Shader)
 			{
 				DrawShaderProperties();
 			}
-			else if (m_AssetPath.extension().string() == ".mat")
+			else if (m_AssetType == AssetType::Material)
 			{
 				DrawMaterialProperties();
 			}
-			else if (std::find(s_ModelExtensions.begin(), s_ModelExtensions.end(), m_AssetPath.extension().string()) != s_ModelExtensions.end())
+			else if (m_AssetType == AssetType::Model)
 			{
 				DrawModelProperties();
 			}
@@ -284,6 +284,14 @@ namespace Debut
 		MaterialConfig finalConfig;
 
 		Ref<Material> material = AssetManager::Request<Material>(m_AssetPath.string());
+		if (material == nullptr)
+		{
+			std::ifstream metaFile(AssetManager::s_MetadataDir + m_AssetPath.string());
+			std::stringstream ss;
+			ss << metaFile.rdbuf();
+			YAML::Node metaNode = YAML::Load(ss.str());
+			material = AssetManager::Request<Material>(metaNode["ID"].as<uint64_t>());
+		}
 		Ref<Shader> shader = AssetManager::Request<Shader>(material->GetShader());
 
 		// Shader selection combobox
@@ -299,7 +307,6 @@ namespace Debut
 		pathsToVisit.push(std::filesystem::path("assets\\shaders"));
 		std::filesystem::path currPath;
 
-		// TODO: cache paths
 		while (pathsToVisit.size() > 0)
 		{
 			currPath = pathsToVisit.top();
@@ -409,10 +416,24 @@ namespace Debut
 		
 	}
 
-	void PropertiesPanel::SetAsset(std::filesystem::path path)
+	void PropertiesPanel::SetAsset(std::filesystem::path path, AssetType assetType)
 	{
 		if (std::filesystem::is_directory(path))
 			return;
 		m_AssetPath = path;
+		m_AssetType = assetType;
+
+		if (std::find(s_ModelExtensions.begin(), s_ModelExtensions.end(), m_AssetPath.extension().string()) != s_ModelExtensions.end())
+			m_AssetType = AssetType::Model;
+		else if (path.extension() == ".png")
+			m_AssetType = AssetType::Texture2D;
+		else if (path.extension() == ".physmat2d")
+			m_AssetType = AssetType::PhysicsMaterial2D;
+		else if (path.extension() == ".glsl")
+			m_AssetType = AssetType::Shader;
+		else if (path.extension() == ".mat")
+			m_AssetType = AssetType::Material;
+		else if (path.extension() == ".mesh")
+			m_AssetType = AssetType::Mesh;
 	}
 }

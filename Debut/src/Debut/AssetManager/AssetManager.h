@@ -73,9 +73,9 @@ namespace Debut
 				return nullptr;
 
 			std::stringstream ss;
-			ss << s_ProjectDir << "\\Lib\\Assets\\" << id;
+			ss << s_AssetsDir << id;
 			std::stringstream metaSs;
-			metaSs << s_ProjectDir << "\\Lib\\Metadata\\" << id << ".meta";
+			metaSs << s_MetadataDir << id << ".meta";
 
 			std::ifstream file(ss.str());
 			if (file.good())
@@ -93,8 +93,10 @@ namespace Debut
 	public:
 		// Working directory for the currently opened project
 		static std::string s_ProjectDir;
-		// Directory containing intermediate data for assets
-		static std::string s_IntAssetsDir;
+		// Asset directory
+		static std::string s_AssetsDir;
+		// Metadata directory
+		static std::string s_MetadataDir;
 		
 	private:
 		static void Reimport(const std::string& folder);

@@ -81,18 +81,29 @@ namespace Debut
 
 			m_Valid = true;
 		}
-		// Otherwise save the ID in a new meta file
+		// Otherwise load from the assets folder
 		else
 		{
 			meta.close();
-			std::ofstream newMeta(m_MetaPath);
-			YAML::Emitter emitter;
-			
-			emitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
-			newMeta << emitter.c_str();
-			newMeta.close();
 
-			m_Valid = false;
+			std::string assetFile = AssetManager::s_AssetsDir + path;
+			std::ifstream meshFile(assetFile);
+			if (meshFile.good())
+			{
+				Load(meshFile);
+			}
+			else
+			{
+				meshFile.close();
+				std::ofstream newMeta(m_MetaPath);
+				YAML::Emitter emitter;
+
+				emitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
+				newMeta << emitter.c_str();
+				newMeta.close();
+
+				m_Valid = false;
+			}
 		}
 	}
 
@@ -100,7 +111,7 @@ namespace Debut
 	{
 		std::ofstream outFile(m_Path, std::ios::out | std::ios::binary);
 		std::stringstream ss;
-		ss << AssetManager::s_ProjectDir + "\\Lib\\Metadata\\" << m_ID << ".meta";
+		ss << AssetManager::s_MetadataDir << m_ID << ".meta";
 		std::string metaPath = ss.str();
 
 		outFile << "Vertices" << "\n"; EmitBuffer<float>(m_Vertices, outFile);
@@ -150,7 +161,7 @@ namespace Debut
 	{
 		MeshMetadata ret = {};
 		std::stringstream ss;
-		ss << AssetManager::s_ProjectDir << "\\Lib\\Metadata\\" << id << ".meta";
+		ss << AssetManager::s_MetadataDir << id << ".meta";
 		std::ifstream metaFile(ss.str());
 		
 		if (metaFile.good())

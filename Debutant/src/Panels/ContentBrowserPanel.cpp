@@ -172,22 +172,33 @@ namespace Debutant
 			{
 				auto meshData = Mesh::GetMetadata(mesh);
 				std::stringstream ss;
-				ss << AssetManager::s_ProjectDir << "\\Lib\\Assets\\" << mesh;
+				ss << mesh;
 
-				if (ImGuiUtils::ImageTreeNode(meshData.Name.c_str(), (ImTextureID)GetFileIcon("x.mesh")->GetRendererID(), 
-					ss.str() == m_PropertiesPanel->GetAsset()))
+				if (ImGuiUtils::ImageTreeNode((meshData.Name + ".mesh").c_str(), (ImTextureID)GetFileIcon("x.mesh")->GetRendererID(),
+					ss.str() == m_PropertiesPanel->GetAsset()) || ss.str() == m_PropertiesPanel->GetAsset())
 				{
-					m_PropertiesPanel->SetAsset(ss.str());
+					m_PropertiesPanel->SetAsset(ss.str(), AssetType::Mesh);
 					ImGui::TreePop();
 				}
+
+				AddDragSource(ss.str());
 			}
 
 			// Materials
 			for (Debut::UUID material : model->GetMaterials())
-			{/*
+			{
 				auto materialData = Material::GetMetadata(material);
-				ImGuiUtils::ImageTreeNode(materialData.Name.c_str(), (ImTextureID)GetFileIcon(".mesh")->GetRendererID(), false);
-				*/
+				std::stringstream ss;
+				ss << material;
+
+				if (ImGuiUtils::ImageTreeNode((materialData.Name + ".mat").c_str(), (ImTextureID)GetFileIcon("x.mat")->GetRendererID(),
+					ss.str() == m_PropertiesPanel->GetAsset()) || ss.str() == m_PropertiesPanel->GetAsset())
+				{
+					m_PropertiesPanel->SetAsset(ss.str(), AssetType::Material);
+					ImGui::TreePop();
+				}
+
+				AddDragSource(ss.str());
 			}
 
 			ImGui::TreePop();

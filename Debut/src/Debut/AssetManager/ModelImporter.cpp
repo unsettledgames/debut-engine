@@ -10,6 +10,9 @@
 
 /*
 	TODO
+		- BUGS
+			- Drag n drop material in hierarchy
+			- Don't let the user drag meshes on materials and similar stuff
 		- UX
 			- Let the user reimport a model:
 				- Delete Lib entries (in Assets and in Metadata)
@@ -49,8 +52,6 @@ namespace Debut
 				pFlags |= aiProcess_OptimizeGraph;
 
 			const aiScene* scene = importer.ReadFile(path, pFlags);
-			std::string folder = AssetManager::s_IntAssetsDir;
-			std::string fileName;
 
 			if (scene != nullptr)
 			{
@@ -82,9 +83,9 @@ namespace Debut
 
 		// Save the root model in the folder of the asset, save the generated assets in Lib
 		std::string submodelsFolder = saveFolder;
-		std::string assetsFolder = AssetManager::s_IntAssetsDir;
+		std::string assetsFolder = AssetManager::s_AssetsDir;
 		if (parent->mParent != nullptr)
-			submodelsFolder = AssetManager::s_IntAssetsDir;
+			submodelsFolder = AssetManager::s_AssetsDir;
 
 		std::vector<UUID> models;
 		std::vector<UUID> meshes;
@@ -227,7 +228,7 @@ namespace Debut
 
 		// Save the mesh on disk + meta file
 		std::stringstream ss;
-		ss << saveFolder << "\\" << mesh->GetID();
+		ss << saveFolder << mesh->GetID();
 		mesh->SetPath(ss.str());
 		mesh->SetName(assimpMesh->mName.C_Str());
 		mesh->SaveSettings();
@@ -283,10 +284,11 @@ namespace Debut
 		// Save the material on disk + meta file
 		// Save the mesh on disk + meta file
 		std::stringstream ss;
-		ss << saveFolder << "\\" << material->GetID();
+		ss << saveFolder << material->GetID();
 		material->SetPath(ss.str());
 		ss.str("");
-		ss << AssetManager::s_ProjectDir << "\\Lib\\Metadata\\" << material->GetID() << ".meta";
+
+		ss << AssetManager::s_MetadataDir << material->GetID() << ".meta";
 		material->SetMetaPath(ss.str());
 		material->SaveSettings();
 

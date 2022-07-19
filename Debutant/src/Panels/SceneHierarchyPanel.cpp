@@ -273,19 +273,69 @@ namespace Debut
 		DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [](auto& component)
 			{
 				ImGuiUtils::StartColumns(2, { 100, (uint32_t)ImGui::GetContentRegionAvail().x - 100 });
+				MeshMetadata meshData = Mesh::GetMetadata(component.Mesh);
+				MaterialMetadata materialData = Material::GetMetadata(component.Material);
 
 				// Mesh reference
-				ImGui::LabelText("##mesh", "Mesh");
+				ImGui::LabelText("##meshlabel", "Mesh");
 				ImGui::NextColumn();
-				if (ImGui::Button(AssetManager::Request<Mesh>(component.Mesh)->GetName().c_str()))
-					Log.CoreInfo("Mesh ID: {0}", component.Mesh);
+
+				ImGui::Button((meshData.Name + "##mesh").c_str(), { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.2f });
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path pathStr(path);
+
+						// Instead of asking for the asset, load the .meta file and extract the ID
+						std::ifstream meta(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
+						if (meta.good())
+						{
+							std::stringstream ss;
+							ss << meta.rdbuf();
+							YAML::Node metaData = YAML::Load(ss.str());
+
+							component.Mesh = metaData["ID"].as<uint64_t>();
+						}
+					}
+
+					ImGui::EndDragDropTarget();
+				}
 
 				ImGui::NextColumn();
 
 				// Material reference
-				ImGui::LabelText("##material", "Material");
+				// Mesh reference
+				ImGui::LabelText("##materiallabel", "Material");
 				ImGui::NextColumn();
-				ImGui::Button(AssetManager::Request<Material>(component.Material)->GetName().c_str());
+
+				ImGui::Button((materialData.Name + "##material").c_str(), { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.2f });
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path pathStr(path);
+
+						// Instead of asking for the asset, load the .meta file and extract the ID
+						std::ifstream meta(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
+						if (meta.good())
+						{
+							std::stringstream ss;
+							ss << meta.rdbuf();
+							YAML::Node metaData = YAML::Load(ss.str());
+
+							component.Material = metaData["ID"].as<uint64_t>();
+						}
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::NextColumn();
+
+				ImGuiUtils::ResetColumns();
 			});
 
 
@@ -347,9 +397,9 @@ namespace Debut
 
 				ImGuiUtils::VerticalSpace(10);
 
-				Ref<PhysicsMaterial2D> material = ImGuiUtils::DragDestination<PhysicsMaterial2D>("Physics material", ".physmat2d", component.Material);
-				if (material)
-					component.Material = material->GetID();
+				UUID material = ImGuiUtils::DragDestination("Physics material", ".physmat2d", component.Material);
+				if (material != 0)
+					component.Material = material;
 			});
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)

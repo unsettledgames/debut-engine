@@ -1,7 +1,9 @@
 #pragma once
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <filesystem>
 
+#include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/Rendering/Texture.h>
 
@@ -29,10 +31,9 @@ namespace Debut
 
 		static bool BeginDragDropSourceCustom(ImGuiDragDropFlags flags = 0);
 
-		template <typename T>
-		static Ref<T> DragDestination(const std::string& label, const std::string& acceptedExtension, UUID currentID)
+		static UUID DragDestination(const std::string& label, const std::string& acceptedExtension, UUID currentID)
 		{
-			Ref<T> ret = nullptr;
+			UUID ret = 0;
 
 			std::string currentName = AssetManager::GetPath(currentID);
 			currentName = currentName.substr(currentName.find_last_of("\\") + 1, currentName.size() - currentName.find_last_of("\\"));
@@ -53,8 +54,19 @@ namespace Debut
 					const wchar_t* path = (const wchar_t*)payload->Data;
 					std::filesystem::path pathStr(path);
 
+					// Instead of asking for the asset, load the .meta file and extract the ID
 					if (pathStr.extension() == acceptedExtension)
-						ret = AssetManager::Request<T>(pathStr.string());
+					{
+						std::ifstream meta(pathStr.string() + ".meta");
+						if (meta.good())
+						{
+							std::stringstream ss;
+							ss << meta.rdbuf();
+							YAML::Node metaData = YAML::Load(ss.str());
+
+							ret = metaData["ID"].as<uint64_t>();
+						}
+					}
 				}
 
 				ImGui::EndDragDropTarget();

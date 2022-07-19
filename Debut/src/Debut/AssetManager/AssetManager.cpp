@@ -9,7 +9,8 @@ namespace Debut
 {
 	std::unordered_map<UUID, std::string> AssetManager::s_AssetMap;
 	std::string AssetManager::s_ProjectDir;
-	std::string AssetManager::s_IntAssetsDir;
+	std::string AssetManager::s_AssetsDir;
+	std::string AssetManager::s_MetadataDir;
 
 	AssetCache<std::string, Ref<Texture2D>> AssetManager::s_TextureCache;
 	AssetCache<std::string, Ref<Shader>> AssetManager::s_ShaderCache;
@@ -22,7 +23,8 @@ namespace Debut
 	void AssetManager::Init(const std::string& projectDir)
 	{
 		s_ProjectDir = projectDir;
-		s_IntAssetsDir = s_ProjectDir + "\\Lib\\Assets";
+		s_AssetsDir = s_ProjectDir + "\\Lib\\Assets\\";
+		s_MetadataDir = s_ProjectDir + "\\Lib\\Metadata\\";
 
 		CreateLibDirs();
 
@@ -232,7 +234,7 @@ namespace Debut
 	Ref<Material> AssetManager::Request<Material>(const std::string& id, const std::string& metaFile)
 	{
 		if (s_MaterialCache.Has(id))
-			return s_MaterialCache.Get(id);	
+			return s_MaterialCache.Get(id);
 
 		Ref<Material> toAdd = CreateRef<Material>(id, metaFile);
 
