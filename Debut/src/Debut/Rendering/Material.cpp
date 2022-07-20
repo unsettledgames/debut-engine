@@ -173,7 +173,8 @@ namespace Debut
 		YAML::Emitter metaEmitter;
 		std::ofstream out(m_MetaPath);
 
-		metaEmitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
+		metaEmitter << YAML::BeginDoc << YAML::BeginMap << 
+			YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
 		out << metaEmitter.c_str();
 	}
 

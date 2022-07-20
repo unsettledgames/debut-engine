@@ -288,15 +288,19 @@ namespace Debut
 						const wchar_t* path = (const wchar_t*)payload->Data;
 						std::filesystem::path pathStr(path);
 
-						// Instead of asking for the asset, load the .meta file and extract the ID
-						std::ifstream meta(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
-						if (meta.good())
+						if (pathStr.extension() == ".mesh")
 						{
-							std::stringstream ss;
-							ss << meta.rdbuf();
-							YAML::Node metaData = YAML::Load(ss.str());
+							pathStr = pathStr.replace_extension();
+							std::ifstream meta(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
 
-							component.Mesh = metaData["ID"].as<uint64_t>();
+							if (meta.good())
+							{
+								std::stringstream ss;
+								ss << meta.rdbuf();
+								YAML::Node metaData = YAML::Load(ss.str());
+
+								component.Mesh = metaData["ID"].as<uint64_t>();
+							}
 						}
 					}
 
@@ -318,15 +322,19 @@ namespace Debut
 						const wchar_t* path = (const wchar_t*)payload->Data;
 						std::filesystem::path pathStr(path);
 
-						// Instead of asking for the asset, load the .meta file and extract the ID
-						std::ifstream meta(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
-						if (meta.good())
+						if (pathStr.extension() == ".mat")
 						{
-							std::stringstream ss;
-							ss << meta.rdbuf();
-							YAML::Node metaData = YAML::Load(ss.str());
+							pathStr = pathStr.replace_extension();
+							std::ifstream meta(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
 
-							component.Material = metaData["ID"].as<uint64_t>();
+							if (meta.good())
+							{
+								std::stringstream ss;
+								ss << meta.rdbuf();
+								YAML::Node metaData = YAML::Load(ss.str());
+
+								component.Material = metaData["ID"].as<uint64_t>();
+							}
 						}
 					}
 

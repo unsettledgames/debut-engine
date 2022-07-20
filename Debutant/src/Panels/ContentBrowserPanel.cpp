@@ -181,7 +181,7 @@ namespace Debutant
 					ImGui::TreePop();
 				}
 
-				AddDragSource(ss.str());
+				AddDragSource(ss.str() + ".mesh");
 			}
 
 			// Materials
@@ -198,7 +198,7 @@ namespace Debutant
 					ImGui::TreePop();
 				}
 
-				AddDragSource(ss.str());
+				AddDragSource(ss.str() + ".mat");
 			}
 
 			ImGui::TreePop();
