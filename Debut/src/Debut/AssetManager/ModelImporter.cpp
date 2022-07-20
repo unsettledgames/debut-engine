@@ -10,9 +10,6 @@
 
 /*
 	TODO
-		- BUGS
-			- Drag n drop material in hierarchy
-			- Don't let the user drag meshes on materials and similar stuff
 		- UX
 			- Let the user reimport a model:
 				- Delete Lib entries (in Assets and in Metadata)

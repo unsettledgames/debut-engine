@@ -158,6 +158,10 @@ namespace Debutant
 			{
 				m_OpenDirs.erase(openFolder);
 				m_PropertiesPanel->SetAsset(model->GetPath());
+
+				std::stringstream ss;
+				ss << model->GetPath() << model->GetID();
+				m_SelectedAsset = ss.str();
 			}
 			else
 				m_OpenDirs.insert(model->GetPath());
@@ -173,12 +177,16 @@ namespace Debutant
 				auto meshData = Mesh::GetMetadata(mesh);
 				std::stringstream ss;
 				ss << mesh;
+				std::stringstream meshIDStr;
+				meshIDStr << meshData.Name << ".mesh##" << mesh;
 
-				if (ImGuiUtils::ImageTreeNode((meshData.Name + ".mesh").c_str(), (ImTextureID)GetFileIcon("x.mesh")->GetRendererID(),
-					ss.str() == m_PropertiesPanel->GetAsset()) || ss.str() == m_PropertiesPanel->GetAsset())
+				if (ImGuiUtils::ImageTreeNode(meshIDStr.str().c_str(), (ImTextureID)GetFileIcon("x.mesh")->GetRendererID(),
+					meshIDStr.str() == m_SelectedAsset) || ss.str() == m_PropertiesPanel->GetAsset())
 				{
 					m_PropertiesPanel->SetAsset(ss.str(), AssetType::Mesh);
 					ImGui::TreePop();
+
+					m_SelectedAsset = meshIDStr.str();
 				}
 
 				AddDragSource(ss.str() + ".mesh");
@@ -190,12 +198,15 @@ namespace Debutant
 				auto materialData = Material::GetMetadata(material);
 				std::stringstream ss;
 				ss << material;
+				std::stringstream matIDStr;
+				matIDStr << materialData.Name << ".mat##" << material;
 
-				if (ImGuiUtils::ImageTreeNode((materialData.Name + ".mat").c_str(), (ImTextureID)GetFileIcon("x.mat")->GetRendererID(),
-					ss.str() == m_PropertiesPanel->GetAsset()) || ss.str() == m_PropertiesPanel->GetAsset())
+				if (ImGuiUtils::ImageTreeNode(matIDStr.str().c_str(), (ImTextureID)GetFileIcon("x.mat")->GetRendererID(),
+					matIDStr.str() == m_SelectedAsset) || ss.str() == m_PropertiesPanel->GetAsset())
 				{
 					m_PropertiesPanel->SetAsset(ss.str(), AssetType::Material);
 					ImGui::TreePop();
+					m_SelectedAsset = matIDStr.str();
 				}
 
 				AddDragSource(ss.str() + ".mat");
