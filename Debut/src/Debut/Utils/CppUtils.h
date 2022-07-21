@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <cstdio>
+#include <filesystem>
 
 namespace Debut
 {
@@ -15,6 +17,13 @@ namespace Debut
 					name.erase(std::remove(name.begin(), name.end(), forbidden[i]), name.end());
 
 				return name;
+			}
+
+			static bool RemoveFile(std::filesystem::path path)
+			{
+				if (std::filesystem::exists(path))
+					return std::filesystem::remove(path);
+				return false;
 			}
 		}
 

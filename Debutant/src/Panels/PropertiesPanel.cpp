@@ -155,14 +155,16 @@ namespace Debut
 
 			ImGui::Text("Optimize scene");
 			ImGuiUtils::NextColumn();
-			ImGui::Checkbox("##joinvertices", &settings.OptimizeScene);
+			ImGui::Checkbox("##optimizescene", &settings.OptimizeScene);
 			ImGuiUtils::NextColumn();
 
 			ImGuiUtils::ResetColumns();
 
 			if (ImGui::Button("Import"))
 			{
+				modelFile.close();
 				ModelImporter::ImportModel(m_AssetPath.string(), settings);
+				m_AssetPath = "";
 				settings = {};
 			}
 		}

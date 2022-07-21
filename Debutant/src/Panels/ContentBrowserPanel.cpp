@@ -141,6 +141,9 @@ namespace Debutant
 
 	void ContentBrowserPanel::DrawModelHierarchy(const Ref<Model>& model)
 	{
+		if (model == nullptr)
+			return;
+
 		Ref<Texture2D> modelIcon = GetFileIcon("x.model");
 		std::string path = std::filesystem::path(model->GetPath()).filename().string();
 		auto openFolder = std::find(m_OpenDirs.begin(), m_OpenDirs.end(), model->GetPath());

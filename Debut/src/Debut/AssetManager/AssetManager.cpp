@@ -310,33 +310,27 @@ namespace Debut
 	void AssetManager::DeleteAssociations(std::vector<UUID>& id)
 	{
 #ifdef DBT_DEBUG
-		std::stringstream ss;
-		std::fstream currFile("Debut\\AssetMap.yaml", std::ios::in | std::ios::out);
+		std::fstream currFile("Debut\\AssetMap.yaml", std::ios::out | std::ios::trunc);
+		std::unordered_map copy = s_AssetMap;
 		YAML::Emitter emitter;
-		YAML::Emitter testEmitter;
-		YAML::Node currYaml;
-		YAML::Node newNode;
 
-		// Read the file, load the old content
-		ss << currFile.rdbuf();
-		currYaml = YAML::Load(ss.str().c_str())["Associations"];
-		for (auto& node : currYaml)
-		{
-			if (std::find(id.begin(), id.end(), node["ID"].as<uint64_t>()) != id.end())
-			{
-				s_AssetMap.erase(node["ID"].as<uint64_t>());
-				currYaml.remove(node.as<YAML::Node>());
-			}
-		}
+		// Delete from asset map
+		for (auto& entry : copy)
+			if (std::find(id.begin(), id.end(), entry.first) != id.end())
+				s_AssetMap.erase(entry.first);
+
 
 		// Write the final document
+		emitter << YAML::BeginMap << YAML::Key << "Associations" << YAML::Value << YAML::BeginSeq;
 
-		emitter << YAML::BeginMap << YAML::Key << "Associations" << YAML::Value << currYaml << YAML::EndMap;
+		for (auto& entry : s_AssetMap)
+			emitter << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << entry.first << 
+										 YAML::Key << "Path" << YAML::Value << entry.second << YAML::EndMap;
 
-		currFile.close();
-		currFile.open("Debut\\AssetMap.yaml", std::ios::out | std::ios::trunc);
+		// Write changes on disk
+		emitter << YAML::EndSeq << YAML::EndMap;
 		currFile << emitter.c_str();
-
+		currFile.close();
 #endif
 	}
 	

@@ -1,6 +1,7 @@
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Core/Log.h>
+#include <cstdio>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -10,14 +11,13 @@
 
 /*
 	TODO
-		- UX
+		UX:
 			- Let the user reimport a model:
-				- Delete Lib entries (in Assets and in Metadata)
-				- Delete AssetMap entries
-				- Delete meta and model files
 				- OPTIONAL: save a map <meshName, ID>; if during the reimporting, a mesh with the same name of the previous
 					import is found, use the previous ID to save references
-				- Reimport
+			- Save model import settings in .model.meta file
+		- BUGS:
+			- When reimporting with different settings, shader not found error
 */
 
 namespace Debut
@@ -29,50 +29,58 @@ namespace Debut
 		std::ifstream meta(path + ".model.meta");
 		unsigned int pFlags = aiProcess_RemoveRedundantMaterials;
 
-		if (!meta.good())
+		if (meta.good())
 		{
-			Assimp::Importer importer;
+			meta.close();
+			Ref<Model> model = AssetManager::Request<Model>(path + ".model");
+			std::vector<UUID> associationsToDelete;
+			RemoveNodes(model, associationsToDelete);
+			AssetManager::DeleteAssociations(associationsToDelete);
+		}
+		
+		Assimp::Importer importer;
 
-			if (settings.ImproveRenderingSpeed)
-				pFlags |= aiProcess_ImproveCacheLocality;
-			if (settings.JoinVertices)
-				pFlags |= aiProcess_JoinIdenticalVertices;
-			if (settings.Triangulate)
-				pFlags |= aiProcess_Triangulate;
-			if (settings.Normals)
-				pFlags |= aiProcess_GenNormals;
-			if (settings.TangentSpace)
-				pFlags |= aiProcess_CalcTangentSpace;
-			if (settings.OptimizeMeshes)
-				pFlags |= aiProcess_OptimizeMeshes;
-			if (settings.OptimizeScene)
-				pFlags |= aiProcess_OptimizeGraph;
+		if (settings.ImproveRenderingSpeed)
+			pFlags |= aiProcess_ImproveCacheLocality;
+		if (settings.JoinVertices)
+			pFlags |= aiProcess_JoinIdenticalVertices;
+		if (settings.Triangulate)
+			pFlags |= aiProcess_Triangulate;
+		if (settings.Normals)
+			pFlags |= aiProcess_GenNormals;
+		if (settings.TangentSpace)
+			pFlags |= aiProcess_CalcTangentSpace;
+		if (settings.OptimizeMeshes)
+			pFlags |= aiProcess_OptimizeMeshes;
+		if (settings.OptimizeScene)
+			pFlags |= aiProcess_OptimizeGraph;
 
-			const aiScene* scene = importer.ReadFile(path, pFlags);
+		const aiScene* scene = importer.ReadFile(path, pFlags);
 
-			if (scene != nullptr)
-			{
-				// Import the model
-				aiNode* rootNode = scene->mRootNode;
-				Ref<Model> ret = ImportNodes(rootNode, scene, path.substr(0, path.find_last_of("\\")));
-				ret->SetPath(path + ".model");
+		if (scene != nullptr)
+		{
+			// Import the model
+			aiNode* rootNode = scene->mRootNode;
+			Ref<Model> ret = ImportNodes(rootNode, scene, path.substr(0, path.find_last_of("\\")), 
+				std::filesystem::path(path).filename().string());
+			ret->SetPath(path + ".model");
 
-				return ret;
-			}
-			else
-			{
-				Log.CoreError("Error while importing model {0}: {1}", path, importer.GetErrorString());
-				return nullptr;
-			}
+			return ret;
+		}
+		else
+		{
+			Log.CoreError("Error while importing model {0}: {1}", path, importer.GetErrorString());
+			return nullptr;
 		}
 
 		ProgressPanel::CompleteTask("modelimport");
 
 		meta.close();
+		
 		return nullptr;
 	}
 
-	Ref<Model> ModelImporter::ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder)
+	Ref<Model> ModelImporter::ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder, const std::string& modelName)
 	{
 		// Don't import empty models
 		if (parent->mNumMeshes == 0 && parent->mNumChildren == 0)
@@ -126,7 +134,11 @@ namespace Debut
 
 		Ref<Model> ret = CreateRef<Model>(meshes, materials, models);
 		std::stringstream ss;
-		std::string name = CppUtils::FileSystem::CorrectFileName(parent->mName.C_Str());
+		std::string name;
+		if (parent->mParent == nullptr)
+			name = modelName;
+		else
+			name = CppUtils::FileSystem::CorrectFileName(parent->mName.C_Str());
 		ret->SetPath(submodelsFolder + "\\" + name + ".model");
 		ret->SaveSettings();
 		AssetManager::Submit<Model>(ret);
@@ -290,5 +302,43 @@ namespace Debut
 		material->SaveSettings();
 
 		return material;
+	}
+
+	void ModelImporter::RemoveNodes(Ref<Model> model, std::vector<UUID>& associations)
+	{
+		CppUtils::FileSystem::RemoveFile((model->GetPath() + ".meta").c_str());
+		CppUtils::FileSystem::RemoveFile((model->GetPath()).c_str());
+		AssetManager::Remove<Model>(model->GetID());
+		associations.push_back(model->GetID());
+
+		std::stringstream ss;
+		for (uint32_t i = 0; i < model->GetMeshes().size(); i++)
+		{
+			ss.str("");
+			ss << AssetManager::s_AssetsDir << model->GetMeshes()[i];
+			CppUtils::FileSystem::RemoveFile(ss.str().c_str());
+			associations.push_back(model->GetMeshes()[i]);
+			AssetManager::Remove<Mesh>(model->GetMeshes()[i]);
+
+			ss.str("");
+			ss << AssetManager::s_MetadataDir << model->GetMeshes()[i] << ".meta";
+			CppUtils::FileSystem::RemoveFile(ss.str().c_str());
+		}
+
+		for (uint32_t i = 0; i < model->GetMaterials().size(); i++)
+		{
+			ss.str("");
+			ss << AssetManager::s_AssetsDir << model->GetMaterials()[i];
+			CppUtils::FileSystem::RemoveFile(ss.str().c_str());
+			associations.push_back(model->GetMaterials()[i]);
+			AssetManager::Remove<Material>(model->GetMaterials()[i]);
+
+			ss.str("");
+			ss << AssetManager::s_MetadataDir << model->GetMaterials()[i] << ".meta";
+			CppUtils::FileSystem::RemoveFile(ss.str().c_str());
+		}
+
+		for (uint32_t i = 0; i < model->GetSubmodels().size(); i++)
+			RemoveNodes(AssetManager::Request<Model>(model->GetSubmodels()[i]), associations);
 	}
 }
