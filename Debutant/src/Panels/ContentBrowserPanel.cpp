@@ -15,7 +15,7 @@ namespace Debutant
 	static const std::filesystem::path s_AssetsPath = "assets";
 	ContentBrowserSettings ContentBrowserPanel::s_Settings;
 
-	ContentBrowserPanel::ContentBrowserPanel() : m_CurrDirectory(s_AssetsPath)
+	ContentBrowserPanel::ContentBrowserPanel()
 	{
 		EditorCache::Textures().Put("cb-genericfile", Texture2D::Create("assets/icons/file.png"));
 		EditorCache::Textures().Put("cb-directory", Texture2D::Create("assets/icons/directory.png"));
@@ -45,9 +45,9 @@ namespace Debutant
 		if (ImGui::BeginPopupContextWindow(0, 1, false))
 		{
 			if (ImGui::MenuItem("Create new Physics Material 2D"))
-				AssetManager::CreateAsset<PhysicsMaterial2D>(m_CurrDirectory.string() + "/NewPhysicsMaterial2D.physmat2d");
+				AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
 			if (ImGui::MenuItem("Create new Material"))
-				AssetManager::CreateAsset<Material>(m_CurrDirectory.string() + "/NewMaterial.mat");
+				AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
 			ImGui::EndPopup();
 		}
 		
@@ -67,7 +67,7 @@ namespace Debutant
 			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 
 		// Get contents: this is used to show folder first and then files
-		for (auto& dirEntry : std::filesystem::directory_iterator(m_CurrDirectory))
+		for (auto& dirEntry : std::filesystem::directory_iterator(s_AssetsPath))
 		{
 			// Don't show meta files
 			if (dirEntry.path().extension() == ".meta")
@@ -107,18 +107,24 @@ namespace Debutant
 		Ref<Texture2D> icon = isDir ? EditorCache::Textures().Get("cb-directory") : GetFileIcon(path);
 		auto openFolder = std::find(m_OpenDirs.begin(), m_OpenDirs.end(), path.filename().string());
 		bool folderOpen = openFolder != m_OpenDirs.end() || path.string() == m_PropertiesPanel->GetAsset().string();
-		bool treeNodeClicked = ImGuiUtils::ImageTreeNode(path.filename().string().c_str(), (ImTextureID)icon->GetRendererID(), folderOpen);
+		bool treeNodeClicked = ImGuiUtils::ImageTreeNode(path.filename().string().c_str(), 
+			(ImTextureID)icon->GetRendererID(), folderOpen, m_SelectedDir == path || m_PropertiesPanel->GetAsset() == path);
 		AddDragSource(path);
 
 		if (treeNodeClicked || folderOpen)
 		{
 			// Toggle the current node if it's been clicked
 			if (isDir)
+			{
 				if (folderOpen && treeNodeClicked)
 					m_OpenDirs.erase(openFolder);
-				else
+				else if (treeNodeClicked)
+				{
 					m_OpenDirs.insert(path.filename().string());
-			else
+					m_SelectedDir = path.string();
+				}
+			}
+			else if (treeNodeClicked)
 				m_PropertiesPanel->SetAsset(path);
 
 			// Recursively render the rest of the hierarchy
@@ -151,7 +157,8 @@ namespace Debutant
 		if (path == "")
 			path = "Submodel";
 
-		bool treeNodeClicked = ImGuiUtils::ImageTreeNode(path.c_str(), (ImTextureID)modelIcon->GetRendererID(), folderOpen);
+		bool treeNodeClicked = ImGuiUtils::ImageTreeNode(path.c_str(), (ImTextureID)modelIcon->GetRendererID(), 
+			folderOpen, model->GetPath() == m_PropertiesPanel->GetAsset());
 		AddDragSource(model->GetPath());
 
 		if (treeNodeClicked || folderOpen)
@@ -160,14 +167,15 @@ namespace Debutant
 			if (folderOpen && treeNodeClicked)
 			{
 				m_OpenDirs.erase(openFolder);
+			}
+			else if (treeNodeClicked)
+			{
 				m_PropertiesPanel->SetAsset(model->GetPath());
-
+				m_OpenDirs.insert(model->GetPath());
 				std::stringstream ss;
 				ss << model->GetPath() << model->GetID();
 				m_SelectedAsset = ss.str();
 			}
-			else
-				m_OpenDirs.insert(model->GetPath());
 				
 
 			// Recursively render submodels
@@ -184,7 +192,7 @@ namespace Debutant
 				meshIDStr << meshData.Name << ".mesh##" << mesh;
 
 				if (ImGuiUtils::ImageTreeNode(meshIDStr.str().c_str(), (ImTextureID)GetFileIcon("x.mesh")->GetRendererID(),
-					meshIDStr.str() == m_SelectedAsset) || ss.str() == m_PropertiesPanel->GetAsset())
+					false, meshIDStr.str().compare(m_SelectedAsset) == 0))
 				{
 					m_PropertiesPanel->SetAsset(ss.str(), AssetType::Mesh);
 					ImGui::TreePop();
@@ -205,7 +213,7 @@ namespace Debutant
 				matIDStr << materialData.Name << ".mat##" << material;
 
 				if (ImGuiUtils::ImageTreeNode(matIDStr.str().c_str(), (ImTextureID)GetFileIcon("x.mat")->GetRendererID(),
-					matIDStr.str() == m_SelectedAsset) || ss.str() == m_PropertiesPanel->GetAsset())
+					false, matIDStr.str().compare(m_SelectedAsset) == 0))
 				{
 					m_PropertiesPanel->SetAsset(ss.str(), AssetType::Material);
 					ImGui::TreePop();
@@ -226,10 +234,6 @@ namespace Debutant
 		float iconHeight = ImGui::GetTextLineHeight();
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-
-		if (ImGui::ImageButton((ImTextureID)EditorCache::Textures().Get("cb-back")->GetRendererID(),
-			{ ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight() }, { 0, 1 }, { 1, 0 }) && m_CurrDirectory != s_AssetsPath)
-			m_CurrDirectory = m_CurrDirectory.parent_path();
 
 		// Pop 0 item spacing
 		ImGui::PopStyleVar();

@@ -16,8 +16,6 @@
 				- OPTIONAL: save a map <meshName, ID>; if during the reimporting, a mesh with the same name of the previous
 					import is found, use the previous ID to save references
 			- Save model import settings in .model.meta file
-		- BUGS:
-			- When reimporting with different settings, shader not found error
 */
 
 namespace Debut
@@ -82,6 +80,7 @@ namespace Debut
 
 	Ref<Model> ModelImporter::ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder, const std::string& modelName)
 	{
+		DBT_PROFILE_FUNCTION();
 		// Don't import empty models
 		if (parent->mNumMeshes == 0 && parent->mNumChildren == 0)
 			return nullptr;
@@ -117,17 +116,26 @@ namespace Debut
 		{
 			// Import and submit the mesh
 			aiMesh* assimpMesh = scene->mMeshes[parent->mMeshes[i]];
-			Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, assetsFolder);
-			AssetManager::Submit<Mesh>(mesh);
-			if (mesh != nullptr)
-				meshes[i] = mesh->GetID();
 
-			// Import and submit the material
-			aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
-			Ref<Material> material = ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, assetsFolder);
-			AssetManager::Submit<Material>(material);
-			if (material != nullptr)
-				materials[i] = material->GetID();
+			{
+				DBT_PROFILE_SCOPE("ModelImporter::ImportMesh");
+				Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, assetsFolder);
+				AssetManager::Submit<Mesh>(mesh);
+				if (mesh != nullptr)
+					meshes[i] = mesh->GetID();
+			}
+			
+			{
+				DBT_PROFILE_SCOPE("ModelImporter::ImportMaterial");
+				// Import and submit the material
+				aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
+				Ref<Material> material = ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, assetsFolder);
+				AssetManager::Submit<Material>(material);
+				if (material != nullptr)
+					materials[i] = material->GetID();
+			}
+
+			
 		}
 		meshes.erase(std::remove(meshes.begin(), meshes.end(), 0), meshes.end());
 		materials.erase(std::remove(materials.begin(), materials.end(), 0), materials.end());
@@ -158,91 +166,109 @@ namespace Debut
 		mesh->m_Vertices.resize(assimpMesh->mNumVertices * 3);
 		mesh->SetName(assimpMesh->mName.C_Str());
 
-		// Create mesh, start with the positions of the vertices
-		for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
-			for (uint32_t j = 0; j < 3; j++)
-			{
-				uint32_t index = i * 3 + j;
-				mesh->m_Vertices[index] = assimpMesh->mVertices[i][j];
-			}
-		ProgressPanel::ProgressTask("meshimport", 0.17);
-
-		// Load normals
-		if (assimpMesh->HasNormals())
 		{
-			mesh->m_Normals.resize(assimpMesh->mNumVertices * 3);
+			DBT_PROFILE_SCOPE("ImportMesh::Vertices");
+			// Create mesh, start with the positions of the vertices
 			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
 				for (uint32_t j = 0; j < 3; j++)
 				{
 					uint32_t index = i * 3 + j;
-					mesh->m_Normals[index] = assimpMesh->mNormals[i][j];
+					mesh->m_Vertices[index] = assimpMesh->mVertices[i][j];
 				}
-		}
-		ProgressPanel::ProgressTask("meshimport", 0.17);
-
-		// Load tangents / bitangents
-		if (assimpMesh->HasTangentsAndBitangents())
-		{
-			mesh->m_Tangents.resize(assimpMesh->mNumVertices * 3);
-			mesh->m_Bitangents.resize(assimpMesh->mNumVertices * 3);
-
-			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
-			{
-				for (uint32_t j = 0; j < 3; j++)
-				{
-					uint32_t index = i * 3 + j;
-					mesh->m_Tangents[index] = assimpMesh->mTangents[i][j];
-				}
-			}
 			ProgressPanel::ProgressTask("meshimport", 0.17);
-
-			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+		}
+		
+		{
+			DBT_PROFILE_SCOPE("ImportMesh::Normals");
+			// Load normals
+			if (assimpMesh->HasNormals())
 			{
-				for (uint32_t j = 0; j < 3; j++)
-				{
-					uint32_t index = i * 3 + j;
-					mesh->m_Bitangents[index] = assimpMesh->mBitangents[i][j];
-				}
+				mesh->m_Normals.resize(assimpMesh->mNumVertices * 3);
+				for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+					for (uint32_t j = 0; j < 3; j++)
+					{
+						uint32_t index = i * 3 + j;
+						mesh->m_Normals[index] = assimpMesh->mNormals[i][j];
+					}
 			}
 			ProgressPanel::ProgressTask("meshimport", 0.17);
 		}
 
-		// Load texture coordinates
-		mesh->m_TexCoords.resize(assimpMesh->GetNumUVChannels());
-		for (uint32_t i = 0; i < assimpMesh->GetNumUVChannels(); i++)
 		{
-			mesh->m_TexCoords[i].resize(assimpMesh->mNumVertices * 3);
-
-			for (uint32_t j = 0; j < assimpMesh->mNumVertices; j++)
-				for (uint32_t k = 0; k < 3; k++)
-				{
-					uint32_t index = j * 3 + k;
-					mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j][k];
-				}
-		}
-		ProgressPanel::ProgressTask("meshimport", 0.17);
-
-		// Load indices
-		mesh->m_Indices.resize(assimpMesh->mNumFaces * 3);
-		uint32_t indexIndex = 0;
-		for (uint32_t i = 0; i < assimpMesh->mNumFaces; i++)
-		{
-			for (uint32_t j = 0; j < assimpMesh->mFaces[i].mNumIndices; j++)
+			DBT_PROFILE_SCOPE("ImportMesh::TangentSpace");
+			// Load tangents / bitangents
+			if (assimpMesh->HasTangentsAndBitangents())
 			{
-				mesh->m_Indices[indexIndex] = assimpMesh->mFaces[i].mIndices[j];
-				indexIndex++;
+				mesh->m_Tangents.resize(assimpMesh->mNumVertices * 3);
+				mesh->m_Bitangents.resize(assimpMesh->mNumVertices * 3);
+
+				for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+				{
+					for (uint32_t j = 0; j < 3; j++)
+					{
+						uint32_t index = i * 3 + j;
+						mesh->m_Tangents[index] = assimpMesh->mTangents[i][j];
+					}
+				}
+				ProgressPanel::ProgressTask("meshimport", 0.17);
+
+				for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+				{
+					for (uint32_t j = 0; j < 3; j++)
+					{
+						uint32_t index = i * 3 + j;
+						mesh->m_Bitangents[index] = assimpMesh->mBitangents[i][j];
+					}
+				}
+				ProgressPanel::ProgressTask("meshimport", 0.17);
 			}
 		}
-		ProgressPanel::ProgressTask("meshimport", 0.17);
 
-		// Save the mesh on disk + meta file
-		std::stringstream ss;
-		ss << saveFolder << mesh->GetID();
-		mesh->SetPath(ss.str());
-		mesh->SetName(assimpMesh->mName.C_Str());
-		mesh->SaveSettings();
+		{
+			DBT_PROFILE_SCOPE("ImportMesh::TexCoords");
+			// Load texture coordinates
+			mesh->m_TexCoords.resize(assimpMesh->GetNumUVChannels());
+			for (uint32_t i = 0; i < assimpMesh->GetNumUVChannels(); i++)
+			{
+				mesh->m_TexCoords[i].resize(assimpMesh->mNumVertices * 3);
 
-		ProgressPanel::CompleteTask("meshimport");
+				for (uint32_t j = 0; j < assimpMesh->mNumVertices; j++)
+					for (uint32_t k = 0; k < 3; k++)
+					{
+						uint32_t index = j * 3 + k;
+						mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j][k];
+					}
+			}
+			ProgressPanel::ProgressTask("meshimport", 0.17);
+		}
+
+		{
+			DBT_PROFILE_SCOPE("ImportMesh::Indices");
+			// Load indices
+			mesh->m_Indices.resize(assimpMesh->mNumFaces * 3);
+			uint32_t indexIndex = 0;
+			for (uint32_t i = 0; i < assimpMesh->mNumFaces; i++)
+			{
+				for (uint32_t j = 0; j < assimpMesh->mFaces[i].mNumIndices; j++)
+				{
+					mesh->m_Indices[indexIndex] = assimpMesh->mFaces[i].mIndices[j];
+					indexIndex++;
+				}
+			}
+			ProgressPanel::ProgressTask("meshimport", 0.17);
+		}
+
+		{
+			DBT_PROFILE_SCOPE("ImportMesh::SaveFiles");
+			// Save the mesh on disk + meta file
+			std::stringstream ss;
+			ss << saveFolder << mesh->GetID();
+			mesh->SetPath(ss.str());
+			mesh->SetName(assimpMesh->mName.C_Str());
+			mesh->SaveSettings();
+
+			ProgressPanel::CompleteTask("meshimport");
+		}
 
 		return mesh;
 	}

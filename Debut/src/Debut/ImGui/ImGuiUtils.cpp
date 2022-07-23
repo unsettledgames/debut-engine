@@ -394,7 +394,7 @@ namespace Debut
 		return false;
 	}
 
-	bool ImGuiUtils::ImageTreeNode(const char* label, ImTextureID texture, bool open)
+	bool ImGuiUtils::ImageTreeNode(const char* label, ImTextureID texture, bool open, bool selected)
 	{
 		ImGuiContext& g = *GImGui;
 		ImGuiWindow* window = g.CurrentWindow;
@@ -405,11 +405,18 @@ namespace Debut
 		bool opened = open;
 		bool hovered, held;
 		bool ret = ImGui::ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClickRelease);
+		uint32_t colorIndex;
+		if (held || hovered || selected)
+			colorIndex = ImGuiCol_HeaderHovered;
+		else
+			colorIndex = ImGuiCol_WindowBg;
+
 		
 		if (ret)
 			window->DC.StateStorage->SetInt(id, opened ? 0 : 1);
-		if (hovered || held || opened)
-			window->DrawList->AddRectFilled(bb.Min, bb.Max, ImGui::ColorConvertFloat4ToU32(ImGui::GetStyle().Colors[held ? ImGuiCol_HeaderActive : ImGuiCol_HeaderHovered]));
+		if (hovered || held || opened || selected)
+			window->DrawList->AddRectFilled(bb.Min, bb.Max, ImGui::ColorConvertFloat4ToU32(
+				ImGui::GetStyle().Colors[colorIndex]));
 
 		// Icon, text
 		float button_sz = g.FontSize + g.Style.FramePadding.y * 2;

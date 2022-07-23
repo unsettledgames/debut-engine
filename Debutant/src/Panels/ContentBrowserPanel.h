@@ -46,11 +46,11 @@ namespace Debutant
 		static ContentBrowserSettings s_Settings;
 		bool m_LayoutMenuOpen = false;
 
-		std::filesystem::path m_CurrDirectory;
 		std::unordered_set<std::string> m_OpenDirs;
 		std::unordered_map<std::string, std::string> m_Icons;
 
 		std::string m_SelectedAsset;
+		std::string m_SelectedDir;
 
 		char m_RenameBuffer[MAX_NAME_LENGTH];
 		bool m_IsRenaming = false;
