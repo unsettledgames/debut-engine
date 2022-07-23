@@ -25,14 +25,16 @@ namespace Debut
 	Ref<Model> ModelImporter::ImportModel(const std::string& path, const ModelImportSettings& settings)
 	{
 		ProgressPanel::SubmitTask("modelimport", "Importing model...");
+		std::string modelPath = path.substr(0, path.find_last_of("\\") + 1);
+		modelPath += settings.ImportedName;
 
-		std::ifstream meta(path + ".model.meta");
+		std::ifstream meta(modelPath + ".model.meta");
 		unsigned int pFlags = aiProcess_RemoveRedundantMaterials;
 
 		if (meta.good())
 		{
 			meta.close();
-			Ref<Model> model = AssetManager::Request<Model>(path + ".model");
+			Ref<Model> model = AssetManager::Request<Model>(modelPath + ".model");
 			std::vector<UUID> associationsToDelete;
 			RemoveNodes(model, associationsToDelete);
 			AssetManager::DeleteAssociations(associationsToDelete);
@@ -61,9 +63,11 @@ namespace Debut
 		{
 			// Import the model
 			aiNode* rootNode = scene->mRootNode;
-			Ref<Model> ret = ImportNodes(rootNode, scene, path.substr(0, path.find_last_of("\\")), 
-				std::filesystem::path(path).filename().string());
-			ret->SetPath(path + ".model");
+			Ref<Model> ret = ImportNodes(rootNode, scene, path.substr(0, path.find_last_of("\\")), settings.ImportedName);
+			ret->SetPath(modelPath + ".model");
+
+			ProgressPanel::CompleteTask("modelimport");
+			meta.close();
 
 			return ret;
 		}
@@ -73,10 +77,6 @@ namespace Debut
 			return nullptr;
 		}
 
-		ProgressPanel::CompleteTask("modelimport");
-
-		meta.close();
-		
 		return nullptr;
 	}
 

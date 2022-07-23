@@ -110,7 +110,7 @@ namespace Debut
 		{
 			std::ifstream modelFile(m_AssetPath.string() + ".model");
 			
-			static ModelImportSettings settings = {};
+			static ModelImportSettings settings = {true, true, true, true, false, false, false, m_AssetPath.filename().string()};
 			static bool normals = false, tangentSpace = false;
 			static bool triangulate = false, joinVertices = false;
 			// Prompt for importing
@@ -158,9 +158,22 @@ namespace Debut
 			ImGui::Checkbox("##optimizescene", &settings.OptimizeScene);
 			ImGuiUtils::NextColumn();
 
+			ImGuiUtils::Separator();
+
+			ImGui::Text("Imported name");
+			ImGuiUtils::NextColumn();
+			char tmpName[1024]; 
+			memset(tmpName, 0, 1024);
+			memcpy(tmpName, settings.ImportedName.c_str(), settings.ImportedName.length());
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+			if (ImGui::InputText("##importedname", tmpName, 1024, 0, 0, (void*)m_AssetPath.string().c_str()))
+				settings.ImportedName = tmpName;
+			ImGui::PopItemWidth();
+			ImGuiUtils::NextColumn();
+
 			ImGuiUtils::ResetColumns();
 
-			if (ImGui::Button("Import"))
+			if (ImGui::Button("Import", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f}))
 			{
 				modelFile.close();
 				ModelImporter::ImportModel(m_AssetPath.string(), settings);

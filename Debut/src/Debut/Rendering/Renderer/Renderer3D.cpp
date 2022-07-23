@@ -56,8 +56,17 @@ namespace Debut
 			if (meshComponent.Material == 18224448360203886318)
 				std::cout << "yo";
 			material = AssetManager::Request<Material>(meshComponent.Material);
-			if (material->GetShader() == 0)
-				std::cout << "sas";
+		}
+
+		if (mesh == nullptr)
+		{
+			Log.CoreError("Couldn't find mesh to render. Did you reimport and overwrote the model?");
+			return;
+		}
+		if (material == nullptr)
+		{
+			Log.CoreError("Couldn't find material to render with. Did you reimport and overwrote the model?");
+			return;
 		}
 
 		// Instanced rendering if the MeshRenderer is instanced

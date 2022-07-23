@@ -22,6 +22,8 @@ namespace Debut
 		bool ImproveRenderingSpeed = false;
 		bool OptimizeMeshes = false;
 		bool OptimizeScene = false;
+
+		std::string ImportedName;
 	};
 
 	class ModelImporter
