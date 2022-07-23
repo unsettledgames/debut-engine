@@ -5,8 +5,16 @@
 #include "Debut/Events/KeyEvent.h"
 #include "Debut/Core/Layer.h"
 
+#include <string>
+
 namespace Debut
 {
+	struct FontIcon
+	{
+		wchar_t Character;
+		std::string TexturePath;
+	};
+
 	class ImGuiLayer : public Layer
 	{
 	public:
@@ -24,6 +32,7 @@ namespace Debut
 		inline void SetBlockEvents(bool block) { m_BlockEvents = block; }
 		
 		void SetDarkThemeColors();
+		std::vector<FontIcon> GetFontIcons();
 	private:
 		bool m_BlockEvents = true;
 		float m_Time = 0;

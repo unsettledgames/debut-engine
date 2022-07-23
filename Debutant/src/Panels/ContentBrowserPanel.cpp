@@ -62,9 +62,6 @@ namespace Debutant
 
 		DrawTopBar();
 
-		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap
-			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
 		// Get contents: this is used to show folder first and then files
 		for (auto& dirEntry : std::filesystem::directory_iterator(s_AssetsPath))
 		{
@@ -92,6 +89,17 @@ namespace Debutant
 			ImGui::NextColumn();
 		}
 
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right, false))
+		{
+			Log.CoreInfo("YO");
+			ImGui::OpenPopup("##contentbrowsercontext");
+
+				if (ImGui::MenuItem("Create new Physics Material 2D"))
+					AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
+				if (ImGui::MenuItem("Create new Material"))
+					AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
+		}
+
 		ImGui::End();
 	}
 
@@ -112,16 +120,6 @@ namespace Debutant
 
 		if (treeNodeClicked || folderOpen)
 		{
-			// Right click menu
-			if (ImGui::BeginPopupContextWindow(0, 1, false))
-			{
-				if (ImGui::MenuItem("Create new Physics Material 2D"))
-					AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
-				if (ImGui::MenuItem("Create new Material"))
-					AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
-				ImGui::EndPopup();
-			}
-
 			// Toggle the current node if it's been clicked
 			if (isDir)
 			{

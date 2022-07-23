@@ -272,7 +272,7 @@ namespace Debutant
     {
         if (ImGui::BeginMenuBar())
         {
-            if (ImGui::BeginMenu("File"))
+            if (ImGui::BeginMenu(u8"File\ue000"))
             {
                 if (ImGui::MenuItem("New scene", "Ctrl+N"))
                     NewScene();

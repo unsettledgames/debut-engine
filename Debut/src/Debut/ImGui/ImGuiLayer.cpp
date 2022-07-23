@@ -10,6 +10,8 @@
 #include "Debut/Core/Core.h"
 #include "ImGuizmo.h"
 #include <Debut/ImGui/ProgressPanel.h>
+#include <stb_image.h>
+#include <stb_image_resize.h>
 
 namespace Debut
 {
@@ -83,6 +85,8 @@ namespace Debut
 
 	void ImGuiLayer::OnAttach()
 	{
+		std::vector<FontIcon> iconData = GetFontIcons();
+
 		DBT_PROFILE_FUNCTION();
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -95,6 +99,44 @@ namespace Debut
 
 		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/Source_Sans_Pro/SourceSansPro-Regular.ttf", 19);
 		io.Fonts->AddFontFromFileTTF("assets/fonts/Source_Sans_Pro/SourceSansPro-Bold.ttf", 21);
+
+		// Pixel data probably refers to the whole atlas area
+		int iconRectIDs[64];
+		wchar_t start = 57344;
+		for (uint32_t i=0; i<64; i++)
+			iconRectIDs[i] = io.Fonts->AddCustomRectFontGlyph(io.FontDefault, start + i, 19, 19, 20);
+		io.Fonts->Build();
+
+		unsigned char* pixels = nullptr;
+		int texWidth, texHeight;
+		io.Fonts->GetTexDataAsRGBA32(&pixels, &texWidth, &texHeight);
+
+		for (uint32_t i = 0; i < iconData.size(); i++)
+		{
+			int rectId = iconRectIDs[i];
+			if (const ImFontAtlasCustomRect* rect = io.Fonts->GetCustomRectByIndex(rectId))
+			{
+				int width, height, channels, desiredChannels = 4;
+				unsigned char* textureData = stbi_load(iconData[i].TexturePath.c_str(), &width, &height, &channels, desiredChannels);
+				stbir_resize_uint8(textureData, width, height, 0, textureData, rect->Width, rect->Height, 0, 4);
+				// Fill the custom rectangle with red pixels (in reality you would draw/copy your bitmap data here!)
+				for (int y = 0; y < rect->Height; y++)
+				{
+					for (int x = rect->Width; x > 0; x--)
+					{
+						ImU32* p = (ImU32*)pixels + (y)*rect->Width + x;
+						*p++ = IM_COL32(
+							textureData[y * texWidth + x],
+							textureData[y * texWidth + x + 1],
+							textureData[y * texWidth + x + 2],
+							255);
+					}
+				}
+
+				stbi_image_free(textureData);
+			}
+		}
+
 
 		ImGui::StyleColorsDark();
 
@@ -144,8 +186,8 @@ namespace Debut
 	void ImGuiLayer::OnImGuiRender()
 	{
 		ProgressPanel::OnImGuiRender();
-		/*static bool showDemo = true;
-		ImGui::ShowDemoWindow(&showDemo);*/
+		static bool showDemo = true;
+		ImGui::ShowDemoWindow(&showDemo);
 	}
 
 	void ImGuiLayer::End()
@@ -168,6 +210,42 @@ namespace Debut
 
 			glfwMakeContextCurrent(backupContext);
 		}
+	}
+
+	std::vector<FontIcon> ImGuiLayer::GetFontIcons()
+	{
+		std::vector<FontIcon> icons;
+
+		icons = {
+			// DIRECTORY_ICON
+			{'\ue000', "assets\\icons\\directory.png"},
+			// FILE_ICON
+			{'\ue001', "assets\\icons\\file.png"},
+			// MENU_ICON
+			{'\ue002', "assets\\icons\\menu.png"},
+			// MODEL_ICON
+			{'\ue003', "assets\\icons\\model.png"},
+			// MESH_ICON
+			{'\ue004', "assets\\icons\\mesh.png"},
+			// MATERIAL_ICON
+			{'\ue005', "assets\\icons\\material.png"},
+			// UNIMPORTED_MODEL_ICON
+			{'\ue006', "assets\\icons\\unimported_model.png"}/*,
+			{'\ue007', "assets\\icons\\model.png"},
+			{'\ue008', "assets\\icons\\model.png"},
+			{'\ue009', "assets\\icons\\model.png"},
+			{'\ue00a', "assets\\icons\\model.png"},
+			{'\ue00b', "assets\\icons\\model.png"},
+			{'\ue00c', "assets\\icons\\model.png"},
+			{'\ue00d', "assets\\icons\\model.png"},
+			{'\ue00e', "assets\\icons\\model.png"},
+			{'\ue00f', "assets\\icons\\model.png"},
+			{'\ue010', "assets\\icons\\model.png"},
+			{'\ue011', "assets\\icons\\model.png"},
+			{'\ue012', "assets\\icons\\model.png"},*/
+		};
+		
+		return icons;
 	}
 	
 }
