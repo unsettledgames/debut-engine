@@ -8,6 +8,13 @@
 #include <filesystem>
 #include <Debut/ImGui/ImGuiUtils.h>
 
+/*
+	TODO
+		- Change parents by dragging objects around
+		- Save objects in the right order
+		- Move objects in the hierarchy
+*/
+
 namespace Debut
 {
 	SceneHierarchyPanel::SceneHierarchyPanel()

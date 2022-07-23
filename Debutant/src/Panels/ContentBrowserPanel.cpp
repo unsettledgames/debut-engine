@@ -9,6 +9,15 @@
 
 using namespace Debut;
 
+/*
+	TODO
+		- Delete file:
+			- Ask for confirmation and just delete it if it's a normal file
+			- Also delete related files if it's a model
+		- Create file in selected directory
+		- Move files in content browser
+*/
+
 namespace Debutant
 {
 	// TODO: change this when we have projects
@@ -40,16 +49,6 @@ namespace Debutant
 	{
 		std::vector<std::filesystem::path> dirs, files;
 		ImGui::Begin("Content browser");
-
-		// Right click menu
-		if (ImGui::BeginPopupContextWindow(0, 1, false))
-		{
-			if (ImGui::MenuItem("Create new Physics Material 2D"))
-				AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
-			if (ImGui::MenuItem("Create new Material"))
-				AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
-			ImGui::EndPopup();
-		}
 		
 		static float padding = s_Settings.padding;
 		static float iconSize = s_Settings.IconSize;
@@ -113,6 +112,16 @@ namespace Debutant
 
 		if (treeNodeClicked || folderOpen)
 		{
+			// Right click menu
+			if (ImGui::BeginPopupContextWindow(0, 1, false))
+			{
+				if (ImGui::MenuItem("Create new Physics Material 2D"))
+					AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
+				if (ImGui::MenuItem("Create new Material"))
+					AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
+				ImGui::EndPopup();
+			}
+
 			// Toggle the current node if it's been clicked
 			if (isDir)
 			{
