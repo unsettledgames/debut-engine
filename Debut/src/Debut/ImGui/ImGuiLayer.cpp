@@ -85,7 +85,7 @@ namespace Debut
 
 	void ImGuiLayer::OnAttach()
 	{
-		std::vector<FontIcon> iconData = GetFontIcons();
+		std::vector<FontIcon> iconData;// = GetFontIcons();
 
 		DBT_PROFILE_FUNCTION();
 		IMGUI_CHECKVERSION();
@@ -120,17 +120,17 @@ namespace Debut
 				unsigned char* textureData = stbi_load(iconData[i].TexturePath.c_str(), &width, &height, &channels, desiredChannels);
 				stbir_resize_uint8(textureData, width, height, 0, textureData, rect->Width, rect->Height, 0, 4);
 				// Fill the custom rectangle with red pixels (in reality you would draw/copy your bitmap data here!)
+				//memcpy(pixels + rect->Y * rect->Height + rect->X, textureData, width * height * 4);
+				// Fill the custom rectangle with red pixels (in reality you would draw/copy your bitmap data here!)
 				for (int y = 0; y < rect->Height; y++)
 				{
+					ImU32* p = (ImU32*)pixels + (rect->Y + y) * texWidth + (rect->X);
 					for (int x = rect->Width; x > 0; x--)
-					{
-						ImU32* p = (ImU32*)pixels + (y)*rect->Width + x;
 						*p++ = IM_COL32(
-							textureData[y * texWidth + x],
-							textureData[y * texWidth + x + 1],
-							textureData[y * texWidth + x + 2],
+							textureData[y * rect->Width + x + 0], 
+							textureData[y * rect->Width + x + 1], 
+							textureData[y * rect->Width + x + 2], 
 							255);
-					}
 				}
 
 				stbi_image_free(textureData);
@@ -218,7 +218,7 @@ namespace Debut
 
 		icons = {
 			// DIRECTORY_ICON
-			{'\ue000', "assets\\icons\\directory.png"},
+			{'\ue000', "assets\\icons\\sample_icon.png"},
 			// FILE_ICON
 			{'\ue001', "assets\\icons\\file.png"},
 			// MENU_ICON

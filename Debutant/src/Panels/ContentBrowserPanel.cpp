@@ -89,15 +89,14 @@ namespace Debutant
 			ImGui::NextColumn();
 		}
 
-		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right, false))
+		if (ImGui::BeginPopupContextWindow("##contentbrowsercontext"))
 		{
-			Log.CoreInfo("YO");
-			ImGui::OpenPopup("##contentbrowsercontext");
+			if (ImGui::MenuItem("Create new Physics Material 2D"))
+				AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
+			if (ImGui::MenuItem("Create new Material"))
+				AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
 
-				if (ImGui::MenuItem("Create new Physics Material 2D"))
-					AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
-				if (ImGui::MenuItem("Create new Material"))
-					AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
+			ImGui::EndPopup();
 		}
 
 		ImGui::End();
