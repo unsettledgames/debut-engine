@@ -9,10 +9,10 @@
 
 #define IMGUI_ICON_DIR				u8"\ue000"
 #define IMGUI_ICON_FILE				u8"\ue001"
-#define IMGUI_ICON_MODEL			u8"\ue002"
-#define IMGUI_ICON_MESH				u8"\ue003"
-#define IMGUI_ICON_MATERIAL			u8"\ue004"
-#define IMGUI_ICON_UNIMPORTED_MODEL	u8"\ue005"
+#define IMGUI_ICON_MODEL			u8"\ue003"
+#define IMGUI_ICON_MESH				u8"\ue004"
+#define IMGUI_ICON_MATERIAL			u8"\ue005"
+#define IMGUI_ICON_UNIMPORTED_MODEL	u8"\ue006"
 
 namespace Debut
 {
