@@ -85,7 +85,7 @@ namespace Debut
 
 	void ImGuiLayer::OnAttach()
 	{
-		std::vector<FontIcon> iconData;// = GetFontIcons();
+		std::vector<FontIcon> iconData = GetFontIcons();
 
 		DBT_PROFILE_FUNCTION();
 		IMGUI_CHECKVERSION();
@@ -104,7 +104,7 @@ namespace Debut
 		int iconRectIDs[64];
 		wchar_t start = 57344;
 		for (uint32_t i=0; i<64; i++)
-			iconRectIDs[i] = io.Fonts->AddCustomRectFontGlyph(io.FontDefault, start + i, 19, 19, 20);
+			iconRectIDs[i] = io.Fonts->AddCustomRectFontGlyph(io.FontDefault, start + i, 23, 23, 23, {0, -2});
 		io.Fonts->Build();
 
 		unsigned char* pixels = nullptr;
@@ -119,18 +119,17 @@ namespace Debut
 				int width, height, channels, desiredChannels = 4;
 				unsigned char* textureData = stbi_load(iconData[i].TexturePath.c_str(), &width, &height, &channels, desiredChannels);
 				stbir_resize_uint8(textureData, width, height, 0, textureData, rect->Width, rect->Height, 0, 4);
-				// Fill the custom rectangle with red pixels (in reality you would draw/copy your bitmap data here!)
 				//memcpy(pixels + rect->Y * rect->Height + rect->X, textureData, width * height * 4);
 				// Fill the custom rectangle with red pixels (in reality you would draw/copy your bitmap data here!)
 				for (int y = 0; y < rect->Height; y++)
 				{
 					ImU32* p = (ImU32*)pixels + (rect->Y + y) * texWidth + (rect->X);
-					for (int x = rect->Width; x > 0; x--)
+					for (int x = 0; x < rect->Width; x++)
 						*p++ = IM_COL32(
-							textureData[y * rect->Width + x + 0], 
-							textureData[y * rect->Width + x + 1], 
-							textureData[y * rect->Width + x + 2], 
-							255);
+							textureData[y*4 * rect->Width + x*4 + 0], 
+							textureData[y*4 * rect->Width + x*4 + 1], 
+							textureData[y*4 * rect->Width + x*4 + 2], 
+							textureData[y*4 * rect->Width + x*4 + 3]);
 				}
 
 				stbi_image_free(textureData);
@@ -218,7 +217,7 @@ namespace Debut
 
 		icons = {
 			// DIRECTORY_ICON
-			{'\ue000', "assets\\icons\\sample_icon.png"},
+			{'\ue000', "assets\\icons\\directory.png"},
 			// FILE_ICON
 			{'\ue001', "assets\\icons\\file.png"},
 			// MENU_ICON

@@ -7,6 +7,13 @@
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/Rendering/Texture.h>
 
+#define IMGUI_ICON_DIR				u8"\ue000"
+#define IMGUI_ICON_FILE				u8"\ue001"
+#define IMGUI_ICON_MODEL			u8"\ue002"
+#define IMGUI_ICON_MESH				u8"\ue003"
+#define IMGUI_ICON_MATERIAL			u8"\ue004"
+#define IMGUI_ICON_UNIMPORTED_MODEL	u8"\ue005"
+
 namespace Debut
 {
 	class ImGuiUtils
@@ -28,6 +35,7 @@ namespace Debut
 		static void BoldText(const std::string& label);
 		static bool Combo(const char* id, const char* selectables[], uint32_t nSelectables, const char** currSelected, const char** ret);
 		static bool ImageTreeNode(const char* id, ImTextureID texture, bool open = false, bool selected = false);
+		static std::string GetFileImguiIcon(const std::string& extension);
 
 		static bool BeginDragDropSourceCustom(ImGuiDragDropFlags flags = 0);
 

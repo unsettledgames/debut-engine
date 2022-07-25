@@ -431,4 +431,24 @@ namespace Debut
 
 		return ret;
 	}
+
+	std::string ImGuiUtils::GetFileImguiIcon(const std::string& icon)
+	{
+		std::string ret = u8"\ue000";
+
+		if (icon == ".mat")
+			ret = IMGUI_ICON_MATERIAL;
+		else if (icon == ".mesh")
+			ret = IMGUI_ICON_MESH;
+		else if (icon == ".model")
+			ret = IMGUI_ICON_MODEL;
+		else if (icon == ".obj" || icon == ".fbx")
+			ret = IMGUI_ICON_UNIMPORTED_MODEL;
+		else if (icon == ".dir")
+			ret = IMGUI_ICON_DIR;
+		else
+			ret = IMGUI_ICON_FILE;
+
+		return ret;
+	}
 }

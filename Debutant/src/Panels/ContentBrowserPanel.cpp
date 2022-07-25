@@ -91,10 +91,13 @@ namespace Debutant
 
 		if (ImGui::BeginPopupContextWindow("##contentbrowsercontext"))
 		{
-			if (ImGui::MenuItem("Create new Physics Material 2D"))
-				AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
-			if (ImGui::MenuItem("Create new Material"))
-				AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
+			if (ImGui::BeginMenu("Create..."))
+			{
+				if (ImGui::MenuItem("Create new Physics Material 2D"))
+					AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
+				if (ImGui::MenuItem("Create new Material"))
+					AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
+			}
 
 			ImGui::EndPopup();
 		}
@@ -117,7 +120,9 @@ namespace Debutant
 			(ImTextureID)icon->GetRendererID(), folderOpen, m_SelectedDir == path || m_PropertiesPanel->GetAsset() == path);
 		AddDragSource(path);
 
-		if (treeNodeClicked || folderOpen)
+		if (/*treeNodeClicked || folderOpen*/
+			ImGui::TreeNodeEx((ImGuiUtils::GetFileImguiIcon(isDir ? ".dir" : path.extension().string()) + 
+				" " + path.filename().string()).c_str()))
 		{
 			// Toggle the current node if it's been clicked
 			if (isDir)
