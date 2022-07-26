@@ -175,6 +175,8 @@ namespace Debut
 
 			if (ImGui::Button("Import", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f}))
 			{
+				if (settings.ImportedName == "")
+					settings.ImportedName = "Unnamed model";
 				modelFile.close();
 				ModelImporter::ImportModel(m_AssetPath.string(), settings);
 				m_AssetPath = "";

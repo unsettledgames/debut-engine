@@ -379,7 +379,7 @@ namespace Debutant
 			CppUtils::FileSystem::RemoveFile(ss.str());
 			ss.str("");
 
-			ss << AssetManager::s_MetadataDir << model->GetMeshes()[i];
+			ss << AssetManager::s_MetadataDir << model->GetMeshes()[i] << ".meta";
 			CppUtils::FileSystem::RemoveFile(ss.str());
 			ss.str("");
 
@@ -390,7 +390,7 @@ namespace Debutant
 			CppUtils::FileSystem::RemoveFile(ss.str());
 			ss.str("");
 
-			ss << AssetManager::s_MetadataDir << model->GetMaterials()[i];
+			ss << AssetManager::s_MetadataDir << model->GetMaterials()[i] << ".meta";
 			CppUtils::FileSystem::RemoveFile(ss.str());
 			ss.str("");
 
