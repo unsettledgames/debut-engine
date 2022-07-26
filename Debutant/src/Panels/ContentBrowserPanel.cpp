@@ -4,7 +4,10 @@
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include "Utils/EditorCache.h"
+#include <Debut/Utils/CppUtils.h>
 #include <Debut/ImGui/ImGuiUtils.h>
+#include <Debut/Core/Input.h>
+#include <Debut/Core/KeyCodes.h>
 #include <imgui.h>
 
 using namespace Debut;
@@ -89,6 +92,8 @@ namespace Debutant
 			ImGui::NextColumn();
 		}
 
+		bool deletePopup = false;
+
 		if (ImGui::BeginPopupContextWindow("##contentbrowsercontext"))
 		{
 			if (ImGui::BeginMenu("Create..."))
@@ -97,10 +102,17 @@ namespace Debutant
 					AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
 				if (ImGui::MenuItem("Create new Material"))
 					AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
+
+				ImGui::EndMenu();
 			}
+
+			if (ImGui::MenuItem("Delete"))
+				deletePopup = true;
 
 			ImGui::EndPopup();
 		}
+		if (deletePopup || ImGui::IsPopupOpen("Delete?") || (ImGui::IsKeyPressed(ImGuiKey_Delete) && ImGui::IsWindowFocused()))
+			CBDeleteFile(m_RightClicked);
 
 		ImGui::End();
 	}
@@ -123,6 +135,15 @@ namespace Debutant
 			"  " + path.filename().string()).c_str(), flags);
 		ImGui::PopStyleVar();
 
+		if (ImGui::IsItemClicked(1))
+		{
+			m_RightClicked = path.string();
+			if (isDir)
+				m_SelectedDir = path.string();
+			else
+				m_SelectedAsset = path.string();
+		}
+
 		AddDragSource(path);
 		
 		if (treeNodeRet)
@@ -131,11 +152,15 @@ namespace Debutant
 			{
 				// Toggle the current node if it's been clicked
 				if (isDir)
+				{
 					m_SelectedDir = path.string();
+					m_RightClicked = m_SelectedDir;
+				}
 				else
 				{
 					m_PropertiesPanel->SetAsset(path);
 					m_SelectedAsset = path.string();
+					m_RightClicked = m_SelectedAsset;
 				}
 			}
 
@@ -167,28 +192,36 @@ namespace Debutant
 			path = "Submodel";
 
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-		if (m_SelectedAsset == path)
+		if (m_RightClicked == model->GetPath())
 			flags |= ImGuiTreeNodeFlags_Selected;
+
 		ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, { 20, 20 });
 		bool treeNodeRet = ImGui::TreeNodeEx((ImGuiUtils::GetFileImguiIcon(".model") + "  " + path).c_str(), flags);
 		ImGui::PopStyleVar();
+
+		if (ImGui::IsItemClicked())
+		{
+			m_PropertiesPanel->SetAsset(model->GetPath());
+			std::stringstream ss;
+			ss << model->GetPath() << model->GetID();
+			m_SelectedAsset = ss.str();
+
+			m_RightClicked = model->GetPath();
+		}
+
+		if (ImGui::IsItemClicked(1))
+		{
+			m_RightClicked = path;
+			m_SelectedAsset = path;
+		}
+
 		AddDragSource(model->GetPath());
 
 		if (treeNodeRet)
 		{
-			if (ImGui::IsItemClicked())
-			{
-				m_PropertiesPanel->SetAsset(model->GetPath());
-				std::stringstream ss;
-				ss << model->GetPath() << model->GetID();
-				m_SelectedAsset = ss.str();
-			}
-
 			// Recursively render submodels
 			for (Debut::UUID model : model->GetSubmodels())
 				DrawModelHierarchy(AssetManager::Request<Model>(model));
-
-			flags |= ImGuiTreeNodeFlags_Leaf;
 
 			// Meshes
 			for (Debut::UUID mesh : model->GetMeshes())
@@ -199,7 +232,13 @@ namespace Debutant
 				std::stringstream meshIDStr;
 				meshIDStr << meshData.Name << ".mesh##" << mesh;
 
-				if (ImGui::TreeNodeEx((ImGuiUtils::GetFileImguiIcon(".mesh") + "  " + meshIDStr.str()).c_str(), flags))
+				ImGuiTreeNodeFlags meshFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding
+					| ImGuiTreeNodeFlags_Leaf;
+
+				if (meshIDStr.str() == m_SelectedAsset)
+					meshFlags |= ImGuiTreeNodeFlags_Selected;
+
+				if (ImGui::TreeNodeEx((ImGuiUtils::GetFileImguiIcon(".mesh") + "  " + meshIDStr.str()).c_str(), meshFlags))
 				{
 					if (ImGui::IsItemClicked())
 					{
@@ -220,8 +259,13 @@ namespace Debutant
 				ss << material;
 				std::stringstream matIDStr;
 				matIDStr << materialData.Name << ".mat##" << material;
+				ImGuiTreeNodeFlags matFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding
+					| ImGuiTreeNodeFlags_Leaf;
 
-				if (ImGui::TreeNodeEx((ImGuiUtils::GetFileImguiIcon(".mat") + "  " + matIDStr.str()).c_str(), flags))
+				if (matIDStr.str() == m_SelectedAsset)
+					matFlags |= ImGuiTreeNodeFlags_Selected;
+
+				if (ImGui::TreeNodeEx((ImGuiUtils::GetFileImguiIcon(".mat") + "  " + matIDStr.str()).c_str(), matFlags))
 				{
 					if (ImGui::IsItemClicked())
 					{
@@ -272,6 +316,89 @@ namespace Debutant
 		ImGui::Separator();
 
 		ImGui::EndGroup();
+	}
+
+	void ContentBrowserPanel::CBDeleteFile(const std::string& path)
+	{
+		ImVec2 buttonSize = { 100, ImGui::GetTextLineHeight() * 1.5f };
+		ImGui::OpenPopup("Delete?");
+		bool open = true;
+		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+		if (ImGui::BeginPopupModal("Delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
+		{
+			ImGui::Text(("Are you sure you want to delete the file " + m_RightClicked + "?").c_str());
+				
+			ImGuiUtils::VerticalSpace(2);
+
+			ImGui::SetCursorPosX(ImGui::GetWindowSize().x / 2.0f - 100);
+			if (ImGui::Button("Yes", buttonSize))
+			{
+				if (std::filesystem::path(path).extension().string() == ".model")
+				{
+					std::vector<Debut::UUID> ids;
+					DeleteModel(AssetManager::Request<Model>(path), ids);
+					AssetManager::DeleteAssociations(ids);
+				}
+				else
+				{
+					CppUtils::FileSystem::RemoveFile(path);
+					std::ifstream inFile(path + ".meta");
+					if (inFile.good())
+					{
+						std::stringstream ss;
+						ss << inFile.rdbuf();
+						YAML::Node node = YAML::Load(ss.str());
+
+						CppUtils::FileSystem::RemoveFile(path + ".meta");
+						std::vector<Debut::UUID> id; id.push_back(node["ID"].as<uint64_t>());
+						AssetManager::DeleteAssociations({ id });
+					}
+				}
+
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("No", buttonSize))
+				ImGui::CloseCurrentPopup();
+
+			ImGui::EndPopup();
+		}
+	}
+
+	void ContentBrowserPanel::DeleteModel(Ref<Model> model, std::vector<Debut::UUID> deletedIds)
+	{
+		deletedIds.push_back(model->GetID());
+		CppUtils::FileSystem::RemoveFile(model->GetPath());
+		CppUtils::FileSystem::RemoveFile(model->GetPath() + ".meta");
+
+		for (uint32_t i = 0; i < model->GetMeshes().size(); i++)
+		{
+			std::stringstream ss;
+			// Delete meshes
+			ss << AssetManager::s_AssetsDir << model->GetMeshes()[i];
+			CppUtils::FileSystem::RemoveFile(ss.str());
+			ss.str("");
+
+			ss << AssetManager::s_MetadataDir << model->GetMeshes()[i];
+			CppUtils::FileSystem::RemoveFile(ss.str());
+			ss.str("");
+
+			deletedIds.push_back(model->GetMeshes()[i]);
+
+			// Delete materials
+			ss << AssetManager::s_AssetsDir << model->GetMaterials()[i];
+			CppUtils::FileSystem::RemoveFile(ss.str());
+			ss.str("");
+
+			ss << AssetManager::s_MetadataDir << model->GetMaterials()[i];
+			CppUtils::FileSystem::RemoveFile(ss.str());
+			ss.str("");
+
+			deletedIds.push_back(model->GetMaterials()[i]);
+		}
+
+		for (uint32_t i = 0; i < model->GetSubmodels().size(); i++)
+			DeleteModel(AssetManager::Request<Model>(model->GetSubmodels()[i]), deletedIds);
 	}
 
 	void ContentBrowserPanel::AddDragSource(const std::filesystem::path& path)

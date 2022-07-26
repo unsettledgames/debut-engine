@@ -42,6 +42,9 @@ namespace Debutant
 
 		void AddDragSource(const std::filesystem::path& path);
 
+		void CBDeleteFile(const std::string& path);
+		void DeleteModel(Ref<Model> model, std::vector<Debut::UUID> deletedIds);
+
 	private:
 		static ContentBrowserSettings s_Settings;
 		bool m_LayoutMenuOpen = false;
@@ -51,6 +54,7 @@ namespace Debutant
 
 		std::string m_SelectedAsset;
 		std::string m_SelectedDir;
+		std::string m_RightClicked;
 
 		char m_RenameBuffer[MAX_NAME_LENGTH];
 		bool m_IsRenaming = false;
