@@ -52,7 +52,7 @@ namespace Debut
 			if (m_Cache.find(id) != m_Cache.end())
 			{
 				Value ret = m_Cache[id];
-				m_Cache.erase(ret);
+				m_Cache.erase(id);
 
 				return ret;
 			}

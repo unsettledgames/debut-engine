@@ -103,7 +103,7 @@ target_include_directories(Debut
 	PRIVATE vendor/glfw/include
 	PUBLIC vendor/imgui
 	PUBLIC vendor/imguizmo
-	PRIVATE vendor/stb_image
+	PUBLIC vendor/stb_image
 	PUBLIC vendor/glm
 	PUBLIC vendor/entt/include
 	PUBLIC vendor/assimp/include

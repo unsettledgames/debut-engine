@@ -1,57 +1,95 @@
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Core/Log.h>
+#include <cstdio>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
+#include <Debut/ImGui/ProgressPanel.h>
+#include <Debut/Utils/CppUtils.h>
 
 /*
 	TODO
-		- Opzioni di importazione / dati nella sezione properties
+		UX:
+			- Let the user reimport a model:
+				- OPTIONAL: save a map <meshName, ID>; if during the reimporting, a mesh with the same name of the previous
+					import is found, use the previous ID to save references
+			- Save model import settings in .model.meta file
 */
 
 namespace Debut
 {
-	Ref<Model> ModelImporter::ImportModel(const std::string& path)
+	Ref<Model> ModelImporter::ImportModel(const std::string& path, const ModelImportSettings& settings)
 	{
-		std::ifstream meta(path + ".model.meta");
+		ProgressPanel::SubmitTask("modelimport", "Importing model...");
+		std::string modelPath = path.substr(0, path.find_last_of("\\") + 1);
+		modelPath += settings.ImportedName;
 
-		if (!meta.good())
+		std::ifstream meta(modelPath + ".model.meta");
+		unsigned int pFlags = aiProcess_RemoveRedundantMaterials;
+
+		if (meta.good())
 		{
-			Assimp::Importer importer;
+			meta.close();
+			Ref<Model> model = AssetManager::Request<Model>(modelPath + ".model");
+			std::vector<UUID> associationsToDelete;
+			RemoveNodes(model, associationsToDelete);
+			AssetManager::DeleteAssociations(associationsToDelete);
+		}
+		
+		Assimp::Importer importer;
 
-			const aiScene* scene = importer.ReadFile(path, aiProcess_GenNormals | aiProcess_CalcTangentSpace | aiProcess_Triangulate |
-				aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
-			std::string folder = AssetManager::s_IntAssetsDir;
-			std::string fileName;
+		if (settings.ImproveRenderingSpeed)
+			pFlags |= aiProcess_ImproveCacheLocality;
+		if (settings.JoinVertices)
+			pFlags |= aiProcess_JoinIdenticalVertices;
+		if (settings.Triangulate)
+			pFlags |= aiProcess_Triangulate;
+		if (settings.Normals)
+			pFlags |= aiProcess_GenNormals;
+		if (settings.TangentSpace)
+			pFlags |= aiProcess_CalcTangentSpace;
+		if (settings.OptimizeMeshes)
+			pFlags |= aiProcess_OptimizeMeshes;
+		if (settings.OptimizeScene)
+			pFlags |= aiProcess_OptimizeGraph;
 
-			if (scene != nullptr)
-			{
-				// Import the model
-				aiNode* rootNode = scene->mRootNode;
-				Ref<Model> ret = ImportNodes(rootNode, scene, path.substr(0, path.find_last_of("\\")));
+		const aiScene* scene = importer.ReadFile(path, pFlags);
 
-				return ret;
-			}
-			else
-			{
-				Log.CoreError("Error while importing model {0}: {1}", path, importer.GetErrorString());
-				return nullptr;
-			}
+		if (scene != nullptr)
+		{
+			// Import the model
+			aiNode* rootNode = scene->mRootNode;
+			Ref<Model> ret = ImportNodes(rootNode, scene, path.substr(0, path.find_last_of("\\")), settings.ImportedName);
+			ret->SetPath(modelPath + ".model");
+
+			ProgressPanel::CompleteTask("modelimport");
+			meta.close();
+
+			return ret;
+		}
+		else
+		{
+			Log.CoreError("Error while importing model {0}: {1}", path, importer.GetErrorString());
+			return nullptr;
 		}
 
-		meta.close();
 		return nullptr;
 	}
 
-	Ref<Model> ModelImporter::ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder)
+	Ref<Model> ModelImporter::ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder, const std::string& modelName)
 	{
+		DBT_PROFILE_FUNCTION();
+		// Don't import empty models
+		if (parent->mNumMeshes == 0 && parent->mNumChildren == 0)
+			return nullptr;
+
 		// Save the root model in the folder of the asset, save the generated assets in Lib
 		std::string submodelsFolder = saveFolder;
-		std::string assetsFolder = AssetManager::s_IntAssetsDir;
+		std::string assetsFolder = AssetManager::s_AssetsDir;
 		if (parent->mParent != nullptr)
-			submodelsFolder = AssetManager::s_IntAssetsDir;
+			submodelsFolder = AssetManager::s_AssetsDir;
 
 		std::vector<UUID> models;
 		std::vector<UUID> meshes;
@@ -64,36 +102,62 @@ namespace Debut
 		// Load dependencies
 		for (int i = 0; i < parent->mNumChildren; i++)
 		{
+			ProgressPanel::ProgressTask("modelimport", i / parent->mNumChildren);
 			Ref<Model> currModel = ImportNodes(parent->mChildren[i], scene, submodelsFolder);
-			models[i] = currModel->GetID();
+			if (currModel != nullptr)
+				models[i] = currModel->GetID();
+			else
+				models[i] = 0;
 		}
+		models.erase(std::remove(models.begin(), models.end(), 0), models.end());
 
 		// Load meshes and materials
 		for (int i = 0; i < parent->mNumMeshes; i++)
 		{
 			// Import and submit the mesh
 			aiMesh* assimpMesh = scene->mMeshes[parent->mMeshes[i]];
-			Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, assetsFolder);
-			AssetManager::Submit<Mesh>(mesh);
-			meshes[i] = mesh->GetID();
 
-			// Import and submit the material
-			aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
-			Ref<Material> material = ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, assetsFolder);
-			AssetManager::Submit<Material>(material);
-			materials[i] = material->GetID();
+			{
+				DBT_PROFILE_SCOPE("ModelImporter::ImportMesh");
+				Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, assetsFolder);
+				AssetManager::Submit<Mesh>(mesh);
+				if (mesh != nullptr)
+					meshes[i] = mesh->GetID();
+			}
+			
+			{
+				DBT_PROFILE_SCOPE("ModelImporter::ImportMaterial");
+				// Import and submit the material
+				aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
+				Ref<Material> material = ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, assetsFolder);
+				AssetManager::Submit<Material>(material);
+				if (material != nullptr)
+					materials[i] = material->GetID();
+			}
+
+			
 		}
+		meshes.erase(std::remove(meshes.begin(), meshes.end(), 0), meshes.end());
+		materials.erase(std::remove(materials.begin(), materials.end(), 0), materials.end());
 
 		Ref<Model> ret = CreateRef<Model>(meshes, materials, models);
-		ret->SetPath(submodelsFolder + "\\" + parent->mName.C_Str() + ".model");
+		std::stringstream ss;
+		std::string name;
+		if (parent->mParent == nullptr)
+			name = modelName;
+		else
+			name = CppUtils::FileSystem::CorrectFileName(parent->mName.C_Str());
+		ret->SetPath(submodelsFolder + "\\" + name + ".model");
 		ret->SaveSettings();
 		AssetManager::Submit<Model>(ret);
-		
+
 		return ret;
 	}
 
 	Ref<Mesh> ModelImporter::ImportMesh(aiMesh* assimpMesh, const std::string& name, const std::string& saveFolder)
 	{
+		ProgressPanel::SubmitTask("meshimport", "Importing mesh...");
+
 		Ref<Mesh> mesh = CreateRef<Mesh>();
 		if (mesh->IsValid())
 			return mesh;
@@ -102,82 +166,109 @@ namespace Debut
 		mesh->m_Vertices.resize(assimpMesh->mNumVertices * 3);
 		mesh->SetName(assimpMesh->mName.C_Str());
 
-		// Create mesh, start with the positions of the vertices
-		for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
-			for (uint32_t j = 0; j < 3; j++)
-			{
-				uint32_t index = i * 3 + j;
-				mesh->m_Vertices[index] = assimpMesh->mVertices[i][j];
-			}
-
-		// Load normals
-		if (assimpMesh->HasNormals())
 		{
-			mesh->m_Normals.resize(assimpMesh->mNumVertices * 3);
+			DBT_PROFILE_SCOPE("ImportMesh::Vertices");
+			// Create mesh, start with the positions of the vertices
 			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
 				for (uint32_t j = 0; j < 3; j++)
 				{
 					uint32_t index = i * 3 + j;
-					mesh->m_Normals[index] = assimpMesh->mNormals[i][j];
+					mesh->m_Vertices[index] = assimpMesh->mVertices[i][j];
 				}
+			ProgressPanel::ProgressTask("meshimport", 0.17);
 		}
-
-		// Load tangents / bitangents
-		if (assimpMesh->HasTangentsAndBitangents())
+		
 		{
-			mesh->m_Tangents.resize(assimpMesh->mNumVertices * 3);
-			mesh->m_Bitangents.resize(assimpMesh->mNumVertices * 3);
-
-			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+			DBT_PROFILE_SCOPE("ImportMesh::Normals");
+			// Load normals
+			if (assimpMesh->HasNormals())
 			{
-				for (uint32_t j = 0; j < 3; j++)
-				{
-					uint32_t index = i * 3 + j;
-					mesh->m_Tangents[index] = assimpMesh->mTangents[i][j];
-				}
+				mesh->m_Normals.resize(assimpMesh->mNumVertices * 3);
+				for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+					for (uint32_t j = 0; j < 3; j++)
+					{
+						uint32_t index = i * 3 + j;
+						mesh->m_Normals[index] = assimpMesh->mNormals[i][j];
+					}
 			}
-
-			for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
-			{
-				for (uint32_t j = 0; j < 3; j++)
-				{
-					uint32_t index = i * 3 + j;
-					mesh->m_Bitangents[index] = assimpMesh->mBitangents[i][j];
-				}
-			}
+			ProgressPanel::ProgressTask("meshimport", 0.17);
 		}
 
-		// Load texture coordinates
-		mesh->m_TexCoords.resize(assimpMesh->GetNumUVChannels());
-		for (uint32_t i = 0; i < assimpMesh->GetNumUVChannels(); i++)
 		{
-			mesh->m_TexCoords[i].resize(assimpMesh->mNumVertices * 3);
-
-			for (uint32_t j = 0; j < assimpMesh->mNumVertices; j++)
-				for (uint32_t k = 0; k < 3; k++)
-				{
-					uint32_t index = j * 3 + k;
-					mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j][k];
-				}
-		}
-
-		// Load indices
-		mesh->m_Indices.resize(assimpMesh->mNumFaces * 3);
-		uint32_t indexIndex = 0;
-		for (uint32_t i = 0; i < assimpMesh->mNumFaces; i++)
-		{
-			for (uint32_t j = 0; j < assimpMesh->mFaces[i].mNumIndices; j++)
+			DBT_PROFILE_SCOPE("ImportMesh::TangentSpace");
+			// Load tangents / bitangents
+			if (assimpMesh->HasTangentsAndBitangents())
 			{
-				mesh->m_Indices[indexIndex] = assimpMesh->mFaces[i].mIndices[j];
-				indexIndex++;
+				mesh->m_Tangents.resize(assimpMesh->mNumVertices * 3);
+				mesh->m_Bitangents.resize(assimpMesh->mNumVertices * 3);
+
+				for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+				{
+					for (uint32_t j = 0; j < 3; j++)
+					{
+						uint32_t index = i * 3 + j;
+						mesh->m_Tangents[index] = assimpMesh->mTangents[i][j];
+					}
+				}
+				ProgressPanel::ProgressTask("meshimport", 0.17);
+
+				for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+				{
+					for (uint32_t j = 0; j < 3; j++)
+					{
+						uint32_t index = i * 3 + j;
+						mesh->m_Bitangents[index] = assimpMesh->mBitangents[i][j];
+					}
+				}
+				ProgressPanel::ProgressTask("meshimport", 0.17);
 			}
 		}
 
-		// Save the mesh on disk + meta file
-		std::stringstream ss;
-		ss << saveFolder << "\\" << mesh->GetID();
-		mesh->SetPath(ss.str());
-		mesh->SaveSettings();
+		{
+			DBT_PROFILE_SCOPE("ImportMesh::TexCoords");
+			// Load texture coordinates
+			mesh->m_TexCoords.resize(assimpMesh->GetNumUVChannels());
+			for (uint32_t i = 0; i < assimpMesh->GetNumUVChannels(); i++)
+			{
+				mesh->m_TexCoords[i].resize(assimpMesh->mNumVertices * 3);
+
+				for (uint32_t j = 0; j < assimpMesh->mNumVertices; j++)
+					for (uint32_t k = 0; k < 3; k++)
+					{
+						uint32_t index = j * 3 + k;
+						mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j][k];
+					}
+			}
+			ProgressPanel::ProgressTask("meshimport", 0.17);
+		}
+
+		{
+			DBT_PROFILE_SCOPE("ImportMesh::Indices");
+			// Load indices
+			mesh->m_Indices.resize(assimpMesh->mNumFaces * 3);
+			uint32_t indexIndex = 0;
+			for (uint32_t i = 0; i < assimpMesh->mNumFaces; i++)
+			{
+				for (uint32_t j = 0; j < assimpMesh->mFaces[i].mNumIndices; j++)
+				{
+					mesh->m_Indices[indexIndex] = assimpMesh->mFaces[i].mIndices[j];
+					indexIndex++;
+				}
+			}
+			ProgressPanel::ProgressTask("meshimport", 0.17);
+		}
+
+		{
+			DBT_PROFILE_SCOPE("ImportMesh::SaveFiles");
+			// Save the mesh on disk + meta file
+			std::stringstream ss;
+			ss << saveFolder << mesh->GetID();
+			mesh->SetPath(ss.str());
+			mesh->SetName(assimpMesh->mName.C_Str());
+			mesh->SaveSettings();
+
+			ProgressPanel::CompleteTask("meshimport");
+		}
 
 		return mesh;
 	}
@@ -228,13 +319,52 @@ namespace Debut
 		// Save the material on disk + meta file
 		// Save the mesh on disk + meta file
 		std::stringstream ss;
-		ss << saveFolder << "\\" << material->GetID();
+		ss << saveFolder << material->GetID();
 		material->SetPath(ss.str());
 		ss.str("");
-		ss << AssetManager::s_ProjectDir << "\\Lib\\Metadata\\" << material->GetID() << ".meta";
+
+		ss << AssetManager::s_MetadataDir << material->GetID() << ".meta";
 		material->SetMetaPath(ss.str());
 		material->SaveSettings();
 
 		return material;
+	}
+
+	void ModelImporter::RemoveNodes(Ref<Model> model, std::vector<UUID>& associations)
+	{
+		CppUtils::FileSystem::RemoveFile((model->GetPath() + ".meta").c_str());
+		CppUtils::FileSystem::RemoveFile((model->GetPath()).c_str());
+		AssetManager::Remove<Model>(model->GetID());
+		associations.push_back(model->GetID());
+
+		std::stringstream ss;
+		for (uint32_t i = 0; i < model->GetMeshes().size(); i++)
+		{
+			ss.str("");
+			ss << AssetManager::s_AssetsDir << model->GetMeshes()[i];
+			CppUtils::FileSystem::RemoveFile(ss.str().c_str());
+			associations.push_back(model->GetMeshes()[i]);
+			AssetManager::Remove<Mesh>(model->GetMeshes()[i]);
+
+			ss.str("");
+			ss << AssetManager::s_MetadataDir << model->GetMeshes()[i] << ".meta";
+			CppUtils::FileSystem::RemoveFile(ss.str().c_str());
+		}
+
+		for (uint32_t i = 0; i < model->GetMaterials().size(); i++)
+		{
+			ss.str("");
+			ss << AssetManager::s_AssetsDir << model->GetMaterials()[i];
+			CppUtils::FileSystem::RemoveFile(ss.str().c_str());
+			associations.push_back(model->GetMaterials()[i]);
+			AssetManager::Remove<Material>(model->GetMaterials()[i]);
+
+			ss.str("");
+			ss << AssetManager::s_MetadataDir << model->GetMaterials()[i] << ".meta";
+			CppUtils::FileSystem::RemoveFile(ss.str().c_str());
+		}
+
+		for (uint32_t i = 0; i < model->GetSubmodels().size(); i++)
+			RemoveNodes(AssetManager::Request<Model>(model->GetSubmodels()[i]), associations);
 	}
 }

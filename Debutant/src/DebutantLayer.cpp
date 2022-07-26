@@ -46,22 +46,6 @@ namespace Debutant
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
 
         AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
-        
-        ModelImporter::ImportModel("assets\\models\\house\\source\\domik2\\domik2.obj");
-        m_Model2 = AssetManager::Request<Model>(
-            AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);
-
-        /*ModelImporter::ImportModel("assets\\models\\cube\\untitled.obj");
-        m_Model = AssetManager::Request<Model>(
-            AssetManager::Request<Model>("assets\\models\\house\\source\\domik2\\domik2.obj.model")->GetSubmodels()[0]);*/
-
-        ModelImporter::ImportModel("assets\\models\\pyramid\\source\\1.obj");
-        m_Model = AssetManager::Request<Model>(AssetManager::Request<Model>("assets\\models\\pyramid\\source\\1.obj.model")->GetSubmodels()[0]);
-
-            /*
-        ModelImporter::ImportModel("assets\\models\\car\\car.obj");
-        m_Model = AssetManager::Request<Model>(
-            AssetManager::Request<Model>("assets\\models\\car\\car.obj.model")->GetSubmodels()[0]);*/
     }
 
     void DebutantLayer::OnDetach()
@@ -71,6 +55,7 @@ namespace Debutant
 
     void DebutantLayer::OnUpdate(Timestep ts)
     {
+        //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
         if (m_ViewportFocused)
             m_EditorCamera.OnUpdate(ts);
@@ -98,19 +83,6 @@ namespace Debutant
             break;
         }
 
-        Renderer3D::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
-        MeshRendererComponent component;
-
-        component.Mesh = m_Model->GetMeshes()[0];
-        component.Material = m_Model->GetMaterials()[0];
-        Renderer3D::DrawModel(component, glm::mat4(1.0));
-
-        component.Mesh = m_Model2->GetMeshes()[0];
-        component.Material = m_Model2->GetMaterials()[0];
-        Renderer3D::DrawModel(component, glm::translate(glm::mat4(1.0), glm::vec3(50.0, 0, 0)));
-
-        Renderer3D::EndScene();
-
         m_FrameBuffer->Unbind();
     }
 
@@ -119,6 +91,7 @@ namespace Debutant
         m_SceneState = SceneState::Play;
 
         // TODO: textures aren't updated in the runtime scene
+
         m_RuntimeScene = Scene::Copy(m_ActiveScene);
         m_RuntimeScene->OnRuntimeStart();
 
@@ -201,6 +174,11 @@ namespace Debutant
             m_ContentBrowser.OnImGuiRender();
             m_PropertiesPanel.OnImGuiRender();
 
+#ifdef DBT_DEBUG
+            if (m_AssetMapOpen)
+                DrawAssetMapWindow();
+#endif
+
             DrawViewport();
             DrawUIToolbar();
 
@@ -239,6 +217,57 @@ namespace Debutant
         ImGui::End();
     }
 
+    void DebutantLayer::DrawAssetMapWindow()
+    {
+        const auto& assetMap = AssetManager::GetAssetMap();
+        uint32_t i = 0;
+        ImGui::Begin("Asset map", &m_AssetMapOpen, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_Modal);
+
+        for (auto& entry : assetMap)
+        {
+            std::stringstream ss;
+            ss << entry.first << ":\t\t  " << entry.second;
+            bool selected = (m_StartIndex != -1 && m_EndIndex != -1 && (i > m_StartIndex && i <= m_EndIndex)) || i == m_StartIndex;
+            
+            if (ImGui::Selectable(ss.str().c_str(), &selected, ImGuiSelectableFlags_SpanAvailWidth))
+            {
+                Log.CoreInfo("Shift clicked: {0}", Input::IsKeyPressed(DBT_KEY_LEFT_SHIFT) || Input::IsKeyPressed(DBT_KEY_RIGHT_SHIFT));
+                if (ImGui::IsKeyPressed(ImGuiKey_LeftShift) || ImGui::IsKeyPressed(ImGuiKey_RightShift))
+                    m_EndIndex = i;
+                else
+                {
+                    m_StartIndex = i;
+                    m_EndIndex = -1;
+                }
+            }
+
+            ImGui::Separator();
+            i++;
+        }
+
+        ImGui::End();
+
+        if (m_StartIndex > m_EndIndex)
+        {
+            uint32_t tmp = m_StartIndex;
+            m_StartIndex = m_EndIndex;
+            m_EndIndex = tmp;
+        }
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Delete))
+        {
+            std::vector<Debut::UUID> toDel;
+
+            for (uint32_t i = m_StartIndex; i < m_EndIndex; i++)
+                toDel.push_back(assetMap[i].first);
+
+            AssetManager::DeleteAssociations(toDel);
+
+            m_StartIndex = -1;
+            m_EndIndex = -1;
+        }
+    }
+
     void DebutantLayer::DrawTopBar()
     {
         if (ImGui::BeginMenuBar())
@@ -265,6 +294,8 @@ namespace Debutant
             {
                 if (ImGui::MenuItem("Reimport"))
                     AssetManager::Reimport();
+                if (ImGui::MenuItem("Asset map"))
+                    m_AssetMapOpen = true;
                 ImGui::EndMenu();
             }
 
@@ -305,7 +336,11 @@ namespace Debutant
                 const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA");
                 if (payload != nullptr)
                 {
-                    OpenScene(std::filesystem::path((const wchar_t*)payload->Data));
+                    std::filesystem::path path((const wchar_t*)payload->Data);
+                    if (path.extension() == ".debut")
+                        OpenScene(path);
+                    else if (path.extension() == ".model")
+                        LoadModel(path);
                     ImGui::EndDragDropTarget();
                 }
 
@@ -323,6 +358,50 @@ namespace Debutant
             ImGui::PopStyleVar();
         }
         ImGui::End();
+    }
+
+    void DebutantLayer::LoadModel(const std::filesystem::path path)
+    {
+        Ref<Model> model = AssetManager::Request<Model>(path.string());
+        Entity modelEntity = m_ActiveScene->CreateEntity({}, path.filename().string());
+
+        modelEntity.Transform().Parent = {};
+        LoadModelNode(model, modelEntity);
+    }
+    void DebutantLayer::LoadModelNode(Ref<Model> model, Entity& parent)
+    {
+        std::string path, extension, folder, name;
+        path = model->GetPath();
+        if (path != "")
+        {
+            extension = path.substr(path.find_last_of("."), path.length());
+            folder = path.substr(path.find_last_of("\\"), path.length());
+            name = folder.substr(folder.find_last_of("\\") + 1, folder.length() - extension.length());
+        }
+        else
+            name = "Submodel";
+
+        // Create entity
+        Entity modelEntity = m_ActiveScene->CreateEntity({}, name);
+        // Parent it
+        modelEntity.Transform().Parent = parent;
+
+        // Add MeshRendererComponent: if there are more than 1 mesh, add children
+        if (model->GetMeshes().size() == 1)
+            modelEntity.AddComponent<MeshRendererComponent>(model->GetMeshes()[0], model->GetMaterials()[0]);
+        else
+            for (uint32_t i = 0; i < model->GetMeshes().size(); i++)
+            {
+                Entity additional = m_ActiveScene->CreateEntity({}, name + " i");
+                additional.Transform().Parent = modelEntity;
+                additional.AddComponent<MeshRendererComponent>(model->GetMeshes()[i], model->GetMaterials()[i]);
+            }
+
+        // Add submodels as children
+        for (uint32_t i = 0; i < model->GetSubmodels().size(); i++)
+            LoadModelNode(AssetManager::Request<Model>(model->GetSubmodels()[i]), modelEntity);
+
+        m_ActiveScene->RebuildSceneGraph();
     }
 
     void DebutantLayer::DrawGizmos()
@@ -348,7 +427,7 @@ namespace Debutant
             ImGuizmo::SetDrawlist();
             ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
 
-            auto& tc = currSelection.GetComponent<TransformComponent>();
+            auto& tc = currSelection.Transform();
             glm::mat4 transform = tc.GetTransform();
 
             ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
@@ -357,6 +436,7 @@ namespace Debutant
             if (ImGuizmo::IsUsing())
             {
                 glm::vec3 finalTrans, finalRot, finalScale;
+                transform = (tc.Parent ? glm::inverse(tc.Parent.Transform().GetTransform()) : glm::mat4(1.0)) * transform;
                 Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
 
                 glm::vec3 deltaRot = finalRot - tc.Rotation;
@@ -494,6 +574,7 @@ namespace Debutant
 
         m_ScenePath = path.string();
         m_ActiveScene = m_EditorScene;
+        m_ActiveScene->RebuildSceneGraph();
     }
 
     void DebutantLayer::SaveScene()

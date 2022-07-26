@@ -16,6 +16,12 @@ namespace Debut
 		std::vector<ShaderUniform> Uniforms;
 	};
 
+	struct MaterialMetadata
+	{
+		std::string Name;
+		UUID ID;
+	};
+
 	class Material
 	{
 	public:
@@ -52,6 +58,11 @@ namespace Debut
 		std::string GetPath() { return m_Path; }
 		std::vector<ShaderUniform> GetUniforms();
 		bool IsValid() { return m_Valid; }
+
+		static MaterialMetadata GetMetadata(UUID id);
+
+	private:
+		void Load(std::ifstream& file);
 
 	private:
 		UUID m_ID;

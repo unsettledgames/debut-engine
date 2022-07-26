@@ -3,7 +3,6 @@
 
 #include <Debut/AssetManager/AssetManager.h>
 #include <filesystem>
-#include <imgui_internal.h>
 
 namespace Debut
 {
@@ -27,6 +26,13 @@ namespace Debut
 	void ImGuiUtils::VerticalSpace(uint32_t amount)
 	{
 		ImGui::Dummy({0, (float)amount});
+	}
+
+	void ImGuiUtils::Separator()
+	{
+		ImGui::Dummy({ 0, 3 });
+		ImGui::Separator();
+		ImGui::Dummy({ 0, 3 });
 	}
 
 	bool ImGuiUtils::DragFloat(const std::string& label, float* value, float power, float min, float max)
@@ -318,5 +324,131 @@ namespace Debut
 		ImGuiUtils::ResetColumns();
 
 		return changed;
+	}
+
+	bool ImGuiUtils::BeginDragDropSourceCustom(ImGuiDragDropFlags flags)
+	{
+		ImGuiContext& g = *GImGui;
+		ImGuiWindow* window = g.CurrentWindow;
+		ImGuiMouseButton mouse_button = ImGuiMouseButton_Left;
+
+		bool source_drag_active = false;
+		ImGuiID id = ImGui::GetHoveredID();
+		if (id == 0)
+			return false;
+		ImGuiID source_id = id;
+		ImGuiID source_parent_id = id;
+
+		if (!(flags & ImGuiDragDropFlags_SourceExtern))
+		{
+			ImGui::SetActiveID(id, window);
+			ImGui::KeepAliveID(id);
+
+			source_drag_active = ImGui::IsMouseDragging(mouse_button);
+			// Disable navigation and key inputs while dragging + cancel existing request if any
+			ImGui::SetActiveIdUsingNavAndKeys();
+		}
+		else
+		{
+			window = NULL;
+			source_id = ImHashStr("#SourceExtern");
+			source_drag_active = true;
+		}
+
+		if (source_drag_active)
+		{
+			if (!g.DragDropActive)
+			{
+				IM_ASSERT(source_id != 0);
+				ImGui::ClearDragDrop();
+				ImGuiPayload& payload = g.DragDropPayload;
+				payload.SourceId = source_id;
+				payload.SourceParentId = source_parent_id;
+				g.DragDropActive = true;
+				g.DragDropSourceFlags = flags;
+				g.DragDropMouseButton = mouse_button;
+				if (payload.SourceId == g.ActiveId)
+					g.ActiveIdNoClearOnFocusLoss = true;
+			}
+			g.DragDropSourceFrameCount = g.FrameCount;
+			g.DragDropWithinSource = true;
+
+			if (!(flags & ImGuiDragDropFlags_SourceNoPreviewTooltip))
+			{
+				// Target can request the Source to not display its tooltip (we use a dedicated flag to make this request explicit)
+				// We unfortunately can't just modify the source flags and skip the call to BeginTooltip, as caller may be emitting contents.
+				ImGui::BeginTooltip();
+				if (g.DragDropAcceptIdPrev && (g.DragDropAcceptFlags & ImGuiDragDropFlags_AcceptNoPreviewTooltip))
+				{
+					ImGuiWindow* tooltip_window = g.CurrentWindow;
+					tooltip_window->Hidden = tooltip_window->SkipItems = true;
+					tooltip_window->HiddenFramesCanSkipItems = 1;
+				}
+			}
+
+			if (!(flags & ImGuiDragDropFlags_SourceNoDisableHover) && !(flags & ImGuiDragDropFlags_SourceExtern))
+				g.LastItemData.StatusFlags &= ~ImGuiItemStatusFlags_HoveredRect;
+
+			return true;
+		}
+		return false;
+	}
+
+	bool ImGuiUtils::ImageTreeNode(const char* label, ImTextureID texture, bool open, bool selected)
+	{
+		ImGuiContext& g = *GImGui;
+		ImGuiWindow* window = g.CurrentWindow;
+
+		ImGuiID id = window->GetID(label);
+		ImVec2 pos = window->DC.CursorPos;
+		ImRect bb(pos, ImVec2(pos.x + ImGui::GetContentRegionAvail().x, pos.y + g.FontSize + g.Style.FramePadding.y * 2));
+		bool opened = open;
+		bool hovered, held;
+		bool ret = ImGui::ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClickRelease);
+		uint32_t colorIndex;
+		if (held || hovered || selected)
+			colorIndex = ImGuiCol_HeaderHovered;
+		else
+			colorIndex = ImGuiCol_WindowBg;
+
+		
+		if (ret)
+			window->DC.StateStorage->SetInt(id, opened ? 0 : 1);
+		if (hovered || held || opened || selected)
+			window->DrawList->AddRectFilled(bb.Min, bb.Max, ImGui::ColorConvertFloat4ToU32(
+				ImGui::GetStyle().Colors[colorIndex]));
+
+		// Icon, text
+		float button_sz = g.FontSize + g.Style.FramePadding.y * 2;
+		window->DrawList->AddImage(texture, {pos.x, pos.y}, {pos.x + button_sz, pos.y + button_sz}, { 0, 1 }, { 1, 0 });
+		ImGui::RenderText(ImVec2(pos.x + button_sz + g.Style.ItemInnerSpacing.x, pos.y + g.Style.FramePadding.y), label);
+
+		ImGui::ItemSize(bb, g.Style.FramePadding.y);
+		ImGui::ItemAdd(bb, id);
+
+		if (opened || ret)
+			ImGui::TreePush(label);
+
+		return ret;
+	}
+
+	std::string ImGuiUtils::GetFileImguiIcon(const std::string& icon)
+	{
+		std::string ret = u8"\ue000";
+
+		if (icon == ".mat")
+			ret = IMGUI_ICON_MATERIAL;
+		else if (icon == ".mesh")
+			ret = IMGUI_ICON_MESH;
+		else if (icon == ".model")
+			ret = IMGUI_ICON_MODEL;
+		else if (icon == ".obj" || icon == ".fbx")
+			ret = IMGUI_ICON_UNIMPORTED_MODEL;
+		else if (icon == ".dir")
+			ret = IMGUI_ICON_DIR;
+		else
+			ret = IMGUI_ICON_FILE;
+
+		return ret;
 	}
 }

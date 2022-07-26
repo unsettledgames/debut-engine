@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Debut.h"
+#include <vector>
 
 
 namespace Debut
@@ -16,10 +17,17 @@ namespace Debut
 
 		void OnImGuiRender();
 
-		Entity GetSelectionContext() const { return m_SelectionContext; }
+		inline Entity GetSelectionContext() { 
+			if (m_SelectionContext)
+			{
+				TransformComponent& transform = m_SelectionContext.Transform();
+				int sas = 5;
+			}
+			return m_SelectionContext; 
+		}
 
 	private:
-		void DrawEntityNode(Entity& entity);
+		void DrawEntityNode(EntitySceneNode& entity);
 		void DrawComponents(Entity& entity);
 
 		template <typename T>
@@ -35,8 +43,11 @@ namespace Debut
 			}
 		}
 
+		void DestroySceneNode(EntitySceneNode& node);
+
 	private:
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
+		bool m_RebuiltGraph = false;
 	};
 }

@@ -8,6 +8,13 @@
 #include <filesystem>
 #include <Debut/ImGui/ImGuiUtils.h>
 
+/*
+	TODO
+		- Change parents by dragging objects around
+		- Save objects in the right order
+		- Move objects in the hierarchy
+*/
+
 namespace Debut
 {
 	SceneHierarchyPanel::SceneHierarchyPanel()
@@ -33,11 +40,8 @@ namespace Debut
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		m_Context->m_Registry.each([=](auto entity)
-		{
-			Entity entt = { entity, m_Context.get() };
-			DrawEntityNode(entt);
-		});
+		for (uint32_t i=0; i<m_Context->m_CachedSceneGraph->Children.size(); i++)
+			DrawEntityNode(m_Context->m_CachedSceneGraph->Children[i]);
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectionContext = {};
@@ -46,7 +50,10 @@ namespace Debut
 		if (ImGui::BeginPopupContextWindow(0, 1, false))
 		{
 			if (ImGui::MenuItem("New Entity"))
-				m_SelectionContext = m_Context->CreateEntity();
+			{
+				m_SelectionContext = m_Context->CreateEntity({});
+				m_Context->RebuildSceneGraph();
+			}
 			ImGui::EndPopup();
 		}
 
@@ -62,44 +69,84 @@ namespace Debut
 		ImGui::End();
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity& entity)
+	void SceneHierarchyPanel::DrawEntityNode(EntitySceneNode& node)
 	{
-		bool entityDeleted = false;
-		auto& tc = entity.GetComponent<TagComponent>();
-		ImGuiTreeNodeFlags flags = (m_SelectionContext == entity ? ImGuiTreeNodeFlags_OpenOnArrow : 0);
-		flags |= ImGuiTreeNodeFlags_Selected;
-		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+		if (m_RebuiltGraph)
+			return;
 
-		// TODO: HACKY
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tc.Name.c_str());
+		bool entityDeleted = false;
+		auto& tc = node.EntityData.GetComponent<TagComponent>();
+		ImGuiTreeNodeFlags flags = (m_SelectionContext == node.EntityData ? ImGuiTreeNodeFlags_OpenOnArrow : 0);
+		flags |= ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed;
+
+		// Don't let the user expand a node if it doesn't have children
+		if (node.Children.size() == 0)
+			flags |= ImGuiTreeNodeFlags_Leaf;
+		// Highlight the selected node
+		if (node.EntityData == m_SelectionContext)
+			flags |= ImGuiTreeNodeFlags_Selected;
+
+		// Color the node differently if it's selected
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 2, 2 });
+		if ((uint32_t)node.EntityData != (uint32_t)m_SelectionContext)
+			ImGui::PushStyleColor(ImGuiCol_Header, { 0.0, 0.0, 0.0, 0.0 });
+		else
+			ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered]);
+		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, tc.Name.c_str());
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
+
 		if (ImGui::IsItemClicked())
-		{
-			m_SelectionContext = entity;
-		}
+			m_SelectionContext = node.EntityData;
 
 		// Right click on blank space
 		if (ImGui::BeginPopupContextItem())
 		{
+			if (ImGui::MenuItem("New Entity"))
+			{
+				m_SelectionContext = m_Context->CreateEntity(node.EntityData);
+				m_Context->RebuildSceneGraph();
+
+				ImGui::EndPopup();
+				if (opened)
+					ImGui::TreePop();	
+				return;
+			}
+			if (ImGui::MenuItem("Duplicate"))
+			{
+				m_Context->DuplicateEntity(node.EntityData);
+				m_Context->RebuildSceneGraph();
+
+				ImGui::EndPopup();
+				if (opened)
+					ImGui::TreePop();
+				return;
+			}
 			if (ImGui::MenuItem("Destroy"))
 				entityDeleted = true;
-			if (ImGui::MenuItem("Duplicate"))
-				m_Context->DuplicateEntity(entity);
 
 			ImGui::EndPopup();
 		}
 
+		if (entityDeleted)
+		{
+			DestroySceneNode(node);
+			m_Context->RebuildSceneGraph();
+
+			if (opened)
+				ImGui::TreePop();
+			return;
+		}
+
 		if (opened)
 		{
-			ImGui::Text("TODO: transform trees");
+			for (uint32_t i = 0; i < node.Children.size(); i++)
+				DrawEntityNode(node.Children[i]);
 			ImGui::TreePop();
 		}
 
-		if (entityDeleted)
-		{
-			m_Context->DestroyEntity(entity);
-			if (m_SelectionContext == entity)
-				m_SelectionContext = {};
-		}
+		m_RebuiltGraph = false;
 	}
 
 	template<typename T, typename UIFunction>
@@ -170,6 +217,7 @@ namespace Debut
 			DrawAddComponentEntry<Rigidbody2DComponent>("Rigidbody2D");
 			DrawAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DrawAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
+			DrawAddComponentEntry<MeshRendererComponent>("Mesh Renderer");
 
 			ImGui::EndPopup();
 		}
@@ -226,6 +274,83 @@ namespace Debut
 					if (ImGuiUtils::DragFloat("Far clip", &orthoFar, 0.15f))
 						camera.SetOrthoFarClip(orthoFar);
 				}
+			});
+
+		
+		DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [](auto& component)
+			{
+				ImGuiUtils::StartColumns(2, { 100, (uint32_t)ImGui::GetContentRegionAvail().x - 100 });
+				MeshMetadata meshData = Mesh::GetMetadata(component.Mesh);
+				MaterialMetadata materialData = Material::GetMetadata(component.Material);
+
+				// Mesh reference
+				ImGui::LabelText("##meshlabel", "Mesh");
+				ImGui::NextColumn();
+
+				ImGui::Button((meshData.Name + "##mesh").c_str(), { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.2f });
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path pathStr(path);
+
+						if (pathStr.extension() == ".mesh")
+						{
+							pathStr = pathStr.replace_extension();
+							std::ifstream meta(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
+
+							if (meta.good())
+							{
+								std::stringstream ss;
+								ss << meta.rdbuf();
+								YAML::Node metaData = YAML::Load(ss.str());
+
+								component.Mesh = metaData["ID"].as<uint64_t>();
+							}
+						}
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::NextColumn();
+
+				// Material reference
+				// Mesh reference
+				ImGui::LabelText("##materiallabel", "Material");
+				ImGui::NextColumn();
+
+				ImGui::Button((materialData.Name + "##material").c_str(), { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.2f });
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path pathStr(path);
+
+						if (pathStr.extension() == ".mat")
+						{
+							pathStr = pathStr.replace_extension();
+							std::ifstream meta(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
+
+							if (meta.good())
+							{
+								std::stringstream ss;
+								ss << meta.rdbuf();
+								YAML::Node metaData = YAML::Load(ss.str());
+
+								component.Material = metaData["ID"].as<uint64_t>();
+							}
+						}
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::NextColumn();
+
+				ImGuiUtils::ResetColumns();
 			});
 
 
@@ -287,9 +412,9 @@ namespace Debut
 
 				ImGuiUtils::VerticalSpace(10);
 
-				Ref<PhysicsMaterial2D> material = ImGuiUtils::DragDestination<PhysicsMaterial2D>("Physics material", ".physmat2d", component.Material);
-				if (material)
-					component.Material = material->GetID();
+				UUID material = ImGuiUtils::DragDestination("Physics material", ".physmat2d", component.Material);
+				if (material != 0)
+					component.Material = material;
 			});
 
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)
@@ -306,5 +431,16 @@ namespace Debut
 				ImGuiUtils::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
 				ImGuiUtils::DragFloat("Restitution threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 			});
+	}
+
+	void SceneHierarchyPanel::DestroySceneNode(EntitySceneNode& node)
+	{
+		// Destroy children
+		for (uint32_t i = 0; i < node.Children.size(); i++)
+			DestroySceneNode(node.Children[i]);
+
+		m_Context->DestroyEntity(node.EntityData);
+		if (m_SelectionContext == node.EntityData)
+			m_SelectionContext = {};
 	}
 }

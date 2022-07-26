@@ -9,7 +9,8 @@ namespace Debut
 {
 	std::unordered_map<UUID, std::string> AssetManager::s_AssetMap;
 	std::string AssetManager::s_ProjectDir;
-	std::string AssetManager::s_IntAssetsDir;
+	std::string AssetManager::s_AssetsDir;
+	std::string AssetManager::s_MetadataDir;
 
 	AssetCache<std::string, Ref<Texture2D>> AssetManager::s_TextureCache;
 	AssetCache<std::string, Ref<Shader>> AssetManager::s_ShaderCache;
@@ -22,7 +23,8 @@ namespace Debut
 	void AssetManager::Init(const std::string& projectDir)
 	{
 		s_ProjectDir = projectDir;
-		s_IntAssetsDir = s_ProjectDir + "\\Lib\\Assets";
+		s_AssetsDir = s_ProjectDir + "\\Lib\\Assets\\";
+		s_MetadataDir = s_ProjectDir + "\\Lib\\Metadata\\";
 
 		CreateLibDirs();
 
@@ -232,7 +234,7 @@ namespace Debut
 	Ref<Material> AssetManager::Request<Material>(const std::string& id, const std::string& metaFile)
 	{
 		if (s_MaterialCache.Has(id))
-			return s_MaterialCache.Get(id);	
+			return s_MaterialCache.Get(id);
 
 		Ref<Material> toAdd = CreateRef<Material>(id, metaFile);
 
@@ -288,6 +290,48 @@ namespace Debut
 		}
 
 		return toAdd;
+	}
+
+	std::vector<std::pair<UUID, std::string>> AssetManager::GetAssetMap()
+	{
+		std::vector<std::pair<UUID, std::string>> ret;
+
+		for (auto& entry : s_AssetMap)
+			ret.push_back(std::make_pair(entry.first, entry.second));
+
+		std::sort(ret.begin(), ret.end(), 
+			[](const std::pair<UUID, std::string>& lhs, const std::pair<UUID, std::string>& rhs) {
+				return lhs.second.compare(rhs.second) < 0; 
+			});
+
+		return ret;
+	}
+
+	void AssetManager::DeleteAssociations(std::vector<UUID>& id)
+	{
+#ifdef DBT_DEBUG
+		std::fstream currFile("Debut\\AssetMap.yaml", std::ios::out | std::ios::trunc);
+		std::unordered_map copy = s_AssetMap;
+		YAML::Emitter emitter;
+
+		// Delete from asset map
+		for (auto& entry : copy)
+			if (std::find(id.begin(), id.end(), entry.first) != id.end())
+				s_AssetMap.erase(entry.first);
+
+
+		// Write the final document
+		emitter << YAML::BeginMap << YAML::Key << "Associations" << YAML::Value << YAML::BeginSeq;
+
+		for (auto& entry : s_AssetMap)
+			emitter << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << entry.first << 
+										 YAML::Key << "Path" << YAML::Value << entry.second << YAML::EndMap;
+
+		// Write changes on disk
+		emitter << YAML::EndSeq << YAML::EndMap;
+		currFile << emitter.c_str();
+		currFile.close();
+#endif
 	}
 	
 }

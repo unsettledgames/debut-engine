@@ -1,6 +1,8 @@
 #pragma once
 
 #include <entt.hpp>
+#include <vector>
+
 #include <Debut/Core/Core.h>
 #include <Debut/Rendering/Camera.h>
 #include <Debut/Core/UUID.h>
@@ -10,6 +12,8 @@ class b2World;
 
 namespace Debut
 {
+	class EntitySceneNode;
+
 	class Scene
 	{
 	friend class Entity;
@@ -28,15 +32,16 @@ namespace Debut
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
-		Entity CreateEntity(const std::string& name = "New Entity");
-		Entity CreateEntity(const UUID& id, const std::string& name = "New Entity");
-
+		Entity CreateEntity(Entity parent, const std::string& name = "New Entity");
+		Entity CreateEntity(Entity parent, const UUID& id, const std::string& name = "New Entity");
 		void DuplicateEntity(Entity& entity);
 		void DestroyEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
+		Entity GetEntityByID(uint64_t id);
 
 		static Ref<Scene> Copy(Ref<Scene> other);
+		void RebuildSceneGraph();
 
 	private:
 		template<typename T>
@@ -50,6 +55,9 @@ namespace Debut
 		
 		// Physics
 		b2World* m_PhysicsWorld2D = nullptr;
+
+		// Editor
+		EntitySceneNode* m_CachedSceneGraph;
 	};
 }
 

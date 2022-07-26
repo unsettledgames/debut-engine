@@ -3,6 +3,7 @@
 #include <Debut/Scene/Scene.h>
 #include <Debut/Core/UUID.h>
 #include <entt.hpp>
+#include <vector>
 #include <xhash>
 
 namespace Debut
@@ -67,6 +68,16 @@ namespace Debut
 	private:
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene;
+	};
+
+	struct EntitySceneNode
+	{
+		bool IsRoot = false;
+		Entity EntityData;
+		std::vector<EntitySceneNode> Children;
+
+		EntitySceneNode(bool root, Entity parent) : IsRoot(root), EntityData(parent), Children({}) {}
+		EntitySceneNode() : EntityData({}), Children({}) {}
 	};
 }
 

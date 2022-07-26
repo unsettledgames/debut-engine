@@ -1,15 +1,20 @@
-#include "PropertiesPanel.h"
-#include "Utils/EditorCache.h"
-#include <Debut/AssetManager/AssetManager.h>
-#include <Debut/Rendering/Texture.h>
+#include <imgui_internal.h>
+#include <Debut/ImGui/ImGuiUtils.h>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
 #include <stack>
-#include <Debut/Physics/PhysicsMaterial2D.h>
-#include <imgui_internal.h>
-#include <Debut/ImGui/ImGuiUtils.h>
+
+#include "PropertiesPanel.h"
+#include "Utils/EditorCache.h"
+#include <Debut/AssetManager/ModelImporter.h>
+#include <Debut/AssetManager/AssetManager.h>
+
 #include <Debut/Rendering/Material.h>
 #include <Debut/Rendering/Shader.h>
+#include <Debut/Physics/PhysicsMaterial2D.h>
+#include <Debut/Rendering/Texture.h>
+
+
 
 /**
 	TODO:
@@ -19,6 +24,8 @@
 namespace Debut
 {
 	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d", ".glsl", ".mat"};
+	static std::vector<std::string> s_ModelExtensions = { ".obj", ".fbx", ".dae", ".gltf", ".glb", ".blend", ".3ds", ".ase",
+		".ifc", ".xgl", ".zgl", ".ply", ".dxf", ".lwo", ".lws", ".lxo", ".stl", ".x", ".ac", ".ms3d", ".cob", ".scn"};
 
 	static int SetFileName(ImGuiInputTextCallbackData* data)
 	{
@@ -39,21 +46,25 @@ namespace Debut
 			}
 
 			// Put extensions as static members of Texture2D and PhysicsMaterial2D?
-			if (m_AssetPath.extension().string() == ".png")
+			if (m_AssetType == AssetType::Texture2D)
 			{
 				DrawTextureProperties();
 			}
-			else if (m_AssetPath.extension().string() == ".physmat2d")
+			else if (m_AssetType == AssetType::PhysicsMaterial2D)
 			{
 				DrawPhysicsMaterial2DProperties();
 			}
-			else if (m_AssetPath.extension().string() == ".glsl")
+			else if (m_AssetType == AssetType::Shader)
 			{
 				DrawShaderProperties();
 			}
-			else if (m_AssetPath.extension().string() == ".mat")
+			else if (m_AssetType == AssetType::Material)
 			{
 				DrawMaterialProperties();
+			}
+			else if (m_AssetType == AssetType::Model)
+			{
+				DrawModelProperties();
 			}
 		}
 
@@ -91,7 +102,87 @@ namespace Debut
 
 		ImGuiUtils::ResetColumns();
 		ImGui::PopID();
-		
+	}
+
+	void PropertiesPanel::DrawModelProperties()
+	{
+		if (std::find(s_ModelExtensions.begin(), s_ModelExtensions.end(), m_AssetPath.extension().string()) != s_ModelExtensions.end())
+		{
+			std::ifstream modelFile(m_AssetPath.string() + ".model");
+			
+			static ModelImportSettings settings = {true, true, true, true, false, false, false, m_AssetPath.filename().string()};
+			static bool normals = false, tangentSpace = false;
+			static bool triangulate = false, joinVertices = false;
+			// Prompt for importing
+			ImGuiUtils::BoldText(m_AssetPath.filename().string() + " import settings");
+			if (!modelFile.good())
+				ImGui::TextWrapped("The selected object hasn't been imported. Customize the settings and hit \"Import\" to use the generated .model file.");
+			ImGuiUtils::Separator();
+
+			ImGuiUtils::StartColumns(2, { 200, (uint32_t)ImGui::GetContentRegionAvail().x - 200 });
+
+			// Normals and tangent space
+			ImGui::Text("Generate normals");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##gennormals", &settings.Normals);
+			ImGuiUtils::NextColumn();
+
+			ImGui::Text("Generate tangent space");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##gentangentspace", &settings.TangentSpace);
+			ImGuiUtils::NextColumn();
+
+			ImGuiUtils::Separator();
+
+			// Triangulation
+			ImGui::Text("Triangulate");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##triangulate", &settings.Triangulate);
+			ImGuiUtils::NextColumn();
+
+			ImGui::Text("Join identical vertices");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##joinvertices", &settings.JoinVertices);
+			ImGuiUtils::NextColumn();
+
+			ImGuiUtils::Separator();
+
+			// Optimizations
+			ImGui::Text("Optimize meshes");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##optimizemeshes", &settings.OptimizeMeshes);
+			ImGuiUtils::NextColumn();
+
+			ImGui::Text("Optimize scene");
+			ImGuiUtils::NextColumn();
+			ImGui::Checkbox("##optimizescene", &settings.OptimizeScene);
+			ImGuiUtils::NextColumn();
+
+			ImGuiUtils::Separator();
+
+			ImGui::Text("Imported name");
+			ImGuiUtils::NextColumn();
+			char tmpName[1024]; 
+			memset(tmpName, 0, 1024);
+			memcpy(tmpName, settings.ImportedName.c_str(), settings.ImportedName.length());
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+			if (ImGui::InputText("##importedname", tmpName, 1024, 0, 0, (void*)m_AssetPath.string().c_str()))
+				settings.ImportedName = tmpName;
+			ImGui::PopItemWidth();
+			ImGuiUtils::NextColumn();
+
+			ImGuiUtils::ResetColumns();
+
+			if (ImGui::Button("Import", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f}))
+			{
+				if (settings.ImportedName == "")
+					settings.ImportedName = "Unnamed model";
+				modelFile.close();
+				ModelImporter::ImportModel(m_AssetPath.string(), settings);
+				m_AssetPath = "";
+				settings = {};
+			}
+		}
 	}
 
 	void PropertiesPanel::DrawPhysicsMaterial2DProperties()
@@ -210,6 +301,14 @@ namespace Debut
 		MaterialConfig finalConfig;
 
 		Ref<Material> material = AssetManager::Request<Material>(m_AssetPath.string());
+		if (material == nullptr)
+		{
+			std::ifstream metaFile(AssetManager::s_MetadataDir + m_AssetPath.string());
+			std::stringstream ss;
+			ss << metaFile.rdbuf();
+			YAML::Node metaNode = YAML::Load(ss.str());
+			material = AssetManager::Request<Material>(metaNode["ID"].as<uint64_t>());
+		}
 		Ref<Shader> shader = AssetManager::Request<Shader>(material->GetShader());
 
 		// Shader selection combobox
@@ -225,7 +324,6 @@ namespace Debut
 		pathsToVisit.push(std::filesystem::path("assets\\shaders"));
 		std::filesystem::path currPath;
 
-		// TODO: cache paths
 		while (pathsToVisit.size() > 0)
 		{
 			currPath = pathsToVisit.top();
@@ -335,10 +433,24 @@ namespace Debut
 		
 	}
 
-	void PropertiesPanel::SetAsset(std::filesystem::path path)
+	void PropertiesPanel::SetAsset(std::filesystem::path path, AssetType assetType)
 	{
 		if (std::filesystem::is_directory(path))
 			return;
 		m_AssetPath = path;
+		m_AssetType = assetType;
+
+		if (std::find(s_ModelExtensions.begin(), s_ModelExtensions.end(), m_AssetPath.extension().string()) != s_ModelExtensions.end())
+			m_AssetType = AssetType::Model;
+		else if (path.extension() == ".png")
+			m_AssetType = AssetType::Texture2D;
+		else if (path.extension() == ".physmat2d")
+			m_AssetType = AssetType::PhysicsMaterial2D;
+		else if (path.extension() == ".glsl")
+			m_AssetType = AssetType::Shader;
+		else if (path.extension() == ".mat")
+			m_AssetType = AssetType::Material;
+		else if (path.extension() == ".mesh")
+			m_AssetType = AssetType::Mesh;
 	}
 }

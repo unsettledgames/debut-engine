@@ -24,14 +24,19 @@ namespace Debut
 		const unsigned char* byteArrayBegin = reinterpret_cast<unsigned char*>(buffer.data());
 		unsigned char* compressedByteArray = new unsigned char[uncompressedSize];
 		
+		{
+			DBT_PROFILE_SCOPE("SaveMesh::CompressBuffer");
+			BrotliEncoderCompress(BROTLI_MAX_QUALITY, BROTLI_DEFAULT_WINDOW, BrotliEncoderMode::BROTLI_MODE_GENERIC,
+				buffer.size() * sizeof(T), byteArrayBegin, &compressedSize, compressedByteArray);
+		}
+		
+		{
+			DBT_PROFILE_SCOPE("SaveMesh::SaveToFile");
+			file << compressedSize;
+			file.write((const char*)compressedByteArray, compressedSize);
 
-		BrotliEncoderCompress(BROTLI_MAX_QUALITY, BROTLI_DEFAULT_WINDOW, BrotliEncoderMode::BROTLI_MODE_GENERIC,
-			buffer.size() * sizeof(T), byteArrayBegin, &compressedSize, compressedByteArray);
-
-		file << compressedSize;
-		file.write((const char*)compressedByteArray, compressedSize);
-
-		delete[] compressedByteArray;
+			delete[] compressedByteArray;
+		}
 	}
 
 	template<typename T>
@@ -63,6 +68,7 @@ namespace Debut
 			YAML::Node meta = YAML::Load(ss.str());
 
 			m_ID = meta["ID"].as<uint64_t>();
+			m_Name = meta["Name"].as<std::string>();
 
 			float nPoints = meta["NumVertices"].as<uint32_t>();
 
@@ -80,18 +86,29 @@ namespace Debut
 
 			m_Valid = true;
 		}
-		// Otherwise save the ID in a new meta file
+		// Otherwise load from the assets folder
 		else
 		{
 			meta.close();
-			std::ofstream newMeta(m_MetaPath);
-			YAML::Emitter emitter;
-			
-			emitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
-			newMeta << emitter.c_str();
-			newMeta.close();
 
-			m_Valid = false;
+			std::string assetFile = AssetManager::s_AssetsDir + path;
+			std::ifstream meshFile(assetFile);
+			if (meshFile.good())
+			{
+				Load(meshFile);
+			}
+			else
+			{
+				meshFile.close();
+				std::ofstream newMeta(m_MetaPath);
+				YAML::Emitter emitter;
+
+				emitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
+				newMeta << emitter.c_str();
+				newMeta.close();
+
+				m_Valid = false;
+			}
 		}
 	}
 
@@ -99,44 +116,45 @@ namespace Debut
 	{
 		std::ofstream outFile(m_Path, std::ios::out | std::ios::binary);
 		std::stringstream ss;
-		ss << AssetManager::s_ProjectDir + "\\Lib\\Metadata\\" << m_ID << ".meta";
+		ss << AssetManager::s_MetadataDir << m_ID << ".meta";
 		std::string metaPath = ss.str();
 
-		outFile << "Name" << m_Name;
-		outFile << "\nVertices" << "\n"; EmitBuffer<float>(m_Vertices, outFile);
-		outFile << "\nNormals" << "\n"; EmitBuffer<float>(m_Normals, outFile);
-		outFile << "\nTangents" << "\n"; EmitBuffer<float>(m_Tangents, outFile);
-		outFile << "\nBitangents" << "\n"; EmitBuffer<float>(m_Bitangents, outFile);
-		outFile << "\nIndices" << "\n"; EmitBuffer<int>(m_Indices, outFile);
-		
-		outFile << "\nTexCoords" << "\n";
-
-		for (uint32_t i = 0; i < m_TexCoords.size(); i++)
 		{
-			outFile << "\nTexCoords" + i << "\n";
-			EmitBuffer<float>(m_TexCoords[i], outFile);
+			DBT_PROFILE_SCOPE("SaveMesh::EmitBuffers");
+			outFile << "Vertices" << "\n"; EmitBuffer<float>(m_Vertices, outFile);
+			outFile << "\nNormals" << "\n"; EmitBuffer<float>(m_Normals, outFile);
+			outFile << "\nTangents" << "\n"; EmitBuffer<float>(m_Tangents, outFile);
+			outFile << "\nBitangents" << "\n"; EmitBuffer<float>(m_Bitangents, outFile);
+			outFile << "\nIndices" << "\n"; EmitBuffer<int>(m_Indices, outFile);
+			outFile << "\nTexCoords" << "\n";
+			for (uint32_t i = 0; i < m_TexCoords.size(); i++)
+			{
+				outFile << "\nTexCoords" + i << "\n";
+				EmitBuffer<float>(m_TexCoords[i], outFile);
+			}
 		}
 
 		outFile.close();
-		outFile.open(metaPath);
-		YAML::Emitter metaEmitter;
+		DBT_PROFILE_SCOPE("SaveMesh::SaveMeta")
+		{
+			outFile.open(metaPath);
+			YAML::Emitter metaEmitter;
 
-		metaEmitter << YAML::BeginDoc << YAML::BeginMap;
-		metaEmitter << YAML::Key << "ID" << YAML::Value << m_ID;
-		metaEmitter << YAML::Key << "NumVertices" << YAML::Value << m_Vertices.size();
-		metaEmitter << YAML::Key << "NumIndices" << YAML::Value << m_Indices.size();
-		metaEmitter << YAML::Key << "NumTexCoords" << YAML::Value << m_TexCoords.size();
-		metaEmitter << m_ID << YAML::EndMap << YAML::EndDoc;
-		outFile << metaEmitter.c_str();
+			metaEmitter << YAML::BeginDoc << YAML::BeginMap;
+			metaEmitter << YAML::Key << "ID" << YAML::Value << m_ID;
+			metaEmitter << YAML::Key << "Name" << YAML::Value << m_Name;
+			metaEmitter << YAML::Key << "NumVertices" << YAML::Value << m_Vertices.size();
+			metaEmitter << YAML::Key << "NumIndices" << YAML::Value << m_Indices.size();
+			metaEmitter << YAML::Key << "NumTexCoords" << YAML::Value << m_TexCoords.size();
+			metaEmitter << m_ID << YAML::EndMap << YAML::EndDoc;
+			outFile << metaEmitter.c_str();
+		}
 	}
 
 	void Mesh::Load(std::ifstream& inFile)
 	{
 		DBT_PROFILE_FUNCTION("Mesh:Load");
 		{
-			std::string dummy;
-			inFile >> dummy;
-			
 			LoadBuffer<float>(m_Vertices, inFile, m_Vertices.size());
 			LoadBuffer<float>(m_Normals, inFile, m_Normals.size());
 			LoadBuffer<float>(m_Tangents, inFile, m_Tangents.size());
@@ -146,5 +164,24 @@ namespace Debut
 			for (uint32_t i = 0; i < m_TexCoords.size(); i++)
 				LoadBuffer<float>(m_TexCoords[i], inFile, m_TexCoords[i].size());
 		}
+	}
+
+	MeshMetadata Mesh::GetMetadata(UUID id)
+	{
+		MeshMetadata ret = {};
+		std::stringstream ss;
+		ss << AssetManager::s_MetadataDir << id << ".meta";
+		std::ifstream metaFile(ss.str());
+		
+		if (metaFile.good())
+		{
+			std::stringstream ss;
+			ss << metaFile.rdbuf();
+
+			ret.ID = id;
+			ret.Name = YAML::Load(ss.str())["Name"].as<std::string>();
+		}
+
+		return ret;
 	}
 }

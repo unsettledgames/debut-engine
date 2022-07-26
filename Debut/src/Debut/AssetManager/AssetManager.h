@@ -26,25 +26,39 @@ namespace Debut
 
 		template <typename T>
 		static void Submit(Ref<T> asset) {}
+		
+		template <typename T>
+		static void Remove(UUID id) {}
 
 		// TODO: make these 2 guys uise UUIDs instead of paths, make sure meta files are loaded correctly
 		template <>
-		static void Submit(Ref<Mesh> asset)
-		{
-			s_MeshCache.Put(asset->GetPath(), asset);
-		}
-
+		static void Submit(Ref<Mesh> asset) { s_MeshCache.Put(asset->GetPath(), asset); }
 		template <>
-		static void Submit(Ref<Material> asset)
-		{
-			s_MaterialCache.Put(asset->GetPath(), asset);
-		}
-		
+		static void Submit(Ref<Material> asset) { s_MaterialCache.Put(asset->GetPath(), asset); }
 		template <>
 		static void Submit(Ref<Model> model)
 		{
 			s_ModelCache.Put(model->GetPath(), model);
 			AddAssociationToFile(model->GetID(), model->GetPath());
+		}
+
+		template <>
+		static void Remove<Mesh>(UUID id) 
+		{ 
+			if (s_MeshCache.Has(GetPath(id)))
+				s_MeshCache.Remove(GetPath(id)); 
+		}
+		template <>
+		static void Remove<Model>(UUID id) 
+		{ 
+			if (s_ModelCache.Has(GetPath(id)))
+				s_ModelCache.Remove(GetPath(id)); 
+		}
+		template <>
+		static void Remove<Material>(UUID id) 
+		{ 
+			if (s_MaterialCache.Has(GetPath(id)))
+				s_MaterialCache.Remove(GetPath(id)); 
 		}
 
 		template<typename T>
@@ -73,9 +87,9 @@ namespace Debut
 				return nullptr;
 
 			std::stringstream ss;
-			ss << s_ProjectDir << "\\Lib\\Assets\\" << id;
+			ss << s_AssetsDir << id;
 			std::stringstream metaSs;
-			metaSs << s_ProjectDir << "\\Lib\\Metadata\\" << id << ".meta";
+			metaSs << s_MetadataDir << id << ".meta";
 
 			std::ifstream file(ss.str());
 			if (file.good())
@@ -87,11 +101,16 @@ namespace Debut
 			return Request<T>(s_AssetMap[id], s_AssetMap[id] + ".meta");
 		}
 
+		static std::vector<std::pair<UUID, std::string>> GetAssetMap();
+		static void DeleteAssociations(std::vector<UUID>& id);
+
 	public:
 		// Working directory for the currently opened project
 		static std::string s_ProjectDir;
-		// Directory containing intermediate data for assets
-		static std::string s_IntAssetsDir;
+		// Asset directory
+		static std::string s_AssetsDir;
+		// Metadata directory
+		static std::string s_MetadataDir;
 		
 	private:
 		static void Reimport(const std::string& folder);

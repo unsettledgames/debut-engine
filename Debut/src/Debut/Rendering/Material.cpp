@@ -23,97 +23,119 @@ namespace Debut
 
 	Material::Material(const std::string& path, const std::string& metaPath) : m_Path(path), m_MetaPath(metaPath)
 	{
+		if (m_MetaPath == "")
+			m_MetaPath = m_Path + ".meta";
 		// Load material if it exists, otherwise create a .meta file
 		std::ifstream matFile(path);
 		std::stringstream ss;
 
 		if (matFile.good())
 		{
-			ss << matFile.rdbuf();
-			YAML::Node inYaml = YAML::Load(ss.str());
-
-			// Load the ID from the meta file
-			std::ifstream meta(metaPath);
-			ss.str("");
-			ss << meta.rdbuf();
-			YAML::Node metaNode = YAML::Load(ss.str());
-			m_ID = metaNode["ID"].as<uint64_t>();
-
-			// First of all load the shader
-			m_Shader = inYaml["Shader"].as<uint64_t>();
-			m_Name = inYaml["Name"].as<std::string>();
-			Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
-
-			if (shader == nullptr)
-				return;
-			// Then load the uniform fromt the shader and their values from disk
-			std::vector<ShaderUniform> uniforms = shader->GetUniforms();
-			YAML::Node matParams = inYaml["Parameters"];
-
-			for (auto& uniform : uniforms)
-			{
-				m_Uniforms[uniform.Name] = uniform;
-				switch (uniform.Type)
-				{
-				case ShaderDataType::Float: 
-					m_Uniforms[uniform.Name].Data.Float = matParams[uniform.Name].as<float>();
-					break;
-				case ShaderDataType::Float2: 
-					m_Uniforms[uniform.Name].Data.Vec2 = matParams[uniform.Name].as<glm::vec2>();
-					break;
-				case ShaderDataType::Float3: 
-					m_Uniforms[uniform.Name].Data.Vec3 = matParams[uniform.Name].as<glm::vec3>();
-					break;
-				case ShaderDataType::Float4: 
-					m_Uniforms[uniform.Name].Data.Vec4 = matParams[uniform.Name].as<glm::vec4>();
-					break;
-				case ShaderDataType::Mat4:
-					m_Uniforms[uniform.Name].Data.Mat4 = matParams[uniform.Name].as<glm::mat4>();
-					break;
-
-				case ShaderDataType::Int: 
-					m_Uniforms[uniform.Name].Data.Int = matParams[uniform.Name].as<int>();
-					break;
-				case ShaderDataType::Bool: 
-					m_Uniforms[uniform.Name].Data.Bool = matParams[uniform.Name].as<bool>();
-					break;
-				case ShaderDataType::Sampler2D: 
-				{
-					// TODO: add scale and offset to texture?
-
-					// Load the texture data
-					YAML::Node textureNode = matParams[uniform.Name];
-					// Load the actual texture
-					UUID texID = textureNode["ID"].as<uint64_t>();
-					Ref<Texture2D> texture = AssetManager::Request<Texture2D>(texID);
-
-					m_Uniforms[uniform.Name].Data.Texture = texID;
-				}
-				break;
-
-				default:
-					Log.CoreError("Material type {0} for uniform {1} isn't supported", (int)uniform.Type, uniform.Name);
-					break;
-				}
-			}
-
-			m_Valid = true;
+			m_Path = path;
+			Load(matFile);
 		}
 		else
 		{
-			// Create the .meta file
 			matFile.close();
-			std::ofstream metaFile(m_MetaPath);
+			std::string assetPath = AssetManager::s_AssetsDir + path;
+			std::ifstream assetFile(assetPath);
 
-			YAML::Emitter metaEmitter;
-			metaEmitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
-			metaFile << metaEmitter.c_str();
-			metaFile.close();
+			if (assetFile.good())
+			{
+				m_Path = assetPath;
+				m_MetaPath = AssetManager::s_MetadataDir + path + ".meta";
+				Load(assetFile);
+			}
+			else
+			{
+				assetFile.close();
 
-			// Save the default configuration for this material
-			Material::SaveSettings(path, { "Untitled Material", 0, {} });
-			m_Valid = false;
+				std::ofstream metaFile(m_MetaPath);
+
+				YAML::Emitter metaEmitter;
+				metaEmitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
+				metaFile << metaEmitter.c_str();
+				metaFile.close();
+
+				// Save the default configuration for this material
+				Material::SaveSettings(path, { "Untitled Material", 0, {} });
+				m_Valid = false;
+			}
 		}
+	}
+
+	void Material::Load(std::ifstream& file)
+	{
+		std::stringstream ss;
+		ss << file.rdbuf();
+		YAML::Node inYaml = YAML::Load(ss.str());
+
+		// Load the ID from the meta file
+		std::ifstream meta(m_MetaPath);
+		ss.str("");
+		ss << meta.rdbuf();
+		YAML::Node metaNode = YAML::Load(ss.str());
+		m_ID = metaNode["ID"].as<uint64_t>();
+
+		// First of all load the shader
+		m_Shader = inYaml["Shader"].as<uint64_t>();
+		m_Name = inYaml["Name"].as<std::string>();
+		Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
+
+		if (shader == nullptr)
+			return;
+		// Then load the uniform fromt the shader and their values from disk
+		std::vector<ShaderUniform> uniforms = shader->GetUniforms();
+		YAML::Node matParams = inYaml["Parameters"];
+
+		for (auto& uniform : uniforms)
+		{
+			m_Uniforms[uniform.Name] = uniform;
+			switch (uniform.Type)
+			{
+			case ShaderDataType::Float:
+				m_Uniforms[uniform.Name].Data.Float = matParams[uniform.Name].as<float>();
+				break;
+			case ShaderDataType::Float2:
+				m_Uniforms[uniform.Name].Data.Vec2 = matParams[uniform.Name].as<glm::vec2>();
+				break;
+			case ShaderDataType::Float3:
+				m_Uniforms[uniform.Name].Data.Vec3 = matParams[uniform.Name].as<glm::vec3>();
+				break;
+			case ShaderDataType::Float4:
+				m_Uniforms[uniform.Name].Data.Vec4 = matParams[uniform.Name].as<glm::vec4>();
+				break;
+			case ShaderDataType::Mat4:
+				m_Uniforms[uniform.Name].Data.Mat4 = matParams[uniform.Name].as<glm::mat4>();
+				break;
+
+			case ShaderDataType::Int:
+				m_Uniforms[uniform.Name].Data.Int = matParams[uniform.Name].as<int>();
+				break;
+			case ShaderDataType::Bool:
+				m_Uniforms[uniform.Name].Data.Bool = matParams[uniform.Name].as<bool>();
+				break;
+			case ShaderDataType::Sampler2D:
+			{
+				// TODO: add scale and offset to texture?
+
+				// Load the texture data
+				YAML::Node textureNode = matParams[uniform.Name];
+				// Load the actual texture
+				UUID texID = textureNode["ID"].as<uint64_t>();
+				Ref<Texture2D> texture = AssetManager::Request<Texture2D>(texID);
+
+				m_Uniforms[uniform.Name].Data.Texture = texID;
+			}
+			break;
+
+			default:
+				Log.CoreError("Material type {0} for uniform {1} isn't supported", (int)uniform.Type, uniform.Name);
+				break;
+			}
+		}
+
+		m_Valid = true;
 	}
 
 	void Material::SetConfig(const MaterialConfig& config)
@@ -151,7 +173,8 @@ namespace Debut
 		YAML::Emitter metaEmitter;
 		std::ofstream out(m_MetaPath);
 
-		metaEmitter << YAML::BeginDoc << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
+		metaEmitter << YAML::BeginDoc << YAML::BeginMap << 
+			YAML::Key << "ID" << YAML::Value << m_ID << YAML::EndMap << YAML::EndDoc;
 		out << metaEmitter.c_str();
 	}
 
@@ -314,6 +337,33 @@ namespace Debut
 		{
 			ret[i] = el.second;
 			i++;
+		}
+
+		return ret;
+	}
+
+	MaterialMetadata Material::GetMetadata(UUID id)
+	{
+		MaterialMetadata ret = {};
+		std::string path = AssetManager::GetPath(id);
+		std::ifstream metaFile(path);
+
+		if (!metaFile.good())
+		{
+			std::stringstream ss;
+			ss << AssetManager::s_AssetsDir << id;
+
+			metaFile.open(ss.str());
+		}
+
+		if (metaFile.good())
+		{
+			std::stringstream ss;
+			ss << metaFile.rdbuf();
+
+			YAML::Node metaNode = YAML::Load(ss.str());
+			ret.Name = metaNode["Name"].as<std::string>();
+			ret.ID = id;
 		}
 
 		return ret;

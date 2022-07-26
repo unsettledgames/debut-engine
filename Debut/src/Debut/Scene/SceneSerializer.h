@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 #include <Debut/Events/KeyEvent.h>
+#include <yaml-cpp/yaml.h>
 
 namespace YAML
 {
@@ -18,10 +19,11 @@ namespace Debut
 
 		void SerializeText(const std::string& name);
 		void SerializeBin(const std::string& name) {};
-		void SerializeEntity(Entity& entity, YAML::Emitter& out);
+		void SerializeEntity(EntitySceneNode& entity, YAML::Emitter& out);
 
 		bool DeserializeText(const std::string& name);
 		bool DeserializeBin(const std::string& name) { return false; };
+		void DeserializeEntity(YAML::Node& node);
 
 	private:
 		Ref<Scene> m_Scene;

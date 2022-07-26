@@ -4,6 +4,7 @@
 #include "Debut/Scene/Entity.h"
 #include "Debut/Scene/Components.h"
 #include "Debut/Rendering/Renderer/Renderer2D.h"
+#include "Debut/Rendering/Renderer/Renderer3D.h"
 #include "Debut/AssetManager/AssetManager.h"
 
 #include "box2d/b2_world.h"
@@ -29,11 +30,12 @@ namespace Debut
 	
 	Scene::Scene()
 	{
+		m_CachedSceneGraph = new EntitySceneNode();
 	}
 
 	Scene::~Scene()
 	{
-
+		delete m_CachedSceneGraph;
 	}
 
 	template<typename T>
@@ -58,6 +60,8 @@ namespace Debut
 	void Scene::OnComponentAdded(CircleCollider2DComponent& bc2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(MeshRendererComponent& bc2d, Entity entity) { }
 
 	template <typename Component>
 	static void CopyComponent(entt::registry& dst, const entt::registry& src, const std::unordered_map<UUID, entt::entity> enttMap)
@@ -105,6 +109,8 @@ namespace Debut
 	void Scene::OnEditorUpdate(Timestep ts, Camera& camera)
 	{
 		DBT_PROFILE_SCOPE("Editor update");
+
+		// 2D Rendering
 		Renderer2D::BeginScene(camera, glm::inverse(camera.GetView()));
 
 		auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
@@ -125,12 +131,23 @@ namespace Debut
 		}
 
 		Renderer2D::EndScene();
+
+		// 3D Rendering
+		Renderer3D::BeginScene(camera, glm::inverse(camera.GetView()));
+
+		auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
+		for (auto entity : group3D)
+		{
+			auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
+			Renderer3D::DrawModel(mesh, transform.GetTransform());
+		}
+
+		Renderer3D::EndScene();
 	}
 	
 
 	void Scene::OnRuntimeUpdate(Timestep ts)
 	{
-		
 		// Update scripts
 		{
 			DBT_PROFILE_SCOPE("Scene: Script Update");
@@ -191,17 +208,35 @@ namespace Debut
 
 		if (mainCamera)
 		{
-			DBT_PROFILE_SCOPE("Renderer2D update");
-			Renderer2D::BeginScene(*mainCamera, cameraTransform);
-
-			auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
-			for (auto entity : group)
+			// 2D Rendering
 			{
-				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				DBT_PROFILE_SCOPE("Renderer2D update");
+				Renderer2D::BeginScene(*mainCamera, cameraTransform);
+
+				auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
+				for (auto entity : group)
+				{
+					auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				}
+
+				Renderer2D::EndScene();
 			}
 
-			Renderer2D::EndScene();
+			// 3D Rendering
+			{
+				DBT_PROFILE_SCOPE("Renderer3D update");
+				Renderer3D::BeginScene(*mainCamera, cameraTransform);
+
+				auto group = m_Registry.view<TransformComponent, MeshRendererComponent>();
+				for (auto entity : group)
+				{
+					auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
+					Renderer3D::DrawModel(mesh, transform.GetTransform());
+				}
+
+				Renderer3D::EndScene();
+			}
 		}
 	}
 
@@ -291,7 +326,7 @@ namespace Debut
 		if (!entity)
 			return;
 
-		Entity duplicate = CreateEntity(entity.GetComponent<TagComponent>().Name + " Copy");
+		Entity duplicate = CreateEntity({}, entity.GetComponent<TagComponent>().Name + " Copy");
 		
 		CopyComponentIfExists<TransformComponent>(duplicate, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(duplicate, entity);
@@ -300,9 +335,11 @@ namespace Debut
 		CopyComponentIfExists<CircleCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CameraComponent>(duplicate, entity);
 		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
+		
+		duplicate.Transform().Parent = duplicate.Transform().Parent;
 	}
 
-	Entity Scene::CreateEntity(const std::string& name)
+	Entity Scene::CreateEntity(Entity parent, const std::string& name)
 	{
 		Entity ret = { m_Registry.create(), this };
 
@@ -310,19 +347,36 @@ namespace Debut
 		ret.AddComponent<TagComponent>(name);
 		ret.AddComponent<IDComponent>();
 
+		ret.Transform().Parent = parent;
+
 		return ret;
 	}
 
-	Entity Scene::CreateEntity(const UUID& id, const std::string& name)
+	Entity Scene::CreateEntity(Entity parent, const UUID& id, const std::string& name)
 	{
 		Entity ret = { m_Registry.create(), this };
 
+		IDComponent& idC = ret.AddComponent<IDComponent>();
+		idC.ID = id;
 		ret.AddComponent<TransformComponent>();
 		ret.AddComponent<TagComponent>(name);
-		IDComponent idC = ret.AddComponent<IDComponent>();
-		idC.ID = id;
+
+		ret.Transform().Parent = parent;
 
 		return ret;
+	}
+
+	Entity Scene::GetEntityByID(uint64_t id)
+	{
+		auto view = m_Registry.view<IDComponent>();
+		for (auto& entity : view)
+		{
+			IDComponent& idComp = view.get<IDComponent>(entity);
+			if (idComp.ID == id)
+				return { entity, this };
+		}
+
+		return {};
 	}
 
 	void Scene::DestroyEntity(Entity entity)
@@ -349,7 +403,7 @@ namespace Debut
 			UUID id = srcSceneRegistry.get<IDComponent>(e).ID;
 			auto& name = srcSceneRegistry.get<TagComponent>(e).Name;
 
-			Entity newEntity = newScene->CreateEntity(id, name);
+			Entity newEntity = newScene->CreateEntity({}, id, name);
 			enttMap[id] = newEntity;
 		}
 
@@ -361,7 +415,43 @@ namespace Debut
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
+		// Restore transforms
+		auto transformView = dstSceneRegistry.view<TransformComponent>();
+		for (auto e : transformView)
+		{
+			TransformComponent& tc = dstSceneRegistry.get<TransformComponent>(e);
+			if (tc.Parent)
+				tc.Parent = newScene->GetEntityByID(tc.Parent.GetComponent<IDComponent>().ID);
+		}
+
 		return newScene;
+	}
+
+	void Scene::RebuildSceneGraph()
+	{
+		EntitySceneNode scene(true, {});
+		std::unordered_map<entt::entity, EntitySceneNode> nodes;
+		auto transforms = m_Registry.view<TransformComponent>();
+
+		for (auto entity : transforms)
+			nodes[entity] = EntitySceneNode(false, Entity(entity, this));
+
+		for (auto entity : transforms)
+		{
+			auto& transform = transforms.get<TransformComponent>(entity);
+
+			// If the object doesn't have a parent, then the parent is the root node
+			if (!transform.Parent)
+				scene.Children.push_back(nodes[entity]);
+			// Otherwise, set the entity as the child of its parent in the scene graph
+			else
+			{
+				entt::entity parentEntity = entt::to_entity(m_Registry, transform.Parent);
+				nodes[transform.Parent].Children.push_back(nodes[entity]);
+			}
+		}
+
+		*m_CachedSceneGraph = scene;
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
