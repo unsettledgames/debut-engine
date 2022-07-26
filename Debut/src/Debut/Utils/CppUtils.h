@@ -22,7 +22,13 @@ namespace Debut
 			static bool RemoveFile(std::filesystem::path path)
 			{
 				if (std::filesystem::exists(path))
-					return std::filesystem::remove_all(path);
+				{
+					if (std::filesystem::is_directory(path))
+						return std::filesystem::remove_all(path);
+					else
+						return std::filesystem::remove(path);
+				}
+					
 				return false;
 			}
 		}

@@ -347,6 +347,7 @@ namespace Debutant
 					{
 						std::stringstream ss;
 						ss << inFile.rdbuf();
+						inFile.close();
 						YAML::Node node = YAML::Load(ss.str());
 
 						CppUtils::FileSystem::RemoveFile(path + ".meta");
