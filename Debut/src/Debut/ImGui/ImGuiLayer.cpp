@@ -229,7 +229,10 @@ namespace Debut
 			// MATERIAL_ICON
 			{'\ue005', "assets\\icons\\material.png"},
 			// UNIMPORTED_MODEL_ICON
-			{'\ue006', "assets\\icons\\unimported_model.png"}/*,
+			{'\ue006', "assets\\icons\\unimported_model.png"},
+			// ENITTY ICON
+			{'\ue007', "assets\\icons\\entity.png"}
+			/*,
 			{'\ue007', "assets\\icons\\model.png"},
 			{'\ue008', "assets\\icons\\model.png"},
 			{'\ue009', "assets\\icons\\model.png"},

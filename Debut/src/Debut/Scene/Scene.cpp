@@ -429,29 +429,30 @@ namespace Debut
 
 	void Scene::RebuildSceneGraph()
 	{
+		delete m_CachedSceneGraph;
+		m_CachedSceneGraph = new EntitySceneNode();
+
 		EntitySceneNode scene(true, {});
-		std::unordered_map<entt::entity, EntitySceneNode> nodes;
 		auto transforms = m_Registry.view<TransformComponent>();
 
 		for (auto entity : transforms)
-			nodes[entity] = EntitySceneNode(false, Entity(entity, this));
+			m_ExistingEntities[entity] = new EntitySceneNode(false, Entity(entity, this));
 
 		for (auto entity : transforms)
 		{
 			auto& transform = transforms.get<TransformComponent>(entity);
 
 			// If the object doesn't have a parent, then the parent is the root node
-			if (!transform.Parent)
-				scene.Children.push_back(nodes[entity]);
-			// Otherwise, set the entity as the child of its parent in the scene graph
-			else
+			if (transform.Parent)
 			{
 				entt::entity parentEntity = entt::to_entity(m_Registry, transform.Parent);
-				nodes[transform.Parent].Children.push_back(nodes[entity]);
+				m_ExistingEntities[transform.Parent]->Children.push_back(m_ExistingEntities[entity]);
 			}
 		}
 
-		*m_CachedSceneGraph = scene;
+		for (auto entity : m_ExistingEntities)
+			if (!entity.second->EntityData.Transform().Parent)
+				m_CachedSceneGraph->Children.push_back(entity.second);
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)

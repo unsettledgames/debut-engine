@@ -252,7 +252,7 @@ namespace Debut
 
 		out << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
 		for (uint32_t i = 0; i < node.Children.size(); i++)
-			SerializeEntity(node.Children[i], out);
+			SerializeEntity(*node.Children[i], out);
 		out << YAML::EndSeq;
 
 		out << YAML::EndMap;
@@ -268,7 +268,7 @@ namespace Debut
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
 		for (uint32_t i = 0; i < m_Scene->m_CachedSceneGraph->Children.size(); i++)
-			SerializeEntity(m_Scene->m_CachedSceneGraph->Children[i],out);
+			SerializeEntity(*m_Scene->m_CachedSceneGraph->Children[i],out);
 
 		out << YAML::EndSeq;
 		out << YAML::EndMap;

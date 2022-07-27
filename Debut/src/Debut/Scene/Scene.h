@@ -42,6 +42,7 @@ namespace Debut
 
 		static Ref<Scene> Copy(Ref<Scene> other);
 		void RebuildSceneGraph();
+		void ClearSceneGraph();
 
 	private:
 		template<typename T>
@@ -58,6 +59,7 @@ namespace Debut
 
 		// Editor
 		EntitySceneNode* m_CachedSceneGraph;
+		std::unordered_map<entt::entity, EntitySceneNode*> m_ExistingEntities;
 	};
 }
 

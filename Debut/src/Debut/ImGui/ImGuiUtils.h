@@ -13,6 +13,7 @@
 #define IMGUI_ICON_MESH				u8"\ue004"
 #define IMGUI_ICON_MATERIAL			u8"\ue005"
 #define IMGUI_ICON_UNIMPORTED_MODEL	u8"\ue006"
+#define IMGUI_ICON_ENTITY			u8"\ue007"
 
 namespace Debut
 {

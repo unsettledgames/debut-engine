@@ -41,7 +41,7 @@ namespace Debut
 		ImGui::Begin("Scene Hierarchy");
 
 		for (uint32_t i=0; i<m_Context->m_CachedSceneGraph->Children.size(); i++)
-			DrawEntityNode(m_Context->m_CachedSceneGraph->Children[i]);
+			DrawEntityNode(*m_Context->m_CachedSceneGraph->Children[i]);
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectionContext = {};
@@ -79,7 +79,7 @@ namespace Debut
 		ImGuiTreeNodeFlags flags = (m_SelectionContext == node.EntityData ? ImGuiTreeNodeFlags_OpenOnArrow : 0);
 		flags |= ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_Framed;
-
+		
 		// Don't let the user expand a node if it doesn't have children
 		if (node.Children.size() == 0)
 			flags |= ImGuiTreeNodeFlags_Leaf;
@@ -93,12 +93,48 @@ namespace Debut
 			ImGui::PushStyleColor(ImGuiCol_Header, { 0.0, 0.0, 0.0, 0.0 });
 		else
 			ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered]);
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, tc.Name.c_str());
+		std::string entityName = node.Children.size() == 0 ? (IMGUI_ICON_ENTITY + std::string("  ") + tc.Name) : tc.Name;
+		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, entityName.c_str());
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
-
 		if (ImGui::IsItemClicked())
 			m_SelectionContext = node.EntityData;
+
+		// Drag n drop to parent entities
+		if (ImGui::BeginDragDropSource())
+		{
+			uint32_t id = node.EntityData;
+			ImGui::SetDragDropPayload("SCENE_HIERARCHY_ENTITY", (void*)&id, sizeof(id), ImGuiCond_Once);
+			ImGui::EndDragDropSource();
+		}
+		else if (ImGui::BeginDragDropTarget())
+		{
+			// Set the current node as the payload's parent
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_HIERARCHY_ENTITY");
+			if (payload != nullptr)
+			{
+				uint32_t entityId = *((uint32_t*)payload->Data);
+				Entity child = { (entt::entity)entityId, m_Context.get()};
+
+				// Check if child is parent of this entity
+				Entity parent = node.EntityData;
+				bool canParent = true;
+				while (parent && canParent)
+				{
+					if ((uint32_t)parent == (uint32_t)child)
+						canParent = false;
+					parent = parent.Transform().Parent;
+				}
+				
+				if (canParent)
+				{
+					child.Transform().SetParent(node.EntityData);
+					m_Context->RebuildSceneGraph();
+				}
+			}
+			
+			ImGui::EndDragDropTarget();
+		}		
 
 		// Right click on blank space
 		if (ImGui::BeginPopupContextItem())
@@ -142,7 +178,7 @@ namespace Debut
 		if (opened)
 		{
 			for (uint32_t i = 0; i < node.Children.size(); i++)
-				DrawEntityNode(node.Children[i]);
+				DrawEntityNode(*node.Children[i]);
 			ImGui::TreePop();
 		}
 
@@ -437,7 +473,7 @@ namespace Debut
 	{
 		// Destroy children
 		for (uint32_t i = 0; i < node.Children.size(); i++)
-			DestroySceneNode(node.Children[i]);
+			DestroySceneNode(*node.Children[i]);
 
 		m_Context->DestroyEntity(node.EntityData);
 		if (m_SelectionContext == node.EntityData)

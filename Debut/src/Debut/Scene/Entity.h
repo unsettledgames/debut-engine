@@ -74,10 +74,16 @@ namespace Debut
 	{
 		bool IsRoot = false;
 		Entity EntityData;
-		std::vector<EntitySceneNode> Children;
+		std::vector<EntitySceneNode*> Children;
 
 		EntitySceneNode(bool root, Entity parent) : IsRoot(root), EntityData(parent), Children({}) {}
 		EntitySceneNode() : EntityData({}), Children({}) {}
+
+		~EntitySceneNode()
+		{
+			for (auto child : Children)
+				delete child;
+		}
 	};
 }
 
