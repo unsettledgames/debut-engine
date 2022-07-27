@@ -15,6 +15,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_operation.hpp>
 
+/*
+    TODO:
+    - Drag n drop stuff in scene hierarchy to change parenting
+    - Serialize scene while keeping scene hierarchy order
+    - Let the user move entities in the hierarchy
+    - MeshRendererComponent serialization / deserialization
+    - Mesh properties in properties panel?
+*/
+
 namespace Debutant
 {
     void DebutantLayer::OnAttach()

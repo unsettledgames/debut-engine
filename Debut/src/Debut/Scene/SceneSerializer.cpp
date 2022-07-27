@@ -87,6 +87,13 @@ namespace Debut
 		out << YAML::Key << "TilingFactor" << YAML::Value << s.TilingFactor;
 	}
 
+	static void SerializeComponent(const MeshRendererComponent& s, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Mesh" << YAML::Value << s.Mesh;
+		out << YAML::Key << "Material" << YAML::Value << s.Material;
+		out << YAML::Key << "Instanced" << YAML::Value << s.Instanced;
+	}
+
 	static void SerializeComponent(const Rigidbody2DComponent& c, YAML::Emitter& out)
 	{
 		out << YAML::Key << "Type" << YAML::Value << Rb2DTypeToString(c.Type);
@@ -179,6 +186,17 @@ namespace Debut
 	}
 
 	template<>
+	static void DeserializeComponent<MeshRendererComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		MeshRendererComponent& mr = e.AddComponent<MeshRendererComponent>();
+		mr.Instanced = in["Instanced"].as<bool>();
+		mr.Material = in["Material"].as<uint64_t>();
+		mr.Mesh = in["Mesh"].as<uint64_t>();
+	}
+
+	template<>
 	static void DeserializeComponent<Rigidbody2DComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in)
@@ -227,6 +245,7 @@ namespace Debut
 		SerializeComponent<TransformComponent>(entity, "TransformComponent", out);
 		SerializeComponent<CameraComponent>(entity, "CameraComponent", out);
 		SerializeComponent<SpriteRendererComponent>(entity, "SpriteRendererComponent", out);
+		SerializeComponent<MeshRendererComponent>(entity, "MeshRendererComponent", out);
 		SerializeComponent<Rigidbody2DComponent>(entity, "Rigidbody2DComponent", out);
 		SerializeComponent<BoxCollider2DComponent>(entity, "BoxCollider2DComponent", out);
 		SerializeComponent<CircleCollider2DComponent>(entity, "CircleCollider2DComponent", out);
@@ -298,6 +317,7 @@ namespace Debut
 		DeserializeComponent<TransformComponent>(entity, yamlEntity["TransformComponent"], m_Scene);
 		DeserializeComponent<CameraComponent>(entity, yamlEntity["CameraComponent"]);
 		DeserializeComponent<SpriteRendererComponent>(entity, yamlEntity["SpriteRendererComponent"]);
+		DeserializeComponent<MeshRendererComponent>(entity, yamlEntity["MeshRendererComponent"]);
 		DeserializeComponent<Rigidbody2DComponent>(entity, yamlEntity["Rigidbody2DComponent"]);
 		DeserializeComponent<BoxCollider2DComponent>(entity, yamlEntity["BoxCollider2DComponent"]);
 		DeserializeComponent<CircleCollider2DComponent>(entity, yamlEntity["CircleCollider2DComponent"]);

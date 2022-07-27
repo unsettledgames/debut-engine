@@ -30,7 +30,6 @@ namespace Debut
 		template <typename T>
 		static void Remove(UUID id) {}
 
-		// TODO: make these 2 guys uise UUIDs instead of paths, make sure meta files are loaded correctly
 		template <>
 		static void Submit(Ref<Mesh> asset) { s_MeshCache.Put(asset->GetPath(), asset); }
 		template <>

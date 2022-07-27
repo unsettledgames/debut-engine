@@ -53,7 +53,6 @@ namespace Debut
 			ImGui::SameLine();
 			ImGui::NextColumn();
 
-			// TODO: put name of selected material inside 
 			ImGui::Button((currentName + "##" + label).c_str(), {ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.2f});
 			if (ImGui::BeginDragDropTarget())
 			{
