@@ -30,12 +30,10 @@ namespace Debut
 	
 	Scene::Scene()
 	{
-		m_CachedSceneGraph = new EntitySceneNode();
 	}
 
 	Scene::~Scene()
 	{
-		delete m_CachedSceneGraph;
 	}
 
 	template<typename T>
@@ -425,34 +423,6 @@ namespace Debut
 		}
 
 		return newScene;
-	}
-
-	void Scene::RebuildSceneGraph()
-	{
-		delete m_CachedSceneGraph;
-		m_CachedSceneGraph = new EntitySceneNode();
-
-		EntitySceneNode scene(true, {});
-		auto transforms = m_Registry.view<TransformComponent>();
-
-		for (auto entity : transforms)
-			m_ExistingEntities[entity] = new EntitySceneNode(false, Entity(entity, this));
-
-		for (auto entity : transforms)
-		{
-			auto& transform = transforms.get<TransformComponent>(entity);
-
-			// If the object doesn't have a parent, then the parent is the root node
-			if (transform.Parent)
-			{
-				entt::entity parentEntity = entt::to_entity(m_Registry, transform.Parent);
-				m_ExistingEntities[transform.Parent]->Children.push_back(m_ExistingEntities[entity]);
-			}
-		}
-
-		for (auto entity : m_ExistingEntities)
-			if (!entity.second->EntityData.Transform().Parent)
-				m_CachedSceneGraph->Children.push_back(entity.second);
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)

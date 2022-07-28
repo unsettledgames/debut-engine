@@ -41,8 +41,6 @@ namespace Debut
 		Entity GetEntityByID(uint64_t id);
 
 		static Ref<Scene> Copy(Ref<Scene> other);
-		void RebuildSceneGraph();
-		void ClearSceneGraph();
 
 	private:
 		template<typename T>
@@ -55,11 +53,7 @@ namespace Debut
 		uint32_t m_ViewportHeight = 0;
 		
 		// Physics
-		b2World* m_PhysicsWorld2D = nullptr;
-
-		// Editor
-		EntitySceneNode* m_CachedSceneGraph;
-		std::unordered_map<entt::entity, EntitySceneNode*> m_ExistingEntities;
+		b2World* m_PhysicsWorld2D = nullptr;		
 	};
 }
 

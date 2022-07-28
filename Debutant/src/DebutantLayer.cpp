@@ -17,9 +17,8 @@
 
 /*
     TODO:
-    - Drag n drop stuff in scene hierarchy to change parenting
-    - Serialize scene while keeping scene hierarchy order
     - Let the user move entities in the hierarchy
+    - Serialize scene while keeping scene hierarchy order
     - Mesh properties in properties panel?
 */
 
@@ -409,7 +408,7 @@ namespace Debutant
         for (uint32_t i = 0; i < model->GetSubmodels().size(); i++)
             LoadModelNode(AssetManager::Request<Model>(model->GetSubmodels()[i]), modelEntity);
 
-        m_ActiveScene->RebuildSceneGraph();
+        m_SceneHierarchy.RebuildSceneGraph();
     }
 
     void DebutantLayer::DrawGizmos()
@@ -582,7 +581,7 @@ namespace Debutant
 
         m_ScenePath = path.string();
         m_ActiveScene = m_EditorScene;
-        m_ActiveScene->RebuildSceneGraph();
+        m_SceneHierarchy.RebuildSceneGraph();
     }
 
     void DebutantLayer::SaveScene()
@@ -593,7 +592,7 @@ namespace Debutant
             return;
         }
         SceneSerializer ss(m_ActiveScene);
-        ss.SerializeText(m_ScenePath);
+        ss.SerializeText(m_ScenePath, *m_SceneHierarchy.GetSceneGraph());
     }
 
     void DebutantLayer::SaveSceneAs()
@@ -602,7 +601,7 @@ namespace Debutant
         if (!path.empty())
         {
             SceneSerializer ss(m_ActiveScene);
-            ss.SerializeText(path);
+            ss.SerializeText(path, *m_SceneHierarchy.GetSceneGraph());
 
             m_ScenePath = path;
         }

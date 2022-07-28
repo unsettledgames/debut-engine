@@ -7,10 +7,15 @@
 #include <Debut/Rendering/Texture.h>
 #include <filesystem>
 #include <Debut/ImGui/ImGuiUtils.h>
+#include <entt.hpp>
 
 /*
 	TODO
 		- Change parents by dragging objects around
+			- Save the last hovered item
+			- If the user drops when the item is not hovered
+				- Detect if they dropped above or below the last hovered item
+				- if above, put above, if below, put below (on the same tree level)
 		- Save objects in the right order
 		- Move objects in the hierarchy
 */
@@ -20,6 +25,14 @@ namespace Debut
 	SceneHierarchyPanel::SceneHierarchyPanel()
 	{
 		EditorCache::Textures().Put("assets\\textures\\empty_texture.png", Texture2D::Create(1, 1));
+		m_CachedSceneGraph = new EntitySceneNode();
+	}
+
+	SceneHierarchyPanel::~SceneHierarchyPanel()
+	{
+		delete m_CachedSceneGraph;
+		for (auto e : m_ExistingEntities)
+			delete e.second;
 	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& scene)
@@ -40,8 +53,8 @@ namespace Debut
 	{
 		ImGui::Begin("Scene Hierarchy");
 
-		for (uint32_t i=0; i<m_Context->m_CachedSceneGraph->Children.size(); i++)
-			DrawEntityNode(*m_Context->m_CachedSceneGraph->Children[i]);
+		for (uint32_t i = 0; i < m_CachedSceneGraph->Children.size(); i++)
+			DrawEntityNode(*m_CachedSceneGraph->Children[i]);
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 			m_SelectionContext = {};
@@ -52,7 +65,8 @@ namespace Debut
 			if (ImGui::MenuItem("New Entity"))
 			{
 				m_SelectionContext = m_Context->CreateEntity({});
-				m_Context->RebuildSceneGraph();
+				m_ExistingEntities[m_SelectionContext] = new EntitySceneNode(false, m_SelectionContext);
+				RebuildSceneGraph();
 			}
 			ImGui::EndPopup();
 		}
@@ -62,8 +76,17 @@ namespace Debut
 		ImGui::Begin("Inspector");
 
 		if (m_SelectionContext)
-		{
 			DrawComponents(m_SelectionContext);
+
+		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+		{
+			if (m_DraggingEntity && !m_DroppedOnEntity && m_LastHoveredEntity)
+			{
+				// Take care of repositioning entities
+				
+
+				m_LastHoveredEntity = {};
+			}
 		}
 
 		ImGui::End();
@@ -99,6 +122,8 @@ namespace Debut
 		ImGui::PopStyleVar();
 		if (ImGui::IsItemClicked())
 			m_SelectionContext = node.EntityData;
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
+			m_LastHoveredEntity = node.EntityData;
 
 		// Drag n drop to parent entities
 		if (ImGui::BeginDragDropSource())
@@ -106,6 +131,9 @@ namespace Debut
 			uint32_t id = node.EntityData;
 			ImGui::SetDragDropPayload("SCENE_HIERARCHY_ENTITY", (void*)&id, sizeof(id), ImGuiCond_Once);
 			ImGui::EndDragDropSource();
+
+			m_DroppedOnEntity = false;
+			m_DraggingEntity = true;
 		}
 		else if (ImGui::BeginDragDropTarget())
 		{
@@ -129,20 +157,37 @@ namespace Debut
 				if (canParent)
 				{
 					child.Transform().SetParent(node.EntityData);
-					m_Context->RebuildSceneGraph();
+					RebuildSceneGraph();
 				}
+
+				m_DroppedOnEntity = true;
+				m_DraggingEntity = false;
+				m_LastHoveredEntity = {};
 			}
 			
 			ImGui::EndDragDropTarget();
-		}		
+		}
 
+		// One approach to moving entities: it has problems
+		/*ImGui::InvisibleButton("Invisible", {ImGui::GetContentRegionAvail().x, 1});
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
+			m_HoveringInvisibleEntityButton = true;
+		else
+			m_HoveringInvisibleEntityButton = false;
+		if (ImGui::BeginDragDropTarget())
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_HIERARCHY_ENTITY");
+			ImGui::EndDragDropTarget();
+		}
+		*/
 		// Right click on blank space
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("New Entity"))
 			{
 				m_SelectionContext = m_Context->CreateEntity(node.EntityData);
-				m_Context->RebuildSceneGraph();
+				m_ExistingEntities[m_SelectionContext] = new EntitySceneNode(false, m_SelectionContext);
+				RebuildSceneGraph();
 
 				ImGui::EndPopup();
 				if (opened)
@@ -152,7 +197,7 @@ namespace Debut
 			if (ImGui::MenuItem("Duplicate"))
 			{
 				m_Context->DuplicateEntity(node.EntityData);
-				m_Context->RebuildSceneGraph();
+				RebuildSceneGraph();
 
 				ImGui::EndPopup();
 				if (opened)
@@ -168,7 +213,7 @@ namespace Debut
 		if (entityDeleted)
 		{
 			DestroySceneNode(node);
-			m_Context->RebuildSceneGraph();
+			RebuildSceneGraph();
 
 			if (opened)
 				ImGui::TreePop();
@@ -478,5 +523,45 @@ namespace Debut
 		m_Context->DestroyEntity(node.EntityData);
 		if (m_SelectionContext == node.EntityData)
 			m_SelectionContext = {};
+	}
+
+
+	void SceneHierarchyPanel::RebuildSceneGraph()
+	{
+		delete m_CachedSceneGraph;
+		m_CachedSceneGraph = new EntitySceneNode();
+
+		EntitySceneNode scene(true, {});
+		auto transforms = m_Context->m_Registry.view<TransformComponent>();
+
+		for (auto entity : transforms)
+			m_ExistingEntities[entity]->Children.resize(0);
+
+		for (auto entity : transforms)
+		{
+			auto& transform = transforms.get<TransformComponent>(entity);
+
+			// If the object doesn't have a parent, then the parent is the root node
+			if (transform.Parent)
+			{
+				entt::entity parentEntity = entt::to_entity(m_Context->m_Registry, transform.Parent);
+				EntitySceneNode* currEntity = m_ExistingEntities[entity];
+				std::vector<EntitySceneNode*> children = m_ExistingEntities[transform.Parent]->Children;
+
+				currEntity->IndexInNode = children.size() > 0 ? children[children.size() - 1]->IndexInNode + 1 : 0;
+				m_ExistingEntities[transform.Parent]->Children.push_back(m_ExistingEntities[entity]);
+			}
+		}
+
+		uint32_t i = 0;
+		for (auto entity : m_ExistingEntities)
+		{
+			if (!entity.second->EntityData.Transform().Parent)
+			{
+				m_CachedSceneGraph->Children.push_back(entity.second);
+				entity.second->IndexInNode = i;
+				i++;
+			}
+		}
 	}
 }

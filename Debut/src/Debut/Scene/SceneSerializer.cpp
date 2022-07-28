@@ -258,7 +258,7 @@ namespace Debut
 		out << YAML::EndMap;
 	}
 
-	void SceneSerializer::SerializeText(const std::string& fileName)
+	void SceneSerializer::SerializeText(const std::string& fileName, EntitySceneNode& sceneGraph)
 	{
 		YAML::Emitter out;
 		std::ofstream outFile(fileName);
@@ -267,8 +267,8 @@ namespace Debut
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled scene";
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
-		for (uint32_t i = 0; i < m_Scene->m_CachedSceneGraph->Children.size(); i++)
-			SerializeEntity(*m_Scene->m_CachedSceneGraph->Children[i],out);
+		for (uint32_t i = 0; i < sceneGraph.Children.size(); i++)
+			SerializeEntity(*sceneGraph.Children[i],out);
 
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
