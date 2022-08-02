@@ -90,9 +90,9 @@ namespace Debut
 					// Place the dragged entity above or below the last hovered item
 					ImVec2 currMousePos = ImGui::GetMousePos();
 					if (currMousePos.y > m_LastHoveredPos.y)
-						ChangeEntityOrder(entityId, m_EntitiesOrdering[m_LastHoveredEntity] - 1);
+						ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode);
 					else
-						ChangeEntityOrder(entityId, m_EntitiesOrdering[m_LastHoveredEntity] + 1);
+						ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode - 1);
 
 					m_LastHoveredEntity = {};
 				}
@@ -129,7 +129,7 @@ namespace Debut
 		std::stringstream ss;
 		ss << tc.Name << node.IndexInNode;
 		std::string entityName = node.Children.size() == 0 ? (IMGUI_ICON_ENTITY + std::string("  ") + tc.Name) : tc.Name;
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, ss.str().c_str());
+		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, entityName.c_str());
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 		if (ImGui::IsItemClicked())
@@ -572,7 +572,7 @@ namespace Debut
 		}
 
 		// Order children, assign to scene graph
-		for (auto e : m_ExistingEntities)
+		for (auto& e : m_ExistingEntities)
 		{
 			if (!e.second->EntityData.Transform().Parent)
 				m_CachedSceneGraph->Children.push_back(e.second);
@@ -584,37 +584,45 @@ namespace Debut
 				[&](const EntitySceneNode* right, const EntitySceneNode* left)
 				{return right->IndexInNode < left->IndexInNode; });
 		}
+
+		std::sort(m_CachedSceneGraph->Children.begin(), m_CachedSceneGraph->Children.end(),
+			[&](const EntitySceneNode* right, const EntitySceneNode* left)
+			{return right->IndexInNode < left->IndexInNode; });
 	}
 
 	void SceneHierarchyPanel::ChangeEntityOrder(uint32_t movedEntity, uint32_t position)
 	{
 		EntitySceneNode* child = m_ExistingEntities[(entt::entity)movedEntity];
-		uint32_t parent = m_EntityParenting[movedEntity];
+		EntitySceneNode* parent;
+		if (m_ExistingEntities.find((entt::entity)m_EntityParenting[movedEntity]) != m_ExistingEntities.end())
+			parent = m_ExistingEntities[(entt::entity)m_EntityParenting[movedEntity]];
+		else
+			parent = m_CachedSceneGraph;
+		std::vector<EntitySceneNode*>& children = parent->Children;
 
 		uint32_t currPos = child->IndexInNode;
 
-		// Find the entity that has the moved entity as a child
-		for (auto entity : m_ExistingEntities)
+		if (currPos < position)
 		{
-			auto& children = entity.second->Children;
-			for (uint32_t i = 0; i < children.size(); i++)
-			{
-				// Entity that moved found
-				if (movedEntity == (uint32_t)children[i]->EntityData)
-				{
-					// Move it to the new position
-					m_ExistingEntities[children[i]->EntityData]->IndexInNode = position;
-					// Shift the other entities
-					for (uint32_t j = 0; j < i; j++)
-						m_ExistingEntities[children[j]->EntityData]->IndexInNode = j;
-					for (uint32_t j=i+1; j<children.size(); j++)
-						m_ExistingEntities[children[j]->EntityData]->IndexInNode = j;
+			for (uint32_t i = 0; i < currPos; i++)
+				children[i]->IndexInNode = i;
+			for (uint32_t i = currPos + 1; i <= position; i++)
+				children[i]->IndexInNode = i - 1;
 
-					RebuildSceneGraph();
-					return;
-				}
-			}
+			children[currPos]->IndexInNode = position;
 		}
+		else
+		{
+			position++;
+			for (uint32_t i = position; i < currPos; i++)
+				children[i]->IndexInNode = i + 1;
+
+			children[currPos]->IndexInNode = position;
+		}
+
+		std::sort(children.begin(), children.end(),
+			[&](const EntitySceneNode* right, const EntitySceneNode* left)
+			{return right->IndexInNode < left->IndexInNode; });
 
 		RebuildSceneGraph();
 	}
