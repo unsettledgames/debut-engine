@@ -74,7 +74,7 @@ namespace Debut
 	{
 		bool IsRoot = false;
 		Entity EntityData;
-		uint32_t IndexInNode = 0;
+		uint32_t IndexInNode = -1;
 		std::vector<EntitySceneNode*> Children;
 
 		EntitySceneNode(bool root, Entity entity) : IsRoot(root), EntityData(entity), Children({}) {}

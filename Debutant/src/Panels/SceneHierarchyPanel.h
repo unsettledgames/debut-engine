@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Debut.h"
+#include <imgui.h>
 #include <vector>
 
 
@@ -15,6 +16,7 @@ namespace Debut
 
 		void SetContext(const Ref<Scene>& scene);
 		void SetSelectedEntity(const Entity& entity);
+		void RegisterEntity(const Entity& entity);
 
 		void OnImGuiRender();
 
@@ -30,8 +32,11 @@ namespace Debut
 		inline EntitySceneNode* GetSceneGraph() { return m_CachedSceneGraph; }
 
 		void RebuildSceneGraph();
+		void ChangeEntityOrder(uint32_t movedEntity, uint32_t position);
 
 	private:
+		uint32_t GetParentInSceneGraph(EntitySceneNode* node, uint32_t entity);
+
 		void DrawEntityNode(EntitySceneNode& entity);
 		void DrawComponents(Entity& entity);
 
@@ -58,12 +63,17 @@ namespace Debut
 		bool m_RebuiltGraph = false;
 		EntitySceneNode* m_CachedSceneGraph;
 		std::unordered_map<entt::entity, EntitySceneNode*> m_ExistingEntities;
+		std::unordered_map<entt::entity, uint32_t> m_EntitiesOrdering;
+		// Key is child of value
+		std::unordered_map<uint32_t, uint32_t> m_EntityParenting;
 
 		// State
 		// remove
 		bool m_HoveringInvisibleEntityButton = false;
 		// keep
 		Entity m_LastHoveredEntity = {};
+		ImVec2 m_LastHoveredPos = {};
+
 		bool m_DroppedOnEntity = false;
 		bool m_DraggingEntity = false;
 	};

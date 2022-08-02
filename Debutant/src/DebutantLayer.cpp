@@ -371,9 +371,12 @@ namespace Debutant
     {
         Ref<Model> model = AssetManager::Request<Model>(path.string());
         Entity modelEntity = m_ActiveScene->CreateEntity({}, path.filename().string());
+        m_SceneHierarchy.RegisterEntity(modelEntity);
 
         modelEntity.Transform().Parent = {};
         LoadModelNode(model, modelEntity);
+
+        m_SceneHierarchy.RebuildSceneGraph();
     }
     void DebutantLayer::LoadModelNode(Ref<Model> model, Entity& parent)
     {
@@ -390,6 +393,9 @@ namespace Debutant
 
         // Create entity
         Entity modelEntity = m_ActiveScene->CreateEntity({}, name);
+        // Register the entity in the hierarchy
+        m_SceneHierarchy.RegisterEntity(modelEntity);
+
         // Parent it
         modelEntity.Transform().Parent = parent;
 
@@ -402,13 +408,12 @@ namespace Debutant
                 Entity additional = m_ActiveScene->CreateEntity({}, name + " i");
                 additional.Transform().Parent = modelEntity;
                 additional.AddComponent<MeshRendererComponent>(model->GetMeshes()[i], model->GetMaterials()[i]);
+                m_SceneHierarchy.RegisterEntity(additional);
             }
 
         // Add submodels as children
         for (uint32_t i = 0; i < model->GetSubmodels().size(); i++)
             LoadModelNode(AssetManager::Request<Model>(model->GetSubmodels()[i]), modelEntity);
-
-        m_SceneHierarchy.RebuildSceneGraph();
     }
 
     void DebutantLayer::DrawGizmos()

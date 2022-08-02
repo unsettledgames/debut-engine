@@ -1,5 +1,4 @@
 #include "SceneHierarchyPanel.h"
-#include <imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui_internal.h>
 #include "Utils/EditorCache.h"
@@ -65,7 +64,6 @@ namespace Debut
 			if (ImGui::MenuItem("New Entity"))
 			{
 				m_SelectionContext = m_Context->CreateEntity({});
-				m_ExistingEntities[m_SelectionContext] = new EntitySceneNode(false, m_SelectionContext);
 				RebuildSceneGraph();
 			}
 			ImGui::EndPopup();
@@ -78,14 +76,26 @@ namespace Debut
 		if (m_SelectionContext)
 			DrawComponents(m_SelectionContext);
 
+		// Take care of repositioning entities
 		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
 		{
 			if (m_DraggingEntity && !m_DroppedOnEntity && m_LastHoveredEntity)
 			{
-				// Take care of repositioning entities
-				
+				// Get the dragged entity
+				const ImGuiPayload* payload = ImGui::GetDragDropPayload();
+				if (payload != nullptr)
+				{
+					uint32_t entityId = *((uint32_t*)payload->Data);
 
-				m_LastHoveredEntity = {};
+					// Place the dragged entity above or below the last hovered item
+					ImVec2 currMousePos = ImGui::GetMousePos();
+					if (currMousePos.y > m_LastHoveredPos.y)
+						ChangeEntityOrder(entityId, m_EntitiesOrdering[m_LastHoveredEntity] - 1);
+					else
+						ChangeEntityOrder(entityId, m_EntitiesOrdering[m_LastHoveredEntity] + 1);
+
+					m_LastHoveredEntity = {};
+				}
 			}
 		}
 
@@ -116,14 +126,19 @@ namespace Debut
 			ImGui::PushStyleColor(ImGuiCol_Header, { 0.0, 0.0, 0.0, 0.0 });
 		else
 			ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered]);
+		std::stringstream ss;
+		ss << tc.Name << node.IndexInNode;
 		std::string entityName = node.Children.size() == 0 ? (IMGUI_ICON_ENTITY + std::string("  ") + tc.Name) : tc.Name;
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, entityName.c_str());
+		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, ss.str().c_str());
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 		if (ImGui::IsItemClicked())
 			m_SelectionContext = node.EntityData;
 		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
+		{
 			m_LastHoveredEntity = node.EntityData;
+			m_LastHoveredPos = ImGui::GetMousePos();
+		}
 
 		// Drag n drop to parent entities
 		if (ImGui::BeginDragDropSource())
@@ -168,25 +183,12 @@ namespace Debut
 			ImGui::EndDragDropTarget();
 		}
 
-		// One approach to moving entities: it has problems
-		/*ImGui::InvisibleButton("Invisible", {ImGui::GetContentRegionAvail().x, 1});
-		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
-			m_HoveringInvisibleEntityButton = true;
-		else
-			m_HoveringInvisibleEntityButton = false;
-		if (ImGui::BeginDragDropTarget())
-		{
-			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_HIERARCHY_ENTITY");
-			ImGui::EndDragDropTarget();
-		}
-		*/
 		// Right click on blank space
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("New Entity"))
 			{
 				m_SelectionContext = m_Context->CreateEntity(node.EntityData);
-				m_ExistingEntities[m_SelectionContext] = new EntitySceneNode(false, m_SelectionContext);
 				RebuildSceneGraph();
 
 				ImGui::EndPopup();
@@ -531,37 +533,110 @@ namespace Debut
 		delete m_CachedSceneGraph;
 		m_CachedSceneGraph = new EntitySceneNode();
 
-		EntitySceneNode scene(true, {});
+		// Add entity entries
 		auto transforms = m_Context->m_Registry.view<TransformComponent>();
-
-		for (auto entity : transforms)
-			m_ExistingEntities[entity]->Children.resize(0);
-
+		// Add entity entries
 		for (auto entity : transforms)
 		{
-			auto& transform = transforms.get<TransformComponent>(entity);
+			if (m_ExistingEntities.find(entity) == m_ExistingEntities.end())
+				m_ExistingEntities[entity] = new EntitySceneNode(false, { entity, m_Context.get() });
+		}
 
-			// If the object doesn't have a parent, then the parent is the root node
-			if (transform.Parent)
+		// Reset children, gather data
+		for (auto& e : m_ExistingEntities)
+		{
+			Entity parent = e.second->EntityData.Transform().Parent;
+			e.second->Children.resize(0);
+
+			if (parent)
 			{
-				entt::entity parentEntity = entt::to_entity(m_Context->m_Registry, transform.Parent);
-				EntitySceneNode* currEntity = m_ExistingEntities[entity];
-				std::vector<EntitySceneNode*> children = m_ExistingEntities[transform.Parent]->Children;
+				if (m_EntityParenting[e.second->EntityData] != (uint32_t)parent)
+					e.second->IndexInNode = -1;
+				m_EntityParenting[e.second->EntityData] = parent;
+			}
+			else
+				m_EntityParenting[e.second->EntityData] = -1;
+		}
 
-				currEntity->IndexInNode = children.size() > 0 ? children[children.size() - 1]->IndexInNode + 1 : 0;
-				m_ExistingEntities[transform.Parent]->Children.push_back(m_ExistingEntities[entity]);
+		// Set parenting 
+		for (auto e : m_EntityParenting)
+		{
+			if (m_EntityParenting[e.first] != -1)
+			{
+				EntitySceneNode* childNode = m_ExistingEntities[(entt::entity)e.first];
+				m_ExistingEntities[(entt::entity)e.second]->Children.push_back(childNode);
+				if (childNode->IndexInNode == -1)
+					childNode->IndexInNode = m_ExistingEntities[(entt::entity)e.second]->Children.size()-1;
+					
 			}
 		}
 
-		uint32_t i = 0;
+		// Order children, assign to scene graph
+		for (auto e : m_ExistingEntities)
+		{
+			if (!e.second->EntityData.Transform().Parent)
+				m_CachedSceneGraph->Children.push_back(e.second);
+
+			if (e.second->IndexInNode == -1)
+				e.second->IndexInNode = m_CachedSceneGraph->Children.size() - 1;
+
+			std::sort(e.second->Children.begin(), e.second->Children.end(),
+				[&](const EntitySceneNode* right, const EntitySceneNode* left)
+				{return right->IndexInNode < left->IndexInNode; });
+		}
+	}
+
+	void SceneHierarchyPanel::ChangeEntityOrder(uint32_t movedEntity, uint32_t position)
+	{
+		EntitySceneNode* child = m_ExistingEntities[(entt::entity)movedEntity];
+		uint32_t parent = m_EntityParenting[movedEntity];
+
+		uint32_t currPos = child->IndexInNode;
+
+		// Find the entity that has the moved entity as a child
 		for (auto entity : m_ExistingEntities)
 		{
-			if (!entity.second->EntityData.Transform().Parent)
+			auto& children = entity.second->Children;
+			for (uint32_t i = 0; i < children.size(); i++)
 			{
-				m_CachedSceneGraph->Children.push_back(entity.second);
-				entity.second->IndexInNode = i;
-				i++;
+				// Entity that moved found
+				if (movedEntity == (uint32_t)children[i]->EntityData)
+				{
+					// Move it to the new position
+					m_ExistingEntities[children[i]->EntityData]->IndexInNode = position;
+					// Shift the other entities
+					for (uint32_t j = 0; j < i; j++)
+						m_ExistingEntities[children[j]->EntityData]->IndexInNode = j;
+					for (uint32_t j=i+1; j<children.size(); j++)
+						m_ExistingEntities[children[j]->EntityData]->IndexInNode = j;
+
+					RebuildSceneGraph();
+					return;
+				}
 			}
 		}
+
+		RebuildSceneGraph();
+	}
+
+	void SceneHierarchyPanel::RegisterEntity(const Entity& entity)
+	{
+		m_ExistingEntities[entity] = new EntitySceneNode(false, entity);
+	}
+
+	uint32_t SceneHierarchyPanel::GetParentInSceneGraph(EntitySceneNode* node, uint32_t entity)
+	{
+		for (uint32_t i = 0; i < node->Children.size(); i++)
+			if ((uint32_t)node->Children[i]->EntityData == entity)
+				return (uint32_t)node->EntityData;
+
+		for (uint32_t i = 0; i < node->Children.size(); i++)
+		{
+			bool ret = GetParentInSceneGraph(node->Children[i], entity);
+			if (ret)
+				return ret;
+		}
+
+		return -1;
 	}
 }
