@@ -619,15 +619,15 @@ namespace Debut
 		else
 			newParent = m_ExistingEntities[(entt::entity)newParentId];
 
-		Log.CoreInfo("New parent, old parent loaded");
-
+		// This is to fix indexing issues when deleting a child from a subtree invalidates the other ones
+		// on the same one
 		int currPos = child->IndexInNode;
-		if (position > currPos)
+		if (position > currPos && m_EntityParenting[movedEntity] == (uint32_t)newParent->EntityData)
 			position--;
+
+		// Get subtree children
 		std::vector<EntitySceneNode*>& newChildren = newParent->Children;
 		std::vector<EntitySceneNode*>& oldChildren = oldParent == nullptr ? m_CachedSceneGraph->Children : oldParent->Children;
-
-		Log.CoreInfo("Children loaded");
 
 		// Remove child from old subtree
 		oldChildren.erase(oldChildren.begin() + currPos);
@@ -646,6 +646,18 @@ namespace Debut
 		std::sort(newChildren.begin(), newChildren.end(),
 			[&](const EntitySceneNode* right, const EntitySceneNode* left)
 			{return right->IndexInNode < left->IndexInNode; });
+
+		// Save parenting data
+		if (newParent == nullptr)
+		{
+			m_EntityParenting[movedEntity] = -1;
+			child->EntityData.Transform().Parent = {};
+		}
+		else
+		{
+			m_EntityParenting[movedEntity] = newParent->EntityData;
+			child->EntityData.Transform().Parent = newParent->EntityData;
+		}
 
 		RebuildSceneGraph();
 	}
