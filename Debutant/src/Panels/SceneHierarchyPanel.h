@@ -32,7 +32,7 @@ namespace Debut
 		inline EntitySceneNode* GetSceneGraph() { return m_CachedSceneGraph; }
 
 		void RebuildSceneGraph();
-		void ChangeEntityOrder(uint32_t movedEntity, uint32_t position);
+		void ChangeEntityOrder(uint32_t movedEntity, int position, uint32_t newParent = -1);
 
 	private:
 		uint32_t GetParentInSceneGraph(EntitySceneNode* node, uint32_t entity);
@@ -72,6 +72,7 @@ namespace Debut
 		bool m_HoveringInvisibleEntityButton = false;
 		// keep
 		Entity m_LastHoveredEntity = {};
+		ImVec2 m_LastMousePos = {};
 		ImVec2 m_LastHoveredPos = {};
 
 		bool m_DroppedOnEntity = false;

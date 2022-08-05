@@ -11,10 +11,9 @@
 /*
 	TODO
 		- Change parents by dragging objects around
-			- Save the last hovered item
-			- If the user drops when the item is not hovered
-				- Detect if they dropped above or below the last hovered item
-				- if above, put above, if below, put below (on the same tree level)
+			- Edge cases:
+				- Drag n drop object right below the parent
+				- Move object from a subtree to another one
 		- Save objects in the right order
 		- Move objects in the hierarchy
 */
@@ -52,6 +51,8 @@ namespace Debut
 	{
 		ImGui::Begin("Scene Hierarchy");
 
+		m_LastMousePos = ImGui::GetMousePos();
+
 		for (uint32_t i = 0; i < m_CachedSceneGraph->Children.size(); i++)
 			DrawEntityNode(*m_CachedSceneGraph->Children[i]);
 
@@ -86,13 +87,17 @@ namespace Debut
 				if (payload != nullptr)
 				{
 					uint32_t entityId = *((uint32_t*)payload->Data);
+					Log.CoreInfo("Moved id: {0}", Entity((entt::entity)entityId, m_Context.get()).GetComponent<TagComponent>().Name);
+					uint32_t parentId = m_LastHoveredEntity.Transform().Parent;
+					if (parentId != -1)
+						Log.CoreInfo("Moved id: {0}", Entity((entt::entity)parentId, m_Context.get()).GetComponent<TagComponent>().Name);
 
 					// Place the dragged entity above or below the last hovered item
-					ImVec2 currMousePos = ImGui::GetMousePos();
-					if (currMousePos.y > m_LastHoveredPos.y)
-						ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode);
+					ImVec2 currMousePos = m_LastMousePos;
+					if (currMousePos.y < m_LastHoveredPos.y)
+						ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode, parentId);
 					else
-						ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode - 1);
+						ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode+1, parentId);
 
 					m_LastHoveredEntity = {};
 				}
@@ -127,9 +132,11 @@ namespace Debut
 		else
 			ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered]);
 		std::stringstream ss;
-		ss << tc.Name << node.IndexInNode;
+		ss << (uint32_t)node.EntityData;
 		std::string entityName = node.Children.size() == 0 ? (IMGUI_ICON_ENTITY + std::string("  ") + tc.Name) : tc.Name;
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, entityName.c_str());
+		ImVec2 hoveredPos = ImGui::GetCursorPos();
+		hoveredPos = { hoveredPos.x + 2 + ImGui::GetWindowPos().x, hoveredPos.y + 2 + ImGui::GetWindowPos().y };
+		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, ss.str().c_str());
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 		if (ImGui::IsItemClicked())
@@ -137,7 +144,7 @@ namespace Debut
 		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
 		{
 			m_LastHoveredEntity = node.EntityData;
-			m_LastHoveredPos = ImGui::GetMousePos();
+			m_LastHoveredPos = m_LastMousePos;
 		}
 
 		// Drag n drop to parent entities
@@ -590,37 +597,53 @@ namespace Debut
 			{return right->IndexInNode < left->IndexInNode; });
 	}
 
-	void SceneHierarchyPanel::ChangeEntityOrder(uint32_t movedEntity, uint32_t position)
+
+	void SceneHierarchyPanel::ChangeEntityOrder(uint32_t movedEntity, int position, uint32_t newParentId)
 	{
 		EntitySceneNode* child = m_ExistingEntities[(entt::entity)movedEntity];
-		EntitySceneNode* parent;
-		if (m_ExistingEntities.find((entt::entity)m_EntityParenting[movedEntity]) != m_ExistingEntities.end())
-			parent = m_ExistingEntities[(entt::entity)m_EntityParenting[movedEntity]];
-		else
-			parent = m_CachedSceneGraph;
-		std::vector<EntitySceneNode*>& children = parent->Children;
+		EntitySceneNode* oldParent = nullptr;
+		EntitySceneNode* newParent = nullptr;
 
-		uint32_t currPos = child->IndexInNode;
+		// Load the current parent of the object
+		oldParent = m_EntityParenting[movedEntity] == -1 ? 
+			nullptr : m_ExistingEntities[(entt::entity)m_EntityParenting[movedEntity]];
 
-		if (currPos < position)
+		// Load the new parent node
+		if (newParentId == -1)
 		{
-			for (uint32_t i = 0; i < currPos; i++)
-				children[i]->IndexInNode = i;
-			for (uint32_t i = currPos + 1; i <= position; i++)
-				children[i]->IndexInNode = i - 1;
-
-			children[currPos]->IndexInNode = position;
+			if (m_ExistingEntities.find((entt::entity)m_EntityParenting[movedEntity]) != m_ExistingEntities.end())
+				newParent = m_ExistingEntities[(entt::entity)m_EntityParenting[movedEntity]];
+			else
+				newParent = m_CachedSceneGraph;
 		}
 		else
-		{
-			position++;
-			for (uint32_t i = position; i < currPos; i++)
-				children[i]->IndexInNode = i + 1;
+			newParent = m_ExistingEntities[(entt::entity)newParentId];
 
-			children[currPos]->IndexInNode = position;
-		}
+		Log.CoreInfo("New parent, old parent loaded");
 
-		std::sort(children.begin(), children.end(),
+		int currPos = child->IndexInNode;
+		if (position > currPos)
+			position--;
+		std::vector<EntitySceneNode*>& newChildren = newParent->Children;
+		std::vector<EntitySceneNode*>& oldChildren = oldParent == nullptr ? m_CachedSceneGraph->Children : oldParent->Children;
+
+		Log.CoreInfo("Children loaded");
+
+		// Remove child from old subtree
+		oldChildren.erase(oldChildren.begin() + currPos);
+		oldChildren.resize(oldChildren.size());
+		uint32_t index = 0;
+		for (uint32_t i = 0; i < oldChildren.size(); i++)
+			oldChildren[i]->IndexInNode = i;
+
+		// Add child to new subtree
+		child->IndexInNode = position;
+		newChildren.insert(newChildren.begin() + position, child);
+		for (uint32_t i = position+1; i < newChildren.size(); i++)
+			newChildren[i]->IndexInNode = newChildren[i - 1]->IndexInNode + 1;
+
+		// Sort children
+		std::sort(newChildren.begin(), newChildren.end(),
 			[&](const EntitySceneNode* right, const EntitySceneNode* left)
 			{return right->IndexInNode < left->IndexInNode; });
 

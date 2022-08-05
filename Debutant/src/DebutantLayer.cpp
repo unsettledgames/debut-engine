@@ -53,6 +53,10 @@ namespace Debutant
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
 
         AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
+
+        for (uint32_t i = 0; i < 5; i++)
+            m_ActiveScene->CreateEntity({});
+        m_SceneHierarchy.RebuildSceneGraph();
     }
 
     void DebutantLayer::OnDetach()
