@@ -68,14 +68,14 @@ namespace Debut
 		std::unordered_map<uint32_t, uint32_t> m_EntityParenting;
 
 		// State
-		// remove
-		bool m_HoveringInvisibleEntityButton = false;
-		// keep
 		Entity m_LastHoveredEntity = {};
 		ImVec2 m_LastMousePos = {};
-		ImVec2 m_LastHoveredPos = {};
+		ImVec2 m_LastHoveredMousePos = {};
+		ImVec2 m_LastHoveredItemPos = {};
+		ImVec2 m_LastItemSize = {};
 
 		bool m_DroppedOnEntity = false;
 		bool m_DraggingEntity = false;
+		bool m_HoveringEntity = false;
 	};
 }

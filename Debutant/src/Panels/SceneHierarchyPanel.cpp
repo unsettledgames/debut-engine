@@ -12,8 +12,9 @@
 	TODO
 		- Change parents by dragging objects around
 			- Edge cases:
-				- Drag n drop object right below the parent
-				- Move object from a subtree to another one
+				- Crashing when moving from a parent to the top level in the same subtree
+				- Can't unparent to the top level
+		- Fix entity destruction
 		- Save objects in the right order
 		- Move objects in the hierarchy
 */
@@ -51,6 +52,7 @@ namespace Debut
 	{
 		ImGui::Begin("Scene Hierarchy");
 
+		m_HoveringEntity = false;
 		m_LastMousePos = ImGui::GetMousePos();
 
 		for (uint32_t i = 0; i < m_CachedSceneGraph->Children.size(); i++)
@@ -70,17 +72,18 @@ namespace Debut
 			ImGui::EndPopup();
 		}
 
-		ImGui::End();
-
-		ImGui::Begin("Inspector");
-
-		if (m_SelectionContext)
-			DrawComponents(m_SelectionContext);
-
 		// Take care of repositioning entities
-		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+		if (m_DraggingEntity && !m_DroppedOnEntity && m_LastHoveredEntity)
 		{
-			if (m_DraggingEntity && !m_DroppedOnEntity && m_LastHoveredEntity)
+			ImVec2 highlightOffset = {};
+			ImVec2 currMousePos = m_LastMousePos;
+
+			if (currMousePos.y < m_LastHoveredMousePos.y)
+				highlightOffset = { 0, -m_LastItemSize.y / 2.0f };
+			else
+				highlightOffset = { 0, m_LastItemSize.y / 2.0f };
+
+			if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
 			{
 				// Get the dragged entity
 				const ImGuiPayload* payload = ImGui::GetDragDropPayload();
@@ -93,16 +96,33 @@ namespace Debut
 						Log.CoreInfo("Moved id: {0}", Entity((entt::entity)parentId, m_Context.get()).GetComponent<TagComponent>().Name);
 
 					// Place the dragged entity above or below the last hovered item
-					ImVec2 currMousePos = m_LastMousePos;
-					if (currMousePos.y < m_LastHoveredPos.y)
+					if (currMousePos.y < m_LastHoveredMousePos.y)
 						ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode, parentId);
 					else
-						ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode+1, parentId);
+						ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode + 1, parentId);
 
 					m_LastHoveredEntity = {};
+					m_DraggingEntity = false;
 				}
 			}
+
+			if (m_LastHoveredEntity && !m_HoveringEntity)
+			{
+				// Highlight the place where objects will be put
+				ImGui::GetWindowDrawList()->AddLine(
+					ImVec2(m_LastHoveredItemPos.x - m_LastItemSize.x / 2.0f, m_LastHoveredItemPos.y + highlightOffset.y),
+					ImVec2(m_LastHoveredItemPos.x + m_LastItemSize.x / 2.0f, m_LastHoveredItemPos.y + highlightOffset.y),
+					ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_DragDropTarget]), 2.0f
+				);
+			}
 		}
+
+		ImGui::End();
+
+		ImGui::Begin("Inspector");
+
+		if (m_SelectionContext)
+			DrawComponents(m_SelectionContext);		
 
 		ImGui::End();
 	}
@@ -131,20 +151,32 @@ namespace Debut
 			ImGui::PushStyleColor(ImGuiCol_Header, { 0.0, 0.0, 0.0, 0.0 });
 		else
 			ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered]);
-		std::stringstream ss;
-		ss << (uint32_t)node.EntityData;
 		std::string entityName = node.Children.size() == 0 ? (IMGUI_ICON_ENTITY + std::string("  ") + tc.Name) : tc.Name;
+
+		// Get position and size data, then render the tree node
 		ImVec2 hoveredPos = ImGui::GetCursorPos();
 		hoveredPos = { hoveredPos.x + 2 + ImGui::GetWindowPos().x, hoveredPos.y + 2 + ImGui::GetWindowPos().y };
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, ss.str().c_str());
+		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)node.EntityData, flags, entityName.c_str());
+		ImVec2 rectMin = ImGui::GetItemRectMin();
+		ImVec2 rectMax = ImGui::GetItemRectMax();
+
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
+
+		// Setup for selection and entity dragging
 		if (ImGui::IsItemClicked())
 			m_SelectionContext = node.EntityData;
-		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) && 
+			m_DraggingEntity && (uint32_t)m_SelectionContext != (uint32_t)node.EntityData)
 		{
+			m_HoveringEntity = true;
 			m_LastHoveredEntity = node.EntityData;
-			m_LastHoveredPos = m_LastMousePos;
+			m_LastHoveredMousePos = m_LastMousePos;
+			m_LastItemSize = ImGui::GetItemRectSize();
+			m_LastHoveredItemPos = {
+				(rectMin.x + rectMax.x) / 2.0f,
+				(rectMin.y + rectMax.y) / 2.0f
+			};
 		}
 
 		// Drag n drop to parent entities
