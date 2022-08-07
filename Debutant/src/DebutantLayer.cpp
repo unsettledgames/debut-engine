@@ -17,7 +17,6 @@
 
 /*
     TODO:
-    - Let the user move entities in the hierarchy
     - Serialize scene while keeping scene hierarchy order
     - Mesh properties in properties panel?
 */
@@ -582,15 +581,14 @@ namespace Debutant
         m_EditorScene = CreateRef<Scene>();
         m_RuntimeScene = nullptr;
 
-        m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
-        m_SceneHierarchy.SetContext(m_EditorScene);
-
         SceneSerializer ss(m_EditorScene);
         ss.DeserializeText(path.string());
 
+        m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+        m_SceneHierarchy.SetContext(m_EditorScene);
+
         m_ScenePath = path.string();
         m_ActiveScene = m_EditorScene;
-        m_SceneHierarchy.RebuildSceneGraph();
     }
 
     void DebutantLayer::SaveScene()

@@ -10,13 +10,8 @@
 
 /*
 	TODO
-		- Change parents by dragging objects around
-			- Edge cases:
-				- Crashing when moving from a parent to the top level in the same subtree
-				- Can't unparent to the top level
-		- Fix entity destruction
-		- Save objects in the right order
-		- Move objects in the hierarchy
+		- Load objects in the right order: to do that, make DeserializeText return an EntitySceneNode that the DebutantLayer
+		  can use to load the scene correctly
 */
 
 namespace Debut
@@ -38,6 +33,9 @@ namespace Debut
 	{
 		m_Context = scene;
 		m_SelectionContext = {};
+
+		Reset();
+		RebuildSceneGraph();
 	}
 
 	void SceneHierarchyPanel::SetSelectedEntity(const Entity& entity)
@@ -53,6 +51,7 @@ namespace Debut
 		ImGui::Begin("Scene Hierarchy");
 
 		m_HoveringEntity = false;
+		m_LastHoveredOpen = false;
 		m_LastMousePos = ImGui::GetMousePos();
 
 		for (uint32_t i = 0; i < m_CachedSceneGraph->Children.size(); i++)
@@ -97,9 +96,21 @@ namespace Debut
 
 					// Place the dragged entity above or below the last hovered item
 					if (currMousePos.y < m_LastHoveredMousePos.y)
-						ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode, parentId);
+					{
+						// Allow moving an entity above the first one to put it as child of the root node of the scene
+						if (parentId == -1 && m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode == 0)
+							ChangeEntityOrder(entityId, 0, -1);
+						else
+							ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode, parentId);
+					}
 					else
-						ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode + 1, parentId);
+					{
+						// Allow moving an entity right under another entity in a different subtree
+						if (!m_LastHoveredOpen)
+							ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->IndexInNode + 1, parentId);
+						else
+							ChangeEntityOrder(entityId, m_ExistingEntities[(entt::entity)m_LastHoveredEntity]->Children[0]->IndexInNode, m_LastHoveredEntity);
+					}
 
 					m_LastHoveredEntity = {};
 					m_DraggingEntity = false;
@@ -263,6 +274,9 @@ namespace Debut
 
 		if (opened)
 		{
+			if ((uint32_t)m_LastHoveredEntity == (uint32_t)node.EntityData && node.Children.size() > 0)
+				m_LastHoveredOpen = true;
+
 			for (uint32_t i = 0; i < node.Children.size(); i++)
 				DrawEntityNode(*node.Children[i]);
 			ImGui::TreePop();
@@ -569,16 +583,31 @@ namespace Debut
 
 	void SceneHierarchyPanel::RebuildSceneGraph()
 	{
-		delete m_CachedSceneGraph;
+		if (m_CachedSceneGraph)
+			delete m_CachedSceneGraph;
 		m_CachedSceneGraph = new EntitySceneNode();
+
+		std::unordered_map<uint32_t, bool> existingIds;
+		for (auto entity : m_ExistingEntities)
+			existingIds[entity.second->EntityData] = true;
 
 		// Add entity entries
 		auto transforms = m_Context->m_Registry.view<TransformComponent>();
 		// Add entity entries
 		for (auto entity : transforms)
 		{
+			existingIds.erase((uint32_t)entity);
+
 			if (m_ExistingEntities.find(entity) == m_ExistingEntities.end())
 				m_ExistingEntities[entity] = new EntitySceneNode(false, { entity, m_Context.get() });
+		}
+
+		// Remove entities that don't exist anymore
+		for (auto entity : existingIds)
+		{
+			delete m_ExistingEntities[(entt::entity)entity.first];
+			m_ExistingEntities.erase((entt::entity)entity.first);
+			m_EntityParenting.erase(entity.first);
 		}
 
 		// Reset children, gather data
@@ -642,12 +671,7 @@ namespace Debut
 
 		// Load the new parent node
 		if (newParentId == -1)
-		{
-			if (m_ExistingEntities.find((entt::entity)m_EntityParenting[movedEntity]) != m_ExistingEntities.end())
-				newParent = m_ExistingEntities[(entt::entity)m_EntityParenting[movedEntity]];
-			else
-				newParent = m_CachedSceneGraph;
-		}
+			newParent = m_CachedSceneGraph;
 		else
 			newParent = m_ExistingEntities[(entt::entity)newParentId];
 
@@ -692,6 +716,30 @@ namespace Debut
 		}
 
 		RebuildSceneGraph();
+	}
+
+	void SceneHierarchyPanel::Reset()
+	{
+		if (m_CachedSceneGraph)
+			delete m_CachedSceneGraph;
+		m_CachedSceneGraph = nullptr;
+
+		m_LastHoveredEntity = {};
+		m_LastMousePos = {};
+		m_LastHoveredMousePos = {};
+		m_LastHoveredItemPos = {};
+		m_LastItemSize = {};
+
+		m_DroppedOnEntity = false;
+		m_DraggingEntity = false;
+		m_HoveringEntity = false;
+		m_LastHoveredOpen = false;
+
+		for (auto node : m_ExistingEntities)
+			delete node.second;
+
+		m_ExistingEntities = {};
+		m_EntityParenting = {};
 	}
 
 	void SceneHierarchyPanel::RegisterEntity(const Entity& entity)

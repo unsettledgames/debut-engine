@@ -239,6 +239,7 @@ namespace Debut
 	{
 		Entity entity = node.EntityData;
 		out << YAML::BeginMap << YAML::Key << "Entity: " << YAML::Value << entity.ID();
+		out << YAML::Key << "HierarchyOrder" << YAML::Value << node.IndexInNode;
 
 		SerializeComponent<IDComponent>(entity, "IDComponent", out);
 		SerializeComponent<TagComponent>(entity, "TagComponent", out);

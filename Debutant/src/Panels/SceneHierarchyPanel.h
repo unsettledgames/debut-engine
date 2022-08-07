@@ -32,6 +32,7 @@ namespace Debut
 		inline EntitySceneNode* GetSceneGraph() { return m_CachedSceneGraph; }
 
 		void RebuildSceneGraph();
+		void Reset();
 		void ChangeEntityOrder(uint32_t movedEntity, int position, uint32_t newParent = -1);
 
 	private:
@@ -63,7 +64,6 @@ namespace Debut
 		bool m_RebuiltGraph = false;
 		EntitySceneNode* m_CachedSceneGraph;
 		std::unordered_map<entt::entity, EntitySceneNode*> m_ExistingEntities;
-		std::unordered_map<entt::entity, uint32_t> m_EntitiesOrdering;
 		// Key is child of value
 		std::unordered_map<uint32_t, uint32_t> m_EntityParenting;
 
@@ -77,5 +77,6 @@ namespace Debut
 		bool m_DroppedOnEntity = false;
 		bool m_DraggingEntity = false;
 		bool m_HoveringEntity = false;
+		bool m_LastHoveredOpen = false;
 	};
 }
