@@ -10,6 +10,7 @@
 
 /*
 	TODO
+		- BUG: when changing parent, change indexes of the level from which the object was taken
 		- Load objects in the right order: to do that, make DeserializeText return an EntitySceneNode that the DebutantLayer
 		  can use to load the scene correctly
 */
@@ -35,7 +36,24 @@ namespace Debut
 		m_SelectionContext = {};
 
 		Reset();
-		RebuildSceneGraph();
+	}
+
+	void SceneHierarchyPanel::LoadTree(EntitySceneNode* node)
+	{
+		if (!node->IsRoot)
+		{
+			Entity parent = node->EntityData.Transform().Parent;
+			m_ExistingEntities[node->EntityData] = node;
+			if (parent)
+				m_EntityParenting[node->EntityData] = parent;
+			else
+				m_EntityParenting[node->EntityData] = -1;
+		}
+		else
+			m_CachedSceneGraph = node;
+
+		for (uint32_t i = 0; i < node->Children.size(); i++)
+			LoadTree(node->Children[i]);
 	}
 
 	void SceneHierarchyPanel::SetSelectedEntity(const Entity& entity)
@@ -221,6 +239,19 @@ namespace Debut
 				
 				if (canParent)
 				{
+					EntitySceneNode* oldParent = nullptr;
+					if (m_EntityParenting[child] != -1)
+						oldParent = m_ExistingEntities[(entt::entity)m_EntityParenting[child]];
+					else
+						oldParent = m_CachedSceneGraph;
+
+					// Shift entity ordering
+					if ((uint32_t)oldParent->EntityData != (uint32_t)node.EntityData)
+					{
+						for (uint32_t i = m_ExistingEntities[(entt::entity)entityId]->IndexInNode + 1; i < oldParent->Children.size(); i++)
+							oldParent->Children[i]->IndexInNode = i - 1;
+					}
+
 					child.Transform().SetParent(node.EntityData);
 					RebuildSceneGraph();
 				}

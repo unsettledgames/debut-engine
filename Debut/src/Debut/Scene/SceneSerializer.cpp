@@ -269,7 +269,7 @@ namespace Debut
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
 		for (uint32_t i = 0; i < sceneGraph.Children.size(); i++)
-			SerializeEntity(*sceneGraph.Children[i],out);
+			SerializeEntity(*sceneGraph.Children[i], out);
 
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
@@ -279,7 +279,7 @@ namespace Debut
 		outFile << out.c_str();
 	}
 
-	bool SceneSerializer::DeserializeText(const std::string& fileName)
+	EntitySceneNode* SceneSerializer::DeserializeText(const std::string& fileName)
 	{
 		if (!CppUtils::String::endsWith(fileName, ".debut"))
 			return false;
@@ -295,23 +295,23 @@ namespace Debut
 			return false;
 
 		auto entities = in["Entities"];
+		EntitySceneNode* ret = new EntitySceneNode();
+		ret->IsRoot = true;
 
 		if (entities)
-		{
 			for (auto yamlEntity : entities)
-			{
-				DeserializeEntity(yamlEntity);
-			}
-		}
+				ret->Children.push_back(DeserializeEntity(yamlEntity));
 
-		return true;
+		return ret;
 	}
 
-	void SceneSerializer::DeserializeEntity(YAML::Node& yamlEntity)
+	EntitySceneNode* SceneSerializer::DeserializeEntity(YAML::Node& yamlEntity)
 	{
 		// Create a new entity, set the tag and name
 		auto tc = yamlEntity["TagComponent"];
 		Entity entity = m_Scene->CreateEntity({}, tc["Name"].as<std::string>());
+		EntitySceneNode* node = new EntitySceneNode(false, entity);
+		node->IndexInNode = yamlEntity["HierarchyOrder"].as<uint32_t>();
 		entity.GetComponent<TagComponent>().Tag = tc["Tag"].as<std::string>();
 
 		// Deserialize the other components
@@ -326,6 +326,8 @@ namespace Debut
 
 		auto children = yamlEntity["Children"];
 		for (auto child : children)
-			DeserializeEntity(child);
+			node->Children.push_back(DeserializeEntity(child));
+
+		return node;
 	}
 }

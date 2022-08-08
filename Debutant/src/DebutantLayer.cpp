@@ -41,6 +41,7 @@ namespace Debutant
         m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
+        m_SceneHierarchy.RebuildSceneGraph();
         m_ContentBrowser.SetPropertiesPanel(&m_PropertiesPanel);
 
         m_IconPlay = Texture2D::Create("assets\\icons\\play.png");
@@ -563,6 +564,7 @@ namespace Debutant
         m_RuntimeScene = nullptr;
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
+        m_SceneHierarchy.RebuildSceneGraph();
         m_ScenePath = "";
     }
 
@@ -582,13 +584,15 @@ namespace Debutant
         m_RuntimeScene = nullptr;
 
         SceneSerializer ss(m_EditorScene);
-        ss.DeserializeText(path.string());
+        EntitySceneNode* sceneHierarchy = ss.DeserializeText(path.string());
 
         m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
-        m_SceneHierarchy.SetContext(m_EditorScene);
-
         m_ScenePath = path.string();
         m_ActiveScene = m_EditorScene;
+
+        m_SceneHierarchy.SetContext(m_ActiveScene);
+        m_SceneHierarchy.LoadTree(sceneHierarchy);
+        m_SceneHierarchy.RebuildSceneGraph();
     }
 
     void DebutantLayer::SaveScene()

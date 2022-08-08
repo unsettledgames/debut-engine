@@ -21,9 +21,9 @@ namespace Debut
 		void SerializeBin(const std::string& name) {};
 		void SerializeEntity(EntitySceneNode& entity, YAML::Emitter& out);
 
-		bool DeserializeText(const std::string& name);
+		EntitySceneNode* DeserializeText(const std::string& name);
 		bool DeserializeBin(const std::string& name) { return false; };
-		void DeserializeEntity(YAML::Node& node);
+		EntitySceneNode* DeserializeEntity(YAML::Node& node);
 
 	private:
 		Ref<Scene> m_Scene;

@@ -33,6 +33,7 @@ namespace Debut
 
 		void RebuildSceneGraph();
 		void Reset();
+		void LoadTree(EntitySceneNode* node);
 		void ChangeEntityOrder(uint32_t movedEntity, int position, uint32_t newParent = -1);
 
 	private:
