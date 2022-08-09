@@ -8,13 +8,6 @@
 #include <Debut/ImGui/ImGuiUtils.h>
 #include <entt.hpp>
 
-/*
-	TODO
-		- BUG: when changing parent, change indexes of the level from which the object was taken
-		- Load objects in the right order: to do that, make DeserializeText return an EntitySceneNode that the DebutantLayer
-		  can use to load the scene correctly
-*/
-
 namespace Debut
 {
 	SceneHierarchyPanel::SceneHierarchyPanel()
@@ -738,12 +731,12 @@ namespace Debut
 		if (newParent == nullptr)
 		{
 			m_EntityParenting[movedEntity] = -1;
-			child->EntityData.Transform().Parent = {};
+			child->EntityData.Transform().SetParent({});
 		}
 		else
 		{
 			m_EntityParenting[movedEntity] = newParent->EntityData;
-			child->EntityData.Transform().Parent = newParent->EntityData;
+			child->EntityData.Transform().SetParent(newParent->EntityData);
 		}
 
 		RebuildSceneGraph();

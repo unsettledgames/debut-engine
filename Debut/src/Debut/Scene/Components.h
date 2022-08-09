@@ -7,6 +7,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include <Debut/Rendering/Texture.h>
 #include <Debut/Core/Core.h>
 #include <Debut/Core/UUID.h>
@@ -76,7 +78,24 @@ namespace Debut
 				* glm::scale(glm::mat4(1.0f), Scale));
 		}
 
-		void SetParent(Entity parent) { Parent = parent; }
+		void SetParent(Entity parent) 
+		{ 
+			Log.CoreInfo("Setting parent");
+			glm::mat4 finalTransform = GetLocalTransform();
+			glm::quat rotation;
+			glm::vec3 skew;
+			glm::vec4 persp;
+
+			if (Parent)
+				finalTransform = Parent.Transform().GetTransform() * finalTransform;
+			if (parent)
+				finalTransform = glm::inverse(parent.Transform().GetTransform()) * finalTransform;
+
+			glm::decompose(finalTransform, Scale, rotation, Translation, skew, persp);
+			Rotation = glm::eulerAngles(rotation);
+
+			Parent = parent; 
+		}
 	};
 
 	// RENDERING

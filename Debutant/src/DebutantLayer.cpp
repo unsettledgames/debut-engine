@@ -17,8 +17,15 @@
 
 /*
     TODO:
-    - Serialize scene while keeping scene hierarchy order
     - Mesh properties in properties panel?
+
+    Problema ridimensionamento transform:
+        - Il problema è che, quando cambio parent a un oggetto, esso non deve cambiare trasformazione. Allora prendo la
+          matrice del genitore, la inverto e la moltiplico per la locale, così non ha influenza. Ora però per tornare indietro
+          non posso, perché non ho la matrice originale.
+        - What if virtual parent? Un parent che contiene l'inversa del vero genitore: il parent vero diventa privato, per
+          accedere al parent si usa una funzione GetParent. In questo modo la locale dell'oggeto può rimanere uguale. Come 
+          capire se un parent è virtuale? L'id dell'entità è -1.
 */
 
 namespace Debutant
