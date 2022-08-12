@@ -8,6 +8,7 @@
 #include <Debut/Rendering/Renderer/Renderer3D.h>
 
 #include <chrono>
+#include "Debut/ImGui/ImGuiUtils.h"
 #include <imgui_internal.h>
 
 #include <glm/glm.hpp>
@@ -195,7 +196,55 @@ namespace Debutant
 
     void DebutantLayer::DrawSettingsWindow()
     {
+        ImGuiWindowFlags flags = ImGuiWindowFlags_Modal;
+        
+        ImGui::Begin("Settings", &m_SettingsOpen, flags);
+        ImGui::SetWindowSize({ 800, 600 });
 
+        if (ImGui::BeginTabBar("SettingsTabBar"))
+        {
+            if (ImGui::BeginTabItem("Editor"))
+            {
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Graphics"))
+            {
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Lighting"))
+            {
+                // Skybox options
+                const char* dirs[6] = {"Front", "Bottom", "Left", "Right", "Up", "Down"};
+                ImGuiUtils::BoldText("Skybox");
+
+                ImGuiUtils::StartColumns(6, { 100, 100, 100, 100, 100, 100 });
+                for (uint32_t i = 0; i < 6; i++)
+                {
+                    ImGuiUtils::ImageButton(EditorCache::Textures().Get("assets\\textures\\empty_texture.png"), { 80, 80 });
+                    ImGui::NextColumn();
+                }
+                for (uint32_t i = 0; i < 6; i++)
+                {
+                    ImGui::Text(dirs[i]);
+                    ImGui::NextColumn();
+                }
+                ImGuiUtils::ResetColumns();
+
+
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Physics"))
+            {
+                ImGui::EndTabItem();
+            }
+
+            ImGui::EndTabBar();
+        }
+
+        ImGui::End();
     }
 
     // TODO: move this to the top bar
