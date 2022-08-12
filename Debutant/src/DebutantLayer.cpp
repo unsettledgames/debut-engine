@@ -18,14 +18,6 @@
 /*
     TODO:
     - Mesh properties in properties panel?
-
-    Problema ridimensionamento transform:
-        - Il problema è che, quando cambio parent a un oggetto, esso non deve cambiare trasformazione. Allora prendo la
-          matrice del genitore, la inverto e la moltiplico per la locale, così non ha influenza. Ora però per tornare indietro
-          non posso, perché non ho la matrice originale.
-        - What if virtual parent? Un parent che contiene l'inversa del vero genitore: il parent vero diventa privato, per
-          accedere al parent si usa una funzione GetParent. In questo modo la locale dell'oggeto può rimanere uguale. Come 
-          capire se un parent è virtuale? L'id dell'entità è -1.
 */
 
 namespace Debutant
@@ -60,10 +52,6 @@ namespace Debutant
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
 
         AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
-
-        /*for (uint32_t i = 0; i < 5; i++)
-            m_ActiveScene->CreateEntity({});
-        m_SceneHierarchy.RebuildSceneGraph();*/
     }
 
     void DebutantLayer::OnDetach()
@@ -196,11 +184,18 @@ namespace Debutant
             if (m_AssetMapOpen)
                 DrawAssetMapWindow();
 #endif
+            if (m_SettingsOpen)
+                DrawSettingsWindow();
 
             DrawViewport();
             DrawUIToolbar();
 
         ImGui::End();
+    }
+
+    void DebutantLayer::DrawSettingsWindow()
+    {
+
     }
 
     // TODO: move this to the top bar
@@ -314,6 +309,14 @@ namespace Debutant
                     AssetManager::Reimport();
                 if (ImGui::MenuItem("Asset map"))
                     m_AssetMapOpen = true;
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Project"))
+            {
+                if (ImGui::MenuItem("Settings"))
+                    m_SettingsOpen = true;
+
                 ImGui::EndMenu();
             }
 

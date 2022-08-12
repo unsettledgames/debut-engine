@@ -45,6 +45,7 @@ namespace Debutant
 		void DrawGizmos();
 		void DrawViewport();
 		void DrawTopBar();
+		void DrawSettingsWindow();
 		void DrawAssetMapWindow();
 
 		// Drag & droppable objects
@@ -78,6 +79,8 @@ namespace Debutant
 		SceneState m_SceneState = SceneState::Edit;
 
 		bool m_AssetMapOpen = false;
+		bool m_SettingsOpen = false;
+
 		uint32_t m_StartIndex = -1;
 		uint32_t m_EndIndex = -1;
 
