@@ -18,6 +18,7 @@
 
 /**
 	TODO:
+	- Allow renaming for each asset
 	- Polish: reset texture paramters so they're coherent if the user doesn't save the results
 */
 
@@ -49,6 +50,10 @@ namespace Debut
 			if (m_AssetType == AssetType::Texture2D)
 			{
 				DrawTextureProperties();
+			}
+			else if (m_AssetType == AssetType::Skybox)
+			{
+				DrawSkyboxProperties();
 			}
 			else if (m_AssetType == AssetType::PhysicsMaterial2D)
 			{
@@ -433,6 +438,14 @@ namespace Debut
 		
 	}
 
+	void PropertiesPanel::DrawSkyboxProperties()
+	{
+		// Shader drop down
+		// Drag / drop textures
+		// Apply settings button
+		
+	}
+
 	void PropertiesPanel::SetAsset(std::filesystem::path path, AssetType assetType)
 	{
 		if (std::filesystem::is_directory(path))
@@ -452,5 +465,7 @@ namespace Debut
 			m_AssetType = AssetType::Material;
 		else if (path.extension() == ".mesh")
 			m_AssetType = AssetType::Mesh;
+		else if (path.extension() == ".skybox")
+			m_AssetType = AssetType::Skybox;
 	}
 }

@@ -2,6 +2,7 @@
 #include <Debut/Rendering/Resources/Skybox.h>
 #include <Platform/OpenGL/OpenGLSkybox.h>
 #include "Debut/dbtpch.h"
+#include <yaml-cpp/yaml.h>
 #include "Debut/Rendering/Renderer/Renderer.h"
 
 namespace Debut
@@ -27,5 +28,33 @@ namespace Debut
 
 			return ret;
 		}
+	}
+
+	void Skybox::SaveDefaultConfig(const std::string& path)
+	{
+		std::ofstream skyboxFile(path);
+		std::ofstream metaFile(path);
+
+		YAML::Emitter skyboxEmitter;
+		YAML::Emitter metaEmitter;
+
+		skyboxEmitter << YAML::BeginDoc << YAML::BeginMap;
+
+		skyboxEmitter << YAML::Key << "Shader" << YAML::Value << 0;
+		skyboxEmitter << YAML::Key << "Front Texture" << YAML::Value << 0;
+		skyboxEmitter << YAML::Key << "Bottom Texture" << YAML::Value << 0;
+		skyboxEmitter << YAML::Key << "Left Texture" << YAML::Value << 0;
+		skyboxEmitter << YAML::Key << "Right Texture" << YAML::Value << 0;
+		skyboxEmitter << YAML::Key << "Up Texture" << YAML::Value << 0;
+		skyboxEmitter << YAML::Key << "Down Texture" << YAML::Value << 0;
+
+		skyboxEmitter << YAML::EndMap << YAML::EndDoc;
+
+		metaEmitter << YAML::BeginDoc << YAML::BeginMap;
+		metaEmitter << YAML::Key << "ID" << YAML::Value << UUID();
+		metaEmitter << YAML::EndMap << YAML::EndDoc;
+
+		skyboxFile << skyboxEmitter.c_str();
+		metaFile << skyboxEmitter.c_str();
 	}
 }

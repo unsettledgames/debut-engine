@@ -21,11 +21,17 @@ namespace Debut
 		static Ref<Skybox> Create(const std::string& front, const std::string& bottom, const std::string& left,
 			const std::string& right, const std::string& up, const std::string& down, Ref<Shader> shader);
 
+		static void SaveDefaultConfig(const std::string& path);
+
 		Material& GetMaterial() { return m_Material; }
 		Mesh& GetMesh() { return m_Mesh; }
+		UUID GetID() { return m_ID; }
 
 	protected:
 		Material m_Material;
 		Mesh m_Mesh;
+		UUID m_ID;
+
+		std::unordered_map<std::string, UUID> m_Textures;
 	};
 }
