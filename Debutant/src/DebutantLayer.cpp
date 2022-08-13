@@ -53,10 +53,10 @@ namespace Debutant
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
 
         // TEST AREA
-        std::vector<std::string> filenames = { "assets\\textures\\Skybox\\skyrender0001.png" ,
-        "assets\\textures\\Skybox\\skyrender0001.png","assets\\textures\\Skybox\\skyrender0001.png",
-        "assets\\textures\\Skybox\\skyrender0001.png","assets\\textures\\Skybox\\skyrender0001.png",
-        "assets\\textures\\Skybox\\skyrender0001.png" };
+        std::vector<std::string> filenames = { "assets\\textures\\Skybox\\front.png" ,
+        "assets\\textures\\Skybox\\bottom.png","assets\\textures\\Skybox\\left.png",
+        "assets\\textures\\Skybox\\right.png","assets\\textures\\Skybox\\up.png",
+        "assets\\textures\\Skybox\\down.png" };
 
         m_ActiveScene->SetSkybox(filenames[0], filenames[1], filenames[2], filenames[3], filenames[4], filenames[5],
             AssetManager::Request<Shader>("assets\\shaders\\skybox.glsl"));
@@ -270,7 +270,7 @@ namespace Debutant
                 if (setting == "Skybox") m_ActiveScene->SetSkybox(EditorCache::Textures().Get("SkyboxFront")->GetPath(),
                     EditorCache::Textures().Get("SkyboxBottom")->GetPath(), EditorCache::Textures().Get("SkyboxLeft")->GetPath(),
                     EditorCache::Textures().Get("SkyboxRight")->GetPath(), EditorCache::Textures().Get("SkyboxUp")->GetPath(),
-                    EditorCache::Textures().Get("SkyboxDown")->GetPath(), EditorCache::Shaders().Get("SkyboxDefault"));
+                    EditorCache::Textures().Get("SkyboxDown")->GetPath(), AssetManager::Request<Shader>("assets\\shaders\\skybox.glsl"));
             }
             // Reset the set
             changedSettings = {};

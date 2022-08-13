@@ -40,7 +40,9 @@ namespace Debut
 		// Draw the skybox
 		if (skybox != nullptr)
 		{
-			skybox->GetMaterial().Use(transform);
+			glm::mat4 skyboxTransform = camera.GetProjection() * glm::inverse(glm::mat4(glm::mat3(transform)));
+			skybox->Bind();
+			skybox->GetMaterial().Use(skyboxTransform);
 
 			std::vector<float>& positions = skybox->GetMesh().GetPositions();
 			std::vector<int>& indices = skybox->GetMesh().GetIndices();
@@ -49,6 +51,7 @@ namespace Debut
 
 			RenderCommand::DrawIndexed(s_Data.VertexArray, indices.size());
 
+			skybox->Unbind();
 			skybox->GetMaterial().Unuse();
 		}
 	}
@@ -101,7 +104,6 @@ namespace Debut
 					currBatch->Buffers["Bitangents"]->PushData(mesh->GetBitangents().data(), sizeof(float) * mesh->GetBitangents().size());
 
 				// Add indices
-				// This kinda sucks, the vector is reallocated every time a mesh is submitted (100 * 60 = 6000 times per second to be optimist)
 				uint32_t currIndicesSize = currBatch->Indices.size();
 				currBatch->Indices.resize(currBatch->Indices.size() + mesh->GetIndices().size());
 				memcpy(currBatch->Indices.data() + currIndicesSize, mesh->GetIndices().data(), mesh->GetIndices().size() * sizeof(int));

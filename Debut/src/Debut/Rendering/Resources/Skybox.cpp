@@ -18,18 +18,11 @@ namespace Debut
 
 		if (ret != nullptr)
 		{
-			std::vector<float> cubeVertices = {
-				-1.0f,  1.0f, -1.0f,    -1.0f, -1.0f, -1.0f,    1.0f, -1.0f, -1.0f,     1.0f, -1.0f, -1.0f,
-				 1.0f,  1.0f, -1.0f,    -1.0f,  1.0f, -1.0f,    -1.0f, -1.0f,  1.0f,    -1.0f, -1.0f, -1.0f,
-				-1.0f,  1.0f, -1.0f,    -1.0f,  1.0f, -1.0f,    -1.0f,  1.0f,  1.0f,    -1.0f, -1.0f,  1.0f,
-				 1.0f, -1.0f, -1.0f,    1.0f, -1.0f,  1.0f,     1.0f,  1.0f,  1.0f,     1.0f,  1.0f,  1.0f,
-				 1.0f,  1.0f, -1.0f,    1.0f, -1.0f, -1.0f,     -1.0f, -1.0f,  1.0f,    -1.0f,  1.0f,  1.0f,
-				 1.0f,  1.0f,  1.0f,    1.0f,  1.0f,  1.0f,     1.0f, -1.0f,  1.0f,     -1.0f, -1.0f,  1.0f,
-				-1.0f,  1.0f, -1.0f,    1.0f,  1.0f, -1.0f,     1.0f,  1.0f,  1.0f,      1.0f,  1.0f,  1.0f,
-				-1.0f,  1.0f,  1.0f,    -1.0f,  1.0f, -1.0f,    -1.0f, -1.0f, -1.0f,    -1.0f, -1.0f,  1.0f,
-				 1.0f, -1.0f, -1.0f,	 1.0f, -1.0f, -1.0f,	-1.0f, -1.0f,  1.0f,	1.0f, -1.0f,  1.0f
-			};
+			std::vector<float> cubeVertices = {-4, -4,  4,	4, -4, 4,	-4,  4,  4,	4,  4,  4,	-4, -4, -4,	 4, -4, -4,	-4,  4, -4, 4,  4, -4 };
+			std::vector<int> cubeIndices = { 2, 6, 7, 2, 3, 7, 0, 4, 5, 0, 1, 5, 0, 2, 6, 0, 4, 6, 1, 3, 7, 1, 5, 7, 0, 2, 3,
+				0, 1, 3, 4, 6, 7, 4, 5, 7 };
             ret->m_Mesh.SetPositions(cubeVertices);
+			ret->m_Mesh.SetIndices(cubeIndices);
 			ret->m_Material.SetShader(shader);
 
 			return ret;
