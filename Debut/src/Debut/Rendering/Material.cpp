@@ -3,6 +3,7 @@
 #include <Debut/Utils/YamlUtils.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Rendering/Material.h>
+#include <Debut/Rendering/Resources/Skybox.h>
 
 #define FIND_UNIFORM(name)	if (m_Uniforms.find(##name) == m_Uniforms.end()) \
 							{	\
@@ -247,6 +248,9 @@ namespace Debut
 				if (uniform.second.Data.Texture != 0)
 					shader->SetInt(uniform.second.Name, AssetManager::Request<Texture2D>(uniform.second.Data.Texture)->GetID());
 				break;
+			case ShaderDataType::SamplerCube:
+				shader->SetInt(uniform.second.Name, uniform.second.Data.Cubemap);
+				break;
 			default:
 				Log.CoreError("Shader data type not supported while trying to use material {0}", m_Name);
 				break;
@@ -325,6 +329,16 @@ namespace Debut
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::Sampler2D);
 		m_Uniforms[name].Data.Texture = texture->GetID();
+	}
+
+	// TODO: skyboxes aren't assets. They don't use the ID as they probably should for now. Should a skybox be an asset?
+	// Maybe. Let the user create a skybox in the content browser and assign textures, then we can use the UUID here.
+	// Let's focus on rendering for now though.
+	void Material::SetCubemap(const std::string& name, const Ref<Skybox> cubemap)
+	{
+		FIND_UNIFORM(name);
+		CHECK_TYPE(name, ShaderDataType::SamplerCube);
+		m_Uniforms[name].Data.Cubemap = cubemap->GetRendererID();
 	}
 
 	std::vector<ShaderUniform> Material::GetUniforms()

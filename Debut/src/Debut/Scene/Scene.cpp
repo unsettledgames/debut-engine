@@ -131,7 +131,7 @@ namespace Debut
 		Renderer2D::EndScene();
 
 		// 3D Rendering
-		Renderer3D::BeginScene(camera, glm::inverse(camera.GetView()));
+		Renderer3D::BeginScene(camera, m_Skybox, glm::inverse(camera.GetView()));
 
 		auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
 		for (auto entity : group3D)
@@ -224,7 +224,7 @@ namespace Debut
 			// 3D Rendering
 			{
 				DBT_PROFILE_SCOPE("Renderer3D update");
-				Renderer3D::BeginScene(*mainCamera, cameraTransform);
+				Renderer3D::BeginScene(*mainCamera, m_Skybox, cameraTransform);
 
 				auto group = m_Registry.view<TransformComponent, MeshRendererComponent>();
 				for (auto entity : group)
@@ -380,6 +380,12 @@ namespace Debut
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+	}
+
+	void Scene::SetSkybox(const std::string& front, const std::string& bottom, const std::string& left,
+		const std::string& right, const std::string& up, const std::string& down, Ref<Shader> shader)
+	{
+		m_Skybox = Skybox::Create(front, bottom, left, right, up, down, shader);
 	}
 
 	Ref<Scene> Scene::Copy(Ref<Scene> other)

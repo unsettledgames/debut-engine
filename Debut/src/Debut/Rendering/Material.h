@@ -22,6 +22,8 @@ namespace Debut
 		UUID ID;
 	};
 
+	class Skybox;
+
 	class Material
 	{
 	public:
@@ -51,6 +53,7 @@ namespace Debut
 		void SetInt(const std::string& name, int val);
 		void SetBool(const std::string& name, bool val);
 		void SetTexture(const std::string& name, const Ref<Texture2D> texture);
+		void SetCubemap(const std::string& name, const Ref<Skybox> texture);
 
 		UUID GetID() { return m_ID; }
 		UUID GetShader() { return m_Shader; }

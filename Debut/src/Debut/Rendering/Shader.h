@@ -13,7 +13,7 @@ namespace Debut
 		Int, Int2, Int3, Int4,
 		Bool,
 		Mat3, Mat4, Struct,
-		Sampler2D
+		Sampler2D, SamplerCube
 	};
 
 	struct ShaderUniform
@@ -33,6 +33,7 @@ namespace Debut
 			glm::mat4 Mat4;
 
 			UUID Texture = 0;
+			int Cubemap;
 
 			UniformData() {}
 		} Data;

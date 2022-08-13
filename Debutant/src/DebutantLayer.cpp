@@ -52,7 +52,14 @@ namespace Debutant
         EditorCache::Textures().Put("assets\\icons\\play.png", m_IconPlay);
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
 
-        AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
+        // TEST AREA
+        std::vector<std::string> filenames = { "assets\\textures\\Skybox\\skyrender0001.png" ,
+        "assets\\textures\\Skybox\\skyrender0001.png","assets\\textures\\Skybox\\skyrender0001.png",
+        "assets\\textures\\Skybox\\skyrender0001.png","assets\\textures\\Skybox\\skyrender0001.png",
+        "assets\\textures\\Skybox\\skyrender0001.png" };
+
+        m_ActiveScene->SetSkybox(filenames[0], filenames[1], filenames[2], filenames[3], filenames[4], filenames[5],
+            AssetManager::Request<Shader>("assets\\shaders\\skybox.glsl"));
     }
 
     void DebutantLayer::OnDetach()
@@ -96,8 +103,6 @@ namespace Debutant
     void DebutantLayer::OnScenePlay()
     {
         m_SceneState = SceneState::Play;
-
-        // TODO: textures aren't updated in the runtime scene
 
         m_RuntimeScene = Scene::Copy(m_ActiveScene);
         m_RuntimeScene->OnRuntimeStart();
@@ -196,6 +201,7 @@ namespace Debutant
 
     void DebutantLayer::DrawSettingsWindow()
     {
+        static std::unordered_set<std::string> changedSettings;
         ImGuiWindowFlags flags = ImGuiWindowFlags_Modal;
         
         ImGui::Begin("Settings", &m_SettingsOpen, flags);
@@ -215,6 +221,10 @@ namespace Debutant
 
             if (ImGui::BeginTabItem("Lighting"))
             {
+                // TODO: drag drop texture, put temporary texture in editor cache to display it
+                // correctly in the editor. Each scene should have a skybox object, when the user applies the changes,
+                // the skybox is edited and reloaded if necessary.
+
                 // Skybox options
                 const char* dirs[6] = {"Front", "Bottom", "Left", "Right", "Up", "Down"};
                 ImGuiUtils::BoldText("Skybox");
@@ -222,7 +232,16 @@ namespace Debutant
                 ImGuiUtils::StartColumns(6, { 100, 100, 100, 100, 100, 100 });
                 for (uint32_t i = 0; i < 6; i++)
                 {
-                    ImGuiUtils::ImageButton(EditorCache::Textures().Get("assets\\textures\\empty_texture.png"), { 80, 80 });
+                    Ref<Texture2D> preview = EditorCache::Textures().Has("Skybox" + std::string(dirs[i])) ?
+                        EditorCache::Textures().Get("Skybox" + std::string(dirs[i])) : EditorCache::Textures().Get("assets\\textures\\empty_texture.png");
+                    Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(preview->GetRendererID(), {80, 80});
+
+                    // User loaded new texture
+                    if (newTexture != nullptr && newTexture->GetRendererID() != preview->GetRendererID())
+                    {
+                        EditorCache::Textures().Put("Skybox" + std::string(dirs[i]), newTexture);
+                        changedSettings.insert("Skybox");
+                    }
                     ImGui::NextColumn();
                 }
                 for (uint32_t i = 0; i < 6; i++)
@@ -231,7 +250,6 @@ namespace Debutant
                     ImGui::NextColumn();
                 }
                 ImGuiUtils::ResetColumns();
-
 
                 ImGui::EndTabItem();
             }
@@ -242,6 +260,20 @@ namespace Debutant
             }
 
             ImGui::EndTabBar();
+        }
+
+        if (ImGui::Button("Apply settings"))
+        {
+            // Apply all settings
+            for (auto& setting : changedSettings)
+            {
+                if (setting == "Skybox") m_ActiveScene->SetSkybox(EditorCache::Textures().Get("SkyboxFront")->GetPath(),
+                    EditorCache::Textures().Get("SkyboxBottom")->GetPath(), EditorCache::Textures().Get("SkyboxLeft")->GetPath(),
+                    EditorCache::Textures().Get("SkyboxRight")->GetPath(), EditorCache::Textures().Get("SkyboxUp")->GetPath(),
+                    EditorCache::Textures().Get("SkyboxDown")->GetPath(), EditorCache::Shaders().Get("SkyboxDefault"));
+            }
+            // Reset the set
+            changedSettings = {};
         }
 
         ImGui::End();
@@ -269,7 +301,7 @@ namespace Debutant
         ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (buttonSize * 0.5f));
         if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(buttonSize, buttonSize)))
         {
-            // TODO: simulate physics, pause scene...
+            // TODO: pause scene...
             if (m_SceneState == SceneState::Edit)
                 OnScenePlay();
             else if (m_SceneState == SceneState::Play)

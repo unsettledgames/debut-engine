@@ -34,9 +34,23 @@ namespace Debut
 		s_Data.VertexArray->AddIndexBuffer(s_Data.IndexBuffer);
 	}
 
-	void Renderer3D::BeginScene(Camera& camera, glm::mat4& transform)
+	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& transform)
 	{
 		s_Data.CameraTransform = camera.GetProjection() * glm::inverse(transform);
+		// Draw the skybox
+		if (skybox != nullptr)
+		{
+			skybox->GetMaterial().Use(transform);
+
+			std::vector<float>& positions = skybox->GetMesh().GetPositions();
+			std::vector<int>& indices = skybox->GetMesh().GetIndices();
+			s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
+			s_Data.IndexBuffer->SetData(indices.data(), indices.size());
+
+			RenderCommand::DrawIndexed(s_Data.VertexArray, indices.size());
+
+			skybox->GetMaterial().Unuse();
+		}
 	}
 
 	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform)
@@ -53,19 +67,17 @@ namespace Debut
 
 		{
 			DBT_PROFILE_SCOPE("Renderer3D::GetMaterial");
-			if (meshComponent.Material == 18224448360203886318)
-				std::cout << "yo";
 			material = AssetManager::Request<Material>(meshComponent.Material);
 		}
 
 		if (mesh == nullptr)
 		{
-			Log.CoreError("Couldn't find mesh to render. Did you reimport and overwrote the model?");
+			Log.CoreError("Couldn't find mesh to render. Did you reimport and overwrite the model?");
 			return;
 		}
 		if (material == nullptr)
 		{
-			Log.CoreError("Couldn't find material to render with. Did you reimport and overwrote the model?");
+			Log.CoreError("Couldn't find material to render with. Did you reimport and overwrite the model?");
 			return;
 		}
 
@@ -80,7 +92,13 @@ namespace Debut
 			{
 				DBT_PROFILE_SCOPE("Renderer3D::PushData");
 				currBatch->Buffers["Positions"]->PushData(mesh->GetPositions().data(), sizeof(float) * mesh->GetPositions().size());
-				currBatch->Buffers["Normals"]->PushData(mesh->GetNormals().data(), sizeof(float) * mesh->GetNormals().size());
+				
+				if (mesh->HasNormals())
+					currBatch->Buffers["Normals"]->PushData(mesh->GetNormals().data(), sizeof(float) * mesh->GetNormals().size());
+				if (mesh->HasTangents())
+					currBatch->Buffers["Tangents"]->PushData(mesh->GetTangents().data(), sizeof(float) * mesh->GetTangents().size());
+				if (mesh->HasBitangents())
+					currBatch->Buffers["Bitangents"]->PushData(mesh->GetBitangents().data(), sizeof(float) * mesh->GetBitangents().size());
 
 				// Add indices
 				// This kinda sucks, the vector is reallocated every time a mesh is submitted (100 * 60 = 6000 times per second to be optimist)
@@ -95,11 +113,27 @@ namespace Debut
 			{
 				DBT_PROFILE_SCOPE("DrawModel::SetDataAndIndices");
 				std::vector<float>& positions = mesh->GetPositions();
-				std::vector<float>& normals = mesh->GetNormals();
 				std::vector<int>& indices = mesh->GetIndices();
 				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
-				s_Data.VertexBuffers["Normals"]->SetData(normals.data(), normals.size() * sizeof(float));
-				s_Data.IndexBuffer->SetData(mesh->GetIndices().data(), mesh->GetIndices().size());
+				s_Data.IndexBuffer->SetData(indices.data(), indices.size());
+
+				if (mesh->HasNormals())
+				{
+					std::vector<float>& normals = mesh->GetNormals();
+					s_Data.VertexBuffers["Normals"]->SetData(normals.data(), normals.size() * sizeof(float));
+				}
+
+				if (mesh->HasTangents())
+				{
+					std::vector<float>& tangents = mesh->GetTangents();
+					s_Data.VertexBuffers["Tangents"]->SetData(tangents.data(), tangents.size() * sizeof(float));
+				}
+
+				if (mesh->HasBitangents())
+				{
+					std::vector<float>& bitangents = mesh->GetBitangents();
+					s_Data.VertexBuffers["Bitangents"]->SetData(bitangents.data(), bitangents.size() * sizeof(float));
+				}
 			}
 			
 			{
@@ -111,6 +145,78 @@ namespace Debut
 			{
 				DBT_PROFILE_SCOPE("DrawModel::DrawIndexed");
 				RenderCommand::DrawIndexed(s_Data.VertexArray, mesh->GetIndices().size());
+			}
+		}
+	}
+
+	void Renderer3D::DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, bool instanced /* = false*/)
+	{
+		DBT_PROFILE_FUNCTION();
+
+		// Instanced rendering if the MeshRenderer is instanced
+		if (instanced)
+		{
+			if (s_Data.Batches.find(material.GetID()) == s_Data.Batches.end())
+				AddBatch(material.GetID());
+			RenderBatch3D* currBatch = s_Data.Batches[material.GetID()];
+
+			// Send data to buffers
+			{
+				DBT_PROFILE_SCOPE("Renderer3D::PushData");
+				currBatch->Buffers["Positions"]->PushData(mesh.GetPositions().data(), sizeof(float) * mesh.GetPositions().size());
+
+				if (mesh.HasNormals())
+					currBatch->Buffers["Normals"]->PushData(mesh.GetNormals().data(), sizeof(float) * mesh.GetNormals().size());
+				if (mesh.HasTangents())
+					currBatch->Buffers["Tangents"]->PushData(mesh.GetTangents().data(), sizeof(float) * mesh.GetTangents().size());
+				if (mesh.HasBitangents())
+					currBatch->Buffers["Bitangents"]->PushData(mesh.GetBitangents().data(), sizeof(float) * mesh.GetBitangents().size());
+
+				// Add indices
+				// This kinda sucks, the vector is reallocated every time a mesh is submitted (100 * 60 = 6000 times per second to be optimist)
+				uint32_t currIndicesSize = currBatch->Indices.size();
+				currBatch->Indices.resize(currBatch->Indices.size() + mesh.GetIndices().size());
+				memcpy(currBatch->Indices.data() + currIndicesSize, mesh.GetIndices().data(), mesh.GetIndices().size() * sizeof(int));
+			}
+		}
+		// Just draw the model otherwise
+		else
+		{
+			{
+				DBT_PROFILE_SCOPE("DrawModel::SetDataAndIndices");
+				std::vector<float>& positions = mesh.GetPositions();
+				std::vector<int>& indices = mesh.GetIndices();
+				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
+				s_Data.IndexBuffer->SetData(mesh.GetIndices().data(), mesh.GetIndices().size());
+
+				if (mesh.HasNormals())
+				{
+					std::vector<float>& normals = mesh.GetNormals();
+					s_Data.VertexBuffers["Normals"]->SetData(normals.data(), normals.size() * sizeof(float));
+				}
+
+				if (mesh.HasTangents())
+				{
+					std::vector<float>& tangents = mesh.GetTangents();
+					s_Data.VertexBuffers["Tangents"]->SetData(tangents.data(), tangents.size() * sizeof(float));
+				}
+
+				if (mesh.HasBitangents())
+				{
+					std::vector<float>& bitangents = mesh.GetBitangents();
+					s_Data.VertexBuffers["Bitangents"]->SetData(bitangents.data(), bitangents.size() * sizeof(float));
+				}
+			}
+
+			{
+				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
+				material.SetMat4("u_Transform", transform);
+				material.Use(s_Data.CameraTransform);
+			}
+
+			{
+				DBT_PROFILE_SCOPE("DrawModel::DrawIndexed");
+				RenderCommand::DrawIndexed(s_Data.VertexArray, mesh.GetIndices().size());
 			}
 		}
 	}
@@ -132,9 +238,6 @@ namespace Debut
 			for (auto& buffer : batch.second->Buffers)
 				buffer.second->SubmitData();
 			batch.second->IndexBuffer->SetData(batch.second->Indices.data(), batch.second->Indices.size());
-
-			/*for (uint32_t i = 0; i < batch.second->Indices.size(); i++)
-				Log.CoreInfo("Index {0}", batch.second->Indices[i]);*/
 
 			// Issue draw call
 			RenderCommand::DrawIndexed(batch.second->VertexArray, batch.second->Indices.size());

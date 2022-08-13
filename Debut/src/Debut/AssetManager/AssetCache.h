@@ -28,12 +28,6 @@ namespace Debut
 
 		inline void Put(Key id, Value item)
 		{
-			if (m_Cache.find(id) != m_Cache.end())
-			{
-				Log.CoreWarn("Attempted to add asset with ID already taken (skipping)");
-				return;
-			}
-
 			m_Cache[id] = item;
 		}
 

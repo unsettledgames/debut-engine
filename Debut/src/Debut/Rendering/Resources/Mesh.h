@@ -33,6 +33,18 @@ namespace Debut
 		std::vector<float>& GetTexCoords(uint32_t index) { return m_TexCoords[index]; }
 		std::vector<int>& GetIndices() { return m_Indices; }
 
+		void SetPositions(std::vector<float>& vec) { m_Vertices = vec; }
+		void SetNormals(std::vector<float>& vec) { m_Normals = vec; }
+		void SetTangents(std::vector<float>& vec) { m_Tangents = vec; }
+		void SetBitangents(std::vector<float>& vec) { m_Bitangents = vec; }
+		void SetTexCoords(std::vector<float>& vec, uint32_t i) { m_TexCoords[i] = vec; }
+		void SetIndices(std::vector<int>& vec) { m_Indices = vec; }
+
+		bool HasNormals() { return m_Normals.size() > 0; }
+		bool HasTangents() { return m_Tangents.size() > 0; }
+		bool HasBitangents() { return m_Bitangents.size() > 0; }
+		bool HasTexCoords(uint32_t index) { return m_TexCoords[index].size() > 0; }
+
 		void SetName(const std::string& name) { m_Name = name; }
 		void SetPath(const std::string& path) { m_Path = path; }
 		void SetID(const UUID& id) { m_ID = id; }
