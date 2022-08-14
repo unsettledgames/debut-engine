@@ -28,3 +28,6 @@
 [submodule "Debut/vendor/brotli"]
 	path = Debut/vendor/brotli
 	url = https://github.com/google/brotli
+[submodule "Debut/vendor/corto"]
+	path = Debut/vendor/corto
+	url = https://github.com/unsettledgames/corto

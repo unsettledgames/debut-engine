@@ -410,7 +410,6 @@ namespace Debutant
 	{
 		if (ImGui::BeginDragDropSource())
 		{
-			Log.CoreInfo("Dragging {0}", path.string());
 			const wchar_t* itemPath = path.c_str();
 			ImGui::SetDragDropPayload("CONTENT_BROWSER_DATA", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
 			ImGui::EndDragDropSource();

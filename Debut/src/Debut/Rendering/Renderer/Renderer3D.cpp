@@ -37,6 +37,7 @@ namespace Debut
 	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& transform)
 	{
 		s_Data.CameraTransform = camera.GetProjection() * glm::inverse(transform);
+
 		// Draw the skybox
 		if (skybox != nullptr)
 		{
@@ -53,6 +54,9 @@ namespace Debut
 
 			skybox->Unbind();
 			skybox->GetMaterial().Unuse();
+
+			s_Data.IndexBuffer->SetData("", 0);
+			s_Data.VertexBuffers["Positions"]->SetData("", 0);
 		}
 	}
 

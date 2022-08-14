@@ -19,6 +19,7 @@
 /*
     TODO:
     - Mesh properties in properties panel?
+    - Models not loading correctly in release mode
 */
 
 namespace Debutant

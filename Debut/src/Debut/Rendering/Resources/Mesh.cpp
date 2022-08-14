@@ -5,6 +5,9 @@
 #include <brotli/encode.h>
 #include <brotli/decode.h>
 
+#include <corto/encoder.h>
+#include <corto/decoder.h>
+
 #include <yaml-cpp/yaml.h>
 #include <Debut/Utils/YamlUtils.h>
 
@@ -26,13 +29,14 @@ namespace Debut
 		
 		{
 			DBT_PROFILE_SCOPE("SaveMesh::CompressBuffer");
-			BrotliEncoderCompress(BROTLI_MAX_QUALITY, BROTLI_DEFAULT_WINDOW, BrotliEncoderMode::BROTLI_MODE_GENERIC,
-				buffer.size() * sizeof(T), byteArrayBegin, &compressedSize, compressedByteArray);
+			if (BrotliEncoderCompress(BROTLI_MAX_QUALITY, BROTLI_DEFAULT_WINDOW, BrotliEncoderMode::BROTLI_MODE_GENERIC,
+				buffer.size() * sizeof(T), byteArrayBegin, &compressedSize, compressedByteArray) == BROTLI_FALSE)
+				Log.CoreError("Mesh compression error");
 		}
 		
 		{
 			DBT_PROFILE_SCOPE("SaveMesh::SaveToFile");
-			file << compressedSize;
+			file << compressedSize << "\n";
 			file.write((const char*)compressedByteArray, compressedSize);
 
 			delete[] compressedByteArray;
@@ -49,9 +53,11 @@ namespace Debut
 
 		file >> string;
 		file >> compressedSize;
-		file.read(reinterpret_cast<char*>(buffer.data()), compressedSize);
+		file.read(reinterpret_cast<char*>(buffer.data()), compressedSize + sizeof(T));
 
-		BrotliDecoderDecompress(compressedSize, (const uint8_t*)buffer.data(), &decompressedSize, (uint8_t*)buffer.data());
+		BrotliDecoderResult ret = BrotliDecoderDecompress(compressedSize, (const uint8_t*)buffer.data(), &decompressedSize, (uint8_t*)buffer.data());
+		if (ret != 1)
+			Log.CoreError("Mesh decompression error {0}", ret);
 	}
 
 
@@ -155,14 +161,24 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION("Mesh:Load");
 		{
+			Log.CoreInfo("Load {0} vertices", m_Vertices.size());
 			LoadBuffer<float>(m_Vertices, inFile, m_Vertices.size());
+			Log.CoreInfo("Load {0} normals", m_Normals.size());
 			LoadBuffer<float>(m_Normals, inFile, m_Normals.size());
+			Log.CoreInfo("Load {0} tangents", m_Tangents.size());
 			LoadBuffer<float>(m_Tangents, inFile, m_Tangents.size());
+			Log.CoreInfo("Load {0} bitangents", m_Bitangents.size());
 			LoadBuffer<float>(m_Bitangents, inFile, m_Bitangents.size());
+			Log.CoreInfo("Load {0} indices", m_Indices.size());
 			LoadBuffer<int>(m_Indices, inFile, m_Indices.size());
 
+			std::string texString;
+			inFile >> texString;
 			for (uint32_t i = 0; i < m_TexCoords.size(); i++)
+			{
+				Log.CoreInfo("Load {0} texcoord {1}", m_TexCoords.size(), i);
 				LoadBuffer<float>(m_TexCoords[i], inFile, m_TexCoords[i].size());
+			}
 		}
 	}
 

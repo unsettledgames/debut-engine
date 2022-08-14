@@ -309,7 +309,6 @@ namespace Debut
 
 	void AssetManager::DeleteAssociations(std::vector<UUID>& id)
 	{
-#ifdef DBT_DEBUG
 		std::fstream currFile("Debut\\AssetMap.yaml", std::ios::out | std::ios::trunc);
 		std::unordered_map copy = s_AssetMap;
 		YAML::Emitter emitter;
@@ -331,7 +330,6 @@ namespace Debut
 		emitter << YAML::EndSeq << YAML::EndMap;
 		currFile << emitter.c_str();
 		currFile.close();
-#endif
 	}
 	
 }
