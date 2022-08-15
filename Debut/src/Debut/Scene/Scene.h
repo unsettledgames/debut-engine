@@ -42,7 +42,7 @@ namespace Debut
 		Entity GetEntityByID(uint64_t id);
 		Ref<Skybox> GetSkybox() { return m_Skybox; }
 
-		void SetSkybox(const std::string& path);
+		void SetSkybox(UUID path);
 
 		static Ref<Scene> Copy(Ref<Scene> other);
 

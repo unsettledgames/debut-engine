@@ -382,9 +382,9 @@ namespace Debut
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::SetSkybox(const std::string& path)
+	void Scene::SetSkybox(UUID skybox)
 	{
-		m_Skybox = Skybox::Create(path);
+		m_Skybox = Skybox::Create(AssetManager::GetPath(skybox));
 	}
 
 	Ref<Scene> Scene::Copy(Ref<Scene> other)

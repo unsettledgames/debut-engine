@@ -1,4 +1,5 @@
 #include "DebutantLayer.h"
+#include <Debut/Core/UUID.h>
 #include "Debut/Core/Instrumentor.h"
 #include "Camera/EditorCamera.h"
 #include <Utils/EditorCache.h>
@@ -21,6 +22,7 @@
 /*
     TODO:
     - Mesh properties in properties panel?
+    - Distinguish between Skybox::Create and Skybox constructor to avoid uselessly creating skyboxes
 */
 
 namespace Debutant
@@ -223,58 +225,16 @@ namespace Debutant
 
             if (ImGui::BeginTabItem("Lighting"))
             {
-                // TODO: drag drop texture, put temporary texture in editor cache to display it
-                // correctly in the editor. Each scene should have a skybox object, when the user applies the changes,
-                // the skybox is edited and reloaded if necessary.
-
-                std::vector<std::string> skyboxPaths = CppUtils::FileSystem::GetAllFilesWithExtension(".skybox", "assets");
-                Ref<Skybox> currSkybox = m_ActiveScene->GetSkybox();
-                const char* currSelected;
-                for (uint32_t i = 0; i < skyboxPaths.size(); i++)
-                {
-                    if (skyboxPaths[i].compare(currSkybox->GetName()) == 0)
-                    {
-                        currSelected = skyboxPaths[i].c_str();
-                        i = skyboxPaths.size();
-                    }
-                }
-                const char** selectables = new const char* [skyboxPaths.size()];
-                const char* ret = nullptr;
-                for (uint32_t i = 0; i < skyboxPaths.size(); i++)
-                    selectables[i] = skyboxPaths[i].c_str();
-
-                if (ImGuiUtils::Combo("Skybox", selectables, skyboxPaths.size(), &currSelected, &ret))
-                {
-                    Log.CoreInfo("Skybox {0}", ret);
-                }
 
                 // Skybox options
-                const char* dirs[6] = {"Front", "Bottom", "Left", "Right", "Up", "Down"};
                 ImGuiUtils::BoldText("Skybox");
+                Ref<Skybox> currSkybox = m_ActiveScene->GetSkybox();
+                Debut::UUID skybox = ImGuiUtils::DragDestination("Skybox", ".skybox", currSkybox == nullptr ? 0 : currSkybox->GetID());
 
-                ImGuiUtils::StartColumns(6, { 100, 100, 100, 100, 100, 100 });
-                for (uint32_t i = 0; i < 6; i++)
-                {
-                    Ref<Texture2D> preview = EditorCache::Textures().Has("Skybox" + std::string(dirs[i])) ?
-                        EditorCache::Textures().Get("Skybox" + std::string(dirs[i])) : EditorCache::Textures().Get("assets\\textures\\empty_texture.png");
-                    Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(preview->GetRendererID(), {80, 80});
-
-                    // User loaded new texture
-                    if (newTexture != nullptr && newTexture->GetRendererID() != preview->GetRendererID())
-                    {
-                        EditorCache::Textures().Put("Skybox" + std::string(dirs[i]), newTexture);
-                        changedSettings.insert("Skybox");
-                    }
-                    ImGui::NextColumn();
-                }
-                for (uint32_t i = 0; i < 6; i++)
-                {
-                    ImGui::Text(dirs[i]);
-                    ImGui::NextColumn();
-                }
-                ImGuiUtils::ResetColumns();
-
-                delete[] selectables;
+                if (m_ActiveScene->GetSkybox() == nullptr && skybox != 0)
+                    m_ActiveScene->SetSkybox(skybox);
+                else if (skybox != 0 &&m_ActiveScene->GetSkybox()->GetID() != skybox)
+                    m_ActiveScene->SetSkybox(skybox);
 
                 ImGui::EndTabItem();
             }
