@@ -382,10 +382,9 @@ namespace Debut
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::SetSkybox(const std::string& front, const std::string& bottom, const std::string& left,
-		const std::string& right, const std::string& up, const std::string& down, Ref<Shader> shader)
+	void Scene::SetSkybox(const std::string& path)
 	{
-		m_Skybox = Skybox::Create(front, bottom, left, right, up, down, shader);
+		m_Skybox = Skybox::Create(path);
 	}
 
 	Ref<Scene> Scene::Copy(Ref<Scene> other)

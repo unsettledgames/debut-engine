@@ -8,29 +8,51 @@
 
 namespace Debut
 {
+	struct SkyboxConfig
+	{
+		UUID FrontTexture;
+		UUID BottomTexture;
+		UUID LeftTexture;
+		UUID RightTexture;
+		UUID UpTexture;
+		UUID DownTexture;
+
+		UUID Material;
+	};
+	
 	class Skybox
 	{
 	public:
+		Skybox() {}
+		Skybox(const Skybox&) {}
 		virtual ~Skybox() = default;
 
-		virtual void Bind() = 0;
-		virtual void Unbind() = 0;
+		virtual void Bind() {}
+		virtual void Unbind() {}
 
-		virtual uint32_t GetRendererID() = 0;
+		virtual uint32_t GetRendererID() { return m_ID; }
 
-		static Ref<Skybox> Create(const std::string& front, const std::string& bottom, const std::string& left,
-			const std::string& right, const std::string& up, const std::string& down, Ref<Shader> shader);
+		static Ref<Skybox> Create(const std::string& path);
 
 		static void SaveDefaultConfig(const std::string& path);
+		static void SaveSettings(SkyboxConfig config, const std::string& path);
 
-		Material& GetMaterial() { return m_Material; }
-		Mesh& GetMesh() { return m_Mesh; }
-		UUID GetID() { return m_ID; }
+		inline void SetMaterial(UUID material) { m_Material = material; }
+
+		inline UUID GetTexture(const std::string& type) { return m_Textures[type]; }
+		inline UUID GetMaterial() { return m_Material; }
+		inline Mesh& GetMesh() { return m_Mesh; }
+		inline UUID GetID() { return m_ID; }
+		inline std::string GetName() { return m_Name; }
+		inline std::string GetPath() { return m_Path; }
 
 	protected:
-		Material m_Material;
+		UUID m_Material = 0;
+		UUID m_ID = 0;
 		Mesh m_Mesh;
-		UUID m_ID;
+
+		std::string m_Name;
+		std::string m_Path;
 
 		std::unordered_map<std::string, UUID> m_Textures;
 	};

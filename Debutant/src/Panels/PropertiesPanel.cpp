@@ -1,4 +1,5 @@
 #include <imgui_internal.h>
+#include <Debut/Utils/CppUtils.h>
 #include <Debut/ImGui/ImGuiUtils.h>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
@@ -9,6 +10,7 @@
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/AssetManager/AssetManager.h>
 
+#include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Rendering/Material.h>
 #include <Debut/Rendering/Shader.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
@@ -317,38 +319,14 @@ namespace Debut
 		Ref<Shader> shader = AssetManager::Request<Shader>(material->GetShader());
 
 		// Shader selection combobox
-		std::vector<std::string> shaderStrings;
 		const char** shaders;
 		std::filesystem::path shaderFolder("assets\\shaders");
 
 		const char* currShader = shader == nullptr ? "None" : shader->GetName().c_str();
 		const char* ret = nullptr;
 
-		// BF visit to find all the shaders in the folder
-		std::stack<std::filesystem::path> pathsToVisit;
-		pathsToVisit.push(std::filesystem::path("assets\\shaders"));
-		std::filesystem::path currPath;
-
-		while (pathsToVisit.size() > 0)
-		{
-			currPath = pathsToVisit.top();
-			pathsToVisit.pop();
-
-			auto& dirIt = std::filesystem::directory_iterator(currPath);
-
-			for (auto entry : dirIt)
-			{
-				if (entry.is_directory())
-					pathsToVisit.push(entry.path());
-				else
-				{
-					std::string extension = entry.path().extension().string();
-					if (extension == ".glsl" || extension == ".hlsl")
-						shaderStrings.push_back(entry.path().string());
-				}
-			}
-		}
-
+		// Get all shaders
+		std::vector<std::string> shaderStrings = CppUtils::FileSystem::GetAllFilesWithExtension(".glsl", "assets\\shaders");
 		// Convert the strings to const char*s
 		shaders = new const char* [shaderStrings.size()];
 		for (uint32_t i = 0; i < shaderStrings.size(); i++)
@@ -440,10 +418,60 @@ namespace Debut
 
 	void PropertiesPanel::DrawSkyboxProperties()
 	{
-		// Shader drop down
+		// Load necessary resources
+		Ref<Skybox> skybox = AssetManager::Request<Skybox>(m_AssetPath.string());
+		Ref<Material> material = AssetManager::Request<Material>(skybox->GetMaterial());
+		// Material
+		UUID currentMaterial = ImGuiUtils::DragDestination("Material", ".mat", material == nullptr ? 0 : material->GetID());
+		if (currentMaterial != 0)
+		{
+			if (material == nullptr)
+				skybox->SetMaterial(currentMaterial);
+			else if (currentMaterial != material->GetID())
+				skybox->SetMaterial(currentMaterial);
+		}
+
+		ImGuiUtils::ResetColumns();
+
 		// Drag / drop textures
+		const char* dirs[6] = { "Front", "Bottom", "Left", "Right", "Up", "Down" };
+		Ref<Texture2D> textures[6] = { AssetManager::Request<Texture2D>(skybox->GetTexture("Front")) ,
+		AssetManager::Request<Texture2D>(skybox->GetTexture("Bottom")) ,AssetManager::Request<Texture2D>(skybox->GetTexture("Left")) ,
+		AssetManager::Request<Texture2D>(skybox->GetTexture("Right")),AssetManager::Request<Texture2D>(skybox->GetTexture("Up")) ,
+		AssetManager::Request<Texture2D>(skybox->GetTexture("Down")) };
+		ImGui::Text("Textures");
+
+		ImGuiUtils::StartColumns(4, { 100, 100, 100, 100 });
+		for (uint32_t i = 0; i < 6; i++)
+		{
+			Ref<Texture2D> preview = textures[i] != nullptr ? textures[i] : EditorCache::Textures().Get("assets\\textures\\empty_texture.png");
+			Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(preview->GetRendererID(), { 80, 80 });
+			if (preview != nullptr && !EditorCache::Textures().Has("Skybox" + std::string(dirs[i])))
+				EditorCache::Textures().Put("Skybox" + std::string(dirs[i]), preview);
+
+			// User loaded new texture
+			if (newTexture != nullptr && newTexture->GetRendererID() != preview->GetRendererID())
+				EditorCache::Textures().Put("Skybox" + std::string(dirs[i]), newTexture);
+			ImGui::NextColumn();
+
+			ImGui::Text(dirs[i]);
+			ImGui::NextColumn();
+		}
+		ImGuiUtils::ResetColumns();
+
 		// Apply settings button
-		
+		if (ImGui::Button("Apply settings"))
+		{
+			SkyboxConfig skyboxSettings;
+			skyboxSettings.FrontTexture = EditorCache::Textures().Get("SkyboxFront")->GetID();
+			skyboxSettings.BottomTexture = EditorCache::Textures().Get("SkyboxBottom")->GetID();
+			skyboxSettings.LeftTexture = EditorCache::Textures().Get("SkyboxLeft")->GetID();
+			skyboxSettings.RightTexture = EditorCache::Textures().Get("SkyboxRight")->GetID();
+			skyboxSettings.UpTexture = EditorCache::Textures().Get("SkyboxUp")->GetID();
+			skyboxSettings.DownTexture = EditorCache::Textures().Get("SkyboxDown")->GetID();
+			skyboxSettings.Material = skybox->GetMaterial();
+			skybox->SaveSettings(skyboxSettings, m_AssetPath.string());
+		}
 	}
 
 	void PropertiesPanel::SetAsset(std::filesystem::path path, AssetType assetType)

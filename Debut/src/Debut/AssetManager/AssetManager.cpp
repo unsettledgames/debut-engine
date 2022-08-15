@@ -17,6 +17,7 @@ namespace Debut
 	AssetCache<std::string, Ref<Material>> AssetManager::s_MaterialCache;
 	AssetCache<std::string, Ref<Mesh>> AssetManager::s_MeshCache;
 	AssetCache<std::string, Ref<Model>> AssetManager::s_ModelCache;
+	AssetCache<std::string, Ref<Skybox>> AssetManager::s_SkyboxCache;
 
 	static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
 
@@ -283,6 +284,25 @@ namespace Debut
 
 		// Update the asset map if the entry wasn't there
 		s_ModelCache.Put(id, toAdd);
+		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+		{
+			s_AssetMap[toAdd->GetID()] = id;
+			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
+		}
+
+		return toAdd;
+	}
+
+	template<>
+	Ref<Skybox> AssetManager::Request<Skybox>(const std::string& id, const std::string& metaFile)
+	{
+		if (s_SkyboxCache.Has(id))
+			return s_SkyboxCache.Get(id);
+
+		Ref<Skybox> toAdd = Skybox::Create(id);
+
+		// Update the asset map if the entry wasn't there
+		s_SkyboxCache.Put(id, toAdd);
 		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
 		{
 			s_AssetMap[toAdd->GetID()] = id;

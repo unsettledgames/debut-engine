@@ -2,6 +2,7 @@
 #include <string>
 #include <cstdio>
 #include <filesystem>
+#include <stack>
 
 namespace Debut
 {
@@ -30,6 +31,36 @@ namespace Debut
 				}
 					
 				return false;
+			}
+
+			static std::vector<std::string> GetAllFilesWithExtension(const std::string& extension, const std::string& folder)
+			{
+				std::vector<std::string> ret;
+				std::stack<std::filesystem::path> pathsToVisit;
+				pathsToVisit.push(std::filesystem::path(folder));
+				std::filesystem::path currPath;
+
+				while (pathsToVisit.size() > 0)
+				{
+					currPath = pathsToVisit.top();
+					pathsToVisit.pop();
+
+					auto& dirIt = std::filesystem::directory_iterator(currPath);
+
+					for (auto entry : dirIt)
+					{
+						if (entry.is_directory())
+							pathsToVisit.push(entry.path());
+						else
+						{
+							std::string fileExt = entry.path().extension().string();
+							if (fileExt.compare(extension) == 0)
+								ret.push_back(entry.path().string());
+						}
+					}
+				}
+
+				return ret;
 			}
 		}
 

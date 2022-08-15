@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Debut/Rendering/Material.h>
+#include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Rendering/Structures/VertexArray.h>
 #include <Debut/Rendering/Structures/Buffer.h>
 #include <Debut/Scene/Components.h>

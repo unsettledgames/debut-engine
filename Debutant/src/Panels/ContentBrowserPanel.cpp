@@ -15,9 +15,6 @@ using namespace Debut;
 
 /*
 	TODO
-		- Delete file:
-			- Ask for confirmation and just delete it if it's a normal file
-			- Also delete related files if it's a model
 		- Move files in content browser
 */
 
@@ -152,20 +149,16 @@ namespace Debutant
 		
 		if (treeNodeRet)
 		{
-			if (ImGui::IsItemClicked())
+			if (ImGui::IsItemClicked() && isDir)
 			{
-				// Toggle the current node if it's been clicked
-				if (isDir)
-				{
-					m_SelectedDir = path.string();
-					m_RightClicked = m_SelectedDir;
-				}
-				else
-				{
-					m_PropertiesPanel->SetAsset(path);
-					m_SelectedAsset = path.string();
-					m_RightClicked = m_SelectedAsset;
-				}
+				m_SelectedDir = path.string();
+				m_RightClicked = m_SelectedDir;
+			}
+			if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
+			{
+				m_PropertiesPanel->SetAsset(path);
+				m_SelectedAsset = path.string();
+				m_RightClicked = m_SelectedAsset;
 			}
 
 			// Recursively render the rest of the hierarchy

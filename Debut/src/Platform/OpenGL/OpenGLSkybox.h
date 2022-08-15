@@ -8,6 +8,8 @@ namespace Debut
 	class OpenGLSkybox : public Skybox
 	{
 	public:
+		OpenGLSkybox() {};
+		OpenGLSkybox(const OpenGLSkybox&) {};
 		OpenGLSkybox(const std::string& front, const std::string& bottom, const std::string& left,
 			const std::string& right, const std::string& up, const std::string& down);
 		~OpenGLSkybox();
@@ -18,6 +20,6 @@ namespace Debut
 		virtual void Unbind() override;
 
 	private:
-		GLuint m_RendererID;
+		GLuint m_RendererID = 0;
 	};
 }

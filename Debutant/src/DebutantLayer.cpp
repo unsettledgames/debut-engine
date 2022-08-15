@@ -5,7 +5,9 @@
 #include <Debut/Rendering/Resources/Model.h>
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/Utils/PlatformUtils.h>
+#include <Debut/Utils/CppUtils.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
+#include <Debut/Rendering/Resources/Skybox.h>
 
 #include <chrono>
 #include "Debut/ImGui/ImGuiUtils.h"
@@ -19,7 +21,6 @@
 /*
     TODO:
     - Mesh properties in properties panel?
-    - Models not loading correctly in release mode
 */
 
 namespace Debutant
@@ -59,8 +60,8 @@ namespace Debutant
         "assets\\textures\\Skybox\\right.png","assets\\textures\\Skybox\\up.png",
         "assets\\textures\\Skybox\\down.png" };
 
-        m_ActiveScene->SetSkybox(filenames[0], filenames[1], filenames[2], filenames[3], filenames[4], filenames[5],
-            AssetManager::Request<Shader>("assets\\shaders\\skybox.glsl"));
+        /*m_ActiveScene->SetSkybox(filenames[0], filenames[1], filenames[2], filenames[3], filenames[4], filenames[5],
+            AssetManager::Request<Shader>("assets\\shaders\\skybox.glsl"));*/
     }
 
     void DebutantLayer::OnDetach()
@@ -226,6 +227,27 @@ namespace Debutant
                 // correctly in the editor. Each scene should have a skybox object, when the user applies the changes,
                 // the skybox is edited and reloaded if necessary.
 
+                std::vector<std::string> skyboxPaths = CppUtils::FileSystem::GetAllFilesWithExtension(".skybox", "assets");
+                Ref<Skybox> currSkybox = m_ActiveScene->GetSkybox();
+                const char* currSelected;
+                for (uint32_t i = 0; i < skyboxPaths.size(); i++)
+                {
+                    if (skyboxPaths[i].compare(currSkybox->GetName()) == 0)
+                    {
+                        currSelected = skyboxPaths[i].c_str();
+                        i = skyboxPaths.size();
+                    }
+                }
+                const char** selectables = new const char* [skyboxPaths.size()];
+                const char* ret = nullptr;
+                for (uint32_t i = 0; i < skyboxPaths.size(); i++)
+                    selectables[i] = skyboxPaths[i].c_str();
+
+                if (ImGuiUtils::Combo("Skybox", selectables, skyboxPaths.size(), &currSelected, &ret))
+                {
+                    Log.CoreInfo("Skybox {0}", ret);
+                }
+
                 // Skybox options
                 const char* dirs[6] = {"Front", "Bottom", "Left", "Right", "Up", "Down"};
                 ImGuiUtils::BoldText("Skybox");
@@ -252,6 +274,8 @@ namespace Debutant
                 }
                 ImGuiUtils::ResetColumns();
 
+                delete[] selectables;
+
                 ImGui::EndTabItem();
             }
 
@@ -268,10 +292,6 @@ namespace Debutant
             // Apply all settings
             for (auto& setting : changedSettings)
             {
-                if (setting == "Skybox") m_ActiveScene->SetSkybox(EditorCache::Textures().Get("SkyboxFront")->GetPath(),
-                    EditorCache::Textures().Get("SkyboxBottom")->GetPath(), EditorCache::Textures().Get("SkyboxLeft")->GetPath(),
-                    EditorCache::Textures().Get("SkyboxRight")->GetPath(), EditorCache::Textures().Get("SkyboxUp")->GetPath(),
-                    EditorCache::Textures().Get("SkyboxDown")->GetPath(), AssetManager::Request<Shader>("assets\\shaders\\skybox.glsl"));
             }
             // Reset the set
             changedSettings = {};

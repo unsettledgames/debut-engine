@@ -40,9 +40,9 @@ namespace Debut
 
 		Entity GetPrimaryCameraEntity();
 		Entity GetEntityByID(uint64_t id);
+		Ref<Skybox> GetSkybox() { return m_Skybox; }
 
-		void SetSkybox(const std::string& front, const std::string& bottom, const std::string& left,
-			const std::string& right, const std::string& up, const std::string& down, Ref<Shader> shader);
+		void SetSkybox(const std::string& path);
 
 		static Ref<Scene> Copy(Ref<Scene> other);
 

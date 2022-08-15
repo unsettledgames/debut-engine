@@ -41,9 +41,10 @@ namespace Debut
 		// Draw the skybox
 		if (skybox != nullptr)
 		{
+			Ref<Material> skyboxMaterial = AssetManager::Request<Material>(skybox->GetMaterial());
 			glm::mat4 skyboxTransform = camera.GetProjection() * glm::inverse(glm::mat4(glm::mat3(transform)));
 			skybox->Bind();
-			skybox->GetMaterial().Use(skyboxTransform);
+			skyboxMaterial->Use(skyboxTransform);
 
 			std::vector<float>& positions = skybox->GetMesh().GetPositions();
 			std::vector<int>& indices = skybox->GetMesh().GetIndices();
@@ -53,7 +54,7 @@ namespace Debut
 			RenderCommand::DrawIndexed(s_Data.VertexArray, indices.size());
 
 			skybox->Unbind();
-			skybox->GetMaterial().Unuse();
+			skyboxMaterial->Unuse();
 
 			s_Data.IndexBuffer->SetData("", 0);
 			s_Data.VertexBuffers["Positions"]->SetData("", 0);

@@ -9,6 +9,7 @@
 #include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Rendering/Shader.h>
 #include <Debut/Rendering/Material.h>
+#include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Rendering/Resources/Model.h>
 
 namespace Debut
@@ -122,6 +123,7 @@ namespace Debut
 		static AssetCache<std::string, Ref<Material>> s_MaterialCache;
 		static AssetCache<std::string, Ref<Mesh>> s_MeshCache;
 		static AssetCache<std::string, Ref<Model>> s_ModelCache;
+		static AssetCache<std::string, Ref<Skybox>> s_SkyboxCache;
 		
 	};
 }
