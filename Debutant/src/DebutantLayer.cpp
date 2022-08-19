@@ -21,9 +21,13 @@
 
 /*
     TODO:
+    - Remove as many #include as possible
     - Mesh properties in properties panel?
     - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
     - Find out why sometimes associations are duplicated in the assetmanager
+    - Fix CB ordering: folders before files
+    - Add inspector / properties panel locking
+    - Make editor robust to association file deletion / editing
 */
 
 namespace Debutant
@@ -63,8 +67,7 @@ namespace Debutant
         "assets\\textures\\Skybox\\right.png","assets\\textures\\Skybox\\up.png",
         "assets\\textures\\Skybox\\down.png" };
 
-        /*m_ActiveScene->SetSkybox(filenames[0], filenames[1], filenames[2], filenames[3], filenames[4], filenames[5],
-            AssetManager::Request<Shader>("assets\\shaders\\skybox.glsl"));*/
+        m_ActiveScene->SetSkybox(12755579250371982529);
     }
 
     void DebutantLayer::OnDetach()

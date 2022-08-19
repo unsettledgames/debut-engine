@@ -108,6 +108,18 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Editor update");
 
+		// 3D Rendering
+		Renderer3D::BeginScene(camera, m_Skybox, glm::inverse(camera.GetView()));
+
+		auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
+		for (auto entity : group3D)
+		{
+			auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
+			Renderer3D::DrawModel(mesh, transform.GetTransform());
+		}
+
+		Renderer3D::EndScene();
+
 		// 2D Rendering
 		Renderer2D::BeginScene(camera, glm::inverse(camera.GetView()));
 
@@ -129,18 +141,7 @@ namespace Debut
 		}
 
 		Renderer2D::EndScene();
-
-		// 3D Rendering
-		Renderer3D::BeginScene(camera, m_Skybox, glm::inverse(camera.GetView()));
-
-		auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
-		for (auto entity : group3D)
-		{
-			auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
-			Renderer3D::DrawModel(mesh, transform.GetTransform());
-		}
-
-		Renderer3D::EndScene();
+		
 	}
 	
 
