@@ -18,6 +18,7 @@ namespace Debut
 		UUID DownTexture;
 
 		UUID Material;
+		UUID ID;
 	};
 	
 	class Skybox

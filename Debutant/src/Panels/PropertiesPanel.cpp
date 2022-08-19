@@ -435,10 +435,13 @@ namespace Debut
 
 		// Drag / drop textures
 		const char* dirs[6] = { "Front", "Bottom", "Left", "Right", "Up", "Down" };
-		Ref<Texture2D> textures[6] = { AssetManager::Request<Texture2D>(skybox->GetTexture("Front")) ,
-		AssetManager::Request<Texture2D>(skybox->GetTexture("Bottom")) ,AssetManager::Request<Texture2D>(skybox->GetTexture("Left")) ,
-		AssetManager::Request<Texture2D>(skybox->GetTexture("Right")),AssetManager::Request<Texture2D>(skybox->GetTexture("Up")) ,
-		AssetManager::Request<Texture2D>(skybox->GetTexture("Down")) };
+		Ref<Texture2D> textures[6] = { EditorCache::Textures().Get("SkyboxFront"), EditorCache::Textures().Get("SkyboxBottom"),
+			EditorCache::Textures().Get("SkyboxLeft"), EditorCache::Textures().Get("SkyboxRight"), 
+			EditorCache::Textures().Get("SkyboxUp") , EditorCache::Textures().Get("SkyboxDown")};
+
+		for (uint32_t i = 0; i < 6; i++)
+			if (textures[i] == nullptr)
+				textures[i] = AssetManager::Request<Texture2D>(skybox->GetTexture(dirs[i]));
 		ImGui::Text("Textures");
 
 		ImGuiUtils::StartColumns(4, { 100, 100, 100, 100 });
@@ -470,6 +473,7 @@ namespace Debut
 			skyboxSettings.UpTexture = EditorCache::Textures().Get("SkyboxUp")->GetID();
 			skyboxSettings.DownTexture = EditorCache::Textures().Get("SkyboxDown")->GetID();
 			skyboxSettings.Material = skybox->GetMaterial();
+			skyboxSettings.ID = skybox->GetID();
 			skybox->SaveSettings(skyboxSettings, m_AssetPath.string());
 		}
 	}

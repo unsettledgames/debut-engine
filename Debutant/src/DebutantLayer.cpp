@@ -22,7 +22,8 @@
 /*
     TODO:
     - Mesh properties in properties panel?
-    - Distinguish between Skybox::Create and Skybox constructor to avoid uselessly creating skyboxes
+    - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
+    - Find out why sometimes associations are duplicated in the assetmanager
 */
 
 namespace Debutant

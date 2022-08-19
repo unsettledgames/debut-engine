@@ -75,6 +75,11 @@ namespace Debut
 			
 			// Create the empty file
 			T::SaveDefaultConfig(tmpPath);
+			// Load the ID from the newly created meta and add the association
+			std::ifstream meta(tmpPath + ".meta");
+			std::stringstream ss; ss << meta.rdbuf();
+			YAML::Node node = YAML::Load(ss.str());
+			AddAssociationToFile(node["ID"].as<uint64_t>(), path);
 		}
 
 

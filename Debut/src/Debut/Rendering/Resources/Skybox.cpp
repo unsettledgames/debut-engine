@@ -76,7 +76,7 @@ namespace Debut
 
 	void Skybox::SaveDefaultConfig(const std::string& path)
 	{
-		SkyboxConfig config = { 0, 0, 0, 0, 0, 0, 0 };
+		SkyboxConfig config = { 0, 0, 0, 0, 0, 0, 0, UUID()};
 		Skybox::SaveSettings(config, path);
 	}
 
@@ -101,7 +101,7 @@ namespace Debut
 		skyboxEmitter << YAML::EndMap << YAML::EndDoc;
 
 		metaEmitter << YAML::BeginDoc << YAML::BeginMap;
-		metaEmitter << YAML::Key << "ID" << YAML::Value << UUID();
+		metaEmitter << YAML::Key << "ID" << YAML::Value << config.ID;
 		metaEmitter << YAML::EndMap << YAML::EndDoc;
 
 		skyboxFile << skyboxEmitter.c_str();

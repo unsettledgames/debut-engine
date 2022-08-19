@@ -20,12 +20,19 @@ namespace Debut
             unsigned char* data = stbi_load(facesPaths[i].c_str(), &width, &height, &nrChannels, 0);
             if (data)
             {
-                GLCall(glTexImage2D(faces[i], 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+                if (nrChannels == 4)
+                {
+                    GLCall(glTexImage2D(faces[i], 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
+                }
+                else
+                {
+                    GLCall(glTexImage2D(faces[i], 0, GL_RGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+                }
                 stbi_image_free(data);
             }
             else
             {
-                Log.CoreInfo("Cubemap tex failed to load at path: {0}", facesPaths[i]);
+                Log.CoreInfo("Cubemap texture failed to load at path: {0}", facesPaths[i]);
                 stbi_image_free(data);
             }
         }
