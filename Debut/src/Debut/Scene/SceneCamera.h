@@ -7,11 +7,9 @@ namespace Debut
 	class SceneCamera : public Camera
 	{
 	public:
-		enum class ProjectionType { Perspective = 0, Orthographic = 1 };
 		SceneCamera();
 		~SceneCamera();
 
-		ProjectionType GetProjectionType() const { return m_ProjectionType; }
 		void SetOrthographic(float size, float nearPlane, float farPlane);
 		void SetPerspective(float fov, float nearPlane, float farPlane);
 		void SetProjectionType(ProjectionType type);
@@ -35,13 +33,10 @@ namespace Debut
 		void SetPerspFarClip(float val) { m_PerspectiveFar = val; RecalculateProjection(); }
 
 		static ProjectionType StringToProjType(const char* string);
-		
 	
 	private:
 		void RecalculateProjection();
 	private:
-		ProjectionType m_ProjectionType = ProjectionType::Orthographic;
-
 		float m_OrthographicSize = 10.0f;
 		float m_OrthographicNear = -1.0f, m_OrthographicFar = 1.0f;
 

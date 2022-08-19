@@ -21,13 +21,16 @@
 
 /*
     TODO:
+    - Fix skybox not working in orthographic mode
     - Remove as many #include as possible
+    - Fix warnings
     - Mesh properties in properties panel?
     - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
     - Find out why sometimes associations are duplicated in the assetmanager
     - Fix CB ordering: folders before files
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
+    - Asset renaming
 */
 
 namespace Debutant

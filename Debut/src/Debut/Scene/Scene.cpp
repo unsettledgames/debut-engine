@@ -207,21 +207,6 @@ namespace Debut
 
 		if (mainCamera)
 		{
-			// 2D Rendering
-			{
-				DBT_PROFILE_SCOPE("Renderer2D update");
-				Renderer2D::BeginScene(*mainCamera, cameraTransform);
-
-				auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
-				for (auto entity : group)
-				{
-					auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-				}
-
-				Renderer2D::EndScene();
-			}
-
 			// 3D Rendering
 			{
 				DBT_PROFILE_SCOPE("Renderer3D update");
@@ -235,6 +220,21 @@ namespace Debut
 				}
 
 				Renderer3D::EndScene();
+			}
+
+			// 2D Rendering
+			{
+				DBT_PROFILE_SCOPE("Renderer2D update");
+				Renderer2D::BeginScene(*mainCamera, cameraTransform);
+
+				auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
+				for (auto entity : group)
+				{
+					auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				}
+
+				Renderer2D::EndScene();
 			}
 		}
 	}
@@ -427,6 +427,8 @@ namespace Debut
 			if (tc.Parent)
 				tc.Parent = newScene->GetEntityByID(tc.Parent.GetComponent<IDComponent>().ID);
 		}
+
+		newScene->m_Skybox = other->m_Skybox;
 
 		return newScene;
 	}

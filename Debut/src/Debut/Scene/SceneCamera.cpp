@@ -7,6 +7,7 @@ namespace Debut
 {
 	SceneCamera::SceneCamera()
 	{
+		m_ProjectionType = ProjectionType::Orthographic;
 		RecalculateProjection();
 	}
 
@@ -70,7 +71,7 @@ namespace Debut
 
 	SceneCamera::ProjectionType SceneCamera::StringToProjType(const char* string)
 	{
-		if (string == "Perspective")
+		if (std::string(string).compare("Perspective") == 0)
 			return SceneCamera::ProjectionType::Perspective;
 		
 		return SceneCamera::ProjectionType::Orthographic;
