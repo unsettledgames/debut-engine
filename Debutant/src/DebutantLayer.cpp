@@ -21,9 +21,7 @@
 
 /*
     TODO:
-    - Fix skybox perspective in play mode
     - Fix 3D models loading (same decompression error as before)
-    - Fix skybox not working in orthographic mode
     - Remove as many #include as possible
     - Fix warnings
     - Add const and inline where possible
