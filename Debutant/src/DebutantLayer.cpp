@@ -21,9 +21,12 @@
 
 /*
     TODO:
+    - Fix skybox perspective in play mode
+    - Fix 3D models loading (same decompression error as before)
     - Fix skybox not working in orthographic mode
     - Remove as many #include as possible
     - Fix warnings
+    - Add const and inline where possible
     - Mesh properties in properties panel?
     - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
     - Find out why sometimes associations are duplicated in the assetmanager
@@ -31,6 +34,7 @@
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
     - Asset renaming
+    - Don't save data twice in camera (persp & ortho near / far)
 */
 
 namespace Debutant

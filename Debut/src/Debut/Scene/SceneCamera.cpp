@@ -19,9 +19,9 @@ namespace Debut
 	void SceneCamera::SetProjectionType(ProjectionType type)
 	{
 		if (type == ProjectionType::Perspective)
-			SetPerspective(m_PerspectiveFOV, m_PerspectiveNear, m_PerspectiveFar);
+			SetPerspective(m_PerspectiveFOV, m_NearPlane, m_FarPlane);
 		else
-			SetOrthographic(m_OrthographicSize, m_OrthographicNear, m_OrthographicFar);
+			SetOrthographic(m_OrthographicSize, m_NearPlane, m_FarPlane);
 	}
 
 	void SceneCamera::SetOrthographic(float size, float nearPlane, float farPlane)
@@ -29,8 +29,8 @@ namespace Debut
 		m_ProjectionType = ProjectionType::Orthographic;
 
 		m_OrthographicSize = size;
-		m_OrthographicFar = farPlane;
-		m_OrthographicNear = nearPlane;
+		m_NearPlane = farPlane;
+		m_FarPlane = nearPlane;
 		
 		RecalculateProjection();
 	}
@@ -40,8 +40,8 @@ namespace Debut
 		m_ProjectionType = ProjectionType::Perspective;
 
 		m_PerspectiveFOV = fov;
-		m_PerspectiveFar = farPlane;
-		m_PerspectiveNear = nearPlane;
+		m_FarPlane = farPlane;
+		m_NearPlane = nearPlane;
 
 		RecalculateProjection();
 	}
@@ -56,7 +56,7 @@ namespace Debut
 	{
 		if (m_ProjectionType == ProjectionType::Perspective)
 		{
-			m_ProjectionMatrix = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);
+			m_ProjectionMatrix = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_NearPlane, m_FarPlane);
 		}
 		else
 		{
@@ -65,7 +65,7 @@ namespace Debut
 			float orthoBottom = -0.5f * m_OrthographicSize;
 			float orthoTop = 0.5f * m_OrthographicSize;
 
-			m_ProjectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar);
+			m_ProjectionMatrix = glm::ortho(orthoLeft, orthoRight, orthoBottom, orthoTop, m_NearPlane, m_FarPlane);
 		}
 	}
 

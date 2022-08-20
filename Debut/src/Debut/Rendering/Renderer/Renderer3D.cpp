@@ -46,8 +46,8 @@ namespace Debut
 			if (camera.GetProjectionType() == Camera::ProjectionType::Perspective)
 				skyboxTransform = camera.GetProjection() * glm::inverse(glm::mat4(glm::mat3(transform)));
 			else
-				skyboxTransform = glm::perspective(90, camera.GetAspectRatio(), camera.GetNearPlane(), camera.GetFarPlane());
-
+				skyboxTransform = glm::perspective(90.0f, camera.GetAspectRatio(), camera.GetNearPlane(), camera.GetFarPlane());
+			
 			skybox->Bind();
 			skyboxMaterial->Use(skyboxTransform);
 
