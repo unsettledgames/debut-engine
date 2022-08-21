@@ -1,7 +1,8 @@
+#include <Debut/dbtpch.h>
+#include <cstdio>
+
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/AssetManager/AssetManager.h>
-#include <Debut/Core/Log.h>
-#include <cstdio>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>

@@ -21,10 +21,10 @@
 
 /*
     TODO:
-    - Fork imgui and imguizmo, add cmakelists to them
     - Remove as many #include as possible
     - Fix warnings
     - Add const and inline where possible
+    - Custom memory allocator to keep track of used memory
     - Mesh properties in properties panel?
     - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
     - Find out why sometimes associations are duplicated in the assetmanager
@@ -32,10 +32,9 @@
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
     - Asset renaming
-    - Don't save data twice in camera (persp & ortho near / far)
 */
 
-namespace Debutant
+namespace Debut
 {
     void DebutantLayer::OnAttach()
     {

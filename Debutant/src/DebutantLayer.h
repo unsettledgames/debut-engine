@@ -7,9 +7,7 @@
 #include <Panels/ContentBrowserPanel.h>
 #include <Camera/EditorCamera.h>
 
-using namespace Debut;
-
-namespace Debutant
+namespace Debut
 {
 	class DebutantLayer : public Layer
 	{

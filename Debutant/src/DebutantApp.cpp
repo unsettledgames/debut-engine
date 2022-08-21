@@ -12,7 +12,7 @@ namespace Debut
 	public:
 		DebutantApp() : Application("Debutant")
 		{
-			PushLayer(new Debutant::DebutantLayer());
+			PushLayer(new DebutantLayer());
 		}
 
 		~DebutantApp()

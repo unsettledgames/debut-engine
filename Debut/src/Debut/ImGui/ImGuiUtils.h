@@ -1,6 +1,7 @@
 #pragma once
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <fstream>
 #include <filesystem>
 
 #include <Debut/AssetManager/AssetManager.h>

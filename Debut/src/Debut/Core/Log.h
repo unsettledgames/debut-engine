@@ -2,7 +2,6 @@
 
 #include "Core.h"
 #include "spdlog/spdlog.h"
-#include "Debut/dbtpch.h"
 
 #ifdef DBT_ASSERTS
 	#define DBT_ASSERT(x, ...) { if(!(x)) { Debut::Log.AppFatal("Assertion failed. {0}", __VA_ARGS__); __debugbreak(); }}
