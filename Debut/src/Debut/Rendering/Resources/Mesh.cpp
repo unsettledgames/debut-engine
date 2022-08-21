@@ -4,6 +4,7 @@
 
 #include <brotli/encode.h>
 #include <brotli/decode.h>
+#include <lz4.h>
 
 #include <corto/encoder.h>
 #include <corto/decoder.h>
@@ -24,14 +25,15 @@ namespace Debut
 		size_t uncompressedSize = sizeof(T) * buffer.size();
 		size_t compressedSize;
 
-		const unsigned char* byteArrayBegin = reinterpret_cast<unsigned char*>(buffer.data());
-		unsigned char* compressedByteArray = new unsigned char[uncompressedSize];
+		const char* byteArrayBegin = reinterpret_cast<char*>(buffer.data());
+		char* compressedByteArray = new char[uncompressedSize];
 		
 		{
 			DBT_PROFILE_SCOPE("SaveMesh::CompressBuffer");
-			if (BrotliEncoderCompress(BROTLI_MAX_QUALITY, BROTLI_DEFAULT_WINDOW, BrotliEncoderMode::BROTLI_MODE_GENERIC,
-				buffer.size() * sizeof(T), byteArrayBegin, &compressedSize, compressedByteArray) == BROTLI_FALSE)
-				Log.CoreError("Mesh compression error");
+			Log.CoreInfo("Compressing");
+			compressedSize = LZ4_compress_default(byteArrayBegin, compressedByteArray, uncompressedSize, uncompressedSize);
+			if (compressedSize == 0)
+				Log.CoreError("Compression error");
 		}
 		
 		{
@@ -46,18 +48,34 @@ namespace Debut
 	template<typename T>
 	static void LoadBuffer(std::vector<T>& buffer, std::ifstream& file, uint32_t nElements)
 	{
-		std::string string;
+		std::string string = "";
+		std::string compressedString;
 
 		size_t compressedSize;
 		size_t decompressedSize;
 
-		file >> string;
-		file >> compressedSize;
-		file.read(reinterpret_cast<char*>(buffer.data()), compressedSize + sizeof(T));
+		while (string.compare("") == 0)
+			std::getline(file, string);	
+		std::getline(file, compressedString);
+		compressedSize = std::stoi(compressedString);
 
-		BrotliDecoderResult ret = BrotliDecoderDecompress(compressedSize, (const uint8_t*)buffer.data(), &decompressedSize, (uint8_t*)buffer.data());
-		if (ret != 1)
-			Log.CoreError("Mesh decompression error {0}", ret);
+		file.read(reinterpret_cast<char*>(buffer.data()), compressedSize);
+		if (file)
+			Log.CoreInfo("Read successful");
+		else
+		{
+			Log.CoreInfo("Read unsuccessful (read {0})", file.gcount());
+			Log.CoreInfo("Open? {0}", file.is_open());
+			Log.CoreInfo("Good? {0}", file.good());
+			Log.CoreInfo("Eof? {0}", file.eof());
+			Log.CoreInfo("Fail? {0}", file.fail());
+			Log.CoreInfo("Bad? {0}", file.bad());
+		}
+
+		char* dst = (char*)malloc(sizeof(T) * nElements);
+		decompressedSize = LZ4_decompress_safe((const char*)buffer.data(), dst, compressedSize, sizeof(T) * nElements);
+		memcpy(buffer.data(), dst, sizeof(T) * nElements);
+		free(dst);
 	}
 
 

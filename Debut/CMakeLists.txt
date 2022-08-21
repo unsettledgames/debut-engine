@@ -58,6 +58,7 @@ add_subdirectory(vendor/yaml-cpp)
 add_subdirectory(vendor/assimp)
 add_subdirectory(vendor/brotli)
 add_subdirectory(vendor/corto)
+add_subdirectory(vendor/lz4/build/cmake)
 
 
 # Link dependencies 
@@ -75,6 +76,7 @@ target_link_libraries(Debut
 	PRIVATE brotlienc-static
 	PRIVATE brotlidec-static
 	PRIVATE corto
+	PRIVATE lz4_static
 )
 
 # Define variables
@@ -111,6 +113,7 @@ target_include_directories(Debut
 	PUBLIC vendor/assimp/include
 	PRIVATE vendor/brotli/c/include
 	PRIVATE vendor/corto/include
+	PRIVATE vendor/lz4/lib
 )
 
 # Keep the project structure

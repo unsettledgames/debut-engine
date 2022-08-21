@@ -31,3 +31,6 @@
 [submodule "Debut/vendor/corto"]
 	path = Debut/vendor/corto
 	url = https://github.com/unsettledgames/corto
+[submodule "Debut/vendor/lz4"]
+	path = Debut/vendor/lz4
+	url = https://github.com/lz4/lz4
