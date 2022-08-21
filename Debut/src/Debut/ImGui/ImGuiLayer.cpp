@@ -28,7 +28,7 @@ namespace Debut
 	void ImGuiLayer::SetDarkThemeColors()
 	{
 		auto& colors = ImGui::GetStyle().Colors;
-		/*colors[ImGuiCol_WindowBg] = ImVec4{0.1f, 0.105f, 0.11f, 1.0f};
+		colors[ImGuiCol_WindowBg] = ImVec4{0.1f, 0.105f, 0.11f, 1.0f};
 
 		// Headers
 		colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
@@ -51,7 +51,7 @@ namespace Debut
 		colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.2805f, 0.281f, 1.0f };
 		colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		*/
+		/*
 		// Headers
 		colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.41f, 1.0f };
 		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.51f, 1.0f };
@@ -80,7 +80,7 @@ namespace Debut
 		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.251f, 1.0f };
 
 		colors[ImGuiCol_PlotHistogram] = ImVec4{ 0.25f, 0.4505f, 0.751f, 1.0f };
-		colors[ImGuiCol_PlotHistogramHovered] = ImVec4{ 0.38f, 0.3805f, 0.481f, 1.0f };
+		colors[ImGuiCol_PlotHistogramHovered] = ImVec4{ 0.38f, 0.3805f, 0.481f, 1.0f };*/
 	}
 
 	void ImGuiLayer::OnAttach()

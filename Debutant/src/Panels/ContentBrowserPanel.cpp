@@ -1,6 +1,7 @@
 #include "ContentBrowserPanel.h"
 
 #include <Debut/Rendering/Material.h>
+#include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include "Utils/EditorCache.h"
@@ -14,10 +15,6 @@ using namespace Debut;
 
 /*
 	TODO
-		- Delete file:
-			- Ask for confirmation and just delete it if it's a normal file
-			- Also delete related files if it's a model
-		- Create file in selected directory
 		- Move files in content browser
 */
 
@@ -46,6 +43,8 @@ namespace Debutant
 		m_Icons[".mat"] = "cb-material";
 		m_Icons[".obj"] = "cb-unimported-model";
 		m_Icons[".fbx"] = "cb-unimported-model";
+
+		m_SelectedDir = "assets";
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
@@ -98,10 +97,12 @@ namespace Debutant
 		{
 			if (ImGui::BeginMenu("Create..."))
 			{
-				if (ImGui::MenuItem("Create new Physics Material 2D"))
+				if (ImGui::MenuItem("Physics Material 2D"))
 					AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
-				if (ImGui::MenuItem("Create new Material"))
+				if (ImGui::MenuItem("Material"))
 					AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
+				if (ImGui::MenuItem("Skybox"))
+					AssetManager::CreateAsset<Skybox>(m_SelectedDir + "\\NewSkybox.skybox");
 
 				ImGui::EndMenu();
 			}
@@ -148,20 +149,16 @@ namespace Debutant
 		
 		if (treeNodeRet)
 		{
-			if (ImGui::IsItemClicked())
+			if (ImGui::IsItemClicked() && isDir)
 			{
-				// Toggle the current node if it's been clicked
-				if (isDir)
-				{
-					m_SelectedDir = path.string();
-					m_RightClicked = m_SelectedDir;
-				}
-				else
-				{
-					m_PropertiesPanel->SetAsset(path);
-					m_SelectedAsset = path.string();
-					m_RightClicked = m_SelectedAsset;
-				}
+				m_SelectedDir = path.string();
+				m_RightClicked = m_SelectedDir;
+			}
+			if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
+			{
+				m_PropertiesPanel->SetAsset(path);
+				m_SelectedAsset = path.string();
+				m_RightClicked = m_SelectedAsset;
 			}
 
 			// Recursively render the rest of the hierarchy
@@ -406,7 +403,6 @@ namespace Debutant
 	{
 		if (ImGui::BeginDragDropSource())
 		{
-			Log.CoreInfo("Dragging {0}", path.string());
 			const wchar_t* itemPath = path.c_str();
 			ImGui::SetDragDropPayload("CONTENT_BROWSER_DATA", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
 			ImGui::EndDragDropSource();

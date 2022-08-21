@@ -33,6 +33,7 @@ namespace Debut
 
 		case GL_BOOL: return ShaderDataType::Bool;
 		case GL_SAMPLER_2D: return ShaderDataType::Sampler2D;
+		case GL_SAMPLER_CUBE: return ShaderDataType::SamplerCube;
 		case GL_FLOAT_MAT3: return ShaderDataType::Mat3;
 		case GL_FLOAT_MAT4: return ShaderDataType::Mat4;
 		}

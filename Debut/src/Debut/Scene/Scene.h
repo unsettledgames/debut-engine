@@ -5,6 +5,7 @@
 
 #include <Debut/Core/Core.h>
 #include <Debut/Rendering/Camera.h>
+#include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Core/UUID.h>
 #include "Debut/Core/Time.h"
 
@@ -39,6 +40,9 @@ namespace Debut
 
 		Entity GetPrimaryCameraEntity();
 		Entity GetEntityByID(uint64_t id);
+		Ref<Skybox> GetSkybox() { return m_Skybox; }
+
+		void SetSkybox(UUID path);
 
 		static Ref<Scene> Copy(Ref<Scene> other);
 
@@ -54,6 +58,9 @@ namespace Debut
 		
 		// Physics
 		b2World* m_PhysicsWorld2D = nullptr;		
+
+		// Lighting
+		Ref<Skybox> m_Skybox;
 	};
 }
 

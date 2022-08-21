@@ -108,6 +108,18 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Editor update");
 
+		// 3D Rendering
+		Renderer3D::BeginScene(camera, m_Skybox, glm::inverse(camera.GetView()));
+
+		auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
+		for (auto entity : group3D)
+		{
+			auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
+			Renderer3D::DrawModel(mesh, transform.GetTransform());
+		}
+
+		Renderer3D::EndScene();
+
 		// 2D Rendering
 		Renderer2D::BeginScene(camera, glm::inverse(camera.GetView()));
 
@@ -129,18 +141,7 @@ namespace Debut
 		}
 
 		Renderer2D::EndScene();
-
-		// 3D Rendering
-		Renderer3D::BeginScene(camera, glm::inverse(camera.GetView()));
-
-		auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
-		for (auto entity : group3D)
-		{
-			auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
-			Renderer3D::DrawModel(mesh, transform.GetTransform());
-		}
-
-		Renderer3D::EndScene();
+		
 	}
 	
 
@@ -206,6 +207,21 @@ namespace Debut
 
 		if (mainCamera)
 		{
+			// 3D Rendering
+			{
+				DBT_PROFILE_SCOPE("Renderer3D update");
+				Renderer3D::BeginScene(*mainCamera, m_Skybox, cameraTransform);
+
+				auto group = m_Registry.view<TransformComponent, MeshRendererComponent>();
+				for (auto entity : group)
+				{
+					auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
+					Renderer3D::DrawModel(mesh, transform.GetTransform());
+				}
+
+				Renderer3D::EndScene();
+			}
+
 			// 2D Rendering
 			{
 				DBT_PROFILE_SCOPE("Renderer2D update");
@@ -219,21 +235,6 @@ namespace Debut
 				}
 
 				Renderer2D::EndScene();
-			}
-
-			// 3D Rendering
-			{
-				DBT_PROFILE_SCOPE("Renderer3D update");
-				Renderer3D::BeginScene(*mainCamera, cameraTransform);
-
-				auto group = m_Registry.view<TransformComponent, MeshRendererComponent>();
-				for (auto entity : group)
-				{
-					auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
-					Renderer3D::DrawModel(mesh, transform.GetTransform());
-				}
-
-				Renderer3D::EndScene();
 			}
 		}
 	}
@@ -382,6 +383,11 @@ namespace Debut
 		m_Registry.destroy(entity);
 	}
 
+	void Scene::SetSkybox(UUID skybox)
+	{
+		m_Skybox = Skybox::Create(AssetManager::GetPath(skybox));
+	}
+
 	Ref<Scene> Scene::Copy(Ref<Scene> other)
 	{
 		Ref<Scene> newScene = CreateRef<Scene>();
@@ -421,6 +427,8 @@ namespace Debut
 			if (tc.Parent)
 				tc.Parent = newScene->GetEntityByID(tc.Parent.GetComponent<IDComponent>().ID);
 		}
+
+		newScene->m_Skybox = other->m_Skybox;
 
 		return newScene;
 	}

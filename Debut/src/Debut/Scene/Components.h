@@ -80,7 +80,6 @@ namespace Debut
 
 		void SetParent(Entity parent) 
 		{ 
-			Log.CoreInfo("Setting parent");
 			glm::mat4 finalTransform = GetLocalTransform();
 			glm::quat rotation;
 			glm::vec3 skew;

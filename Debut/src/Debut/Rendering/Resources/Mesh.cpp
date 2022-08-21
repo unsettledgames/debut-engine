@@ -4,6 +4,10 @@
 
 #include <brotli/encode.h>
 #include <brotli/decode.h>
+#include <lz4.h>
+
+#include <corto/encoder.h>
+#include <corto/decoder.h>
 
 #include <yaml-cpp/yaml.h>
 #include <Debut/Utils/YamlUtils.h>
@@ -21,18 +25,20 @@ namespace Debut
 		size_t uncompressedSize = sizeof(T) * buffer.size();
 		size_t compressedSize;
 
-		const unsigned char* byteArrayBegin = reinterpret_cast<unsigned char*>(buffer.data());
-		unsigned char* compressedByteArray = new unsigned char[uncompressedSize];
+		const char* byteArrayBegin = reinterpret_cast<char*>(buffer.data());
+		char* compressedByteArray = new char[uncompressedSize];
 		
 		{
 			DBT_PROFILE_SCOPE("SaveMesh::CompressBuffer");
-			BrotliEncoderCompress(BROTLI_MAX_QUALITY, BROTLI_DEFAULT_WINDOW, BrotliEncoderMode::BROTLI_MODE_GENERIC,
-				buffer.size() * sizeof(T), byteArrayBegin, &compressedSize, compressedByteArray);
+			Log.CoreInfo("Compressing");
+			compressedSize = LZ4_compress_default(byteArrayBegin, compressedByteArray, uncompressedSize, uncompressedSize);
+			if (compressedSize == 0)
+				Log.CoreError("Compression error");
 		}
 		
 		{
 			DBT_PROFILE_SCOPE("SaveMesh::SaveToFile");
-			file << compressedSize;
+			file << compressedSize << "\n";
 			file.write((const char*)compressedByteArray, compressedSize);
 
 			delete[] compressedByteArray;
@@ -42,16 +48,34 @@ namespace Debut
 	template<typename T>
 	static void LoadBuffer(std::vector<T>& buffer, std::ifstream& file, uint32_t nElements)
 	{
-		std::string string;
+		std::string string = "";
+		std::string compressedString;
 
 		size_t compressedSize;
 		size_t decompressedSize;
 
-		file >> string;
-		file >> compressedSize;
-		file.read(reinterpret_cast<char*>(buffer.data()), compressedSize);
+		while (string.compare("") == 0)
+			std::getline(file, string);	
+		std::getline(file, compressedString);
+		compressedSize = std::stoi(compressedString);
 
-		BrotliDecoderDecompress(compressedSize, (const uint8_t*)buffer.data(), &decompressedSize, (uint8_t*)buffer.data());
+		file.read(reinterpret_cast<char*>(buffer.data()), compressedSize);
+		if (file)
+			Log.CoreInfo("Read successful");
+		else
+		{
+			Log.CoreInfo("Read unsuccessful (read {0})", file.gcount());
+			Log.CoreInfo("Open? {0}", file.is_open());
+			Log.CoreInfo("Good? {0}", file.good());
+			Log.CoreInfo("Eof? {0}", file.eof());
+			Log.CoreInfo("Fail? {0}", file.fail());
+			Log.CoreInfo("Bad? {0}", file.bad());
+		}
+
+		char* dst = (char*)malloc(sizeof(T) * nElements);
+		decompressedSize = LZ4_decompress_safe((const char*)buffer.data(), dst, compressedSize, sizeof(T) * nElements);
+		memcpy(buffer.data(), dst, sizeof(T) * nElements);
+		free(dst);
 	}
 
 
@@ -155,14 +179,24 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION("Mesh:Load");
 		{
+			Log.CoreInfo("Load {0} vertices", m_Vertices.size());
 			LoadBuffer<float>(m_Vertices, inFile, m_Vertices.size());
+			Log.CoreInfo("Load {0} normals", m_Normals.size());
 			LoadBuffer<float>(m_Normals, inFile, m_Normals.size());
+			Log.CoreInfo("Load {0} tangents", m_Tangents.size());
 			LoadBuffer<float>(m_Tangents, inFile, m_Tangents.size());
+			Log.CoreInfo("Load {0} bitangents", m_Bitangents.size());
 			LoadBuffer<float>(m_Bitangents, inFile, m_Bitangents.size());
+			Log.CoreInfo("Load {0} indices", m_Indices.size());
 			LoadBuffer<int>(m_Indices, inFile, m_Indices.size());
 
+			std::string texString;
+			inFile >> texString;
 			for (uint32_t i = 0; i < m_TexCoords.size(); i++)
+			{
+				Log.CoreInfo("Load {0} texcoord {1}", m_TexCoords.size(), i);
 				LoadBuffer<float>(m_TexCoords[i], inFile, m_TexCoords[i].size());
+			}
 		}
 	}
 

@@ -412,13 +412,13 @@ namespace Debut
 					if (ImGuiUtils::DragFloat("Vertical FOV", &perspFOV, 0.15f))
 						camera.SetPerspFOV(glm::radians(perspFOV));
 
-					float perspNear = camera.GetPerspNearClip();
+					float perspNear = camera.GetNearPlane();
 					if (ImGuiUtils::DragFloat("Near clip", &perspNear, 0.15f))
-						camera.SetPerspNearClip(perspNear);
+						camera.SetNearPlane(perspNear);
 
-					float perspFar = camera.GetPerspFarClip();
+					float perspFar = camera.GetFarPlane();
 					if (ImGuiUtils::DragFloat("Far clip", &perspFar, 0.15f))
-						camera.SetPerspFarClip(perspFar);
+						camera.SetFarPlane(perspFar);
 				}
 				else
 				{
@@ -426,13 +426,13 @@ namespace Debut
 					if (ImGuiUtils::DragFloat("Size", &orthoSize, 0.15f))
 						camera.SetOrthoSize(orthoSize);
 
-					float orthoNear = camera.GetOrthoNearClip();
+					float orthoNear = camera.GetNearPlane();
 					if (ImGuiUtils::DragFloat("Near clip", &orthoNear, 0.15f))
-						camera.SetOrthoNearClip(orthoNear);
+						camera.SetNearPlane(orthoNear);
 
-					float orthoFar = camera.GetOrthoFarClip();
+					float orthoFar = camera.GetFarPlane();
 					if (ImGuiUtils::DragFloat("Far clip", &orthoFar, 0.15f))
-						camera.SetOrthoFarClip(orthoFar);
+						camera.SetFarPlane(orthoFar);
 				}
 			});
 

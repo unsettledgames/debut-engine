@@ -7,7 +7,7 @@ namespace Debut
 {
 	enum class AssetType
 	{
-		None, Mesh, Material, Texture2D, Shader, PhysicsMaterial2D, Model
+		None, Mesh, Material, Texture2D, Skybox, Shader, PhysicsMaterial2D, Model
 	};
 
 	class PropertiesPanel
@@ -28,6 +28,7 @@ namespace Debut
 		void DrawShaderProperties();
 		void DrawMaterialProperties();
 		void DrawModelProperties();
+		void DrawSkyboxProperties();
 
 		void DrawPhysicsMaterial2DProperties();
 

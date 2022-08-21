@@ -1,13 +1,17 @@
 #include "DebutantLayer.h"
+#include <Debut/Core/UUID.h>
 #include "Debut/Core/Instrumentor.h"
 #include "Camera/EditorCamera.h"
 #include <Utils/EditorCache.h>
 #include <Debut/Rendering/Resources/Model.h>
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/Utils/PlatformUtils.h>
+#include <Debut/Utils/CppUtils.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
+#include <Debut/Rendering/Resources/Skybox.h>
 
 #include <chrono>
+#include "Debut/ImGui/ImGuiUtils.h"
 #include <imgui_internal.h>
 
 #include <glm/glm.hpp>
@@ -17,15 +21,19 @@
 
 /*
     TODO:
+    - Fix 3D models loading (same decompression error as before)
+    - Remove unused libraries from project and from git dependencies
+    - Remove as many #include as possible
+    - Fix warnings
+    - Add const and inline where possible
     - Mesh properties in properties panel?
-
-    Problema ridimensionamento transform:
-        - Il problema è che, quando cambio parent a un oggetto, esso non deve cambiare trasformazione. Allora prendo la
-          matrice del genitore, la inverto e la moltiplico per la locale, così non ha influenza. Ora però per tornare indietro
-          non posso, perché non ho la matrice originale.
-        - What if virtual parent? Un parent che contiene l'inversa del vero genitore: il parent vero diventa privato, per
-          accedere al parent si usa una funzione GetParent. In questo modo la locale dell'oggeto può rimanere uguale. Come 
-          capire se un parent è virtuale? L'id dell'entità è -1.
+    - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
+    - Find out why sometimes associations are duplicated in the assetmanager
+    - Fix CB ordering: folders before files
+    - Add inspector / properties panel locking
+    - Make editor robust to association file deletion / editing
+    - Asset renaming
+    - Don't save data twice in camera (persp & ortho near / far)
 */
 
 namespace Debutant
@@ -59,11 +67,13 @@ namespace Debutant
         EditorCache::Textures().Put("assets\\icons\\play.png", m_IconPlay);
         EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
 
-        AssetManager::Request<Shader>("assets\\shaders\\default-3d.glsl");
+        // TEST AREA
+        std::vector<std::string> filenames = { "assets\\textures\\Skybox\\front.png" ,
+        "assets\\textures\\Skybox\\bottom.png","assets\\textures\\Skybox\\left.png",
+        "assets\\textures\\Skybox\\right.png","assets\\textures\\Skybox\\up.png",
+        "assets\\textures\\Skybox\\down.png" };
 
-        /*for (uint32_t i = 0; i < 5; i++)
-            m_ActiveScene->CreateEntity({});
-        m_SceneHierarchy.RebuildSceneGraph();*/
+        m_ActiveScene->SetSkybox(12755579250371982529);
     }
 
     void DebutantLayer::OnDetach()
@@ -107,8 +117,6 @@ namespace Debutant
     void DebutantLayer::OnScenePlay()
     {
         m_SceneState = SceneState::Play;
-
-        // TODO: textures aren't updated in the runtime scene
 
         m_RuntimeScene = Scene::Copy(m_ActiveScene);
         m_RuntimeScene->OnRuntimeStart();
@@ -196,9 +204,68 @@ namespace Debutant
             if (m_AssetMapOpen)
                 DrawAssetMapWindow();
 #endif
+            if (m_SettingsOpen)
+                DrawSettingsWindow();
 
             DrawViewport();
             DrawUIToolbar();
+
+        ImGui::End();
+    }
+
+    void DebutantLayer::DrawSettingsWindow()
+    {
+        static std::unordered_set<std::string> changedSettings;
+        ImGuiWindowFlags flags = ImGuiWindowFlags_Modal;
+        
+        ImGui::Begin("Settings", &m_SettingsOpen, flags);
+        ImGui::SetWindowSize({ 800, 600 });
+
+        if (ImGui::BeginTabBar("SettingsTabBar"))
+        {
+            if (ImGui::BeginTabItem("Editor"))
+            {
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Graphics"))
+            {
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Lighting"))
+            {
+
+                // Skybox options
+                ImGuiUtils::BoldText("Skybox");
+                Ref<Skybox> currSkybox = m_ActiveScene->GetSkybox();
+                Debut::UUID skybox = ImGuiUtils::DragDestination("Skybox", ".skybox", currSkybox == nullptr ? 0 : currSkybox->GetID());
+
+                if (m_ActiveScene->GetSkybox() == nullptr && skybox != 0)
+                    m_ActiveScene->SetSkybox(skybox);
+                else if (skybox != 0 &&m_ActiveScene->GetSkybox()->GetID() != skybox)
+                    m_ActiveScene->SetSkybox(skybox);
+
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Physics"))
+            {
+                ImGui::EndTabItem();
+            }
+
+            ImGui::EndTabBar();
+        }
+
+        if (ImGui::Button("Apply settings"))
+        {
+            // Apply all settings
+            for (auto& setting : changedSettings)
+            {
+            }
+            // Reset the set
+            changedSettings = {};
+        }
 
         ImGui::End();
     }
@@ -225,7 +292,7 @@ namespace Debutant
         ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (buttonSize * 0.5f));
         if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(buttonSize, buttonSize)))
         {
-            // TODO: simulate physics, pause scene...
+            // TODO: pause scene...
             if (m_SceneState == SceneState::Edit)
                 OnScenePlay();
             else if (m_SceneState == SceneState::Play)
@@ -314,6 +381,14 @@ namespace Debutant
                     AssetManager::Reimport();
                 if (ImGui::MenuItem("Asset map"))
                     m_AssetMapOpen = true;
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Project"))
+            {
+                if (ImGui::MenuItem("Settings"))
+                    m_SettingsOpen = true;
+
                 ImGui::EndMenu();
             }
 

@@ -14,6 +14,7 @@ namespace Debut
 	EditorCamera::EditorCamera(float fov, float aspectRatio, float nearClip, float farClip)
 		: m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip), Camera(glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip))
 	{
+		m_ProjectionType = ProjectionType::Perspective;
 		UpdateView();
 	}
 

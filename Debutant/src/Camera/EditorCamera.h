@@ -8,7 +8,7 @@ namespace Debut
 	class EditorCamera : public Camera
 	{
 	public:
-		EditorCamera() { m_ViewMatrix = glm::mat4(1.0f); }
+		EditorCamera() { m_ViewMatrix = glm::mat4(1.0f); m_ProjectionType = ProjectionType::Perspective; }
 		EditorCamera(float fov, float aspectRatio, float nearClip, float farClip);
 
 		void OnUpdate(Timestep ts);

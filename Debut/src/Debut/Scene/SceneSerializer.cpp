@@ -70,10 +70,10 @@ namespace Debut
 		out << YAML::BeginMap;
 
 		out << YAML::Key << "ProjectionType" << YAML::Value << (int)c.Camera.GetProjectionType();
-		out << YAML::Key << "OrthoNear" << YAML::Value << c.Camera.GetOrthoNearClip();
-		out << YAML::Key << "OrthoFar" << YAML::Value << c.Camera.GetOrthoFarClip();
-		out << YAML::Key << "PerspNear" << YAML::Value << c.Camera.GetPerspNearClip();
-		out << YAML::Key << "PerspFar" << YAML::Value << c.Camera.GetPerspFarClip();
+		out << YAML::Key << "OrthoNear" << YAML::Value << c.Camera.GetNearPlane();
+		out << YAML::Key << "OrthoFar" << YAML::Value << c.Camera.GetFarPlane();
+		out << YAML::Key << "PerspNear" << YAML::Value << c.Camera.GetNearPlane();
+		out << YAML::Key << "PerspFar" << YAML::Value << c.Camera.GetFarPlane();
 		out << YAML::Key << "OrthoSize" << YAML::Value << c.Camera.GetOrthoSize();
 		out << YAML::Key << "PerspFOV" << YAML::Value << c.Camera.GetPerspFOV();
 
@@ -164,12 +164,12 @@ namespace Debut
 		cc.Primary = in["Primary"].as<bool>();
 
 		cc.Camera.SetOrthoSize(in["CameraData"]["OrthoSize"].as<float>());
-		cc.Camera.SetOrthoNearClip(in["CameraData"]["OrthoNear"].as<float>());
-		cc.Camera.SetOrthoFarClip(in["CameraData"]["OrthoFar"].as<float>());
+		cc.Camera.SetNearPlane(in["CameraData"]["OrthoNear"].as<float>());
+		cc.Camera.SetFarPlane(in["CameraData"]["OrthoFar"].as<float>());
 
 		cc.Camera.SetPerspFOV(in["CameraData"]["PerspFOV"].as<float>());
-		cc.Camera.SetPerspNearClip(in["CameraData"]["PerspNear"].as<float>());
-		cc.Camera.SetPerspFarClip(in["CameraData"]["PerspFar"].as<float>());
+		cc.Camera.SetNearPlane(in["CameraData"]["PerspNear"].as<float>());
+		cc.Camera.SetFarPlane(in["CameraData"]["PerspFar"].as<float>());
 
 		cc.Camera.SetProjectionType((SceneCamera::ProjectionType)in["CameraData"]["ProjectionType"].as<int>());
 	}

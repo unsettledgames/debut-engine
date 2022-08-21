@@ -17,6 +17,7 @@ namespace Debut
 	AssetCache<std::string, Ref<Material>> AssetManager::s_MaterialCache;
 	AssetCache<std::string, Ref<Mesh>> AssetManager::s_MeshCache;
 	AssetCache<std::string, Ref<Model>> AssetManager::s_ModelCache;
+	AssetCache<std::string, Ref<Skybox>> AssetManager::s_SkyboxCache;
 
 	static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
 
@@ -292,6 +293,25 @@ namespace Debut
 		return toAdd;
 	}
 
+	template<>
+	Ref<Skybox> AssetManager::Request<Skybox>(const std::string& id, const std::string& metaFile)
+	{
+		if (s_SkyboxCache.Has(id))
+			return s_SkyboxCache.Get(id);
+
+		Ref<Skybox> toAdd = Skybox::Create(id);
+
+		// Update the asset map if the entry wasn't there
+		s_SkyboxCache.Put(id, toAdd);
+		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+		{
+			s_AssetMap[toAdd->GetID()] = id;
+			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
+		}
+
+		return toAdd;
+	}
+
 	std::vector<std::pair<UUID, std::string>> AssetManager::GetAssetMap()
 	{
 		std::vector<std::pair<UUID, std::string>> ret;
@@ -309,7 +329,6 @@ namespace Debut
 
 	void AssetManager::DeleteAssociations(std::vector<UUID>& id)
 	{
-#ifdef DBT_DEBUG
 		std::fstream currFile("Debut\\AssetMap.yaml", std::ios::out | std::ios::trunc);
 		std::unordered_map copy = s_AssetMap;
 		YAML::Emitter emitter;
@@ -331,7 +350,6 @@ namespace Debut
 		emitter << YAML::EndSeq << YAML::EndMap;
 		currFile << emitter.c_str();
 		currFile.close();
-#endif
 	}
 	
 }

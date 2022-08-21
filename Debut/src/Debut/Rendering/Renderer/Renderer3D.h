@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Debut/Rendering/Material.h>
+#include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Rendering/Structures/VertexArray.h>
 #include <Debut/Rendering/Structures/Buffer.h>
 #include <Debut/Scene/Components.h>
@@ -45,11 +46,12 @@ namespace Debut
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(Camera& camera, glm::mat4& transform);
+		static void BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& transform);
 		static void EndScene();
 		static void Flush();
 
 		static void DrawModel(const MeshRendererComponent& model, const glm::mat4& transform);
+		static void DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, bool instanced = false);
 
 	private:
 		static void AddBatch(const UUID& material);
