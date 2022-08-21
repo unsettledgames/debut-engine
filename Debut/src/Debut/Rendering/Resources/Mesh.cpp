@@ -2,12 +2,7 @@
 #include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/AssetManager/AssetManager.h>
 
-#include <brotli/encode.h>
-#include <brotli/decode.h>
 #include <lz4.h>
-
-#include <corto/encoder.h>
-#include <corto/decoder.h>
 
 #include <yaml-cpp/yaml.h>
 #include <Debut/Utils/YamlUtils.h>

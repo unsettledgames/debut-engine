@@ -21,7 +21,7 @@
 
 /*
     TODO:
-    - Remove unused libraries from project and from git dependencies
+    - Fork imgui and imguizmo, add cmakelists to them
     - Remove as many #include as possible
     - Fix warnings
     - Add const and inline where possible

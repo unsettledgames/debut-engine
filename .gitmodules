@@ -7,30 +7,21 @@
 [submodule "Debut/vendor/yaml-cpp"]
 	path = Debut/vendor/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
-[submodule "Debut/vendor/rttr"]
-	path = Debut/vendor/rttr
-	url = https://github.com/rttrorg/rttr
 [submodule "Debut/vendor/glm"]
 	path = Debut/vendor/glm
 	url = https://github.com/g-truc/glm
-[submodule "Debut/vendor/imguizmo"]
-	path = Debut/vendor/imguizmo
-	url = https://github.com/CedricGuillemet/ImGuizmo
-[submodule "Debut/vendor/imgui"]
-	path = Debut/vendor/imgui
-	url = https://github.com/ocornut/imgui
 [submodule "Debut/vendor/box2d"]
 	path = Debut/vendor/box2d
 	url = https://github.com/erincatto/box2d
 [submodule "Debut/vendor/assimp"]
 	path = Debut/vendor/assimp
 	url = https://github.com/assimp/assimp
-[submodule "Debut/vendor/brotli"]
-	path = Debut/vendor/brotli
-	url = https://github.com/google/brotli
-[submodule "Debut/vendor/corto"]
-	path = Debut/vendor/corto
-	url = https://github.com/unsettledgames/corto
 [submodule "Debut/vendor/lz4"]
 	path = Debut/vendor/lz4
 	url = https://github.com/lz4/lz4
+[submodule "Debut/vendor/imguizmo"]
+	path = Debut/vendor/imguizmo
+	url = https://github.com/unsettledgames/ImGuizmo
+[submodule "Debut/vendor/imgui"]
+	path = Debut/vendor/imgui
+	url = https://github.com/unsettledgames/imgui
