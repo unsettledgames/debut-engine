@@ -21,7 +21,6 @@
 
 /*
     TODO:
-    - Fix 3D models loading (same decompression error as before)
     - Remove unused libraries from project and from git dependencies
     - Remove as many #include as possible
     - Fix warnings
