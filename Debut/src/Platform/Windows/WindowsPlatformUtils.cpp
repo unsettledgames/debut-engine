@@ -1,6 +1,7 @@
 #include "Debut/dbtpch.h"
 #include "Debut/Utils/PlatformUtils.h"
 #include "Debut/Core/Application.h"
+#include <Debut/Core/Window.h>
 
 #include <commdlg.h>
 #include <GLFW/glfw3.h>

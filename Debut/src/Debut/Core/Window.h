@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Debut/dbtpch.h"
+#include <string>
+#include <functional>
 
 #include "Debut/Core/Core.h"
-#include "Debut/Events/Event.h"
 
 namespace Debut
 {
@@ -17,7 +17,9 @@ namespace Debut
 			Title(title), Width(width), Height(height) {}
 	};
 
-	class DBT_API Window
+	class Event;
+
+	class Window
 	{
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;

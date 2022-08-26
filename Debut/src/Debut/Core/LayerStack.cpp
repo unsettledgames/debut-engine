@@ -1,7 +1,6 @@
 #include "Debut/dbtpch.h"
 #include "LayerStack.h"
 #include "Log.h"
-#include <iostream>
 
 namespace Debut
 {

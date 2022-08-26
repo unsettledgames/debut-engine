@@ -1,12 +1,13 @@
 #pragma once
 
-#include "Debut/Core/Core.h"
-#include "Debut/Core/Time.h"
-#include "Debut/Events/Event.h"
+#include <string>
 
 namespace Debut
 {
-	class DBT_API Layer
+	class Event;
+	class Timestep;
+
+	class Layer
 	{
 	public:
 		Layer(const std::string& name = "UnnamedLayer");
@@ -14,7 +15,7 @@ namespace Debut
 
 		virtual void OnAttach() {};
 		virtual void OnDetach() {};
-		virtual void OnUpdate(Timestep ts) {};
+		virtual void OnUpdate(Timestep& ts) {};
 		virtual void OnEvent(Event& e) {};
 		virtual void OnImGuiRender() {};
 

@@ -4,6 +4,7 @@
 #include "Debut/Utils/CppUtils.h"
 #include <Debut/Utils/YamlUtils.h>
 #include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Physics/PhysicsMaterial2D.h>
 
 namespace Debut
 {

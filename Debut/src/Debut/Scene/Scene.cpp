@@ -6,6 +6,7 @@
 #include "Debut/Rendering/Renderer/Renderer2D.h"
 #include "Debut/Rendering/Renderer/Renderer3D.h"
 #include "Debut/AssetManager/AssetManager.h"
+#include <Debut/Physics/PhysicsMaterial2D.h>
 
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"

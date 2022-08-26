@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "Debut/Core/Layer.h"
-#include "Debut/Core/Core.h"
 
 namespace Debut
 {

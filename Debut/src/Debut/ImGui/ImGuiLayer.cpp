@@ -6,10 +6,10 @@
 #include "Debut/Core/Application.h"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
-#include "Debut/Core/Log.h"
 #include "Debut/Core/Core.h"
 #include "ImGuizmo.h"
 #include <Debut/ImGui/ProgressPanel.h>
+#include <Debut/Core/Window.h>
 #include <stb_image.h>
 #include <stb_image_resize.h>
 

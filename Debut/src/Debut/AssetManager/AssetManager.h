@@ -2,18 +2,22 @@
 
 #include <Debut/Core/Core.h>
 #include <Debut/Core/UUID.h>
-#include <Debut/Rendering/Texture.h>
-#include <Debut/AssetManager/Asset.h>
 #include <Debut/AssetManager/AssetCache.h>
-#include <Debut/Physics/PhysicsMaterial2D.h>
-#include <Debut/Rendering/Resources/Mesh.h>
-#include <Debut/Rendering/Shader.h>
-#include <Debut/Rendering/Material.h>
-#include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Rendering/Resources/Model.h>
+
+// Untemplate some templates so you can forward declare stuff
 
 namespace Debut
 {
+	class Texture;
+	class Texture2D;
+	class PhysicsMaterial2D;
+	class Mesh;
+	class Shader;
+	class Material;
+	class Skybox;
+	class Model;
+
 	class AssetManager
 	{
 	public:
@@ -25,22 +29,12 @@ namespace Debut
 		static std::string GetPath(UUID id);
 		static void AddAssociationToFile(const UUID& id, const std::string& path);
 
-		template <typename T>
-		static void Submit(Ref<T> asset) {}
-		
+		static void Submit(Ref<Mesh> asset);
+		static void Submit(Ref<Material> asset);
+		static void Submit(Ref<Model> model);
+
 		template <typename T>
 		static void Remove(UUID id) {}
-
-		template <>
-		static void Submit(Ref<Mesh> asset) { s_MeshCache.Put(asset->GetPath(), asset); }
-		template <>
-		static void Submit(Ref<Material> asset) { s_MaterialCache.Put(asset->GetPath(), asset); }
-		template <>
-		static void Submit(Ref<Model> model)
-		{
-			s_ModelCache.Put(model->GetPath(), model);
-			AddAssociationToFile(model->GetID(), model->GetPath());
-		}
 
 		template <>
 		static void Remove<Mesh>(UUID id) 
@@ -86,25 +80,7 @@ namespace Debut
 		template <typename T>
 		static Ref<T> Request(const std::string& file, const std::string& metaFile = "");
 		template <typename T>
-		static Ref<T> Request(UUID id)
-		{
-			if (id == 0)
-				return nullptr;
-
-			std::stringstream ss;
-			ss << s_AssetsDir << id;
-			std::stringstream metaSs;
-			metaSs << s_MetadataDir << id << ".meta";
-
-			std::ifstream file(ss.str());
-			if (file.good())
-				return Request<T>(ss.str(), metaSs.str());
-
-			if (s_AssetMap.find(id) == s_AssetMap.end())
-				return nullptr;
-
-			return Request<T>(s_AssetMap[id], s_AssetMap[id] + ".meta");
-		}
+		static Ref<T> Request(UUID id);
 
 		static std::vector<std::pair<UUID, std::string>> GetAssetMap();
 		static void DeleteAssociations(std::vector<UUID>& id);
@@ -129,6 +105,7 @@ namespace Debut
 		static AssetCache<std::string, Ref<Mesh>> s_MeshCache;
 		static AssetCache<std::string, Ref<Model>> s_ModelCache;
 		static AssetCache<std::string, Ref<Skybox>> s_SkyboxCache;
+		static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
 		
 	};
 }

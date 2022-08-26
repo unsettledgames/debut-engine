@@ -1,4 +1,5 @@
 #include "DebutantLayer.h"
+#include <Debut/Core/Window.h>
 #include <Debut/Core/UUID.h>
 #include "Debut/Core/Instrumentor.h"
 #include "Camera/EditorCamera.h"
@@ -21,7 +22,7 @@
 
 /*
     TODO:
-    - Remove as many #include as possible
+    - Remove as many #include as possible: 115 sec at start
     - Fix warnings
     - Add const and inline where possible
     - Custom memory allocator to keep track of used memory
@@ -79,7 +80,7 @@ namespace Debut
 
     }
 
-    void DebutantLayer::OnUpdate(Timestep ts)
+    void DebutantLayer::OnUpdate(Timestep& ts)
     {
         //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera

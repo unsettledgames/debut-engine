@@ -1,25 +1,42 @@
 #include <Debut/dbtpch.h>
 #include <yaml-cpp/yaml.h>
 #include <imgui.h>
-#include <filesystem>
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Rendering/Shader.h>
+#include <Debut/Rendering/Texture.h>
+#include <Debut/Rendering/Material.h>
+#include <Debut/Physics/PhysicsMaterial2D.h>
+#include <Debut/Rendering/Resources/Mesh.h>
+#include <Debut/Rendering/Resources/Model.h>
+#include <Debut/Rendering/Resources/Skybox.h>
 
 namespace Debut
 {
+	// Project asset folders
 	std::unordered_map<UUID, std::string> AssetManager::s_AssetMap;
 	std::string AssetManager::s_ProjectDir;
 	std::string AssetManager::s_AssetsDir;
 	std::string AssetManager::s_MetadataDir;
 
+	// Asset caches
 	AssetCache<std::string, Ref<Texture2D>> AssetManager::s_TextureCache;
 	AssetCache<std::string, Ref<Shader>> AssetManager::s_ShaderCache;
 	AssetCache<std::string, Ref<Material>> AssetManager::s_MaterialCache;
 	AssetCache<std::string, Ref<Mesh>> AssetManager::s_MeshCache;
 	AssetCache<std::string, Ref<Model>> AssetManager::s_ModelCache;
 	AssetCache<std::string, Ref<Skybox>> AssetManager::s_SkyboxCache;
+	AssetCache<std::string, Ref<PhysicsMaterial2D>> AssetManager::s_PhysicsMaterial2DCache;
 
-	static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
+	// Declare the template types, used to enable forward declaring in the .h file
+	template Ref<Mesh> AssetManager::Request<Mesh>(UUID id);
+	template Ref<Shader> AssetManager::Request<Shader>(UUID id);
+	template Ref<Texture2D> AssetManager::Request<Texture2D>(UUID id);
+	template Ref<Model> AssetManager::Request<Model>(UUID id);
+	template Ref<Material> AssetManager::Request<Material>(UUID id);
+	template Ref<Mesh> AssetManager::Request<Mesh>(UUID id);
+	template Ref<Skybox> AssetManager::Request<Skybox>(UUID id);
+	template Ref<PhysicsMaterial2D> AssetManager::Request<PhysicsMaterial2D>(UUID id);
 
 	void AssetManager::Init(const std::string& projectDir)
 	{
@@ -161,15 +178,25 @@ namespace Debut
 		return "None";
 	}
 
-	// ASSET SUBMISSION BY PATH
+	// ASSET SUBMISSION BY REF
+	void AssetManager::Submit(Ref<Mesh> asset) 
+	{ 
+		s_MeshCache.Put(asset->GetPath(), asset); 
+	}
+	void AssetManager::Submit(Ref<Material> asset) 
+	{ 
+		s_MaterialCache.Put(asset->GetPath(), asset); 
+	}
+	void AssetManager::Submit(Ref<Model> model)
+	{
+		s_ModelCache.Put(model->GetPath(), model);
+		AddAssociationToFile(model->GetID(), model->GetPath());
+	}
 
 	// ASSET REQUESTS
 
 	template <typename T>
-	Ref<T> AssetManager::Request(const std::string& id, const std::string& metaFile)
-	{
-
-	}
+	Ref<T> AssetManager::Request(const std::string& id, const std::string& metaFile){}
 
 	template<>
 	Ref<Texture2D> AssetManager::Request<Texture2D>(const std::string& id, const std::string& metaFile)
@@ -312,6 +339,27 @@ namespace Debut
 		return toAdd;
 	}
 
+	template<typename T>
+	Ref<T> AssetManager::Request(UUID id)
+	{
+		if (id == 0)
+			return nullptr;
+
+		std::stringstream ss;
+		ss << s_AssetsDir << id;
+		std::stringstream metaSs;
+		metaSs << s_MetadataDir << id << ".meta";
+
+		std::ifstream file(ss.str());
+		if (file.good())
+			return Request<T>(ss.str(), metaSs.str());
+
+		if (s_AssetMap.find(id) == s_AssetMap.end())
+			return nullptr;
+
+		return Request<T>(s_AssetMap[id], s_AssetMap[id] + ".meta");
+	}
+
 	std::vector<std::pair<UUID, std::string>> AssetManager::GetAssetMap()
 	{
 		std::vector<std::pair<UUID, std::string>> ret;
@@ -319,13 +367,14 @@ namespace Debut
 		for (auto& entry : s_AssetMap)
 			ret.push_back(std::make_pair(entry.first, entry.second));
 
-		std::sort(ret.begin(), ret.end(), 
+		std::sort(ret.begin(), ret.end(),
 			[](const std::pair<UUID, std::string>& lhs, const std::pair<UUID, std::string>& rhs) {
-				return lhs.second.compare(rhs.second) < 0; 
+				return lhs.second.compare(rhs.second) < 0;
 			});
 
 		return ret;
 	}
+	
 
 	void AssetManager::DeleteAssociations(std::vector<UUID>& id)
 	{

@@ -1,11 +1,12 @@
-#include "Debut/dbtpch.h"
-#include "GLFW/glfw3.h"
-#include "Application.h"
-#include "Input.h"
+#include <Debut/dbtpch.h>
+#include <GLFW/glfw3.h>
 
-#include "Log.h"
-#include "Debut/Rendering/Renderer/RenderCommand.h"
-#include "Debut/Rendering/Renderer/Renderer.h"
+#include <Debut/Core/Application.h>
+#include <Debut/Core/Window.h>
+#include <Debut/ImGui/ImGuiLayer.h>
+#include <Debut/Core/Input.h>
+
+#include <Debut/Rendering/Renderer/Renderer.h>
 
 namespace Debut
 {
