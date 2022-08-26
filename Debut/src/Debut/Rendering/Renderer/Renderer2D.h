@@ -1,17 +1,21 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <Debut/Rendering/Structures/VertexArray.h>
-#include <Debut/Rendering/Structures/Buffer.h>
-#include <Debut/Rendering/Shader.h>
-#include <Debut/Rendering/Texture.h>
-#include <Debut/Rendering/SubTexture2D.h>
-#include <Debut/Rendering/Camera.h>
 #include <array>
-#include <Debut/Scene/Components.h>
 
 namespace Debut
 {
+	class VertexArray;
+	class VertexBuffer;
+	class IndexBuffer;
+
+	class Shader;
+	class Texture;
+	class SubTexture2D;
+	class Camera;
+
+	struct SpriteRendererComponent;
+
 	struct QuadVertex
 	{
 		glm::vec3 Position;
@@ -102,7 +106,5 @@ namespace Debut
 
 	private:
 		static Renderer2DStorage s_Data;
-		
-
 	};
 }

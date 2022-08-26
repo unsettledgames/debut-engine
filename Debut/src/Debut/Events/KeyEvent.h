@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Event.h"
+#include <Debut/Events/Event.h>
+#include <string>
+#include <sstream>
 
 namespace Debut
 {
@@ -24,7 +26,7 @@ namespace Debut
 
 		inline int GetRepeatCount() const { return m_RepeatCount; }
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
@@ -41,7 +43,7 @@ namespace Debut
 	public:
 		KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "KeyReleasedEvent: " << m_KeyCode;
@@ -56,7 +58,7 @@ namespace Debut
 	public:
 		KeyTypedEvent(int keycode) : KeyEvent(keycode) {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "KeyTypedEvent: " << m_KeyCode;

@@ -1,14 +1,12 @@
 #pragma once
 
-#include "Debut/Events/ApplicationEvent.h"
-#include "Debut/Events/MouseEvent.h"
-#include "Debut/Events/KeyEvent.h"
-#include "Debut/Core/Layer.h"
-
+#include <Debut/Core/Layer.h>
 #include <string>
 
 namespace Debut
 {
+	class Event;
+
 	struct FontIcon
 	{
 		wchar_t Character;

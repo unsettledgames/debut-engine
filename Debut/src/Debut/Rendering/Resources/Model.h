@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Debut/Core/Core.h>
 #include <Debut/Core/UUID.h>
 
 namespace Debut

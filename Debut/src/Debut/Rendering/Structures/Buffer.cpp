@@ -1,12 +1,12 @@
 #pragma once
 #include <Debut/dbtpch.h>
 
-#include "Debut/Core/Log.h"
-#include "Debut/Core/Core.h"
-#include "Debut/Rendering/Renderer/Renderer.h"
-#include "Debut/Rendering/Renderer/RendererAPI.h"
-#include "Platform/OpenGL/OpenGLBuffer.h"
-#include "Buffer.h"
+#include <Debut/Core/Log.h>
+#include <Debut/Core/Core.h>
+#include <Debut/Rendering/Renderer/Renderer.h>
+#include <Debut/Rendering/Renderer/RendererAPI.h>
+#include <Platform/OpenGL/OpenGLBuffer.h>
+#include <Debut/Rendering/Structures/Buffer.h>
 
 namespace Debut
 {
@@ -18,7 +18,7 @@ namespace Debut
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLVertexBuffer>(vertices, count);
+			return CreateRef<OpenGLVertexBuffer>(vertices, count);
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
@@ -33,7 +33,7 @@ namespace Debut
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLVertexBuffer>((uint32_t)size, bufferSize);
+			return CreateRef<OpenGLVertexBuffer>((uint32_t)size, bufferSize);
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
@@ -48,7 +48,7 @@ namespace Debut
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLIndexBuffer>(indices, count);
+			return CreateRef<OpenGLIndexBuffer>(indices, count);
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");
@@ -63,7 +63,7 @@ namespace Debut
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLIndexBuffer>();
+			return CreateRef<OpenGLIndexBuffer>();
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");

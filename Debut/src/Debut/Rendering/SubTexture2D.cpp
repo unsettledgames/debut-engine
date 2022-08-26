@@ -1,6 +1,8 @@
 #include "Debut/dbtpch.h"
 #include "SubTexture2D.h"
 
+#include <Debut/Rendering/Texture.h>
+
 namespace Debut
 {
 	Ref<SubTexture2D> SubTexture2D::CreateFromCoords(const Ref<Texture2D>& texture, const glm::vec2& coords, const glm::vec2& spriteSizeInTiles, const glm::vec2& tileSize)

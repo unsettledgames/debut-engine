@@ -4,10 +4,10 @@
 #include <fstream>
 #include <chrono>
 #include <thread>
+#include <algorithm>
 
 namespace Debut
 {
-
     struct ProfileResult
     {
         std::string Name;
@@ -70,19 +70,19 @@ namespace Debut
             m_OutputStream.flush();
         }
 
-        void WriteHeader()
+        inline void WriteHeader()
         {
             m_OutputStream << "{\"otherData\": {},\"traceEvents\":[";
             m_OutputStream.flush();
         }
 
-        void WriteFooter()
+        inline void WriteFooter()
         {
             m_OutputStream << "]}";
             m_OutputStream.flush();
         }
 
-        static Instrumentor& Get()
+        inline static Instrumentor& Get()
         {
             static Instrumentor instance;
             return instance;

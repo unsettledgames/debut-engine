@@ -1,9 +1,18 @@
-#include "Debut/dbtpch.h"
-#include "Debut/Rendering/Renderer/RenderCommand.h"
-#include "Debut/Rendering/Structures/VertexArray.h"
-#include "Debut/Rendering/Shader.h"
-#include "Debut/AssetManager/AssetManager.h"
-#include "Renderer2D.h"
+#include <Debut/dbtpch.h>
+
+#include <Debut/Rendering/Structures/VertexArray.h>
+#include <Debut/Rendering/Structures/Buffer.h>
+
+#include <Debut/Rendering/Texture.h>
+#include <Debut/Rendering/Shader.h>
+#include <Debut/Rendering/SubTexture2D.h>
+
+#include <Debut/Rendering/Renderer/RenderCommand.h>
+#include <Debut/Rendering/Shader.h>
+#include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Rendering/Renderer/Renderer2D.h>
+#include <Debut/Scene/Components.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Debut

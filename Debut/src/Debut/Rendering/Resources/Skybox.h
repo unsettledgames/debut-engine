@@ -1,8 +1,6 @@
 #include <Debut/Core/Core.h>
-#include <Debut/Rendering/Texture.h>
 #include <Debut/Rendering/Resources/Mesh.h>
-#include <Debut/Rendering/Material.h>
-#include <Debut/Rendering/Shader.h>
+#include <unordered_map>
 
 #pragma once
 

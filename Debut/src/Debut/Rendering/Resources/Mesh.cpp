@@ -2,10 +2,10 @@
 #include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/AssetManager/AssetManager.h>
 
-#include <lz4.h>
-
 #include <yaml-cpp/yaml.h>
 #include <Debut/Utils/YamlUtils.h>
+
+#include <lz4.h>
 
 namespace Debut
 {

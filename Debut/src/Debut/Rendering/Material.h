@@ -3,7 +3,6 @@
 #include <Debut/Core/Core.h>
 #include <Debut/Core/UUID.h>
 #include <Debut/Rendering/Shader.h>
-#include <Debut/Rendering/Texture.h>
 
 #include <unordered_map>
 
@@ -23,6 +22,7 @@ namespace Debut
 	};
 
 	class Skybox;
+	class Texture2D;
 
 	class Material
 	{

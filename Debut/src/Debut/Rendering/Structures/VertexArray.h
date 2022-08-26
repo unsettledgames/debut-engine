@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Debut/Rendering/Structures/Buffer.h"
-
 namespace Debut
 {
+	class VertexBuffer;
+	class IndexBuffer;
+
 	class VertexArray
 	{
 	public:

@@ -11,6 +11,7 @@
 #include <Debut/Core/Input.h>
 #include <Debut/Core/KeyCodes.h>
 #include <imgui.h>
+#include <yaml-cpp/yaml.h>
 
 /*
 	TODO

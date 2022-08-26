@@ -4,9 +4,12 @@
 #include "Utils/EditorCache.h"
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Rendering/Texture.h>
-#include <filesystem>
+#include <Debut/Rendering/Material.h>
 #include <Debut/ImGui/ImGuiUtils.h>
 #include <entt.hpp>
+
+#include <filesystem>
+#include <fstream>
 
 namespace Debut
 {

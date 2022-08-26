@@ -1,14 +1,10 @@
 #pragma once
 
-#include "Debut/Core/Core.h"
-#include "Debut/Core/Log.h"
-
-#include "Debut/Rendering/Shader.h"
+#include <Debut/Rendering/Shader.h>
 
 namespace Debut
 {
-
-	static uint32_t ShaderAttribTypeSize(ShaderDataType type)
+	static inline uint32_t ShaderAttribTypeSize(ShaderDataType type)
 	{
 		switch (type)
 		{
@@ -49,7 +45,7 @@ namespace Debut
 		BufferElement(ShaderDataType type, const std::string& name, bool normalize) :
 			Name(name), Type(type), Size(ShaderAttribTypeSize(type)), Offset(0), Normalized(normalize) {}
 
-		uint32_t GetComponentCount() const
+		inline uint32_t GetComponentCount() const
 		{
 			switch (Type)
 			{
@@ -84,8 +80,8 @@ namespace Debut
 			CalculateOffsetStride();
 		}
 
-		std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
-		std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
+		inline std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
+		inline std::vector<BufferElement>::iterator end() { return m_Elements.end(); }
 
 		inline const std::vector<BufferElement> GetElements() { return m_Elements; }
 		inline uint32_t GetStride() const { return m_Stride; }
