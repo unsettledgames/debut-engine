@@ -4,8 +4,6 @@
 #include <vector>
 
 #include <Debut/Core/Core.h>
-#include <Debut/Rendering/Camera.h>
-#include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Core/UUID.h>
 #include "Debut/Core/Time.h"
 
@@ -13,7 +11,9 @@ class b2World;
 
 namespace Debut
 {
-	class EntitySceneNode;
+	struct EntitySceneNode;
+	class Camera;
+	class Skybox;
 
 	class Scene
 	{

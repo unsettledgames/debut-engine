@@ -1,12 +1,15 @@
 #pragma once
 
-#include "Debut.h"
 #include <imgui.h>
 #include <vector>
-
+#include <Debut/Core/Core.h>
+#include <Debut/Scene/Entity.h>
 
 namespace Debut
 {
+	class Scene;
+	struct TransformComponent;
+
 	class SceneHierarchyPanel
 	{
 

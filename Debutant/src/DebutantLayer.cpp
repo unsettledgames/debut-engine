@@ -22,9 +22,7 @@
 
 /*
     TODO:
-    - Remove as many #include as possible: 115 sec at start
     - Fix warnings
-    - Add const and inline where possible
     - Custom memory allocator to keep track of used memory
     - Mesh properties in properties panel?
     - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
@@ -33,6 +31,7 @@
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
     - Asset renaming
+    - Add physics material to circle collider
 */
 
 namespace Debut

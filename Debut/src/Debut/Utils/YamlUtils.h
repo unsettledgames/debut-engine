@@ -1,5 +1,6 @@
 #pragma once
 
+#include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
 
 namespace YAML
