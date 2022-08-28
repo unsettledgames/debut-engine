@@ -22,8 +22,7 @@
 
 /*
     TODO:
-    - Fix warnings (173 at start)
-    - Custom memory allocator to keep track of used memory
+    - Add physics material to circle collider
     - Mesh properties in properties panel?
     - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
     - Find out why sometimes associations are duplicated in the assetmanager
@@ -31,7 +30,7 @@
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
     - Asset renaming
-    - Add physics material to circle collider
+    - Custom memory allocator to keep track of used memory
 */
 
 namespace Debut
