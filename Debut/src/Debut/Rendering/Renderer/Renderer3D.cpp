@@ -1,5 +1,16 @@
 #include <Debut/dbtpch.h>
+
+
+#include <Debut/Rendering/Texture.h>
+#include <Debut/Rendering/Camera.h>
+
+#include <Debut/Rendering/Material.h>
+#include <Debut/Rendering/Resources/Skybox.h>
+#include <Debut/Rendering/Structures/VertexArray.h>
+#include <Debut/Rendering/Structures/Buffer.h>
 #include <Debut/Rendering/Resources/Mesh.h>
+#include <Debut/Scene/Components.h>
+
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
 #include <Debut/Core/Instrumentor.h>

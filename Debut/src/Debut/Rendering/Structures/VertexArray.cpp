@@ -1,9 +1,10 @@
 #include "Debut/dbtpch.h"
 
-#include "Debut/Rendering/Renderer/Renderer.h"
-#include "Debut/Rendering/Renderer/RendererAPI.h"
-#include "Debut/Rendering/Structures/VertexArray.h"
-#include "Platform/OpenGL/OpenGLVertexArray.h"
+#include <Debut/Rendering/Renderer/Renderer.h>
+#include <Debut/Rendering/Renderer/RendererAPI.h>
+#include <Debut/Rendering/Structures/Buffer.h>
+#include <Debut/Rendering/Structures/VertexArray.h>
+#include <Platform/OpenGL/OpenGLVertexArray.h>
 
 namespace Debut
 {
@@ -15,7 +16,7 @@ namespace Debut
 			DBT_ASSERT(false, "The renderer doesn't have an API set.");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGLVertexArray>();
+			return CreateRef<OpenGLVertexArray>();
 		}
 
 		DBT_ASSERT(false, "Unsupported renderer API");

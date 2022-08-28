@@ -1,8 +1,11 @@
 #include <Debut/dbtpch.h>
 #include <Debut/ImGui/ImGuiUtils.h>
 
+#include <Debut/Rendering/Texture.h>
+#include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/AssetManager/AssetManager.h>
-#include <filesystem>
+
+#include <yaml-cpp/yaml.h>
 
 namespace Debut
 {
@@ -273,6 +276,75 @@ namespace Debut
 	bool ImGuiUtils::ImageButton(Ref<Texture2D> texture, ImVec2 size, ImVec4 color)
 	{
 		return ImGui::ImageButton((ImTextureID)texture->GetRendererID(), size, { 1, 0 }, { 0, 1 }, -1, color);
+	}
+
+	template Ref<Texture2D> ImGuiUtils::ImageDragDestination(uint32_t, ImVec2);
+	template<typename T>
+	Ref<T> ImGuiUtils::ImageDragDestination(uint32_t rendererID, ImVec2 size)
+	{
+		Ref<T> selectedAsset = nullptr;
+		// Accept PNG files to use as textures for the sprite renderer
+		ImGui::ImageButton((ImTextureID)rendererID, size, { 0, 1 }, { 1, 0 });
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
+			{
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				std::filesystem::path pathStr(path);
+
+				if (pathStr.extension() == ".png")
+					selectedAsset = AssetManager::Request<T>(pathStr.string());
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		return selectedAsset;
+	}
+
+	UUID ImGuiUtils::DragDestination(const std::string& label, const std::string& acceptedExtension, UUID currentID)
+	{
+		UUID ret = 0;
+
+		std::string currentName = AssetManager::GetPath(currentID);
+		currentName = currentName.substr(currentName.find_last_of("\\") + 1, currentName.size() - currentName.find_last_of("\\"));
+
+		ImGui::PushID(label.c_str());
+		ImGuiUtils::StartColumns(2, { 120, 280 });
+
+		ImGui::Text(label.c_str());
+		ImGui::SameLine();
+		ImGui::NextColumn();
+
+		ImGui::Button((currentName + "##" + label).c_str(), { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.2f });
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA"))
+			{
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				std::filesystem::path pathStr(path);
+
+				// Instead of asking for the asset, load the .meta file and extract the ID
+				if (pathStr.extension() == acceptedExtension)
+				{
+					std::ifstream meta(pathStr.string() + ".meta");
+					if (meta.good())
+					{
+						std::stringstream ss;
+						ss << meta.rdbuf();
+						YAML::Node metaData = YAML::Load(ss.str());
+
+						ret = metaData["ID"].as<uint64_t>();
+					}
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGuiUtils::ResetColumns();
+		ImGui::PopID();
+
+		return ret;
 	}
 
 	void ImGuiUtils::BoldText(const std::string& label)

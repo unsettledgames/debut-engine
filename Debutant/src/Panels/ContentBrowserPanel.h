@@ -14,9 +14,7 @@
 
 #define MAX_NAME_LENGTH	128
 
-using namespace Debut;
-
-namespace Debutant
+namespace Debut
 {
 	struct ContentBrowserSettings
 	{

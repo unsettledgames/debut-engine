@@ -1,16 +1,15 @@
 #pragma once
 
-#include "Debut/Core/Time.h"
-#include "Debut/Scene/SceneCamera.h"
-#include <glm/glm.hpp>
-#include <Debut/Scene/ScriptableEntity.h>
-#include <glm/gtc/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/euler_angles.hpp>
-#include <Debut/Rendering/Texture.h>
-#include <Debut/Core/Core.h>
+
+#include "Debut/Scene/SceneCamera.h"
+#include <Debut/Scene/ScriptableEntity.h>
+
 #include <Debut/Core/UUID.h>
 
 namespace Debut
@@ -161,7 +160,7 @@ namespace Debut
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		glm::vec2 Size = { 1.0f, 1.0f };
 
-		UUID Material;
+		UUID Material = 0;
 
 		void* RuntimeFixture = nullptr;
 
@@ -201,55 +200,4 @@ namespace Debut
 			DestroyScript = [](NativeScriptComponent* nsc) {delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};
-
-	// Utility functions
-	namespace Components
-	{
-		/*
-		struct ComponentData
-		{
-			const std::string Name;
-		};
-
-		static uint32_t NComponents = 9;
-		enum class ComponentType
-		{
-			ID, Tag, Transform,
-			Camera, SpriteRenderer, 
-			Rigidbody2D, BoxCollider2D, CircleCollider2D,
-			NativeScript
-		};
-
-		typedef struct
-		{
-			ComponentType Type;
-			std::string Name;
-		} ComponentTypeDef;
-
-		typedef struct : ComponentTypeDef
-		{
-			ComponentType Type = ComponentType::ID;
-			std::string Name = "IDComponent";
-		}IDType;
-
-		typedef struct : ComponentTypeDef
-		{
-			ComponentType Type = ComponentType::Tag;
-			std::string Name = "TagComponent";
-		}TagType;
-
-		typedef struct : ComponentTypeDef
-		{
-			ComponentType Type = ComponentType::Transform;
-			std::string Name = "TransformComponent";
-		}TransformType;
-
-		static ComponentTypeDef Components[] =
-		{
-			IDType(),
-			TagType(),
-			TransformType()
-		};
-		*/
-	}
 }

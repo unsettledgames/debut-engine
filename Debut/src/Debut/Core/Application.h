@@ -1,19 +1,24 @@
 #pragma once
 
-#include "Core.h"
-#include "Debut/Core/Time.h"
-#include "Window.h"
-#include "LayerStack.h"
-#include "Debut/ImGui/ImGuiLayer.h"
+#include <Debut/Core/Core.h>
+#include <Debut/Core/Time.h>
+#include <Debut/Core/LayerStack.h>
 #include "Debut/Events/ApplicationEvent.h"
-#include "Debut/Rendering/Structures/VertexArray.h"
-#include "Debut/Rendering/Structures/Buffer.h"
-#include "Debut/Rendering/Shader.h"
+
+#include <string>
 
 
 namespace Debut
 {
-	class DBT_API Application
+	class ApplicationEvent;
+	class WindowCloseEvent;
+	class WindowResizedEvent;
+
+	class Layer;
+	class ImGuiLayer;
+	class Window;
+
+	class Application
 	{
 	public:
 		Application(const std::string& name = "Debut Application");

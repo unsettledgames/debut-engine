@@ -1,7 +1,7 @@
 #include "Debut/dbtpch.h"
-#include "Debut/Rendering/Structures/FrameBuffer.h"
-#include "Debut/Rendering/Renderer/RendererAPI.h"
-#include "Platform/OpenGL/OpenGLFrameBuffer.h"
+#include <Debut/Rendering/Structures/FrameBuffer.h>
+#include <Debut/Rendering/Renderer/RendererAPI.h>
+#include <Platform/OpenGL/OpenGLFrameBuffer.h>
 
 namespace Debut
 {

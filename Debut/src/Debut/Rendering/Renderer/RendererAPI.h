@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Debut/Rendering/Structures/VertexArray.h"
 #include <glm/glm.hpp>
 
 namespace Debut
 {
+	class VertexArray;
+
 	class RendererAPI
 	{
 	public:

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Debut/Core/Core.h"
-
 namespace Debut
 {
 	class Input

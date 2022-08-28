@@ -1,16 +1,20 @@
 #pragma once
 
-#include <Debut/Rendering/Material.h>
-#include <Debut/Rendering/Resources/Skybox.h>
-#include <Debut/Rendering/Structures/VertexArray.h>
-#include <Debut/Rendering/Structures/Buffer.h>
-#include <Debut/Scene/Components.h>
-#include <Debut/Rendering/Texture.h>
-#include <Debut/Rendering/Camera.h>
-
 
 namespace Debut
 {
+	class VertexArray;
+	class VertexBuffer;
+	class IndexBuffer;
+
+	class Material;
+	class Skybox;
+	class Texture2D;
+	class Camera;
+	class Mesh;
+
+	struct MeshRendererComponent;
+
 	struct RenderBatch3D
 	{
 		std::unordered_map<std::string, Ref<VertexBuffer>> Buffers;

@@ -1,12 +1,18 @@
 #include "SceneHierarchyPanel.h"
+#include <Debut/Scene/Scene.h>
+#include <Debut/Scene/Components.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui_internal.h>
 #include "Utils/EditorCache.h"
 #include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Rendering/Texture.h>
-#include <filesystem>
+#include <Debut/Rendering/Material.h>
 #include <Debut/ImGui/ImGuiUtils.h>
 #include <entt.hpp>
+#include <yaml-cpp/yaml.h>
+#include <filesystem>
+#include <fstream>
 
 namespace Debut
 {

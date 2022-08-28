@@ -1,7 +1,8 @@
+#include <Debut/dbtpch.h>
+#include <cstdio>
+
 #include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/AssetManager/AssetManager.h>
-#include <Debut/Core/Log.h>
-#include <cstdio>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -120,7 +121,7 @@ namespace Debut
 			{
 				DBT_PROFILE_SCOPE("ModelImporter::ImportMesh");
 				Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, assetsFolder);
-				AssetManager::Submit<Mesh>(mesh);
+				AssetManager::Submit(mesh);
 				if (mesh != nullptr)
 					meshes[i] = mesh->GetID();
 			}
@@ -130,7 +131,7 @@ namespace Debut
 				// Import and submit the material
 				aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
 				Ref<Material> material = ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, assetsFolder);
-				AssetManager::Submit<Material>(material);
+				AssetManager::Submit(material);
 				if (material != nullptr)
 					materials[i] = material->GetID();
 			}
@@ -149,7 +150,7 @@ namespace Debut
 			name = CppUtils::FileSystem::CorrectFileName(parent->mName.C_Str());
 		ret->SetPath(submodelsFolder + "\\" + name + ".model");
 		ret->SaveSettings();
-		AssetManager::Submit<Model>(ret);
+		AssetManager::Submit(ret);
 
 		return ret;
 	}

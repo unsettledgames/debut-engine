@@ -3,6 +3,8 @@
 #include <Debut/Utils/YamlUtils.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Rendering/Material.h>
+#include <Debut/Rendering/Shader.h>
+#include <Debut/Rendering/Texture.h>
 #include <Debut/Rendering/Resources/Skybox.h>
 
 #define FIND_UNIFORM(name)	if (m_Uniforms.find(##name) == m_Uniforms.end()) \

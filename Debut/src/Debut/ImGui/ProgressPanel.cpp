@@ -1,6 +1,7 @@
 #include "ProgressPanel.h"
 #include <Debut/ImGui/ImGuiUtils.h>
 #include <imgui.h>
+#include <sstream>
 
 namespace Debut
 {

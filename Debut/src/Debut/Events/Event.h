@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Debut/dbtpch.h"
-#include "Debut/Core/Core.h"
-
 namespace Debut
 {
 	// At the moment, Events are totally synchronous, that means that events are immediately dispatched as soon as
@@ -41,7 +38,7 @@ namespace Debut
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
-		virtual std::string ToString() const { return GetName(); }
+		virtual inline std::string ToString() const { return GetName(); }
 
 		inline bool IsInCategory(EventCategory category) const { return GetCategoryFlags() & category; }
 		inline bool Handled() const { return m_Handled; }
@@ -60,7 +57,7 @@ namespace Debut
 		EventDispatcher(Event& event) : m_Event(event) {}
 
 		template<typename T>
-		bool Dispatch(EventFn<T> func)
+		inline bool Dispatch(EventFn<T> func)
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{

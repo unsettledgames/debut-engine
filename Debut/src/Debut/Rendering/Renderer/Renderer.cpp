@@ -3,7 +3,6 @@
 #include "RenderCommand.h"
 #include "Renderer2D.h"
 #include "Renderer3D.h"
-#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Debut
 {

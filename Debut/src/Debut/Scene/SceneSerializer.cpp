@@ -3,7 +3,8 @@
 #include "Components.h"
 #include "Debut/Utils/CppUtils.h"
 #include <Debut/Utils/YamlUtils.h>
-#include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Scene/Scene.h>
+#include <yaml-cpp/yaml.h>
 
 namespace Debut
 {
@@ -102,17 +103,10 @@ namespace Debut
 
 	static void SerializeComponent(const BoxCollider2DComponent& c, YAML::Emitter& out)
 	{
-		Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(c.Material);
-
 		out << YAML::Key << "Size" << YAML::Value << c.Size;
 		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
 
-		out << YAML::Key << "Material";
-
-		if (material != nullptr)
-			out << YAML::Value << material->GetID();
-		else
-			out << YAML::Value << 0;
+		out << YAML::Key << "Material"  << YAML::Value << c.Material;
 	}
 
 	static void SerializeComponent(const CircleCollider2DComponent& c, YAML::Emitter& out)
@@ -212,11 +206,10 @@ namespace Debut
 		if (!in)
 			return;
 		BoxCollider2DComponent& bc2d = e.AddComponent<BoxCollider2DComponent>();
-		Ref<PhysicsMaterial2D> material = in["Material"] ? AssetManager::Request<PhysicsMaterial2D>(in["Material"].as<uint64_t>()) : nullptr;
 
 		bc2d.Offset = in["Offset"].as<glm::vec2>();
 		bc2d.Size = in["Size"].as<glm::vec2>();
-		bc2d.Material = material ? material->GetID() : 0;
+		bc2d.Material = in["Material"] ? in["Material"].as<uint64_t>() : 0;
 	}
 
 	template<>

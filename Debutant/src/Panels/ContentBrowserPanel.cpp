@@ -1,4 +1,5 @@
 #include "ContentBrowserPanel.h"
+#include <Debut/dbtpch.h>
 
 #include <Debut/Rendering/Material.h>
 #include <Debut/Rendering/Resources/Skybox.h>
@@ -10,15 +11,14 @@
 #include <Debut/Core/Input.h>
 #include <Debut/Core/KeyCodes.h>
 #include <imgui.h>
-
-using namespace Debut;
+#include <yaml-cpp/yaml.h>
 
 /*
 	TODO
 		- Move files in content browser
 */
 
-namespace Debutant
+namespace Debut
 {
 	// TODO: change this when we have projects
 	static const std::filesystem::path s_AssetsPath = "assets";

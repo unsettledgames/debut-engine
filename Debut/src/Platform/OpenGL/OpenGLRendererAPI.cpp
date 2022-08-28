@@ -1,6 +1,8 @@
 #include "Debut/dbtpch.h"
 #include "OpenGLRendererAPI.h"
 #include "OpenGLError.h"
+#include <Debut/Rendering/Structures/Buffer.h>
+#include <Debut/Rendering/Structures/VertexArray.h>
 #include <glad/glad.h>
 
 namespace Debut

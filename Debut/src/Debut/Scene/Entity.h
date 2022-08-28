@@ -2,6 +2,7 @@
 
 #include <Debut/Scene/Scene.h>
 #include <Debut/Core/UUID.h>
+#include <Debut/Core/Log.h>
 #include <entt.hpp>
 #include <vector>
 #include <xhash>

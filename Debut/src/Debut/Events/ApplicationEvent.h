@@ -1,7 +1,9 @@
 #pragma once
 
-#include "Debut/Core/Core.h"
-#include "Event.h"
+#include <Debut/Events/Event.h>
+
+#include <string>
+#include <sstream>
 
 namespace Debut
 {
@@ -10,7 +12,7 @@ namespace Debut
 	public:
 		WindowResizedEvent(unsigned int width, unsigned int height) : m_Width(width), m_Height(height) {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
@@ -33,7 +35,7 @@ namespace Debut
 	public:
 		WindowMovedEvent(unsigned int x, unsigned int y) : m_x(x), m_y(y) {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "WindowMovedEvent: " << m_x << ", " << m_y;
@@ -56,7 +58,7 @@ namespace Debut
 	public:
 		WindowFocusEvent() {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "WindowFocusEvent";
@@ -73,7 +75,7 @@ namespace Debut
 	public:
 		WindowLostFocusEvent() {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "WindowLostFocusEvent";
@@ -90,7 +92,7 @@ namespace Debut
 	public:
 		WindowCloseEvent() {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "WindowCloseEvent";
@@ -107,7 +109,7 @@ namespace Debut
 	public:
 		AppTickEvent() {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "AppTickEvent";
@@ -124,7 +126,7 @@ namespace Debut
 	public:
 		AppUpdateEvent() {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "AppUpdateEvent";
@@ -141,7 +143,7 @@ namespace Debut
 	public:
 		AppRenderEvent() {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "AppRenderEvent";

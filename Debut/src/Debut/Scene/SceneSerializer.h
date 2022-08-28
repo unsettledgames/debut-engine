@@ -1,16 +1,19 @@
 #pragma once
 
-#include "Scene.h"
-#include <Debut/Events/KeyEvent.h>
-#include <yaml-cpp/yaml.h>
+#include <string>
 
 namespace YAML
 {
 	class Emitter;
+	class Node;
 }
 
 namespace Debut
 {
+	class Scene;
+
+	struct EntitySceneNode;
+
 	class SceneSerializer
 	{
 	public:

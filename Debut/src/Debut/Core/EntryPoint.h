@@ -1,7 +1,10 @@
 #pragma once
+
+#include <Debut/Core/Log.h>
+#include <Debut/Core/Instrumentor.h>
+#include <Debut/Core/Application.h>
+
 #include <filesystem>
-#include "Debut/dbtpch.h"
-#include "Debut.h"
 
 #ifdef DBT_PLATFORM_WINDOWS
 

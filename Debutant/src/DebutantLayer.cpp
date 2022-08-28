@@ -1,4 +1,5 @@
 #include "DebutantLayer.h"
+#include <Debut/Core/Window.h>
 #include <Debut/Core/UUID.h>
 #include "Debut/Core/Instrumentor.h"
 #include "Camera/EditorCamera.h"
@@ -21,10 +22,8 @@
 
 /*
     TODO:
-    - Fork imgui and imguizmo, add cmakelists to them
-    - Remove as many #include as possible
     - Fix warnings
-    - Add const and inline where possible
+    - Custom memory allocator to keep track of used memory
     - Mesh properties in properties panel?
     - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
     - Find out why sometimes associations are duplicated in the assetmanager
@@ -32,10 +31,10 @@
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
     - Asset renaming
-    - Don't save data twice in camera (persp & ortho near / far)
+    - Add physics material to circle collider
 */
 
-namespace Debutant
+namespace Debut
 {
     void DebutantLayer::OnAttach()
     {
@@ -80,7 +79,7 @@ namespace Debutant
 
     }
 
-    void DebutantLayer::OnUpdate(Timestep ts)
+    void DebutantLayer::OnUpdate(Timestep& ts)
     {
         //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera

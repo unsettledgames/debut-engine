@@ -1,9 +1,10 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <Debut/Rendering/Texture.h>
 
 namespace Debut
 {
+	class Texture2D;
+
 	class SubTexture2D
 	{
 	public:

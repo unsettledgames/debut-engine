@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Debut/Core/Window.h"
+#include <Debut/Core/Window.h>
 #include "GLFW/glfw3.h"
-#include "Debut/Rendering/GraphicsContext.h"
 
 namespace Debut
 {
+	class GraphicsContext;
+
 	class WindowsWindow : public Window
 	{
 	public:

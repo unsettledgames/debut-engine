@@ -1,8 +1,8 @@
 #include <imgui_internal.h>
+#include <Debut/dbtpch.h>
 #include <Debut/Utils/CppUtils.h>
 #include <Debut/ImGui/ImGuiUtils.h>
 #include <yaml-cpp/yaml.h>
-#include <filesystem>
 #include <stack>
 
 #include "PropertiesPanel.h"
@@ -15,8 +15,6 @@
 #include <Debut/Rendering/Shader.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/Rendering/Texture.h>
-
-
 
 /**
 	TODO:

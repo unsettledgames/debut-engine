@@ -7,9 +7,7 @@
 #include <Panels/ContentBrowserPanel.h>
 #include <Camera/EditorCamera.h>
 
-using namespace Debut;
-
-namespace Debutant
+namespace Debut
 {
 	class DebutantLayer : public Layer
 	{
@@ -24,7 +22,7 @@ namespace Debutant
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnUpdate(Timestep ts) override;
+		virtual void OnUpdate(Timestep& ts) override;
 		virtual void OnEvent(Event& e) override;
 		virtual void OnImGuiRender() override;
 

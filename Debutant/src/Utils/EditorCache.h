@@ -5,8 +5,6 @@
 #include <Debut/AssetManager/AssetCache.h>
 #include <Debut/Rendering/Shader.h>
 
-using namespace Debut;
-
 namespace Debut
 {
 	class EditorCache

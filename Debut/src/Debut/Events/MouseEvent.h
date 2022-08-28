@@ -1,6 +1,8 @@
 #pragma once
-#include "Debut/dbtpch.h"
-#include "Event.h"
+
+#include <Debut/Events/Event.h>
+#include <string>
+#include <sstream>
 
 namespace Debut
 {
@@ -9,7 +11,7 @@ namespace Debut
 	public:
 		MouseMovedEvent(float x, float y) : m_MouseX(x), m_MouseY(y) {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MouseMovedEvent: " << m_MouseX << ", " << m_MouseY;
@@ -32,7 +34,7 @@ namespace Debut
 	public:
 		MouseScrolledEvent(float offsetX, float offsetY) : m_OffsetX(offsetX), m_OffsetY(offsetY) {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MouseScrolled: " << m_OffsetX << ", " << m_OffsetY;
@@ -67,7 +69,7 @@ namespace Debut
 	public:
 		MouseButtonPressedEvent(int mousebutton) : MouseButtonEvent(mousebutton) {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MouseButtonPressed: " << m_Button;
@@ -82,7 +84,7 @@ namespace Debut
 	public:
 		MouseButtonReleasedEvent(int mousebutton) : MouseButtonEvent(mousebutton) {}
 
-		std::string ToString() const override
+		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "MouseButtonReleased: " << m_Button;
