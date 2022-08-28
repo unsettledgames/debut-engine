@@ -77,17 +77,29 @@ namespace Debut
 		}
 
 		bool deletePopup = false;
+		std::string assetName = "";
+		std::string assetType = "";
+		std::string defaultName = "";
 
 		if (ImGui::BeginPopupContextWindow("##contentbrowsercontext"))
 		{
 			if (ImGui::BeginMenu("Create..."))
 			{
 				if (ImGui::MenuItem("Physics Material 2D"))
-					AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
+				{
+					assetType = "PhysicsMaterial2D";
+					defaultName = "NewPhysicsMaterial2D.physmat2d";
+				}
 				if (ImGui::MenuItem("Material"))
-					AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
+				{
+					assetType = "Material";
+					defaultName = "NewMaterial.mat";
+				}
 				if (ImGui::MenuItem("Skybox"))
-					AssetManager::CreateAsset<Skybox>(m_SelectedDir + "\\NewSkybox.skybox");
+				{
+					assetType = "Skybox";
+					defaultName = "NewSkybox.skybox";
+				}
 
 				ImGui::EndMenu();
 			}
@@ -97,8 +109,24 @@ namespace Debut
 
 			ImGui::EndPopup();
 		}
+
+		// Delete file popup (thanks ImGui)
 		if (deletePopup || ImGui::IsPopupOpen("Delete?") || (ImGui::IsKeyPressed(ImGuiKey_Delete) && ImGui::IsWindowFocused()))
 			CBDeleteFile(m_RightClicked);
+
+		// Set asset filename popup (thanks ImGui)
+		if (assetType.compare("") != 0 || ImGui::IsPopupOpen("Filename?"))
+			assetName = CBChooseFileName(assetType, defaultName);
+
+		if (assetType.compare("") != 0 && assetName.compare("") != 0)
+		{
+			if (assetType.compare("PhysicsMaterial2D") == 0)
+				AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\" + assetName + ".physmat2d");
+			else if (assetType.compare("Material") == 0)
+				AssetManager::CreateAsset<Material>(m_SelectedDir + "\\" + assetName + ".mat");
+			else if (assetType.compare("Skybox") == 0)
+				AssetManager::CreateAsset<Skybox>(m_SelectedDir + "\\" + assetName + ".skybox");
+		}
 
 		ImGui::End();
 	}
@@ -314,7 +342,6 @@ namespace Debut
 	{
 		ImVec2 buttonSize = { 100, ImGui::GetTextLineHeight() * 1.5f };
 		ImGui::OpenPopup("Delete?");
-		bool open = true;
 		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 		if (ImGui::BeginPopupModal("Delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
 		{
@@ -356,6 +383,33 @@ namespace Debut
 
 			ImGui::EndPopup();
 		}
+	}
+
+	std::string ContentBrowserPanel::CBChooseFileName(const std::string& type, const std::string& defaultFilename)
+	{
+		ImGui::OpenPopup("Filename?");
+		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+		if (ImGui::BeginPopupModal("Filename?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
+		{
+			ImGui::Text(std::string("Specify a name for the " + type + ".").c_str());
+
+			ImGuiUtils::VerticalSpace(2);
+
+			static char fileName[128];
+			memcpy(fileName, defaultFilename.c_str(), defaultFilename.length());
+			ImGui::InputText("Filename: ", fileName, 128);
+
+			if (ImGui::Button("Create"))
+			{
+				ImGui::CloseCurrentPopup();
+				return fileName;
+			}
+
+			ImGui::EndPopup();
+		}
+
+		return "";
 	}
 
 	void ContentBrowserPanel::DeleteModel(Ref<Model> model, std::vector<Debut::UUID> deletedIds)
