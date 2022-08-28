@@ -22,7 +22,7 @@
 
 /*
     TODO:
-    - Fix warnings
+    - Fix warnings (173 at start)
     - Custom memory allocator to keep track of used memory
     - Mesh properties in properties panel?
     - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)

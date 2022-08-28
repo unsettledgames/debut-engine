@@ -76,7 +76,7 @@ namespace Debut
 
 	Mesh::Mesh(const std::string& path, const std::string& metaPath) : m_Path(path), m_MetaPath(metaPath)
 	{
-		DBT_PROFILE_FUNCTION("Mesh::Constructor");
+		DBT_PROFILE_FUNCTION();
 		
 		std::ifstream meta(m_MetaPath);
 		// If the meta file exists, load its info
@@ -89,7 +89,7 @@ namespace Debut
 			m_ID = meta["ID"].as<uint64_t>();
 			m_Name = meta["Name"].as<std::string>();
 
-			float nPoints = meta["NumVertices"].as<uint32_t>();
+			uint32_t nPoints = meta["NumVertices"].as<uint32_t>();
 
 			m_Vertices.resize(nPoints);
 			m_Normals.resize(nPoints);
@@ -172,7 +172,7 @@ namespace Debut
 
 	void Mesh::Load(std::ifstream& inFile)
 	{
-		DBT_PROFILE_FUNCTION("Mesh:Load");
+		DBT_PROFILE_FUNCTION();
 		{
 			Log.CoreInfo("Load {0} vertices", m_Vertices.size());
 			LoadBuffer<float>(m_Vertices, inFile, m_Vertices.size());

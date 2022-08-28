@@ -216,21 +216,21 @@ namespace Debut
 
 		icons = {
 			// DIRECTORY_ICON
-			{'\ue000', "assets\\icons\\directory.png"},
+			{L'\ue000', "assets\\icons\\directory.png"},
 			// FILE_ICON
-			{'\ue001', "assets\\icons\\file.png"},
+			{L'\ue001', "assets\\icons\\file.png"},
 			// MENU_ICON
-			{'\ue002', "assets\\icons\\menu.png"},
+			{L'\ue002', "assets\\icons\\menu.png"},
 			// MODEL_ICON
-			{'\ue003', "assets\\icons\\model.png"},
+			{L'\ue003', "assets\\icons\\model.png"},
 			// MESH_ICON
-			{'\ue004', "assets\\icons\\mesh.png"},
+			{L'\ue004', "assets\\icons\\mesh.png"},
 			// MATERIAL_ICON
-			{'\ue005', "assets\\icons\\material.png"},
+			{L'\ue005', "assets\\icons\\material.png"},
 			// UNIMPORTED_MODEL_ICON
-			{'\ue006', "assets\\icons\\unimported_model.png"},
+			{L'\ue006', "assets\\icons\\unimported_model.png"},
 			// ENITTY ICON
-			{'\ue007', "assets\\icons\\entity.png"}
+			{L'\ue007', "assets\\icons\\entity.png"}
 			/*,
 			{'\ue007', "assets\\icons\\model.png"},
 			{'\ue008', "assets\\icons\\model.png"},

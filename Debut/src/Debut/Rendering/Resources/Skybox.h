@@ -29,7 +29,7 @@ namespace Debut
 		virtual void Bind() {}
 		virtual void Unbind() {}
 
-		virtual uint32_t GetRendererID() { return m_ID; }
+		virtual uint32_t GetRendererID() const { return 0; }
 
 		static Ref<Skybox> Create(const std::string& path);
 
@@ -41,7 +41,7 @@ namespace Debut
 		inline UUID GetTexture(const std::string& type) { return m_Textures[type]; }
 		inline UUID GetMaterial() { return m_Material; }
 		inline Mesh& GetMesh() { return m_Mesh; }
-		inline UUID GetID() { return m_ID; }
+		virtual inline UUID GetID() { return m_ID; }
 		inline std::string GetName() { return m_Name; }
 		inline std::string GetPath() { return m_Path; }
 

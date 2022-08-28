@@ -121,7 +121,7 @@ namespace Debut
 		DBT_PROFILE_FUNCTION();
 		if (s_Data.QuadIndexCount)
 		{
-			uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
+			uint64_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
 			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 			s_Data.TextureShader->Bind();
@@ -131,7 +131,7 @@ namespace Debut
 
 		if (s_Data.LineVertexCount)
 		{
-			uint32_t dataSize = (uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase;
+			uint64_t dataSize = (uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase;
 			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
 
 			s_Data.LineShader->Bind();			

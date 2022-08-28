@@ -30,8 +30,8 @@ namespace Debut
 		glm::mat4 m_ViewMatrix = glm::mat4(1.0f);
 		ProjectionType m_ProjectionType;
 
-		float m_NearPlane = 0.1;
-		float m_FarPlane = 1000.0;
+		float m_NearPlane = 0.1f;
+		float m_FarPlane = 1000.0f;
 		float m_AspectRatio;
 	};
 }
