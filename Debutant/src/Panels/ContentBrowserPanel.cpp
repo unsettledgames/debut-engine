@@ -26,24 +26,9 @@ namespace Debut
 
 	ContentBrowserPanel::ContentBrowserPanel()
 	{
-		EditorCache::Textures().Put("cb-genericfile", Texture2D::Create("assets/icons/file.png"));
-		EditorCache::Textures().Put("cb-directory", Texture2D::Create("assets/icons/directory.png"));
 		EditorCache::Textures().Put("cb-menu", Texture2D::Create("assets/icons/menu.png"));
 		EditorCache::Textures().Put("cb-back", Texture2D::Create("assets/icons/back.png"));
 		EditorCache::Textures().Put("cb-search", Texture2D::Create("assets/icons/search.png"));
-		EditorCache::Textures().Put("cb-model", Texture2D::Create("assets/icons/model.png"));
-		EditorCache::Textures().Put("cb-mesh", Texture2D::Create("assets/icons/mesh.png"));
-		EditorCache::Textures().Put("cb-material", Texture2D::Create("assets/icons/material.png"));
-		EditorCache::Textures().Put("cb-unimported-model", Texture2D::Create("assets/icons/unimported_model.png"));
-
-		m_Icons[".txt"] = "cb-genericfile";
-		m_Icons["dir"] = "cb-directory";
-		m_Icons[".model"] = "cb-model";
-		m_Icons[".mesh"] = "cb-mesh";
-		m_Icons[".mat"] = "cb-material";
-		m_Icons[".obj"] = "cb-unimported-model";
-		m_Icons[".fbx"] = "cb-unimported-model";
-
 		m_SelectedDir = "assets";
 	}
 
@@ -164,15 +149,25 @@ namespace Debut
 			// Recursively render the rest of the hierarchy
 			if (isDir)
 			{
+				std::vector<std::filesystem::path> dirs, files;
+				// Get contents: this is used to show folder first and then files
 				for (auto& dirEntry : std::filesystem::directory_iterator(path))
 				{
-					const std::filesystem::path& otherPath = dirEntry.path();
 					// Don't show meta files
-					if (otherPath.extension().string() == ".meta")
+					if (dirEntry.path().extension() == ".meta")
 						continue;
 
-					DrawHierarchy(otherPath, dirEntry.is_directory());
+					// Sort the entry
+					if (dirEntry.is_directory())
+						dirs.push_back(dirEntry);
+					else
+						files.push_back(dirEntry);
 				}
+
+				for (auto& dir : dirs)
+					DrawHierarchy(dir, true);
+				for (auto& file : files)
+					DrawHierarchy(file, false);
 			}
 			
 			ImGui::TreePop();
@@ -407,29 +402,5 @@ namespace Debut
 			ImGui::SetDragDropPayload("CONTENT_BROWSER_DATA", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
 			ImGui::EndDragDropSource();
 		}
-	}
-
-	Ref<Texture2D> ContentBrowserPanel::GetFileIcon(const std::filesystem::path& path)
-	{
-		std::string extension = path.extension().string();
-
-		if (extension == ".png")
-		{
-			Ref<Texture2D> texture = EditorCache::Textures().Get(path.string());
-			if (!texture)
-			{
-				texture = Texture2D::Create(path.string());
-				EditorCache::Textures().Put(path.string(), texture);
-			}
-
-			return texture;
-		}
-
-		// Search for the right icon, if the extension isn't supported, return a generic file icon
-		auto& tex = m_Icons.find(extension);
-		if (tex == m_Icons.end())
-			return EditorCache::Textures().Get("cb-genericfile");
-
-		return EditorCache::Textures().Get(tex->second);
 	}
 }

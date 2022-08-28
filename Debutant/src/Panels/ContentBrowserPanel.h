@@ -32,8 +32,6 @@ namespace Debut
 		void SetPropertiesPanel(PropertiesPanel* panel) { m_PropertiesPanel = panel; }
 
 	private:
-		Ref<Texture2D> GetFileIcon(const std::filesystem::path& path);
-
 		void DrawTopBar();
 		void DrawHierarchy(const std::filesystem::path& path, bool isDir);
 		void DrawModelHierarchy(const Ref<Model>& model);
