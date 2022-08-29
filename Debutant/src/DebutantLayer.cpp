@@ -22,8 +22,9 @@
 
 /*
     TODO:
-    - Mesh properties in properties panel?
     - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
+        - Might need a generic Asset class: the Asset class 
+    - Mesh properties in properties panel?
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
     - Asset renaming

@@ -6,14 +6,11 @@
 
 namespace Debut
 {
+	enum class SkyboxTexture : uint8_t { Front, Bottom, Up, Down, Left, Right };
+
 	struct SkyboxConfig
 	{
-		UUID FrontTexture;
-		UUID BottomTexture;
-		UUID LeftTexture;
-		UUID RightTexture;
-		UUID UpTexture;
-		UUID DownTexture;
+		std::unordered_map<SkyboxTexture, UUID> Textures;
 
 		UUID Material;
 		UUID ID;
@@ -35,15 +32,18 @@ namespace Debut
 
 		static void SaveDefaultConfig(const std::string& path);
 		static void SaveSettings(SkyboxConfig config, const std::string& path);
+		static SkyboxConfig GetConfig(const std::string& path);
 
 		inline void SetMaterial(UUID material) { m_Material = material; }
 
-		inline UUID GetTexture(const std::string& type) { return m_Textures[type]; }
+		inline UUID GetTexture(SkyboxTexture type) { return m_Textures[type]; }
 		inline UUID GetMaterial() { return m_Material; }
 		inline Mesh& GetMesh() { return m_Mesh; }
 		virtual inline UUID GetID() { return m_ID; }
 		inline std::string GetName() { return m_Name; }
 		inline std::string GetPath() { return m_Path; }
+
+		virtual void Reload() = 0;
 
 	protected:
 		UUID m_Material = 0;
@@ -53,6 +53,6 @@ namespace Debut
 		std::string m_Name;
 		std::string m_Path;
 
-		std::unordered_map<std::string, UUID> m_Textures;
+		std::unordered_map<SkyboxTexture, UUID> m_Textures;
 	};
 }

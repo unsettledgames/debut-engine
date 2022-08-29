@@ -16,6 +16,7 @@ namespace Debut
 
 		virtual void Bind() override;
 		virtual void Unbind() override;
+		virtual void Reload() override;
 
 		inline uint32_t GetRendererID() const override { return m_RendererID; }
 

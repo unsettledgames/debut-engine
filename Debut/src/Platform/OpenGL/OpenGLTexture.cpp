@@ -66,6 +66,11 @@ namespace Debut
 
 	void OpenGLTexture2D::Reload()
 	{
+		Texture2DConfig config = OpenGLTexture2D::GetConfig(m_Path);
+
+		m_FilteringMode = config.Filtering;
+		m_WrapMode = config.WrapMode;
+
 		int width, height, channels;
 		stbi_uc* data = nullptr;
 		stbi_set_flip_vertically_on_load(1);

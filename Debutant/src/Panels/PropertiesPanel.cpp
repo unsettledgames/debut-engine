@@ -19,7 +19,6 @@
 /**
 	TODO:
 	- Allow renaming for each asset
-	- Polish: reset texture paramters so they're coherent if the user doesn't save the results
 */
 
 namespace Debut
@@ -75,6 +74,8 @@ namespace Debut
 
 		ImGui::PopStyleVar();
 		ImGui::End();
+
+		m_PrevAssetPath = m_AssetPath;
 	}
 
 	void PropertiesPanel::DrawName()
@@ -221,16 +222,20 @@ namespace Debut
 	void PropertiesPanel::DrawTextureProperties()
 	{
 		Ref<Texture2D> texture = AssetManager::Request<Texture2D>(m_AssetPath.string());
+		// Reset texture parameters 
+		static Texture2DConfig texParams;
+		if (m_AssetPath.compare(m_PrevAssetPath) != 0)
+		{
+			texParams.Filtering = texture->GetFilteringMode();
+			texParams.WrapMode = texture->GetWrapMode();
+			texParams.ID = texture->GetID();
+		}
+		
 		std::ifstream metaFile(texture->GetPath() + ".meta");
 		std::stringstream strStream;
 
-		Texture2DConfig texParams = { Texture2DParameter::FILTERING_LINEAR, Texture2DParameter::WRAP_CLAMP };
-
-		Texture2DParameter filter = texture->GetFilteringMode();
-		Texture2DParameter wrapMode = texture->GetWrapMode();
-
-		std::string currFilterStdStr = Tex2DParamToString(filter);
-		std::string currWrapStdStr = Tex2DParamToString(wrapMode);
+		std::string currFilterStdStr = Tex2DParamToString(texParams.Filtering);
+		std::string currWrapStdStr = Tex2DParamToString(texParams.WrapMode);
 		const char* currFilterString = currFilterStdStr.c_str();
 		const char* currWrapString = currWrapStdStr.c_str();
 
@@ -244,19 +249,12 @@ namespace Debut
 
 		ImGuiUtils::StartColumns(2, { 100, 200 });
 		if (ImGuiUtils::Combo("Filtering mode", filterTypes, 2, &currFilterString, &newFilterType))
-		{
 			texParams.Filtering = StringToTex2DParam(newFilterType);
-			texture->SetFilteringMode(texParams.Filtering);
-		}
 
 		ImGuiUtils::StartColumns(2, { 100, 200 });
 		if (ImGuiUtils::Combo("Wrap mode", wrapTypes, 2, &currWrapString, &newWrapMode))
-		{
 			texParams.WrapMode = StringToTex2DParam(newWrapMode);
-			texture->SetWrapMode(texParams.WrapMode);
-		}
-		
-		ImGui::Columns(1);
+		ImGuiUtils::ResetColumns();
 
 		if (ImGui::TreeNodeEx("Texture preview", treeNodeFlags))
 		{
@@ -271,10 +269,6 @@ namespace Debut
 		// Update settings
 		if (ImGui::Button("Save settings"))
 		{
-			texParams.ID = texture->GetID();
-			texParams.WrapMode = texture->GetWrapMode();
-			texParams.Filtering = texture->GetFilteringMode();
-
 			Texture2D::SaveSettings(texParams, texture->GetPath());
 			texture->Reload();
 		}
@@ -419,43 +413,48 @@ namespace Debut
 		// Load necessary resources
 		Ref<Skybox> skybox = AssetManager::Request<Skybox>(m_AssetPath.string());
 		Ref<Material> material = AssetManager::Request<Material>(skybox->GetMaterial());
+
+		// Load skybox config or keep the current one if the selected asset is the same
+		static SkyboxConfig skyboxConfig;
+		if (m_AssetPath.compare(m_PrevAssetPath) != 0)
+		{
+			skyboxConfig.Textures[SkyboxTexture::Bottom] = skybox->GetTexture(SkyboxTexture::Bottom);
+			skyboxConfig.Textures[SkyboxTexture::Down] = skybox->GetTexture(SkyboxTexture::Down);
+			skyboxConfig.Textures[SkyboxTexture::Up] = skybox->GetTexture(SkyboxTexture::Up);
+			skyboxConfig.Textures[SkyboxTexture::Left] = skybox->GetTexture(SkyboxTexture::Left);
+			skyboxConfig.Textures[SkyboxTexture::Right] = skybox->GetTexture(SkyboxTexture::Right);
+			skyboxConfig.Textures[SkyboxTexture::Front] = skybox->GetTexture(SkyboxTexture::Front);
+			skyboxConfig.Material = skybox->GetMaterial();
+		}
+		
 		// Material
 		UUID currentMaterial = ImGuiUtils::DragDestination("Material", ".mat", material == nullptr ? 0 : material->GetID());
 		if (currentMaterial != 0)
-		{
-			if (material == nullptr)
-				skybox->SetMaterial(currentMaterial);
-			else if (currentMaterial != material->GetID())
-				skybox->SetMaterial(currentMaterial);
-		}
+			skyboxConfig.Material = currentMaterial;
 
 		ImGuiUtils::ResetColumns();
 
 		// Drag / drop textures
-		const char* dirs[6] = { "Front", "Bottom", "Left", "Right", "Up", "Down" };
-		Ref<Texture2D> textures[6] = { EditorCache::Textures().Get("SkyboxFront"), EditorCache::Textures().Get("SkyboxBottom"),
-			EditorCache::Textures().Get("SkyboxLeft"), EditorCache::Textures().Get("SkyboxRight"), 
-			EditorCache::Textures().Get("SkyboxUp") , EditorCache::Textures().Get("SkyboxDown")};
+		SkyboxTexture dirs[6] = { SkyboxTexture::Front, SkyboxTexture::Bottom, SkyboxTexture::Left, 
+			SkyboxTexture::Right, SkyboxTexture::Up, SkyboxTexture::Down };
+		const char* dirStrings[6] = { "Front", "Bottom", "Left", "Right", "Up", "Down" };
 
-		for (uint32_t i = 0; i < 6; i++)
-			if (textures[i] == nullptr)
-				textures[i] = AssetManager::Request<Texture2D>(skybox->GetTexture(dirs[i]));
 		ImGui::Text("Textures");
 
 		ImGuiUtils::StartColumns(4, { 100, 100, 100, 100 });
 		for (uint32_t i = 0; i < 6; i++)
 		{
-			Ref<Texture2D> preview = textures[i] != nullptr ? textures[i] : EditorCache::Textures().Get("assets\\textures\\empty_texture.png");
+			Ref<Texture2D> preview = AssetManager::Request<Texture2D>(skyboxConfig.Textures[dirs[i]]);
+			if (preview == nullptr)
+				preview = EditorCache::Textures().Get("assets\\textures\\empty_texture.png");
 			Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(preview->GetRendererID(), { 80, 80 });
-			if (preview != nullptr && !EditorCache::Textures().Has("Skybox" + std::string(dirs[i])))
-				EditorCache::Textures().Put("Skybox" + std::string(dirs[i]), preview);
 
 			// User loaded new texture
 			if (newTexture != nullptr && newTexture->GetRendererID() != preview->GetRendererID())
-				EditorCache::Textures().Put("Skybox" + std::string(dirs[i]), newTexture);
+				skyboxConfig.Textures[dirs[i]] = newTexture->GetID();
 			ImGui::NextColumn();
 
-			ImGui::Text(dirs[i]);
+			ImGui::Text(std::string(std::string(dirStrings[i]) + " texture").c_str());
 			ImGui::NextColumn();
 		}
 		ImGuiUtils::ResetColumns();
@@ -463,16 +462,8 @@ namespace Debut
 		// Apply settings button
 		if (ImGui::Button("Apply settings"))
 		{
-			SkyboxConfig skyboxSettings;
-			skyboxSettings.FrontTexture = EditorCache::Textures().Get("SkyboxFront")->GetID();
-			skyboxSettings.BottomTexture = EditorCache::Textures().Get("SkyboxBottom")->GetID();
-			skyboxSettings.LeftTexture = EditorCache::Textures().Get("SkyboxLeft")->GetID();
-			skyboxSettings.RightTexture = EditorCache::Textures().Get("SkyboxRight")->GetID();
-			skyboxSettings.UpTexture = EditorCache::Textures().Get("SkyboxUp")->GetID();
-			skyboxSettings.DownTexture = EditorCache::Textures().Get("SkyboxDown")->GetID();
-			skyboxSettings.Material = skybox->GetMaterial();
-			skyboxSettings.ID = skybox->GetID();
-			skybox->SaveSettings(skyboxSettings, m_AssetPath.string());
+			skybox->SaveSettings(skyboxConfig, m_AssetPath.string());
+			skybox->Reload();
 		}
 	}
 
@@ -480,6 +471,7 @@ namespace Debut
 	{
 		if (std::filesystem::is_directory(path))
 			return;
+		m_PrevAssetPath = m_AssetPath;
 		m_AssetPath = path;
 		m_AssetType = assetType;
 

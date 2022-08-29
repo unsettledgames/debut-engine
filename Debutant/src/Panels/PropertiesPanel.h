@@ -34,6 +34,7 @@ namespace Debut
 
 	private:
 		std::filesystem::path m_AssetPath = "";
+		std::filesystem::path m_PrevAssetPath = "";
 		AssetType m_AssetType = AssetType::None;
 	};
 }
