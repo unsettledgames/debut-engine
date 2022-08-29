@@ -22,7 +22,6 @@
 
 /*
     TODO:
-    - Specify name of asset while creating asset
     - Mesh properties in properties panel?
     - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
     - Add inspector / properties panel locking

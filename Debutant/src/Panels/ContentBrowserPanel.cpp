@@ -16,6 +16,7 @@
 /*
 	TODO
 		- Move files in content browser
+		- Regex for filename selection
 */
 
 namespace Debut
@@ -78,9 +79,11 @@ namespace Debut
 
 		bool deletePopup = false;
 		std::string assetName = "";
-		std::string assetType = "";
+		static std::string assetType = "";
 		std::string defaultName = "";
 
+		// Can't open popups directly in this menu. What we do instead is save state about what the user
+		// chose to do and then open the right popups.
 		if (ImGui::BeginPopupContextWindow("##contentbrowsercontext"))
 		{
 			if (ImGui::BeginMenu("Create..."))
@@ -88,17 +91,17 @@ namespace Debut
 				if (ImGui::MenuItem("Physics Material 2D"))
 				{
 					assetType = "PhysicsMaterial2D";
-					defaultName = "NewPhysicsMaterial2D.physmat2d";
+					defaultName = "New Physics Material 2D";
 				}
 				if (ImGui::MenuItem("Material"))
 				{
 					assetType = "Material";
-					defaultName = "NewMaterial.mat";
+					defaultName = "New Material";
 				}
 				if (ImGui::MenuItem("Skybox"))
 				{
 					assetType = "Skybox";
-					defaultName = "NewSkybox.skybox";
+					defaultName = "New Skybox";
 				}
 
 				ImGui::EndMenu();
@@ -118,14 +121,21 @@ namespace Debut
 		if (assetType.compare("") != 0 || ImGui::IsPopupOpen("Filename?"))
 			assetName = CBChooseFileName(assetType, defaultName);
 
+		// Open asset creation popup
 		if (assetType.compare("") != 0 && assetName.compare("") != 0)
 		{
+			// Skip if the user canceled the action
+			if (assetName.compare("!") == 0)
+				assetType = "";
+
 			if (assetType.compare("PhysicsMaterial2D") == 0)
 				AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\" + assetName + ".physmat2d");
 			else if (assetType.compare("Material") == 0)
 				AssetManager::CreateAsset<Material>(m_SelectedDir + "\\" + assetName + ".mat");
 			else if (assetType.compare("Skybox") == 0)
 				AssetManager::CreateAsset<Skybox>(m_SelectedDir + "\\" + assetName + ".skybox");
+
+			assetType = "";
 		}
 
 		ImGui::End();
@@ -155,7 +165,10 @@ namespace Debut
 			if (isDir)
 				m_SelectedDir = path.string();
 			else
+			{
 				m_SelectedAsset = path.string();
+				m_SelectedDir = path.parent_path().string();
+			}
 		}
 
 		AddDragSource(path);
@@ -345,7 +358,7 @@ namespace Debut
 		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 		if (ImGui::BeginPopupModal("Delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
 		{
-			ImGui::Text(("Are you sure you want to delete the file " + m_RightClicked + "?").c_str());
+			ImGuiUtils::BoldText("Are you sure you want to delete the file " + m_RightClicked + "?");
 				
 			ImGuiUtils::VerticalSpace(2);
 
@@ -387,23 +400,49 @@ namespace Debut
 
 	std::string ContentBrowserPanel::CBChooseFileName(const std::string& type, const std::string& defaultFilename)
 	{
+		ImVec2 buttonSize = { 150, ImGui::GetTextLineHeight() * 1.5f };
 		ImGui::OpenPopup("Filename?");
+		ImGui::SetNextWindowSize({ 600, 150 });
 		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
-		if (ImGui::BeginPopupModal("Filename?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
+		if (ImGui::BeginPopupModal("Filename?", NULL))
 		{
-			ImGui::Text(std::string("Specify a name for the " + type + ".").c_str());
+			ImGuiUtils::BoldText("Specify a name for the " + type + ".");
 
 			ImGuiUtils::VerticalSpace(2);
 
 			static char fileName[128];
 			memcpy(fileName, defaultFilename.c_str(), defaultFilename.length());
-			ImGui::InputText("Filename: ", fileName, 128);
+			
+			// Filename text input
+			ImGuiUtils::StartColumns(2, { 100, 500 });
+			ImGui::Text("File name: ");
+			ImGuiUtils::NextColumn();
+			ImGui::SetNextItemWidth(500);
+			bool set = ImGui::InputText("##filename:", fileName, 128, ImGuiInputTextFlags_EnterReturnsTrue);
+			ImGuiUtils::ResetColumns();
 
-			if (ImGui::Button("Create"))
+			ImGui::SetCursorPosX(ImGui::GetWindowSize().x / 2.0f - 150);
+			if (ImGui::Button("Create", buttonSize) || set)
 			{
+				std::string ret(fileName);
+				memset(fileName, 0, 128);
+
+				ImGui::CloseCurrentPopup(); 
+				ImGui::EndPopup();
+				
+				return ret;
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", buttonSize) || ImGui::IsKeyPressed(ImGuiKey_Escape))
+			{
+				memset(fileName, 0, 128);
 				ImGui::CloseCurrentPopup();
-				return fileName;
+				ImGui::EndPopup();
+				
+				return "!";
 			}
 
 			ImGui::EndPopup();
