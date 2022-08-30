@@ -425,6 +425,7 @@ namespace Debut
 			skyboxConfig.Textures[SkyboxTexture::Right] = skybox->GetTexture(SkyboxTexture::Right);
 			skyboxConfig.Textures[SkyboxTexture::Front] = skybox->GetTexture(SkyboxTexture::Front);
 			skyboxConfig.Material = skybox->GetMaterial();
+			skyboxConfig.ID = skybox->GetID();
 		}
 		
 		// Material

@@ -398,7 +398,7 @@ namespace Debut
 
 	void Scene::SetSkybox(UUID skybox)
 	{
-		m_Skybox = Skybox::Create(AssetManager::GetPath(skybox));
+		m_Skybox = AssetManager::Request<Skybox>(skybox);
 	}
 
 	Ref<Scene> Scene::Copy(Ref<Scene> other)
