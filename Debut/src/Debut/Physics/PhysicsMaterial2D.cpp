@@ -94,4 +94,49 @@ namespace Debut
 		outMeta << YAML::BeginMap << YAML::Key << "ID" << YAML::Value << UUID() << YAML::EndMap; 
 		metaFile << outMeta.c_str();
 	}
+
+	PhysicsMaterial2DConfig PhysicsMaterial2D::GetConfig(const std::string& path)
+	{
+		PhysicsMaterial2DConfig config;
+		std::stringstream strStream;
+		std::ifstream file(path);
+
+		if (file.good())
+		{
+			strStream << file.rdbuf();
+			YAML::Node in = YAML::Load(strStream.str().c_str());
+
+			config.Density = in["Density"].as<float>();
+			config.Friction = in["Friction"].as<float>();
+			config.Restitution = in["Restitution"].as<float>();
+			config.RestitutionThreshold = in["RestitutionThreshold"].as<float>();
+
+			file.close();
+
+			// Try loading the id as well
+			file.open(path + ".meta");
+			if (file.good())
+			{
+				strStream.str("");
+				strStream << file.rdbuf();
+				in = YAML::Load(strStream.str().c_str());
+				config.ID = in["ID"].as<uint64_t>();
+			}
+		}
+		else
+			config = { 1.0f, 0.2f, 0.3f, 0.3f, UUID() };
+
+		return config;
+	}
+
+	void PhysicsMaterial2D::Reload()
+	{
+		PhysicsMaterial2DConfig config = GetConfig(m_Path);
+		m_Density = config.Density;
+		m_Friction = config.Friction;
+		m_Restitution = config.Restitution;
+		m_RestitutionThreshold = config.RestitutionThreshold;
+
+		m_ID = config.ID;
+	}
 }
