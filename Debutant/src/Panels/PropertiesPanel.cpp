@@ -428,7 +428,6 @@ namespace Debut
 	{
 		// Load necessary resources
 		Ref<Skybox> skybox = AssetManager::Request<Skybox>(m_AssetPath.string());
-		Ref<Material> material = AssetManager::Request<Material>(skybox->GetMaterial());
 
 		// Load skybox config or keep the current one if the selected asset is the same
 		static SkyboxConfig skyboxConfig;
@@ -443,6 +442,7 @@ namespace Debut
 			skyboxConfig.Material = skybox->GetMaterial();
 			skyboxConfig.ID = skybox->GetID();
 		}
+		Ref<Material> material = AssetManager::Request<Material>(skyboxConfig.Material);
 		
 		// Material
 		UUID currentMaterial = ImGuiUtils::DragDestination("Material", ".mat", material == nullptr ? 0 : material->GetID());

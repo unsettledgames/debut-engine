@@ -22,7 +22,6 @@
 
 /*
     TODO:
-    - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing

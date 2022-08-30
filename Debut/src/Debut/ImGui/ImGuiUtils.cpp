@@ -292,7 +292,7 @@ namespace Debut
 				const wchar_t* path = (const wchar_t*)payload->Data;
 				std::filesystem::path pathStr(path);
 
-				if (pathStr.extension() == ".png")
+				if (pathStr.extension().compare(".png")==0 || pathStr.extension().compare(".jpg")==0)
 					selectedAsset = AssetManager::Request<T>(pathStr.string());
 			}
 			ImGui::EndDragDropTarget();

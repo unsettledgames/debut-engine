@@ -9,7 +9,7 @@ namespace Debut
 		const std::string& right, const std::string& up, const std::string& down)
 	{
         std::vector<std::string> facesPaths = { front, bottom, left, right, up, down };
-        std::vector<GLuint> faces = { GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+        std::vector<GLuint> faces = { GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
             GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y };
         GLCall(glGenTextures(1, &m_RendererID));
         GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID));
