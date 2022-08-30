@@ -14,9 +14,9 @@ namespace Debut
 
 	struct Texture2DConfig
 	{
-		Texture2DParameter Filtering;
-		Texture2DParameter WrapMode;
-		UUID ID;
+		Texture2DParameter Filtering = Texture2DParameter::FILTERING_LINEAR;
+		Texture2DParameter WrapMode = Texture2DParameter::WRAP_REPEAT;
+		UUID ID = 0;
 		// TODO: mip mapping
 	};
 
@@ -85,6 +85,7 @@ namespace Debut
 		UUID GetID() { return m_ID; }
 		float GetAspectRatio() { return (float)GetWidth() / GetHeight(); }
 
+		static Texture2DConfig GetConfig(const std::string& path);
 		virtual void Reload() = 0;
 	};
 }

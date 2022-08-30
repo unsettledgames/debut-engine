@@ -15,18 +15,10 @@ namespace Debut
 		std::ifstream metaFile(metaFilePath);
 		std::stringstream strStream;
 
-		Texture2DConfig texParams = { Texture2DParameter::FILTERING_LINEAR, Texture2DParameter::WRAP_CLAMP };
-
-		if (metaFile.good())
-		{
-			strStream << metaFile.rdbuf();
-			YAML::Node in = YAML::Load(strStream.str().c_str());
-
-			texParams.Filtering = StringToTex2DParam(in["Filtering"].as<std::string>());
-			texParams.WrapMode = StringToTex2DParam(in["WrapMode"].as<std::string>());
-			texParams.ID = in["ID"] ? in["ID"].as<uint64_t>() : 0;
-		}
-		else
+		// Load texture parameters
+		Texture2DConfig texParams = GetConfig(path);
+		// If the texture doesn't have a meta file, save some default ones
+		if (texParams.ID == 0)
 		{
 			texParams.ID = UUID();
 			SaveSettings(texParams, path);
@@ -81,6 +73,25 @@ namespace Debut
 		outFile << emitter.c_str();
 	}
 
+	Texture2DConfig Texture2D::GetConfig(const std::string& path)
+	{
+		std::ifstream metaFile(path + ".meta");
+		std::stringstream strStream;
+		Texture2DConfig texParams;
 
+		if (metaFile.good())
+		{
+			strStream << metaFile.rdbuf();
+			YAML::Node in = YAML::Load(strStream.str().c_str());
 
+			texParams.Filtering = StringToTex2DParam(in["Filtering"].as<std::string>());
+			texParams.WrapMode = StringToTex2DParam(in["WrapMode"].as<std::string>());
+			texParams.ID = in["ID"] ? in["ID"].as<uint64_t>() : 0;
+
+			return texParams;
+		}
+		else
+			return { Texture2DParameter::FILTERING_LINEAR, Texture2DParameter::WRAP_CLAMP, 0 };
+		
+	}
 }

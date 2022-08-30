@@ -16,6 +16,7 @@
 /*
 	TODO
 		- Move files in content browser
+		- Regex for filename selection
 */
 
 namespace Debut
@@ -26,24 +27,9 @@ namespace Debut
 
 	ContentBrowserPanel::ContentBrowserPanel()
 	{
-		EditorCache::Textures().Put("cb-genericfile", Texture2D::Create("assets/icons/file.png"));
-		EditorCache::Textures().Put("cb-directory", Texture2D::Create("assets/icons/directory.png"));
 		EditorCache::Textures().Put("cb-menu", Texture2D::Create("assets/icons/menu.png"));
 		EditorCache::Textures().Put("cb-back", Texture2D::Create("assets/icons/back.png"));
 		EditorCache::Textures().Put("cb-search", Texture2D::Create("assets/icons/search.png"));
-		EditorCache::Textures().Put("cb-model", Texture2D::Create("assets/icons/model.png"));
-		EditorCache::Textures().Put("cb-mesh", Texture2D::Create("assets/icons/mesh.png"));
-		EditorCache::Textures().Put("cb-material", Texture2D::Create("assets/icons/material.png"));
-		EditorCache::Textures().Put("cb-unimported-model", Texture2D::Create("assets/icons/unimported_model.png"));
-
-		m_Icons[".txt"] = "cb-genericfile";
-		m_Icons["dir"] = "cb-directory";
-		m_Icons[".model"] = "cb-model";
-		m_Icons[".mesh"] = "cb-mesh";
-		m_Icons[".mat"] = "cb-material";
-		m_Icons[".obj"] = "cb-unimported-model";
-		m_Icons[".fbx"] = "cb-unimported-model";
-
 		m_SelectedDir = "assets";
 	}
 
@@ -92,17 +78,31 @@ namespace Debut
 		}
 
 		bool deletePopup = false;
+		std::string assetName = "";
+		static std::string assetType = "";
+		std::string defaultName = "";
 
+		// Can't open popups directly in this menu. What we do instead is save state about what the user
+		// chose to do and then open the right popups.
 		if (ImGui::BeginPopupContextWindow("##contentbrowsercontext"))
 		{
 			if (ImGui::BeginMenu("Create..."))
 			{
 				if (ImGui::MenuItem("Physics Material 2D"))
-					AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\NewPhysicsMaterial2D.physmat2d");
+				{
+					assetType = "PhysicsMaterial2D";
+					defaultName = "New Physics Material 2D";
+				}
 				if (ImGui::MenuItem("Material"))
-					AssetManager::CreateAsset<Material>(m_SelectedDir + "\\NewMaterial.mat");
+				{
+					assetType = "Material";
+					defaultName = "New Material";
+				}
 				if (ImGui::MenuItem("Skybox"))
-					AssetManager::CreateAsset<Skybox>(m_SelectedDir + "\\NewSkybox.skybox");
+				{
+					assetType = "Skybox";
+					defaultName = "New Skybox";
+				}
 
 				ImGui::EndMenu();
 			}
@@ -112,8 +112,31 @@ namespace Debut
 
 			ImGui::EndPopup();
 		}
+
+		// Delete file popup (thanks ImGui)
 		if (deletePopup || ImGui::IsPopupOpen("Delete?") || (ImGui::IsKeyPressed(ImGuiKey_Delete) && ImGui::IsWindowFocused()))
 			CBDeleteFile(m_RightClicked);
+
+		// Set asset filename popup (thanks ImGui)
+		if (assetType.compare("") != 0 || ImGui::IsPopupOpen("Filename?"))
+			assetName = CBChooseFileName(assetType, defaultName);
+
+		// Open asset creation popup
+		if (assetType.compare("") != 0 && assetName.compare("") != 0)
+		{
+			// Skip if the user canceled the action
+			if (assetName.compare("!") == 0)
+				assetType = "";
+
+			if (assetType.compare("PhysicsMaterial2D") == 0)
+				AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\" + assetName + ".physmat2d");
+			else if (assetType.compare("Material") == 0)
+				AssetManager::CreateAsset<Material>(m_SelectedDir + "\\" + assetName + ".mat");
+			else if (assetType.compare("Skybox") == 0)
+				AssetManager::CreateAsset<Skybox>(m_SelectedDir + "\\" + assetName + ".skybox");
+
+			assetType = "";
+		}
 
 		ImGui::End();
 	}
@@ -142,7 +165,10 @@ namespace Debut
 			if (isDir)
 				m_SelectedDir = path.string();
 			else
+			{
 				m_SelectedAsset = path.string();
+				m_SelectedDir = path.parent_path().string();
+			}
 		}
 
 		AddDragSource(path);
@@ -164,15 +190,25 @@ namespace Debut
 			// Recursively render the rest of the hierarchy
 			if (isDir)
 			{
+				std::vector<std::filesystem::path> dirs, files;
+				// Get contents: this is used to show folder first and then files
 				for (auto& dirEntry : std::filesystem::directory_iterator(path))
 				{
-					const std::filesystem::path& otherPath = dirEntry.path();
 					// Don't show meta files
-					if (otherPath.extension().string() == ".meta")
+					if (dirEntry.path().extension() == ".meta")
 						continue;
 
-					DrawHierarchy(otherPath, dirEntry.is_directory());
+					// Sort the entry
+					if (dirEntry.is_directory())
+						dirs.push_back(dirEntry);
+					else
+						files.push_back(dirEntry);
 				}
+
+				for (auto& dir : dirs)
+					DrawHierarchy(dir, true);
+				for (auto& file : files)
+					DrawHierarchy(file, false);
 			}
 			
 			ImGui::TreePop();
@@ -319,11 +355,10 @@ namespace Debut
 	{
 		ImVec2 buttonSize = { 100, ImGui::GetTextLineHeight() * 1.5f };
 		ImGui::OpenPopup("Delete?");
-		bool open = true;
 		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 		if (ImGui::BeginPopupModal("Delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
 		{
-			ImGui::Text(("Are you sure you want to delete the file " + m_RightClicked + "?").c_str());
+			ImGuiUtils::BoldText("Are you sure you want to delete the file " + m_RightClicked + "?");
 				
 			ImGuiUtils::VerticalSpace(2);
 
@@ -361,6 +396,59 @@ namespace Debut
 
 			ImGui::EndPopup();
 		}
+	}
+
+	std::string ContentBrowserPanel::CBChooseFileName(const std::string& type, const std::string& defaultFilename)
+	{
+		ImVec2 buttonSize = { 150, ImGui::GetTextLineHeight() * 1.5f };
+		ImGui::OpenPopup("Filename?");
+		ImGui::SetNextWindowSize({ 600, 150 });
+		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+		if (ImGui::BeginPopupModal("Filename?", NULL))
+		{
+			ImGuiUtils::BoldText("Specify a name for the " + type + ".");
+
+			ImGuiUtils::VerticalSpace(2);
+
+			static char fileName[128];
+			memcpy(fileName, defaultFilename.c_str(), defaultFilename.length());
+			
+			// Filename text input
+			ImGuiUtils::StartColumns(2, { 100, 500 });
+			ImGui::Text("File name: ");
+			ImGuiUtils::NextColumn();
+			ImGui::SetNextItemWidth(500);
+			bool set = ImGui::InputText("##filename:", fileName, 128, ImGuiInputTextFlags_EnterReturnsTrue);
+			ImGuiUtils::ResetColumns();
+
+			ImGui::SetCursorPosX(ImGui::GetWindowSize().x / 2.0f - 150);
+			if (ImGui::Button("Create", buttonSize) || set)
+			{
+				std::string ret(fileName);
+				memset(fileName, 0, 128);
+
+				ImGui::CloseCurrentPopup(); 
+				ImGui::EndPopup();
+				
+				return ret;
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", buttonSize) || ImGui::IsKeyPressed(ImGuiKey_Escape))
+			{
+				memset(fileName, 0, 128);
+				ImGui::CloseCurrentPopup();
+				ImGui::EndPopup();
+				
+				return "!";
+			}
+
+			ImGui::EndPopup();
+		}
+
+		return "";
 	}
 
 	void ContentBrowserPanel::DeleteModel(Ref<Model> model, std::vector<Debut::UUID> deletedIds)
@@ -407,29 +495,5 @@ namespace Debut
 			ImGui::SetDragDropPayload("CONTENT_BROWSER_DATA", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t), ImGuiCond_Once);
 			ImGui::EndDragDropSource();
 		}
-	}
-
-	Ref<Texture2D> ContentBrowserPanel::GetFileIcon(const std::filesystem::path& path)
-	{
-		std::string extension = path.extension().string();
-
-		if (extension == ".png")
-		{
-			Ref<Texture2D> texture = EditorCache::Textures().Get(path.string());
-			if (!texture)
-			{
-				texture = Texture2D::Create(path.string());
-				EditorCache::Textures().Put(path.string(), texture);
-			}
-
-			return texture;
-		}
-
-		// Search for the right icon, if the extension isn't supported, return a generic file icon
-		auto& tex = m_Icons.find(extension);
-		if (tex == m_Icons.end())
-			return EditorCache::Textures().Get("cb-genericfile");
-
-		return EditorCache::Textures().Get(tex->second);
 	}
 }

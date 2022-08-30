@@ -114,10 +114,7 @@ namespace Debut
 		out << YAML::Key << "Radius" << YAML::Value << c.Radius;
 		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
 
-		out << YAML::Key << "Density" << YAML::Value << c.Density;
-		out << YAML::Key << "Friction" << YAML::Value << c.Friction;
-		out << YAML::Key << "Restitution" << YAML::Value << c.Restitution;
-		out << YAML::Key << "RestitutionThreshold" << YAML::Value << c.RestitutionThreshold;
+		out << YAML::Key << "Material" << YAML::Value << c.Material;
 	}
 
 	template <typename T>
@@ -219,13 +216,9 @@ namespace Debut
 			return;
 		CircleCollider2DComponent& bc2d = e.AddComponent<CircleCollider2DComponent>();
 
-		bc2d.Density = in["Density"].as<float>();
-		bc2d.Friction = in["Friction"].as<float>();
-		bc2d.Restitution = in["Restitution"].as<float>();
-		bc2d.RestitutionThreshold = in["RestitutionThreshold"].as<float>();
-
 		bc2d.Offset = in["Offset"].as<glm::vec2>();
 		bc2d.Radius = in["Radius"].as<float>();
+		bc2d.Material = in["Material"].as<uint64_t>();
 	}
 
 	void SceneSerializer::SerializeEntity(EntitySceneNode& node, YAML::Emitter& out)

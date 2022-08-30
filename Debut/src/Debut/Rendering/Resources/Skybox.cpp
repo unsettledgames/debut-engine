@@ -16,32 +16,19 @@ namespace Debut
 	Ref<Skybox> Skybox::Create(const std::string& path)
 	{
 		Ref<Skybox> ret = nullptr;
-		std::ifstream skyboxFile(path);
-		std::ifstream metaFile(path + ".meta");
+		SkyboxConfig config = GetConfig(path);
 
-		std::stringstream ss;
-		ss << skyboxFile.rdbuf();
-		YAML::Node skyboxData = YAML::Load(ss.str());
-
-		ss.str("");
-		ss << metaFile.rdbuf();
-		YAML::Node metaData = YAML::Load(ss.str());
-
-		UUID frontId = skyboxData["FrontTexture"].as<uint64_t>();
-		UUID bottomId = skyboxData["BottomTexture"].as<uint64_t>();
-		UUID leftId = skyboxData["LeftTexture"].as<uint64_t>();
-		UUID rightId = skyboxData["RightTexture"].as<uint64_t>();
-		UUID upId = skyboxData["UpTexture"].as<uint64_t>();
-		UUID downId = skyboxData["DownTexture"].as<uint64_t>();
-
-		if (frontId && bottomId && leftId && rightId && upId && downId)
+		if (config.Textures[SkyboxTexture::Front] && config.Textures[SkyboxTexture::Bottom] && 
+			config.Textures[SkyboxTexture::Left] && config.Textures[SkyboxTexture::Right] && 
+			config.Textures[SkyboxTexture::Up] && config.Textures[SkyboxTexture::Down])
 		{
 			switch (Renderer::GetAPI())
 			{
 			case RendererAPI::API::OpenGL:
-				ret = CreateRef<OpenGLSkybox>(AssetManager::GetPath(frontId), AssetManager::GetPath(bottomId),
-					AssetManager::GetPath(leftId), AssetManager::GetPath(rightId), AssetManager::GetPath(upId),
-					AssetManager::GetPath(downId));
+				ret = CreateRef<OpenGLSkybox>(AssetManager::GetPath(config.Textures[SkyboxTexture::Front]), 
+					AssetManager::GetPath(config.Textures[SkyboxTexture::Bottom]), AssetManager::GetPath(config.Textures[SkyboxTexture::Left]), 
+					AssetManager::GetPath(config.Textures[SkyboxTexture::Right]), AssetManager::GetPath(config.Textures[SkyboxTexture::Up]),
+					AssetManager::GetPath(config.Textures[SkyboxTexture::Down]));
 			}
 		}
 		else
@@ -63,17 +50,11 @@ namespace Debut
 			ret->m_Mesh.SetIndices(cubeIndices);
 
 			// Load material from meta file
-			ret->m_Material = skyboxData["Material"].as<uint64_t>();
-			ret->m_ID = metaData["ID"].as<uint64_t>();
+			ret->m_Material = config.Material;
+			ret->m_ID = config.ID;
 			ret->m_Path = path;
 			ret->m_Name = (std::filesystem::path(path)).filename().string();
-
-			ret->m_Textures["Front"] = frontId;
-			ret->m_Textures["Bottom"] = bottomId;
-			ret->m_Textures["Left"] = leftId;
-			ret->m_Textures["Right"] = rightId;
-			ret->m_Textures["Up"] = upId;
-			ret->m_Textures["Down"] = downId;
+			ret->m_Textures = config.Textures;
 
 			return ret;
 		}
@@ -81,8 +62,41 @@ namespace Debut
 
 	void Skybox::SaveDefaultConfig(const std::string& path)
 	{
-		SkyboxConfig config = { 0, 0, 0, 0, 0, 0, 0, UUID()};
+		SkyboxConfig config;
+		config.Textures[SkyboxTexture::Front] = 0;
+		config.Textures[SkyboxTexture::Bottom] = 0;
+		config.Textures[SkyboxTexture::Left] = 0;
+		config.Textures[SkyboxTexture::Right] = 0;
+		config.Textures[SkyboxTexture::Up] = 0;
+		config.Textures[SkyboxTexture::Down] = 0;
+		 
 		Skybox::SaveSettings(config, path);
+	}
+
+	SkyboxConfig Skybox::GetConfig(const std::string& path)
+	{
+		SkyboxConfig config;
+
+		std::ifstream skyboxFile(path);
+		std::stringstream ss;
+		ss << skyboxFile.rdbuf();
+		YAML::Node skyboxData = YAML::Load(ss.str());
+
+		std::ifstream metaFile(path + ".meta");
+		ss.str("");
+		ss << metaFile.rdbuf();
+		YAML::Node metaData = YAML::Load(ss.str());
+
+		config.Textures[SkyboxTexture::Front] = skyboxData["FrontTexture"].as<uint64_t>();
+		config.Textures[SkyboxTexture::Bottom] = skyboxData["BottomTexture"].as<uint64_t>();
+		config.Textures[SkyboxTexture::Left] = skyboxData["LeftTexture"].as<uint64_t>();
+		config.Textures[SkyboxTexture::Right] = skyboxData["RightTexture"].as<uint64_t>();
+		config.Textures[SkyboxTexture::Up] = skyboxData["UpTexture"].as<uint64_t>();
+		config.Textures[SkyboxTexture::Down] = skyboxData["DownTexture"].as<uint64_t>();
+		config.Material = skyboxData["Material"].as<uint64_t>();
+		config.ID = metaData["ID"].as<uint64_t>();
+
+		return config;
 	}
 
 	void Skybox::SaveSettings(SkyboxConfig config, const std::string& path)
@@ -96,12 +110,12 @@ namespace Debut
 		skyboxEmitter << YAML::BeginDoc << YAML::BeginMap;
 
 		skyboxEmitter << YAML::Key << "Material" << YAML::Value << config.Material;
-		skyboxEmitter << YAML::Key << "FrontTexture" << YAML::Value << config.FrontTexture;
-		skyboxEmitter << YAML::Key << "BottomTexture" << YAML::Value << config.BottomTexture;
-		skyboxEmitter << YAML::Key << "LeftTexture" << YAML::Value << config.LeftTexture;
-		skyboxEmitter << YAML::Key << "RightTexture" << YAML::Value << config.RightTexture;
-		skyboxEmitter << YAML::Key << "UpTexture" << YAML::Value << config.UpTexture;
-		skyboxEmitter << YAML::Key << "DownTexture" << YAML::Value << config.DownTexture;
+		skyboxEmitter << YAML::Key << "FrontTexture" << YAML::Value << config.Textures[SkyboxTexture::Front];
+		skyboxEmitter << YAML::Key << "BottomTexture" << YAML::Value << config.Textures[SkyboxTexture::Bottom];
+		skyboxEmitter << YAML::Key << "LeftTexture" << YAML::Value << config.Textures[SkyboxTexture::Left];
+		skyboxEmitter << YAML::Key << "RightTexture" << YAML::Value << config.Textures[SkyboxTexture::Right];
+		skyboxEmitter << YAML::Key << "UpTexture" << YAML::Value << config.Textures[SkyboxTexture::Up];
+		skyboxEmitter << YAML::Key << "DownTexture" << YAML::Value << config.Textures[SkyboxTexture::Down];
 
 		skyboxEmitter << YAML::EndMap << YAML::EndDoc;
 

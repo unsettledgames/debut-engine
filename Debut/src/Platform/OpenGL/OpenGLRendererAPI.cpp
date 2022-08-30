@@ -28,7 +28,7 @@ namespace Debut
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& va, uint32_t indexCount)
 	{
-		uint32_t count = indexCount == 0 ? va->GetIndexBuffer()->GetCount() : indexCount;
+		uint64_t count = indexCount == 0 ? va->GetIndexBuffer()->GetCount() : indexCount;
 		va->Bind();
 		GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr));
 		// Reset the texture after a draw call

@@ -126,7 +126,7 @@ namespace Debut
 					currBatch->Buffers["Bitangents"]->PushData(mesh->GetBitangents().data(), sizeof(float) * mesh->GetBitangents().size());
 
 				// Add indices
-				uint32_t currIndicesSize = currBatch->Indices.size();
+				size_t currIndicesSize = currBatch->Indices.size();
 				currBatch->Indices.resize(currBatch->Indices.size() + mesh->GetIndices().size());
 				memcpy(currBatch->Indices.data() + currIndicesSize, mesh->GetIndices().data(), mesh->GetIndices().size() * sizeof(int));
 			}
@@ -197,8 +197,7 @@ namespace Debut
 					currBatch->Buffers["Bitangents"]->PushData(mesh.GetBitangents().data(), sizeof(float) * mesh.GetBitangents().size());
 
 				// Add indices
-				// This kinda sucks, the vector is reallocated every time a mesh is submitted (100 * 60 = 6000 times per second to be optimist)
-				uint32_t currIndicesSize = currBatch->Indices.size();
+				size_t currIndicesSize = currBatch->Indices.size();
 				currBatch->Indices.resize(currBatch->Indices.size() + mesh.GetIndices().size());
 				memcpy(currBatch->Indices.data() + currIndicesSize, mesh.GetIndices().data(), mesh.GetIndices().size() * sizeof(int));
 			}

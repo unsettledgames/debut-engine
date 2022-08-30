@@ -14,10 +14,11 @@ namespace Debut
 			const std::string& right, const std::string& up, const std::string& down);
 		~OpenGLSkybox();
 
-		GLuint OpenGLSkybox::GetRendererID() override { return m_RendererID; }
-
 		virtual void Bind() override;
 		virtual void Unbind() override;
+		virtual void Reload() override;
+
+		inline uint32_t GetRendererID() const override { return m_RendererID; }
 
 	private:
 		GLuint m_RendererID = 0;

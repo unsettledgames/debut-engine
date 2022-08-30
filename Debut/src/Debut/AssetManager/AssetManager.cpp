@@ -11,6 +11,11 @@
 #include <Debut/Rendering/Resources/Model.h>
 #include <Debut/Rendering/Resources/Skybox.h>
 
+/*
+	TODO:
+	- When loading associations, don't add an association if the .meta file or the actual file aren't there
+*/
+
 namespace Debut
 {
 	// Project asset folders

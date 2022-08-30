@@ -592,10 +592,9 @@ namespace Debut
 				ImGui::Separator();
 				ImGui::Dummy({ 0.0f, 10.0f });
 
-				ImGuiUtils::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
-				ImGuiUtils::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
-				ImGuiUtils::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
-				ImGuiUtils::DragFloat("Restitution threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+				UUID material = ImGuiUtils::DragDestination("Physics material", ".physmat2d", component.Material);
+				if (material != 0)
+					component.Material = material;
 			});
 	}
 

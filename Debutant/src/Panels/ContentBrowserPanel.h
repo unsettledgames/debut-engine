@@ -32,8 +32,6 @@ namespace Debut
 		void SetPropertiesPanel(PropertiesPanel* panel) { m_PropertiesPanel = panel; }
 
 	private:
-		Ref<Texture2D> GetFileIcon(const std::filesystem::path& path);
-
 		void DrawTopBar();
 		void DrawHierarchy(const std::filesystem::path& path, bool isDir);
 		void DrawModelHierarchy(const Ref<Model>& model);
@@ -41,6 +39,7 @@ namespace Debut
 		void AddDragSource(const std::filesystem::path& path);
 
 		void CBDeleteFile(const std::string& path);
+		std::string CBChooseFileName(const std::string& type, const std::string& defaultFilename);
 		void DeleteModel(Ref<Model> model, std::vector<Debut::UUID> deletedIds);
 
 	private:

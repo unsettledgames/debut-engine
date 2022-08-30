@@ -145,8 +145,7 @@ namespace Debut
 	{
 		m_Name = config.Name;
 		m_Shader = config.Shader;
-		for (auto& uniform : config.Uniforms)
-			m_Uniforms[uniform.Name] = uniform;
+		m_Uniforms = config.Uniforms;
 	}
 
 	void Material::SaveDefaultConfig(const std::string& path)
@@ -166,9 +165,7 @@ namespace Debut
 
 		config.Name = m_Name;
 		config.Shader = m_Shader;
-
-		for (auto& uniform : m_Uniforms)
-			config.Uniforms.push_back(uniform.second);
+		config.Uniforms = m_Uniforms;
 
 		SaveSettings(m_Path, config);
 
@@ -194,21 +191,21 @@ namespace Debut
 
 		for (auto& uniform : config.Uniforms)
 		{
-			switch (uniform.Type)
+			switch (uniform.second.Type)
 			{
-			case ShaderDataType::Float: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Float; break;
-			case ShaderDataType::Float2: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Vec2; break;
-			case ShaderDataType::Float3: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Vec3; break;
-			case ShaderDataType::Float4: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Vec4; break;
+			case ShaderDataType::Float: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Float; break;
+			case ShaderDataType::Float2: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Vec2; break;
+			case ShaderDataType::Float3: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Vec3; break;
+			case ShaderDataType::Float4: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Vec4; break;
 
-			case ShaderDataType::Mat4: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Mat4; break;
-			case ShaderDataType::Bool: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Bool; break;
-			case ShaderDataType::Int: emitter << YAML::Key << uniform.Name << YAML::Value << uniform.Data.Int; break;
+			case ShaderDataType::Mat4: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Mat4; break;
+			case ShaderDataType::Bool: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Bool; break;
+			case ShaderDataType::Int: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Int; break;
 			case ShaderDataType::Sampler2D:
 			{
-				emitter << YAML::Key << uniform.Name << YAML::Value << YAML::BeginMap;
-				emitter << YAML::Key << "ID" << uniform.Data.Texture;
-				YAML::EndMap;
+				emitter << YAML::Key << uniform.second.Name << YAML::Value << YAML::BeginMap;
+				emitter << YAML::Key << "ID" << YAML::Value << uniform.second.Data.Texture;
+				emitter << YAML::EndMap;
 				break;
 			}
 			default:
@@ -333,9 +330,6 @@ namespace Debut
 		m_Uniforms[name].Data.Texture = texture->GetID();
 	}
 
-	// TODO: skyboxes aren't assets. They don't use the ID as they probably should for now. Should a skybox be an asset?
-	// Maybe. Let the user create a skybox in the content browser and assign textures, then we can use the UUID here.
-	// Let's focus on rendering for now though.
 	void Material::SetCubemap(const std::string& name, const Ref<Skybox> cubemap)
 	{
 		FIND_UNIFORM(name);
@@ -343,19 +337,10 @@ namespace Debut
 		m_Uniforms[name].Data.Cubemap = cubemap->GetRendererID();
 	}
 
-	std::vector<ShaderUniform> Material::GetUniforms()
+	void Material::Reload()
 	{
-		std::vector<ShaderUniform> ret;
-		ret.resize(m_Uniforms.size());
-
-		uint32_t i = 0;
-		for (auto el : m_Uniforms)
-		{
-			ret[i] = el.second;
-			i++;
-		}
-
-		return ret;
+		std::ifstream matFile(m_Path);
+		Load(matFile);
 	}
 
 	MaterialMetadata Material::GetMetadata(UUID id)

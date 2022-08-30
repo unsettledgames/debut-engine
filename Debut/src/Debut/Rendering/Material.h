@@ -6,13 +6,22 @@
 
 #include <unordered_map>
 
+/*
+	I changed the Material class! What do I do?
+	- Update DrawMaterialProperties in PropertiesPanel
+	- Serialize / deserialize
+	- Add ShaderUniform if necessary
+*/
+
 namespace Debut
 {
 	struct MaterialConfig
 	{
 		std::string Name;
+		UUID ID;
+
 		UUID Shader;
-		std::vector<ShaderUniform> Uniforms;
+		std::unordered_map<std::string, ShaderUniform> Uniforms;
 	};
 
 	struct MaterialMetadata
@@ -34,9 +43,9 @@ namespace Debut
 		void Unuse();
 
 		void SetShader(Ref<Shader> shader);
-		void SetName(const std::string& name) { m_Name = name; }
-		void SetPath(const std::string& path) { m_Path = path; }
-		void SetMetaPath(const std::string& metaPath) { m_MetaPath = metaPath; }
+		inline void SetName(const std::string& name) { m_Name = name; }
+		inline void SetPath(const std::string& path) { m_Path = path; }
+		inline void SetMetaPath(const std::string& metaPath) { m_MetaPath = metaPath; }
 
 		void SetConfig(const MaterialConfig& config);
 		void SaveSettings();
@@ -55,13 +64,14 @@ namespace Debut
 		void SetTexture(const std::string& name, const Ref<Texture2D> texture);
 		void SetCubemap(const std::string& name, const Ref<Skybox> texture);
 
-		UUID GetID() { return m_ID; }
-		UUID GetShader() { return m_Shader; }
-		std::string GetName() { return m_Name; }
-		std::string GetPath() { return m_Path; }
-		std::vector<ShaderUniform> GetUniforms();
-		bool IsValid() { return m_Valid; }
+		inline UUID GetID() { return m_ID; }
+		inline UUID GetShader() { return m_Shader; }
+		inline std::string GetName() { return m_Name; }
+		inline std::string GetPath() { return m_Path; }
+		inline std::unordered_map<std::string, ShaderUniform> GetUniforms() { return m_Uniforms; }
+		inline bool IsValid() { return m_Valid; }
 
+		void Reload();
 		static MaterialMetadata GetMetadata(UUID id);
 
 	private:

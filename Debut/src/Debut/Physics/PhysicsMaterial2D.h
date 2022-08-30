@@ -10,6 +10,7 @@ namespace Debut
 		float Friction = 0.5f;
 		float Restitution = 0.5f;
 		float RestitutionThreshold = 0.5f;
+		UUID ID;
 	};
 
 	class PhysicsMaterial2D
@@ -26,6 +27,9 @@ namespace Debut
 
 		static void SaveDefaultConfig(const std::string& path);
 		static void SaveSettings(const std::string& path, const PhysicsMaterial2DConfig& config);
+		static PhysicsMaterial2DConfig GetConfig(const std::string& path);
+
+		void Reload();
 
 		std::string GetPath() { return m_Path; }
 		float GetDensity() { return m_Density; }

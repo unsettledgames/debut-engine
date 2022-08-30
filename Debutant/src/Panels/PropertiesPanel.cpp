@@ -19,7 +19,6 @@
 /**
 	TODO:
 	- Allow renaming for each asset
-	- Polish: reset texture paramters so they're coherent if the user doesn't save the results
 */
 
 namespace Debut
@@ -75,6 +74,8 @@ namespace Debut
 
 		ImGui::PopStyleVar();
 		ImGui::End();
+
+		m_PrevAssetPath = m_AssetPath;
 	}
 
 	void PropertiesPanel::DrawName()
@@ -193,44 +194,51 @@ namespace Debut
 	void PropertiesPanel::DrawPhysicsMaterial2DProperties()
 	{
 		Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(m_AssetPath.string());
+		static PhysicsMaterial2DConfig config;
+		if (m_AssetPath.compare(m_PrevAssetPath) != 0)
+		{
+			config.Density = material->GetDensity();
+			config.Friction = material->GetFriction();
+			config.Restitution = material->GetRestitution();
+			config.RestitutionThreshold = material->GetRestitutionThreshold();
+		}
 		std::ifstream metaFile(material->GetPath());
 		std::stringstream strStream;
 
 		// PhysMat2D parameters
 		ImGuiUtils::StartColumns(2, { 150, 200 });
-			ImGuiUtils::DragFloat("Density", &material->m_Density, 0.1f, 0.0f, 1.0f);
-			ImGuiUtils::DragFloat("Friction", &material->m_Friction, 0.1f, 0.0f, 1.0f);
-			ImGuiUtils::DragFloat("Restitution", &material->m_Restitution, 0.3f, 0.0f, 100000.0f);
-			ImGuiUtils::DragFloat("Restitution threshold", &material->m_RestitutionThreshold, 0.3f, 0.0f, 100000.0f);
+			ImGuiUtils::DragFloat("Density", &config.Density, 0.1f, 0.0f, 1.0f);
+			ImGuiUtils::DragFloat("Friction", &config.Friction, 0.1f, 0.0f, 1.0f);
+			ImGuiUtils::DragFloat("Restitution", &config.Restitution, 0.3f, 0.0f, 100000.0f);
+			ImGuiUtils::DragFloat("Restitution threshold", &config.RestitutionThreshold, 0.3f, 0.0f, 100000.0f);
 		ImGuiUtils::ResetColumns();
 
 		// Update settings
 		if (ImGui::Button("Save settings"))
 		{
-			PhysicsMaterial2DConfig config;
-			config.Density = material->m_Density;
-			config.Friction = material->m_Friction;
-			config.Restitution = material->m_Restitution;
-			config.RestitutionThreshold = material->m_RestitutionThreshold;
-
 			PhysicsMaterial2D::SaveSettings(m_AssetPath.string(), config);
 			material->SetConfig(config);
+			material->Reload();
 		}
 	}
 
 	void PropertiesPanel::DrawTextureProperties()
 	{
 		Ref<Texture2D> texture = AssetManager::Request<Texture2D>(m_AssetPath.string());
+		// Reset texture parameters 
+		static Texture2DConfig texParams;
+		if (m_AssetPath.compare(m_PrevAssetPath) != 0)
+		{
+			texParams.Filtering = texture->GetFilteringMode();
+			texParams.WrapMode = texture->GetWrapMode();
+			texParams.ID = texture->GetID();
+		}
+		
 		std::ifstream metaFile(texture->GetPath() + ".meta");
 		std::stringstream strStream;
 
-		Texture2DConfig texParams = { Texture2DParameter::FILTERING_LINEAR, Texture2DParameter::WRAP_CLAMP };
-
-		Texture2DParameter filter = texture->GetFilteringMode();
-		Texture2DParameter wrapMode = texture->GetWrapMode();
-
-		std::string currFilterStdStr = Tex2DParamToString(filter);
-		std::string currWrapStdStr = Tex2DParamToString(wrapMode);
+		std::string currFilterStdStr = Tex2DParamToString(texParams.Filtering);
+		std::string currWrapStdStr = Tex2DParamToString(texParams.WrapMode);
 		const char* currFilterString = currFilterStdStr.c_str();
 		const char* currWrapString = currWrapStdStr.c_str();
 
@@ -244,19 +252,12 @@ namespace Debut
 
 		ImGuiUtils::StartColumns(2, { 100, 200 });
 		if (ImGuiUtils::Combo("Filtering mode", filterTypes, 2, &currFilterString, &newFilterType))
-		{
 			texParams.Filtering = StringToTex2DParam(newFilterType);
-			texture->SetFilteringMode(texParams.Filtering);
-		}
 
 		ImGuiUtils::StartColumns(2, { 100, 200 });
 		if (ImGuiUtils::Combo("Wrap mode", wrapTypes, 2, &currWrapString, &newWrapMode))
-		{
 			texParams.WrapMode = StringToTex2DParam(newWrapMode);
-			texture->SetWrapMode(texParams.WrapMode);
-		}
-		
-		ImGui::Columns(1);
+		ImGuiUtils::ResetColumns();
 
 		if (ImGui::TreeNodeEx("Texture preview", treeNodeFlags))
 		{
@@ -271,10 +272,6 @@ namespace Debut
 		// Update settings
 		if (ImGui::Button("Save settings"))
 		{
-			texParams.ID = texture->GetID();
-			texParams.WrapMode = texture->GetWrapMode();
-			texParams.Filtering = texture->GetFilteringMode();
-
 			Texture2D::SaveSettings(texParams, texture->GetPath());
 			texture->Reload();
 		}
@@ -303,8 +300,7 @@ namespace Debut
 
 	void PropertiesPanel::DrawMaterialProperties()
 	{
-		MaterialConfig finalConfig;
-
+		static MaterialConfig config;
 		Ref<Material> material = AssetManager::Request<Material>(m_AssetPath.string());
 		if (material == nullptr)
 		{
@@ -314,17 +310,26 @@ namespace Debut
 			YAML::Node metaNode = YAML::Load(ss.str());
 			material = AssetManager::Request<Material>(metaNode["ID"].as<uint64_t>());
 		}
-		Ref<Shader> shader = AssetManager::Request<Shader>(material->GetShader());
+
+		if (m_AssetPath.compare(m_PrevAssetPath) != 0)
+		{
+			config.Name = material->GetName();
+			config.Shader = material->GetShader();
+			config.Uniforms = material->GetUniforms();
+			config.ID = material->GetID();
+		}
+
+		Ref<Shader> shader = AssetManager::Request<Shader>(config.Shader);
 
 		// Shader selection combobox
 		const char** shaders;
-		std::filesystem::path shaderFolder("assets\\shaders");
-
 		const char* currShader = shader == nullptr ? "None" : shader->GetName().c_str();
 		const char* ret = nullptr;
 
 		// Get all shaders
+		std::filesystem::path shaderFolder("assets\\shaders");
 		std::vector<std::string> shaderStrings = CppUtils::FileSystem::GetAllFilesWithExtension(".glsl", "assets\\shaders");
+		
 		// Convert the strings to const char*s
 		shaders = new const char* [shaderStrings.size()];
 		for (uint32_t i = 0; i < shaderStrings.size(); i++)
@@ -334,7 +339,12 @@ namespace Debut
 		if (ImGuiUtils::Combo("Shader", shaders, shaderStrings.size(), &currShader, &ret))
 		{
 			Ref<Shader> loadedShader = AssetManager::Request<Shader>(ret);
-			material->SetShader(loadedShader);
+			std::vector<ShaderUniform> uniforms = loadedShader->GetUniforms();
+
+			config.Shader = loadedShader->GetID();
+			config.Uniforms.clear();
+			for (auto& uniform : uniforms)
+				config.Uniforms[uniform.Name] = uniform;
 		}
 		delete[] shaders;
 
@@ -342,38 +352,38 @@ namespace Debut
 			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding, "Properties"))
 		{
 			// Draw Material properties
-			for (auto uniform : material->GetUniforms())
+			for (auto uniform : config.Uniforms)
 			{
-				switch (uniform.Type)
+				switch (uniform.second.Type)
 				{
 				case ShaderDataType::Float:
 				{
-					float value = uniform.Data.Float;
-					if (ImGuiUtils::DragFloat(uniform.Name, &value, 0.15f))
-						material->SetFloat(uniform.Name, value);
+					float value = uniform.second.Data.Float;
+					if (ImGuiUtils::DragFloat(uniform.second.Name, &value, 0.15f))
+						config.Uniforms[uniform.second.Name].Data.Float = value;
 					break;
 				}
 				case ShaderDataType::Float2:
 				{
-					float a = uniform.Data.Vec2.x, b = uniform.Data.Vec2.y;
-					ImGuiUtils::RGBVec2(uniform.Name.c_str(), { "A","B" }, { &a, &b });
-					material->SetVec2(uniform.Name, { a, b });
+					float a = uniform.second.Data.Vec2.x, b = uniform.second.Data.Vec2.y;
+					ImGuiUtils::RGBVec2(uniform.second.Name.c_str(), { "A","B" }, { &a, &b });
+					config.Uniforms[uniform.second.Name].Data.Vec2 = { a, b };
 
 					break;
 				}
 				case ShaderDataType::Float3:
 				{
-					float a = uniform.Data.Vec3.x, b = uniform.Data.Vec3.y, c = uniform.Data.Vec3.z;
-					ImGuiUtils::RGBVec3(uniform.Name.c_str(), { "A","B","C" }, { &a, &b, &c });
-					material->SetVec3(uniform.Name, { a, b, c });
+					float a = uniform.second.Data.Vec3.x, b = uniform.second.Data.Vec3.y, c = uniform.second.Data.Vec3.z;
+					ImGuiUtils::RGBVec3(uniform.second.Name.c_str(), { "A","B","C" }, { &a, &b, &c });
+					config.Uniforms[uniform.second.Name].Data.Vec3 = { a, b, c };
 
 					break;
 				}
 				case ShaderDataType::Float4:
 				{
-					float a = uniform.Data.Vec3.x, b = uniform.Data.Vec3.y, c = uniform.Data.Vec3.z, d = uniform.Data.Vec4.w;
-					ImGuiUtils::RGBVec4(uniform.Name.c_str(), { "A","B","C","D" }, { &a, &b, &c, &d });
-					material->SetVec4(uniform.Name, { a, b, c, d });
+					float a = uniform.second.Data.Vec3.x, b = uniform.second.Data.Vec3.y, c = uniform.second.Data.Vec3.z, d = uniform.second.Data.Vec4.w;
+					ImGuiUtils::RGBVec4(uniform.second.Name.c_str(), { "A","B","C","D" }, { &a, &b, &c, &d });
+					config.Uniforms[uniform.second.Name].Data.Vec4 = { a, b, c, d };
 
 					break;
 				}
@@ -381,19 +391,19 @@ namespace Debut
 				{
 					// Load the texture: if it doesn't exist, just use a white default texture
 					uint32_t rendererID;
-					Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.Data.Texture);
+					Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
 					if (currTexture == nullptr)
 						rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
 					else
 						rendererID = currTexture->GetRendererID();
 
 					// Texture title
-					ImGuiUtils::BoldText("Texture " + uniform.Name);
+					ImGuiUtils::BoldText("Texture " + uniform.second.Name);
 
 					// Texture preview button
 					Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 64, 64 });
 					if (newTexture != nullptr)
-						material->SetTexture(uniform.Name, newTexture);
+						config.Uniforms[uniform.second.Name].Data.Texture = newTexture->GetID();
 
 					// TODO: Size and offset?
 					break;
@@ -409,53 +419,59 @@ namespace Debut
 
 		if (ImGui::Button("Save settings"))
 		{
-			material->SaveSettings();
+			Material::SaveSettings(material->GetPath(), config);
+			material->Reload();
 		}
-		
 	}
 
 	void PropertiesPanel::DrawSkyboxProperties()
 	{
 		// Load necessary resources
 		Ref<Skybox> skybox = AssetManager::Request<Skybox>(m_AssetPath.string());
-		Ref<Material> material = AssetManager::Request<Material>(skybox->GetMaterial());
+
+		// Load skybox config or keep the current one if the selected asset is the same
+		static SkyboxConfig skyboxConfig;
+		if (m_AssetPath.compare(m_PrevAssetPath) != 0)
+		{
+			skyboxConfig.Textures[SkyboxTexture::Bottom] = skybox->GetTexture(SkyboxTexture::Bottom);
+			skyboxConfig.Textures[SkyboxTexture::Down] = skybox->GetTexture(SkyboxTexture::Down);
+			skyboxConfig.Textures[SkyboxTexture::Up] = skybox->GetTexture(SkyboxTexture::Up);
+			skyboxConfig.Textures[SkyboxTexture::Left] = skybox->GetTexture(SkyboxTexture::Left);
+			skyboxConfig.Textures[SkyboxTexture::Right] = skybox->GetTexture(SkyboxTexture::Right);
+			skyboxConfig.Textures[SkyboxTexture::Front] = skybox->GetTexture(SkyboxTexture::Front);
+			skyboxConfig.Material = skybox->GetMaterial();
+			skyboxConfig.ID = skybox->GetID();
+		}
+		Ref<Material> material = AssetManager::Request<Material>(skyboxConfig.Material);
+		
 		// Material
 		UUID currentMaterial = ImGuiUtils::DragDestination("Material", ".mat", material == nullptr ? 0 : material->GetID());
 		if (currentMaterial != 0)
-		{
-			if (material == nullptr)
-				skybox->SetMaterial(currentMaterial);
-			else if (currentMaterial != material->GetID())
-				skybox->SetMaterial(currentMaterial);
-		}
+			skyboxConfig.Material = currentMaterial;
 
 		ImGuiUtils::ResetColumns();
 
 		// Drag / drop textures
-		const char* dirs[6] = { "Front", "Bottom", "Left", "Right", "Up", "Down" };
-		Ref<Texture2D> textures[6] = { EditorCache::Textures().Get("SkyboxFront"), EditorCache::Textures().Get("SkyboxBottom"),
-			EditorCache::Textures().Get("SkyboxLeft"), EditorCache::Textures().Get("SkyboxRight"), 
-			EditorCache::Textures().Get("SkyboxUp") , EditorCache::Textures().Get("SkyboxDown")};
+		SkyboxTexture dirs[6] = { SkyboxTexture::Front, SkyboxTexture::Bottom, SkyboxTexture::Left, 
+			SkyboxTexture::Right, SkyboxTexture::Up, SkyboxTexture::Down };
+		const char* dirStrings[6] = { "Front", "Bottom", "Left", "Right", "Up", "Down" };
 
-		for (uint32_t i = 0; i < 6; i++)
-			if (textures[i] == nullptr)
-				textures[i] = AssetManager::Request<Texture2D>(skybox->GetTexture(dirs[i]));
 		ImGui::Text("Textures");
 
 		ImGuiUtils::StartColumns(4, { 100, 100, 100, 100 });
 		for (uint32_t i = 0; i < 6; i++)
 		{
-			Ref<Texture2D> preview = textures[i] != nullptr ? textures[i] : EditorCache::Textures().Get("assets\\textures\\empty_texture.png");
+			Ref<Texture2D> preview = AssetManager::Request<Texture2D>(skyboxConfig.Textures[dirs[i]]);
+			if (preview == nullptr)
+				preview = EditorCache::Textures().Get("assets\\textures\\empty_texture.png");
 			Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(preview->GetRendererID(), { 80, 80 });
-			if (preview != nullptr && !EditorCache::Textures().Has("Skybox" + std::string(dirs[i])))
-				EditorCache::Textures().Put("Skybox" + std::string(dirs[i]), preview);
 
 			// User loaded new texture
 			if (newTexture != nullptr && newTexture->GetRendererID() != preview->GetRendererID())
-				EditorCache::Textures().Put("Skybox" + std::string(dirs[i]), newTexture);
+				skyboxConfig.Textures[dirs[i]] = newTexture->GetID();
 			ImGui::NextColumn();
 
-			ImGui::Text(dirs[i]);
+			ImGui::Text(std::string(std::string(dirStrings[i]) + " texture").c_str());
 			ImGui::NextColumn();
 		}
 		ImGuiUtils::ResetColumns();
@@ -463,16 +479,8 @@ namespace Debut
 		// Apply settings button
 		if (ImGui::Button("Apply settings"))
 		{
-			SkyboxConfig skyboxSettings;
-			skyboxSettings.FrontTexture = EditorCache::Textures().Get("SkyboxFront")->GetID();
-			skyboxSettings.BottomTexture = EditorCache::Textures().Get("SkyboxBottom")->GetID();
-			skyboxSettings.LeftTexture = EditorCache::Textures().Get("SkyboxLeft")->GetID();
-			skyboxSettings.RightTexture = EditorCache::Textures().Get("SkyboxRight")->GetID();
-			skyboxSettings.UpTexture = EditorCache::Textures().Get("SkyboxUp")->GetID();
-			skyboxSettings.DownTexture = EditorCache::Textures().Get("SkyboxDown")->GetID();
-			skyboxSettings.Material = skybox->GetMaterial();
-			skyboxSettings.ID = skybox->GetID();
-			skybox->SaveSettings(skyboxSettings, m_AssetPath.string());
+			skybox->SaveSettings(skyboxConfig, m_AssetPath.string());
+			skybox->Reload();
 		}
 	}
 
@@ -480,6 +488,7 @@ namespace Debut
 	{
 		if (std::filesystem::is_directory(path))
 			return;
+		m_PrevAssetPath = m_AssetPath;
 		m_AssetPath = path;
 		m_AssetType = assetType;
 

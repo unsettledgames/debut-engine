@@ -8,6 +8,7 @@
 namespace Debut
 {
 	class Scene;
+
 	struct TransformComponent;
 
 	class SceneHierarchyPanel

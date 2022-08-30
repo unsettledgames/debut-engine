@@ -298,7 +298,7 @@ namespace Debut
 			if (entity.HasComponent<CircleCollider2DComponent>())
 			{
 				auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
-				//Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(cc2d.Material);
+				Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(cc2d.Material);
 
 				b2CircleShape circleShape;
 				circleShape.m_radius = cc2d.Radius;
@@ -306,10 +306,21 @@ namespace Debut
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &circleShape;
-				fixtureDef.density = cc2d.Density;
-				fixtureDef.friction = cc2d.Friction;
-				fixtureDef.restitution = cc2d.Restitution;
-				fixtureDef.restitutionThreshold = cc2d.RestitutionThreshold;
+
+				if (material != nullptr)
+				{
+					fixtureDef.density = material->GetDensity();
+					fixtureDef.friction = material->GetFriction();
+					fixtureDef.restitution = material->GetRestitution();
+					fixtureDef.restitutionThreshold = material->GetRestitutionThreshold();
+				}
+				else
+				{
+					fixtureDef.density = PhysicsMaterial2D::DefaultSettings.Density;
+					fixtureDef.friction = PhysicsMaterial2D::DefaultSettings.Friction;
+					fixtureDef.restitution = PhysicsMaterial2D::DefaultSettings.Restitution;
+					fixtureDef.restitutionThreshold = PhysicsMaterial2D::DefaultSettings.RestitutionThreshold;
+				}
 				
 				body->CreateFixture(&fixtureDef);
 			}
@@ -387,7 +398,7 @@ namespace Debut
 
 	void Scene::SetSkybox(UUID skybox)
 	{
-		m_Skybox = Skybox::Create(AssetManager::GetPath(skybox));
+		m_Skybox = AssetManager::Request<Skybox>(skybox);
 	}
 
 	Ref<Scene> Scene::Copy(Ref<Scene> other)

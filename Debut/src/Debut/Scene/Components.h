@@ -12,6 +12,11 @@
 
 #include <Debut/Core/UUID.h>
 
+/*
+	OPTIMIZABLE:
+		- Runtime physics material in Colliders?
+*/
+
 namespace Debut
 {
 	// BASIC
@@ -172,12 +177,8 @@ namespace Debut
 	{
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		float Radius = 1.0f;
-		
-		// Move to physics material
-		float Density = 1.0f;
-		float Friction = 0.5f;
-		float Restitution = 0.5f;
-		float RestitutionThreshold = 0.5f;
+
+		UUID Material = 0;
 
 		void* RuntimeFixture = nullptr;
 

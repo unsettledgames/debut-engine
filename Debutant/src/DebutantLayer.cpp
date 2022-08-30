@@ -22,16 +22,11 @@
 
 /*
     TODO:
-    - Fix warnings
-    - Custom memory allocator to keep track of used memory
     - Mesh properties in properties panel?
-    - Better handling of asset editing (don't edit stuff immediately, only do that once the user presses the confirm button)
-    - Find out why sometimes associations are duplicated in the assetmanager
-    - Fix CB ordering: folders before files
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
     - Asset renaming
-    - Add physics material to circle collider
+    - Custom memory allocator to keep track of used memory
 */
 
 namespace Debut
@@ -71,7 +66,7 @@ namespace Debut
         "assets\\textures\\Skybox\\right.png","assets\\textures\\Skybox\\up.png",
         "assets\\textures\\Skybox\\down.png" };
 
-        m_ActiveScene->SetSkybox(12755579250371982529);
+        //m_ActiveScene->SetSkybox(12755579250371982529);
     }
 
     void DebutantLayer::OnDetach()

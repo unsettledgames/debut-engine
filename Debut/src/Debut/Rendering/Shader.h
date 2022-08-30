@@ -55,6 +55,7 @@ namespace Debut
 		case ShaderDataType::Mat3: return "Mat3";
 		case ShaderDataType::Mat4: return "Mat4";
 		case ShaderDataType::Sampler2D: return "Texture";
+		case ShaderDataType::SamplerCube: return "Skybox";
 		}
 
 		return "None";
