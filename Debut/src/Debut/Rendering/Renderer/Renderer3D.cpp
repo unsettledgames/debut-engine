@@ -32,9 +32,9 @@ namespace Debut
 		s_Data.IndexBuffer = IndexBuffer::Create();
 
 		// Attach buffers to VertexArray
-		ShaderDataType types[] = { ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2 };
-		std::string attribNames[] = { "a_Position", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0" };
-		std::string names[] = { "Positions", "Normals", "Tangents", "Bitangents", "TexCoords0" };
+		ShaderDataType types[] = { ShaderDataType::Float3, ShaderDataType::Float4, ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2 };
+		std::string attribNames[] = { "a_Position", "a_Color", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0" };
+		std::string names[] = { "Positions", "Colors", "Normals", "Tangents", "Bitangents", "TexCoords0" };
 		
 		for (uint32_t i = 0; i < sizeof(types); i++)
 		{
@@ -118,6 +118,8 @@ namespace Debut
 				DBT_PROFILE_SCOPE("Renderer3D::PushData");
 				currBatch->Buffers["Positions"]->PushData(mesh->GetPositions().data(), sizeof(float) * mesh->GetPositions().size());
 				
+				if (mesh->HasColors())
+					currBatch->Buffers["Colors"]->PushData(mesh->GetColors().data(), sizeof(float) * mesh->GetColors().size());
 				if (mesh->HasNormals())
 					currBatch->Buffers["Normals"]->PushData(mesh->GetNormals().data(), sizeof(float) * mesh->GetNormals().size());
 				if (mesh->HasTangents())
@@ -141,6 +143,12 @@ namespace Debut
 				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
 				s_Data.IndexBuffer->SetData(indices.data(), indices.size());
 
+				if (mesh->HasColors())
+				{
+					std::vector<float>& colors = mesh->GetColors();
+					s_Data.VertexBuffers["Colors"]->SetData(colors.data(), colors.size() * sizeof(float));
+				}
+
 				if (mesh->HasNormals())
 				{
 					std::vector<float>& normals = mesh->GetNormals();
@@ -162,7 +170,7 @@ namespace Debut
 			
 			{
 				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
-				material->SetMat4("u_Transform", transform);
+				material->SetMat4("u_Transform", transform * mesh->GetTransform());
 				material->Use(s_Data.CameraTransform);
 			}
 			
@@ -189,6 +197,8 @@ namespace Debut
 				DBT_PROFILE_SCOPE("Renderer3D::PushData");
 				currBatch->Buffers["Positions"]->PushData(mesh.GetPositions().data(), sizeof(float) * mesh.GetPositions().size());
 
+				if (mesh.HasColors())
+					currBatch->Buffers["Colors"]->PushData(mesh.GetColors().data(), sizeof(float) * mesh.GetColors().size());
 				if (mesh.HasNormals())
 					currBatch->Buffers["Normals"]->PushData(mesh.GetNormals().data(), sizeof(float) * mesh.GetNormals().size());
 				if (mesh.HasTangents())
@@ -212,6 +222,12 @@ namespace Debut
 				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
 				s_Data.IndexBuffer->SetData(mesh.GetIndices().data(), mesh.GetIndices().size());
 
+				if (mesh.HasColors())
+				{
+					std::vector<float>& colors = mesh.GetColors();
+					s_Data.VertexBuffers["Colors"]->SetData(colors.data(), colors.size() * sizeof(float));
+				}
+
 				if (mesh.HasNormals())
 				{
 					std::vector<float>& normals = mesh.GetNormals();
@@ -233,7 +249,7 @@ namespace Debut
 
 			{
 				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
-				material.SetMat4("u_Transform", transform);
+				material.SetMat4("u_Transform", transform * mesh.GetTransform());
 				material.Use(s_Data.CameraTransform);
 			}
 
@@ -298,6 +314,10 @@ namespace Debut
 		newBatch->Buffers["Position"] = VertexBuffer::Create(s_Data.StartupBufferSize * sizeof(float), s_Data.MaxVerticesPerBatch * sizeof(float));
 		newBatch->Buffers["Position"]->SetLayout({ { ShaderDataType::Float3, "a_Position", false } });
 		newBatch->VertexArray->AddVertexBuffer(newBatch->Buffers["Position"]);
+
+		newBatch->Buffers["Colors"] = VertexBuffer::Create(s_Data.StartupBufferSize * sizeof(float), s_Data.MaxVerticesPerBatch * sizeof(float));
+		newBatch->Buffers["Colors"]->SetLayout({ { ShaderDataType::Float4, "a_Color", false } });
+		newBatch->VertexArray->AddVertexBuffer(newBatch->Buffers["Colors"]);
 
 		newBatch->Buffers["Normals"] = VertexBuffer::Create(s_Data.StartupBufferSize * sizeof(float), s_Data.MaxVerticesPerBatch * sizeof(float));
 		newBatch->Buffers["Normals"]->SetLayout({ { ShaderDataType::Float3, "a_Normal", false } });

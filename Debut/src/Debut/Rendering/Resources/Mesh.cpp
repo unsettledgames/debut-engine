@@ -49,10 +49,13 @@ namespace Debut
 		size_t compressedSize;
 		size_t decompressedSize;
 
-		while (string.compare("") == 0)
+		while (string.compare("") == 0 || string.compare(" ") == 0)
 			std::getline(file, string);	
 		std::getline(file, compressedString);
 		compressedSize = std::stoi(compressedString);
+
+		if (compressedSize == 0)
+			return;
 
 		file.read(reinterpret_cast<char*>(buffer.data()), compressedSize);
 		if (file)
@@ -92,6 +95,8 @@ namespace Debut
 			uint32_t nPoints = meta["NumVertices"].as<uint32_t>();
 
 			m_Vertices.resize(nPoints);
+			m_Colors.resize(4 * (nPoints / 3));
+			std::fill(m_Colors.begin(), m_Colors.end(), 1.0f);
 			m_Normals.resize(nPoints);
 			m_Tangents.resize(nPoints);
 			m_Bitangents.resize(nPoints);
@@ -140,7 +145,14 @@ namespace Debut
 
 		{
 			DBT_PROFILE_SCOPE("SaveMesh::EmitBuffers");
+
+			for (uint32_t i = 0; i < 4; i++)
+				for (uint32_t j=0; j<4; j++)
+					outFile << m_Transform[i][j] << " ";
+			outFile << "\n";
+
 			outFile << "Vertices" << "\n"; EmitBuffer<float>(m_Vertices, outFile);
+			outFile << "\nColors\n"; EmitBuffer<float>(m_Colors, outFile);
 			outFile << "\nNormals" << "\n"; EmitBuffer<float>(m_Normals, outFile);
 			outFile << "\nTangents" << "\n"; EmitBuffer<float>(m_Tangents, outFile);
 			outFile << "\nBitangents" << "\n"; EmitBuffer<float>(m_Bitangents, outFile);
@@ -174,8 +186,13 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION();
 		{
+			for (uint32_t i = 0; i < 4; i++)
+				for (uint32_t j = 0; j < 4; j++)
+					inFile >> m_Transform[i][j];
 			Log.CoreInfo("Load {0} vertices", m_Vertices.size());
 			LoadBuffer<float>(m_Vertices, inFile, m_Vertices.size());
+			Log.CoreInfo("Load {0} colors", m_Colors.size());
+			LoadBuffer<float>(m_Colors, inFile, m_Colors.size());
 			Log.CoreInfo("Load {0} normals", m_Normals.size());
 			LoadBuffer<float>(m_Normals, inFile, m_Normals.size());
 			Log.CoreInfo("Load {0} tangents", m_Tangents.size());

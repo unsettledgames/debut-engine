@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Debut/Core/UUID.h>
+#include <glm/glm.hpp>
 
 namespace Debut
 {
@@ -25,11 +26,13 @@ namespace Debut
 		inline bool IsValid() { return m_Valid; }
 
 		inline std::vector<float>& GetPositions() { return m_Vertices; }
+		inline std::vector<float>& GetColors() { return m_Colors; }
 		inline std::vector<float>& GetNormals() { return m_Normals; }
 		inline std::vector<float>& GetTangents() { return m_Tangents; }
 		inline std::vector<float>& GetBitangents() { return m_Bitangents; }
 		inline std::vector<float>& GetTexCoords(uint32_t index) { return m_TexCoords[index]; }
 		inline std::vector<int>& GetIndices() { return m_Indices; }
+		inline glm::mat4& GetTransform() { return m_Transform; }
 
 		inline void SetPositions(std::vector<float>& vec) { m_Vertices = vec; }
 		inline void SetNormals(std::vector<float>& vec) { m_Normals = vec; }
@@ -37,7 +40,9 @@ namespace Debut
 		inline void SetBitangents(std::vector<float>& vec) { m_Bitangents = vec; }
 		inline void SetTexCoords(std::vector<float>& vec, uint32_t i) { m_TexCoords[i] = vec; }
 		inline void SetIndices(std::vector<int>& vec) { m_Indices = vec; }
+		inline void SetTransform(glm::mat4& transform) { m_Transform = transform; }
 
+		inline bool HasColors() { return m_Colors.size() > 0; }
 		inline bool HasNormals() { return m_Normals.size() > 0; }
 		inline bool HasTangents() { return m_Tangents.size() > 0; }
 		inline bool HasBitangents() { return m_Bitangents.size() > 0; }
@@ -61,11 +66,13 @@ namespace Debut
 		std::string m_MetaPath;
 
 		std::vector<float> m_Vertices;
+		std::vector<float> m_Colors;
 		std::vector<float> m_Normals;
 		std::vector<float> m_Tangents;
 		std::vector<float> m_Bitangents;
 		std::vector<std::vector<float>> m_TexCoords;
-
 		std::vector<int> m_Indices;
+
+		glm::mat4 m_Transform = glm::mat4(1.0f);
 	};
 }

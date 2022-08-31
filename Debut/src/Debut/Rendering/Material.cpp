@@ -9,7 +9,7 @@
 
 #define FIND_UNIFORM(name)	if (m_Uniforms.find(##name) == m_Uniforms.end()) \
 							{	\
-								Log.CoreError("Uniform {0} is not supported by the material {1}", ##name, m_Name);	\
+								/*Log.CoreError("Uniform {0} is not supported by the material {1}", ##name, m_Name);*/	\
 								return;	\
 							}
 

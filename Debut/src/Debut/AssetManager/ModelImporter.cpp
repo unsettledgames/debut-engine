@@ -12,15 +12,24 @@
 
 /*
 	TODO
-		UX:
-			- Let the user reimport a model:
-				- OPTIONAL: save a map <meshName, ID>; if during the reimporting, a mesh with the same name of the previous
-					import is found, use the previous ID to save references
-			- Save model import settings in .model.meta file
+		- Save model import settings in .model.meta file
 */
 
 namespace Debut
 {
+	static inline glm::mat4 AiMatrixoGlm(const aiMatrix4x4* from)
+	{
+		glm::mat4 to;
+
+
+		to[0][0] = from->a1; to[0][1] = from->b1;  to[0][2] = from->c1; to[0][3] = from->d1;
+		to[1][0] = from->a2; to[1][1] = from->b2;  to[1][2] = from->c2; to[1][3] = from->d2;
+		to[2][0] = from->a3; to[2][1] = from->b3;  to[2][2] = from->c3; to[2][3] = from->d3;
+		to[3][0] = from->a4; to[3][1] = from->b4;  to[3][2] = from->c4; to[3][3] = from->d4;
+
+		return to;
+	}
+
 	Ref<Model> ModelImporter::ImportModel(const std::string& path, const ModelImportSettings& settings)
 	{
 		ProgressPanel::SubmitTask("modelimport", "Importing model...");
@@ -120,7 +129,7 @@ namespace Debut
 
 			{
 				DBT_PROFILE_SCOPE("ModelImporter::ImportMesh");
-				Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, assetsFolder);
+				Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, assetsFolder, AiMatrixoGlm(&(parent->mTransformation)));
 				AssetManager::Submit(mesh);
 				if (mesh != nullptr)
 					meshes[i] = mesh->GetID();
@@ -155,7 +164,7 @@ namespace Debut
 		return ret;
 	}
 
-	Ref<Mesh> ModelImporter::ImportMesh(aiMesh* assimpMesh, const std::string& name, const std::string& saveFolder)
+	Ref<Mesh> ModelImporter::ImportMesh(aiMesh* assimpMesh, const std::string& name, const std::string& saveFolder, glm::mat4& transform)
 	{
 		ProgressPanel::SubmitTask("meshimport", "Importing mesh...");
 
@@ -164,6 +173,7 @@ namespace Debut
 			return mesh;
 
 		// Otherwise import it as usual
+		mesh->m_Transform = transform;
 		mesh->m_Vertices.resize(assimpMesh->mNumVertices * 3);
 		mesh->SetName(assimpMesh->mName.C_Str());
 
@@ -177,6 +187,21 @@ namespace Debut
 					mesh->m_Vertices[index] = assimpMesh->mVertices[i][j];
 				}
 			ProgressPanel::ProgressTask("meshimport", 0.17);
+		}
+
+		{
+			DBT_PROFILE_SCOPE("ImportMesh::Colors");
+			// Vertex colors
+			if (assimpMesh->GetNumColorChannels() > 0)
+			{
+				mesh->m_Colors.resize(assimpMesh->mNumVertices * 4);
+				for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+					for (uint32_t j = 0; j < 4; j++)
+					{
+						uint32_t index = i * 4 + j;
+						mesh->m_Colors[index] = assimpMesh->mColors[0][i][j];
+					}
+			}
 		}
 		
 		{
