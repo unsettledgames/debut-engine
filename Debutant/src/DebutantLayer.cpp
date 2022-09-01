@@ -22,6 +22,11 @@
 
 /*
     TODO:
+    - Model texturing
+        - White texture isn't sent correctly
+        - Materials don't update (not sure about that)
+        - Update material depending on shader selected when the user selects it
+
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing

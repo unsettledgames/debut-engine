@@ -72,9 +72,6 @@ namespace Debut
 
 			skybox->Unbind();
 			skyboxMaterial->Unuse();
-
-			s_Data.IndexBuffer->SetData("", 0);
-			s_Data.VertexBuffers["Positions"]->SetData("", 0);
 		}
 	}
 
@@ -166,6 +163,12 @@ namespace Debut
 					std::vector<float>& bitangents = mesh->GetBitangents();
 					s_Data.VertexBuffers["Bitangents"]->SetData(bitangents.data(), bitangents.size() * sizeof(float));
 				}
+
+				if (mesh->HasTexCoords(0))
+				{
+					std::vector<float>& texCoords = mesh->GetTexCoords(0);
+					s_Data.VertexBuffers["TexCoords0"]->SetData(texCoords.data(), texCoords.size() * sizeof(float));
+				}
 			}
 			
 			{
@@ -244,6 +247,12 @@ namespace Debut
 				{
 					std::vector<float>& bitangents = mesh.GetBitangents();
 					s_Data.VertexBuffers["Bitangents"]->SetData(bitangents.data(), bitangents.size() * sizeof(float));
+				}
+
+				if (mesh.HasTexCoords(0))
+				{
+					std::vector<float>& texCoords = mesh.GetTexCoords(0);
+					s_Data.VertexBuffers["TexCoords0"]->SetData(texCoords.data(), texCoords.size() * sizeof(float));
 				}
 			}
 

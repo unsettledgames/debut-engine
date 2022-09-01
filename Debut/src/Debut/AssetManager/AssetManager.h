@@ -5,6 +5,8 @@
 #include <Debut/AssetManager/AssetCache.h>
 #include <Debut/Rendering/Resources/Model.h>
 
+#define DBT_WHITE_TEXTURE_UUID	1
+
 // Untemplate some templates so you can forward declare stuff
 
 namespace Debut

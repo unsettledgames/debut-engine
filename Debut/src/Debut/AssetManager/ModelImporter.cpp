@@ -259,9 +259,9 @@ namespace Debut
 				mesh->m_TexCoords[i].resize(assimpMesh->mNumVertices * 3);
 
 				for (uint32_t j = 0; j < assimpMesh->mNumVertices; j++)
-					for (uint32_t k = 0; k < 3; k++)
+					for (uint32_t k = 0; k < 2; k++)
 					{
-						uint32_t index = j * 3 + k;
+						uint32_t index = j * 2 + k;
 						mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j][k];
 					}
 			}
@@ -317,29 +317,30 @@ namespace Debut
 		assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 		material->SetVec3("u_DiffuseColor", { color.r, color.g, color.b });
 
+		Log.CoreInfo("Diffuse color: {0},{1},{2}", color.r, color.g, color.b);
+
 		assimpMaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
-		material->SetVec3("u_AmbientColor", { color.r, color.g, color.b });
+		material->SetVec4("u_AmbientColor", { color.r, color.g, color.b, 1.0 });
 
-		// Textures
-		if (assimpMaterial->GetTextureCount(aiTextureType_DIFFUSE))
-		{
-			aiString path;
-			assimpMaterial->Get(AI_MATKEY_TEXTURE_DIFFUSE(0), path);
-			material->SetTexture("u_DiffuseTexture", AssetManager::Request<Texture2D>(path.C_Str(), std::string(path.C_Str()) + ".meta"));
-		}
+		Log.CoreInfo("Ambient color: {0},{1},{2}", color.r, color.g, color.b);
 
-		if (assimpMaterial->GetTextureCount(aiTextureType_NORMALS))
-		{
-			aiString path;
-			assimpMaterial->Get(AI_MATKEY_TEXTURE_NORMALS(0), path);
-			material->SetTexture("u_NormalMap", AssetManager::Request<Texture2D>(path.C_Str(), std::string(path.C_Str()) + ".meta"));
-		}
+		// Load textures
+		aiString texturePath;
+		aiTextureType types[] = { aiTextureType_DIFFUSE, aiTextureType_NORMALS, aiTextureType_AMBIENT, 
+			aiTextureType_DIFFUSE_ROUGHNESS, aiTextureType_DISPLACEMENT, aiTextureType_METALNESS, 
+			aiTextureType_REFLECTION, aiTextureType_SPECULAR, aiTextureType_EMISSIVE};
+		std::string uniformNames[] = { "u_DiffuseTexture", "u_NormalMap", "u_AmbientMap", "u_RoughnessMap", "u_DisplacementMap",
+			"u_MetalnessTexture", "u_ReflectionMap", "u_SpecularMap", "u_EmissionMap" };
 
-		if (assimpMaterial->GetTextureCount(aiTextureType_DISPLACEMENT))
+		for (uint32_t i = 0; i < 9; i++)
 		{
-			aiString path;
-			assimpMaterial->Get(AI_MATKEY_TEXTURE_DISPLACEMENT(0), path);
-			material->SetTexture("u_DisplacementMap", AssetManager::Request<Texture2D>(path.C_Str(), std::string(path.C_Str()) + ".meta"));
+			if (assimpMaterial->GetTextureCount(types[i]))
+			{
+				aiString path;
+				assimpMaterial->Get(AI_MATKEY_TEXTURE(types[i], 0), path);
+				Log.CoreInfo("Map for {0} path: {1}", uniformNames[i], std::string(path.C_Str()));
+				material->SetTexture(uniformNames[i], AssetManager::Request<Texture2D>(path.C_Str()));
+			}
 		}
 
 		// Save the material on disk + meta file

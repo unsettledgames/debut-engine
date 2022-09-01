@@ -300,11 +300,16 @@ namespace Debut
 
 	void PropertiesPanel::DrawMaterialProperties()
 	{
+		std::string metaPath;
+		if (m_MetaPath.compare("") == 0)
+			metaPath = m_AssetPath.string() + ".meta";
+		else
+			metaPath = m_MetaPath.string();
 		static MaterialConfig config;
-		Ref<Material> material = AssetManager::Request<Material>(m_AssetPath.string());
+		Ref<Material> material = AssetManager::Request<Material>(m_AssetPath.string(), metaPath);
 		if (material == nullptr)
 		{
-			std::ifstream metaFile(AssetManager::s_MetadataDir + m_AssetPath.string());
+			std::ifstream metaFile(metaPath);
 			std::stringstream ss;
 			ss << metaFile.rdbuf();
 			YAML::Node metaNode = YAML::Load(ss.str());
@@ -484,12 +489,13 @@ namespace Debut
 		}
 	}
 
-	void PropertiesPanel::SetAsset(std::filesystem::path path, AssetType assetType)
+	void PropertiesPanel::SetAsset(std::filesystem::path path, std::filesystem::path metaPath, AssetType assetType)
 	{
 		if (std::filesystem::is_directory(path))
 			return;
 		m_PrevAssetPath = m_AssetPath;
 		m_AssetPath = path;
+		m_MetaPath = metaPath;
 		m_AssetType = assetType;
 
 		if (std::find(s_ModelExtensions.begin(), s_ModelExtensions.end(), m_AssetPath.extension().string()) != s_ModelExtensions.end())

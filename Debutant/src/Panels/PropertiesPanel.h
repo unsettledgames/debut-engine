@@ -17,7 +17,7 @@ namespace Debut
 
 		void OnImGuiRender();
 
-		void SetAsset(std::filesystem::path path, AssetType type = AssetType::None);
+		void SetAsset(std::filesystem::path path, std::filesystem::path metaPath = "", AssetType type = AssetType::None);
 
 		std::filesystem::path GetAsset() { return m_AssetPath; }
 
@@ -34,6 +34,7 @@ namespace Debut
 
 	private:
 		std::filesystem::path m_AssetPath = "";
+		std::filesystem::path m_MetaPath = "";
 		std::filesystem::path m_PrevAssetPath = "";
 		AssetType m_AssetType = AssetType::None;
 	};
