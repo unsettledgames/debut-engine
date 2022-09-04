@@ -346,7 +346,6 @@ namespace Debut
 				if (!std::filesystem::exists(fullPath))
 					fullPath = std::filesystem::path(inputFolder).parent_path().string() + "\\textures\\" + path.C_Str();
 
-				Log.CoreInfo("Texture path for {0}: {1}", uniformNames[i], std::string(fullPath.c_str()));
 				material->SetTexture(uniformNames[i], AssetManager::Request<Texture2D>(fullPath));
 			}
 		}

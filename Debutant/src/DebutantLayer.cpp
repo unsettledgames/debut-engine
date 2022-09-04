@@ -23,7 +23,7 @@
 /*
     TODO:
     - Model texturing
-        - To load texture: use the path of the 3D model in addition to the name of the texture
+        - Transparency issues
 
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking

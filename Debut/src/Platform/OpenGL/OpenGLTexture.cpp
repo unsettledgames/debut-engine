@@ -20,27 +20,15 @@ namespace Debut
 
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, Texture2DConfig config) : m_Path(path)
 	{
-		Log.CoreInfo("Texture path {0}", path.c_str());
 		DBT_PROFILE_FUNCTION();
 
 		int width, height, channels;
 		stbi_uc* data = nullptr;
 		stbi_set_flip_vertically_on_load(1);
 
-#ifdef DBT_DEBUG
-		int w = 0;
-		int h = 0;
-		int comp = 0;
-		int res = stbi_info(path.c_str(), &w, &h, &comp);
-		Log.CoreInfo("Info failure: {0}", stbi_failure_reason());
-#endif
-
 		{
 			DBT_PROFILE_SCOPE("OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
 			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-#ifdef DBT_DEBUG
-			Log.CoreInfo("Info failure: {0}", stbi_failure_reason());
-#endif
 		}
 
 		m_Width = width;

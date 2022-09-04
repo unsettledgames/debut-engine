@@ -293,7 +293,7 @@ namespace Debut
 				std::filesystem::path pathStr(path);
 
 				if (pathStr.extension().compare(".png")==0 || pathStr.extension().compare(".jpg")==0 ||
-					pathStr.extension().compare(".tga")==0)
+					pathStr.extension().compare(".tga")==0 || pathStr.extension().compare(".jpeg")==0)
 					selectedAsset = AssetManager::Request<T>(pathStr.string());
 			}
 			ImGui::EndDragDropTarget();
