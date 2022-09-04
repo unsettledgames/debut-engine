@@ -17,10 +17,34 @@
 		- Runtime physics material in Colliders?
 */
 
+/*
+	I want to add a component! What do I do?
+	- Add a struct in this file, containing the necessary data
+	- Add the entry in the AddComponent menu
+		- Implement OnComponentAdded<ComponentType>
+	- Implement component rendering in the Inspector
+	- Add (de)serialization in SceneSerializer
+		- Implement DeserializeComponent and SerializeComponent for that component
+		- Add calls to them in SerializeText / DeserializeText
+	- Implement actual behaviour
+*/
+
 namespace Debut
 {
-	// CORE
+	// BASE COMPONENT STRUCTS
+	struct Collider2DComponent
+	{
+		enum class Collider2DType { Circle = 0, Box, Polygon};
+		Collider2DType Type;
+	};
+	
+	struct LightComponent
+	{
+		enum class LightType {Directional = 0, Point, Area, Shape};
+		LightType Type;
+	};
 
+	// CORE
 	struct IDComponent
 	{
 		UUID ID;
@@ -137,11 +161,13 @@ namespace Debut
 	};
 
 	// LIGHTING
-	struct DirectionalLightComponent
+	struct DirectionalLightComponent : LightComponent
 	{
 		glm::vec3 Direction;
 		glm::vec3 Color;
 		float Intensity;
+
+		DirectionalLightComponent() { Type = LightType::Directional; }
 	};
 
 	struct PointLightComponent
@@ -173,7 +199,7 @@ namespace Debut
 		}
 	};
 
-	struct BoxCollider2DComponent
+	struct BoxCollider2DComponent : Collider2DComponent
 	{
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		glm::vec2 Size = { 1.0f, 1.0f };
@@ -182,11 +208,11 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent() { Type = Collider2DType::Box; };
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
 
-	struct CircleCollider2DComponent
+	struct CircleCollider2DComponent : Collider2DComponent
 	{
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		float Radius = 1.0f;
@@ -195,7 +221,7 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		CircleCollider2DComponent() = default;
+		CircleCollider2DComponent() { Type = Collider2DType::Circle; };
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 

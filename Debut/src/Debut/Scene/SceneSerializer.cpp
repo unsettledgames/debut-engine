@@ -117,6 +117,13 @@ namespace Debut
 		out << YAML::Key << "Material" << YAML::Value << c.Material;
 	}
 
+	static void SerializeComponent(const DirectionalLightComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Direction" << YAML::Value << c.Direction;
+		out << YAML::Key << "Color" << YAML::Value << c.Color;
+		out << YAML::Key << "Intensity" << YAML::Value << c.Intensity;
+	}
+
 	template <typename T>
 	static void DeserializeComponent(Entity e, YAML::Node& in, Ref<Scene> scene = nullptr)
 	{
@@ -221,6 +228,18 @@ namespace Debut
 		bc2d.Material = in["Material"].as<uint64_t>();
 	}
 
+	template<>
+	static void DeserializeComponent<DirectionalLightComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		DirectionalLightComponent& dl = e.AddComponent<DirectionalLightComponent>();
+
+		dl.Direction = in["Direction"].as<glm::vec3>();
+		dl.Color = in["Color"].as<glm::vec3>();
+		dl.Intensity = in["Intensity"].as<float>();
+	}
+
 	void SceneSerializer::SerializeEntity(EntitySceneNode& node, YAML::Emitter& out)
 	{
 		Entity entity = node.EntityData;
@@ -236,6 +255,7 @@ namespace Debut
 		SerializeComponent<Rigidbody2DComponent>(entity, "Rigidbody2DComponent", out);
 		SerializeComponent<BoxCollider2DComponent>(entity, "BoxCollider2DComponent", out);
 		SerializeComponent<CircleCollider2DComponent>(entity, "CircleCollider2DComponent", out);
+		SerializeComponent<DirectionalLightComponent>(entity, "DirectionalLightComponent", out);
 
 		out << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
 		for (uint32_t i = 0; i < node.Children.size(); i++)
@@ -309,6 +329,7 @@ namespace Debut
 		DeserializeComponent<BoxCollider2DComponent>(entity, yamlEntity["BoxCollider2DComponent"]);
 		DeserializeComponent<CircleCollider2DComponent>(entity, yamlEntity["CircleCollider2DComponent"]);
 		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
+		DeserializeComponent<DirectionalLightComponent>(entity, yamlEntity["DirectionalLightComponent"]);
 
 		auto children = yamlEntity["Children"];
 		for (auto child : children)
