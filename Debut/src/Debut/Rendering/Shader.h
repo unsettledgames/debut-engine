@@ -32,10 +32,11 @@ namespace Debut
 
 			glm::mat4 Mat4;
 
-			UUID Texture = 0;
-			int Cubemap;
+			UUID Texture;
+			UUID Cubemap;
 
-			UniformData() {}
+			UniformData() : Float(0), Int(0), Bool(true), Vec2(glm::vec2(1.0f)), Vec3(glm::vec3(1.0f)),
+				Vec4(glm::vec4(1.0f)), Mat4(glm::mat4(1.0f)), Texture(0), Cubemap(0) {}
 		} Data;
 
 		ShaderUniform() {}

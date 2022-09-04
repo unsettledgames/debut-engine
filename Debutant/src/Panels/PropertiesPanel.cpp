@@ -23,9 +23,9 @@
 
 namespace Debut
 {
-	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d", ".glsl", ".mat"};
+	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d", ".glsl", ".mat" };
 	static std::vector<std::string> s_ModelExtensions = { ".obj", ".fbx", ".dae", ".gltf", ".glb", ".blend", ".3ds", ".ase",
-		".ifc", ".xgl", ".zgl", ".ply", ".dxf", ".lwo", ".lws", ".lxo", ".stl", ".x", ".ac", ".ms3d", ".cob", ".scn"};
+		".ifc", ".xgl", ".zgl", ".ply", ".dxf", ".lwo", ".lws", ".lxo", ".stl", ".x", ".ac", ".ms3d", ".cob", ".scn" };
 
 	static int SetFileName(ImGuiInputTextCallbackData* data)
 	{
@@ -85,7 +85,7 @@ namespace Debut
 		ImGui::TextWrapped("Import settings");
 		ImGui::PopItemWidth();
 		ImGui::PopFont();
-		
+
 		char renameName[128];
 		wcstombs(renameName, m_AssetPath.filename().c_str(), m_AssetPath.string().length());
 
@@ -97,7 +97,7 @@ namespace Debut
 		ImGui::TextWrapped("Name");
 		ImGui::NextColumn();
 		ImGui::PushItemWidth(ImGui::GetWindowWidth() - 100);
-		
+
 
 		if (ImGui::InputText("##", renameName, 128, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
@@ -115,8 +115,8 @@ namespace Debut
 		if (std::find(s_ModelExtensions.begin(), s_ModelExtensions.end(), m_AssetPath.extension().string()) != s_ModelExtensions.end())
 		{
 			std::ifstream modelFile(m_AssetPath.string() + ".model");
-			
-			static ModelImportSettings settings = {true, true, true, true, false, false, false, m_AssetPath.filename().string()};
+
+			static ModelImportSettings settings = { true, true, true, true, false, false, false, m_AssetPath.filename().string() };
 			static bool normals = false, tangentSpace = false;
 			static bool triangulate = false, joinVertices = false;
 			// Prompt for importing
@@ -168,7 +168,7 @@ namespace Debut
 
 			ImGui::Text("Imported name");
 			ImGuiUtils::NextColumn();
-			char tmpName[1024]; 
+			char tmpName[1024];
 			memset(tmpName, 0, 1024);
 			memcpy(tmpName, settings.ImportedName.c_str(), settings.ImportedName.length());
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
@@ -179,7 +179,7 @@ namespace Debut
 
 			ImGuiUtils::ResetColumns();
 
-			if (ImGui::Button("Import", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f}))
+			if (ImGui::Button("Import", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
 			{
 				if (settings.ImportedName == "")
 					settings.ImportedName = "Unnamed model";
@@ -207,10 +207,10 @@ namespace Debut
 
 		// PhysMat2D parameters
 		ImGuiUtils::StartColumns(2, { 150, 200 });
-			ImGuiUtils::DragFloat("Density", &config.Density, 0.1f, 0.0f, 1.0f);
-			ImGuiUtils::DragFloat("Friction", &config.Friction, 0.1f, 0.0f, 1.0f);
-			ImGuiUtils::DragFloat("Restitution", &config.Restitution, 0.3f, 0.0f, 100000.0f);
-			ImGuiUtils::DragFloat("Restitution threshold", &config.RestitutionThreshold, 0.3f, 0.0f, 100000.0f);
+		ImGuiUtils::DragFloat("Density", &config.Density, 0.1f, 0.0f, 1.0f);
+		ImGuiUtils::DragFloat("Friction", &config.Friction, 0.1f, 0.0f, 1.0f);
+		ImGuiUtils::DragFloat("Restitution", &config.Restitution, 0.3f, 0.0f, 100000.0f);
+		ImGuiUtils::DragFloat("Restitution threshold", &config.RestitutionThreshold, 0.3f, 0.0f, 100000.0f);
 		ImGuiUtils::ResetColumns();
 
 		// Update settings
@@ -233,7 +233,7 @@ namespace Debut
 			texParams.WrapMode = texture->GetWrapMode();
 			texParams.ID = texture->GetID();
 		}
-		
+
 		std::ifstream metaFile(texture->GetPath() + ".meta");
 		std::stringstream strStream;
 
@@ -325,6 +325,8 @@ namespace Debut
 		}
 
 		Ref<Shader> shader = AssetManager::Request<Shader>(config.Shader);
+		material->SetShader(shader);
+		material->SetUniforms(config.Uniforms);
 
 		// Shader selection combobox
 		const char** shaders;
@@ -334,7 +336,7 @@ namespace Debut
 		// Get all shaders
 		std::filesystem::path shaderFolder("assets\\shaders");
 		std::vector<std::string> shaderStrings = CppUtils::FileSystem::GetAllFilesWithExtension(".glsl", "assets\\shaders");
-		
+
 		// Convert the strings to const char*s
 		shaders = new const char* [shaderStrings.size()];
 		for (uint32_t i = 0; i < shaderStrings.size(); i++)
@@ -394,6 +396,7 @@ namespace Debut
 				}
 				case ShaderDataType::Sampler2D:
 				{
+					ImGuiUtils::StartColumns(2, { 80, (uint32_t)ImGui::GetContentRegionAvail().x - 80 });
 					// Load the texture: if it doesn't exist, just use a white default texture
 					uint32_t rendererID;
 					Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
@@ -402,13 +405,17 @@ namespace Debut
 					else
 						rendererID = currTexture->GetRendererID();
 
-					// Texture title
-					ImGuiUtils::BoldText("Texture " + uniform.second.Name);
-
 					// Texture preview button
 					Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 64, 64 });
 					if (newTexture != nullptr)
 						config.Uniforms[uniform.second.Name].Data.Texture = newTexture->GetID();
+
+					ImGui::NextColumn();
+
+					// Texture title
+					ImGui::Text(("Texture " + uniform.second.Name).c_str());
+
+					ImGuiUtils::ResetColumns();
 
 					// TODO: Size and offset?
 					break;
@@ -417,6 +424,8 @@ namespace Debut
 				default:
 					break;
 				}
+
+				ImGuiUtils::VerticalSpace(10);
 			}
 
 			ImGui::TreePop();
@@ -448,7 +457,7 @@ namespace Debut
 			skyboxConfig.ID = skybox->GetID();
 		}
 		Ref<Material> material = AssetManager::Request<Material>(skyboxConfig.Material);
-		
+
 		// Material
 		UUID currentMaterial = ImGuiUtils::DragDestination("Material", ".mat", material == nullptr ? 0 : material->GetID());
 		if (currentMaterial != 0)
@@ -457,7 +466,7 @@ namespace Debut
 		ImGuiUtils::ResetColumns();
 
 		// Drag / drop textures
-		SkyboxTexture dirs[6] = { SkyboxTexture::Front, SkyboxTexture::Bottom, SkyboxTexture::Left, 
+		SkyboxTexture dirs[6] = { SkyboxTexture::Front, SkyboxTexture::Bottom, SkyboxTexture::Left,
 			SkyboxTexture::Right, SkyboxTexture::Up, SkyboxTexture::Down };
 		const char* dirStrings[6] = { "Front", "Bottom", "Left", "Right", "Up", "Down" };
 
