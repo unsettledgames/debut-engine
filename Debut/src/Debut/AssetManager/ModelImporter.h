@@ -31,9 +31,9 @@ namespace Debut
 	public:
 		static Ref<Model> ImportModel(const std::string& path, const ModelImportSettings& settings);
 	private:
-		static Ref<Model> ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder, const std::string& modelName = "");
+		static Ref<Model> ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder, const std::string& inputFolder, const std::string& modelName = "");
 		static Ref<Mesh> ImportMesh(aiMesh* mesh, const std::string& name, const std::string& saveFolder, glm::mat4& transform);
-		static Ref<Material> ImportMaterial(aiMaterial* material, const std::string& name, const std::string& saveFolder);
+		static Ref<Material> ImportMaterial(aiMaterial* material, const std::string& name, const std::string& saveFolder, const std::string& inputFolder);
 
 		static void RemoveNodes(Ref<Model> model, std::vector<UUID>& associations);
 	};
