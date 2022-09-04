@@ -48,7 +48,7 @@ namespace Debut
 			m_Format = GL_RGB;
 		}
 
-		DBT_CORE_ASSERT(m_Format != 0 && m_InternalFormat != 0, "Png texture format not supported");
+		DBT_CORE_ASSERT(m_Format != 0 && m_InternalFormat != 0, "Texture format not supported");
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
@@ -141,7 +141,7 @@ namespace Debut
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
-		glBindTextureUnit(slot, m_RendererID);
+		GLCall(glBindTextureUnit(slot, m_RendererID));
 	}
 
 }

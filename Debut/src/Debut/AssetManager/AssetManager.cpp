@@ -89,6 +89,10 @@ namespace Debut
 
 			Reimport("assets");
 		}
+
+		// Upload default assets
+		s_TextureCache.Put("white_texture", Texture2D::Create(1, 1));
+		s_AssetMap[DBT_WHITE_TEXTURE_UUID] =  "white_texture";
 	}
 
 	void AssetManager::CreateLibDirs()

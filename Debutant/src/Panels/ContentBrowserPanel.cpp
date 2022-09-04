@@ -275,7 +275,7 @@ namespace Debut
 				{
 					if (ImGui::IsItemClicked())
 					{
-						m_PropertiesPanel->SetAsset(ss.str(), AssetType::Mesh);
+						m_PropertiesPanel->SetAsset(AssetManager::s_AssetsDir + ss.str(), AssetManager::s_MetadataDir + ss.str() + ".meta", AssetType::Mesh);
 						m_SelectedAsset = meshIDStr.str();
 					}
 					ImGui::TreePop();
@@ -302,7 +302,8 @@ namespace Debut
 				{
 					if (ImGui::IsItemClicked())
 					{
-						m_PropertiesPanel->SetAsset(ss.str(), AssetType::Material);
+						m_PropertiesPanel->SetAsset(AssetManager::s_AssetsDir + ss.str(), 
+							AssetManager::s_MetadataDir + ss.str() + ".meta", AssetType::Material);
 						m_SelectedAsset = matIDStr.str();
 					}
 

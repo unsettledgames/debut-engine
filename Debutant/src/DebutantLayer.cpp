@@ -22,6 +22,9 @@
 
 /*
     TODO:
+    - Model texturing
+        - Transparency issues
+
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing

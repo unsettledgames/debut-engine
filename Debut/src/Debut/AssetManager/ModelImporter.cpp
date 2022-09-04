@@ -12,18 +12,29 @@
 
 /*
 	TODO
-		UX:
-			- Let the user reimport a model:
-				- OPTIONAL: save a map <meshName, ID>; if during the reimporting, a mesh with the same name of the previous
-					import is found, use the previous ID to save references
-			- Save model import settings in .model.meta file
+		- Save model import settings in .model.meta file
 */
 
 namespace Debut
 {
+	static inline glm::mat4 AiMatrixoGlm(const aiMatrix4x4* from)
+	{
+		glm::mat4 to;
+
+
+		to[0][0] = from->a1; to[0][1] = from->b1;  to[0][2] = from->c1; to[0][3] = from->d1;
+		to[1][0] = from->a2; to[1][1] = from->b2;  to[1][2] = from->c2; to[1][3] = from->d2;
+		to[2][0] = from->a3; to[2][1] = from->b3;  to[2][2] = from->c3; to[2][3] = from->d3;
+		to[3][0] = from->a4; to[3][1] = from->b4;  to[3][2] = from->c4; to[3][3] = from->d4;
+
+		return to;
+	}
+
 	Ref<Model> ModelImporter::ImportModel(const std::string& path, const ModelImportSettings& settings)
 	{
 		ProgressPanel::SubmitTask("modelimport", "Importing model...");
+		std::filesystem::path inputFolder(path);
+		inputFolder = inputFolder.parent_path();
 		std::string modelPath = path.substr(0, path.find_last_of("\\") + 1);
 		modelPath += settings.ImportedName;
 
@@ -62,7 +73,7 @@ namespace Debut
 		{
 			// Import the model
 			aiNode* rootNode = scene->mRootNode;
-			Ref<Model> ret = ImportNodes(rootNode, scene, path.substr(0, path.find_last_of("\\")), settings.ImportedName);
+			Ref<Model> ret = ImportNodes(rootNode, scene, path.substr(0, path.find_last_of("\\")), settings.ImportedName, inputFolder.string());
 			ret->SetPath(modelPath + ".model");
 
 			ProgressPanel::CompleteTask("modelimport");
@@ -79,7 +90,7 @@ namespace Debut
 		return nullptr;
 	}
 
-	Ref<Model> ModelImporter::ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder, const std::string& modelName)
+	Ref<Model> ModelImporter::ImportNodes(aiNode* parent, const aiScene* scene, const std::string& saveFolder, const std::string& modelName, const std::string& inputFolder)
 	{
 		DBT_PROFILE_FUNCTION();
 		// Don't import empty models
@@ -104,7 +115,7 @@ namespace Debut
 		for (int i = 0; i < parent->mNumChildren; i++)
 		{
 			ProgressPanel::ProgressTask("modelimport", i / parent->mNumChildren);
-			Ref<Model> currModel = ImportNodes(parent->mChildren[i], scene, submodelsFolder);
+			Ref<Model> currModel = ImportNodes(parent->mChildren[i], scene, submodelsFolder, modelName, inputFolder);
 			if (currModel != nullptr)
 				models[i] = currModel->GetID();
 			else
@@ -120,7 +131,7 @@ namespace Debut
 
 			{
 				DBT_PROFILE_SCOPE("ModelImporter::ImportMesh");
-				Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, assetsFolder);
+				Ref<Mesh> mesh = ModelImporter::ImportMesh(assimpMesh, "Mesh" + i, assetsFolder, AiMatrixoGlm(&(parent->mTransformation)));
 				AssetManager::Submit(mesh);
 				if (mesh != nullptr)
 					meshes[i] = mesh->GetID();
@@ -130,7 +141,7 @@ namespace Debut
 				DBT_PROFILE_SCOPE("ModelImporter::ImportMaterial");
 				// Import and submit the material
 				aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
-				Ref<Material> material = ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, assetsFolder);
+				Ref<Material> material = ModelImporter::ImportMaterial(assimpMaterial, "Material" + i, assetsFolder, inputFolder);
 				AssetManager::Submit(material);
 				if (material != nullptr)
 					materials[i] = material->GetID();
@@ -155,7 +166,7 @@ namespace Debut
 		return ret;
 	}
 
-	Ref<Mesh> ModelImporter::ImportMesh(aiMesh* assimpMesh, const std::string& name, const std::string& saveFolder)
+	Ref<Mesh> ModelImporter::ImportMesh(aiMesh* assimpMesh, const std::string& name, const std::string& saveFolder, glm::mat4& transform)
 	{
 		ProgressPanel::SubmitTask("meshimport", "Importing mesh...");
 
@@ -164,6 +175,7 @@ namespace Debut
 			return mesh;
 
 		// Otherwise import it as usual
+		mesh->m_Transform = transform;
 		mesh->m_Vertices.resize(assimpMesh->mNumVertices * 3);
 		mesh->SetName(assimpMesh->mName.C_Str());
 
@@ -177,6 +189,21 @@ namespace Debut
 					mesh->m_Vertices[index] = assimpMesh->mVertices[i][j];
 				}
 			ProgressPanel::ProgressTask("meshimport", 0.17);
+		}
+
+		{
+			DBT_PROFILE_SCOPE("ImportMesh::Colors");
+			// Vertex colors
+			if (assimpMesh->GetNumColorChannels() > 0)
+			{
+				mesh->m_Colors.resize(assimpMesh->mNumVertices * 4);
+				for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+					for (uint32_t j = 0; j < 4; j++)
+					{
+						uint32_t index = i * 4 + j;
+						mesh->m_Colors[index] = assimpMesh->mColors[0][i][j];
+					}
+			}
 		}
 		
 		{
@@ -234,9 +261,9 @@ namespace Debut
 				mesh->m_TexCoords[i].resize(assimpMesh->mNumVertices * 3);
 
 				for (uint32_t j = 0; j < assimpMesh->mNumVertices; j++)
-					for (uint32_t k = 0; k < 3; k++)
+					for (uint32_t k = 0; k < 2; k++)
 					{
-						uint32_t index = j * 3 + k;
+						uint32_t index = j * 2 + k;
 						mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j][k];
 					}
 			}
@@ -274,7 +301,7 @@ namespace Debut
 		return mesh;
 	}
 
-	Ref<Material> ModelImporter::ImportMaterial(aiMaterial* assimpMaterial, const std::string& name, const std::string& saveFolder)
+	Ref<Material> ModelImporter::ImportMaterial(aiMaterial* assimpMaterial, const std::string& name, const std::string& saveFolder, const std::string& inputFolder)
 	{
 		Ref<Material> material = CreateRef<Material>();
 		if (material->IsValid())
@@ -292,29 +319,35 @@ namespace Debut
 		assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 		material->SetVec3("u_DiffuseColor", { color.r, color.g, color.b });
 
+		Log.CoreInfo("Diffuse color: {0},{1},{2}", color.r, color.g, color.b);
+
 		assimpMaterial->Get(AI_MATKEY_COLOR_AMBIENT, color);
-		material->SetVec3("u_AmbientColor", { color.r, color.g, color.b });
+		material->SetVec4("u_AmbientColor", { color.r, color.g, color.b, 1.0 });
 
-		// Textures
-		if (assimpMaterial->GetTextureCount(aiTextureType_DIFFUSE))
-		{
-			aiString path;
-			assimpMaterial->Get(AI_MATKEY_TEXTURE_DIFFUSE(0), path);
-			material->SetTexture("u_DiffuseTexture", AssetManager::Request<Texture2D>(path.C_Str(), std::string(path.C_Str()) + ".meta"));
-		}
+		Log.CoreInfo("Ambient color: {0},{1},{2}", color.r, color.g, color.b);
 
-		if (assimpMaterial->GetTextureCount(aiTextureType_NORMALS))
-		{
-			aiString path;
-			assimpMaterial->Get(AI_MATKEY_TEXTURE_NORMALS(0), path);
-			material->SetTexture("u_NormalMap", AssetManager::Request<Texture2D>(path.C_Str(), std::string(path.C_Str()) + ".meta"));
-		}
+		// Load textures
+		aiString texturePath;
+		aiTextureType types[] = { aiTextureType_DIFFUSE, aiTextureType_NORMALS, aiTextureType_AMBIENT, 
+			aiTextureType_DIFFUSE_ROUGHNESS, aiTextureType_DISPLACEMENT, aiTextureType_METALNESS, 
+			aiTextureType_REFLECTION, aiTextureType_SPECULAR, aiTextureType_EMISSIVE};
+		std::string uniformNames[] = { "u_DiffuseTexture", "u_NormalMap", "u_AmbientMap", "u_RoughnessMap", "u_DisplacementMap",
+			"u_MetalnessTexture", "u_ReflectionMap", "u_SpecularMap", "u_EmissionMap" };
 
-		if (assimpMaterial->GetTextureCount(aiTextureType_DISPLACEMENT))
+		for (uint32_t i = 0; i < 9; i++)
 		{
-			aiString path;
-			assimpMaterial->Get(AI_MATKEY_TEXTURE_DISPLACEMENT(0), path);
-			material->SetTexture("u_DisplacementMap", AssetManager::Request<Texture2D>(path.C_Str(), std::string(path.C_Str()) + ".meta"));
+			if (assimpMaterial->GetTextureCount(types[i]))
+			{
+				aiString path;
+				std::string fullPath;
+				
+				assimpMaterial->Get(AI_MATKEY_TEXTURE(types[i], 0), path);
+				fullPath = inputFolder + "\\" + path.C_Str();
+				if (!std::filesystem::exists(fullPath))
+					fullPath = std::filesystem::path(inputFolder).parent_path().string() + "\\textures\\" + path.C_Str();
+
+				material->SetTexture(uniformNames[i], AssetManager::Request<Texture2D>(fullPath));
+			}
 		}
 
 		// Save the material on disk + meta file

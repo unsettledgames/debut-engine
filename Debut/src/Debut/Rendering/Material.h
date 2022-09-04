@@ -43,6 +43,7 @@ namespace Debut
 		void Unuse();
 
 		void SetShader(Ref<Shader> shader);
+		void SetUniforms(std::unordered_map<std::string, ShaderUniform> uniforms) { m_Uniforms = uniforms; }
 		inline void SetName(const std::string& name) { m_Name = name; }
 		inline void SetPath(const std::string& path) { m_Path = path; }
 		inline void SetMetaPath(const std::string& metaPath) { m_MetaPath = metaPath; }

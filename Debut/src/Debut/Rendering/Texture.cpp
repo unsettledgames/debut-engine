@@ -12,11 +12,10 @@ namespace Debut
 		std::string correctMeta = metaFilePath;
 		if (correctMeta == "")
 			correctMeta = path + ".meta";
-		std::ifstream metaFile(metaFilePath);
 		std::stringstream strStream;
 
 		// Load texture parameters
-		Texture2DConfig texParams = GetConfig(path);
+		Texture2DConfig texParams = GetConfig(metaFilePath);
 		// If the texture doesn't have a meta file, save some default ones
 		if (texParams.ID == 0)
 		{
@@ -71,6 +70,7 @@ namespace Debut
 
 		std::ofstream outFile(path + ".meta");
 		outFile << emitter.c_str();
+		outFile.close();
 	}
 
 	Texture2DConfig Texture2D::GetConfig(const std::string& path)

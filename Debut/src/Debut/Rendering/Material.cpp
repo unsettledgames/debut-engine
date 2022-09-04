@@ -9,7 +9,7 @@
 
 #define FIND_UNIFORM(name)	if (m_Uniforms.find(##name) == m_Uniforms.end()) \
 							{	\
-								Log.CoreError("Uniform {0} is not supported by the material {1}", ##name, m_Name);	\
+								/*Log.CoreError("Uniform {0} is not supported by the material {1}", ##name, m_Name);*/	\
 								return;	\
 							}
 
@@ -93,48 +93,51 @@ namespace Debut
 
 		for (auto& uniform : uniforms)
 		{
-			m_Uniforms[uniform.Name] = uniform;
-			switch (uniform.Type)
+			if (matParams[uniform.Name])
 			{
-			case ShaderDataType::Float:
-				m_Uniforms[uniform.Name].Data.Float = matParams[uniform.Name].as<float>();
-				break;
-			case ShaderDataType::Float2:
-				m_Uniforms[uniform.Name].Data.Vec2 = matParams[uniform.Name].as<glm::vec2>();
-				break;
-			case ShaderDataType::Float3:
-				m_Uniforms[uniform.Name].Data.Vec3 = matParams[uniform.Name].as<glm::vec3>();
-				break;
-			case ShaderDataType::Float4:
-				m_Uniforms[uniform.Name].Data.Vec4 = matParams[uniform.Name].as<glm::vec4>();
-				break;
-			case ShaderDataType::Mat4:
-				m_Uniforms[uniform.Name].Data.Mat4 = matParams[uniform.Name].as<glm::mat4>();
+				m_Uniforms[uniform.Name] = uniform;
+				switch (uniform.Type)
+				{
+				case ShaderDataType::Float:
+					m_Uniforms[uniform.Name].Data.Float = matParams[uniform.Name].as<float>();
+					break;
+				case ShaderDataType::Float2:
+					m_Uniforms[uniform.Name].Data.Vec2 = matParams[uniform.Name].as<glm::vec2>();
+					break;
+				case ShaderDataType::Float3:
+					m_Uniforms[uniform.Name].Data.Vec3 = matParams[uniform.Name].as<glm::vec3>();
+					break;
+				case ShaderDataType::Float4:
+					m_Uniforms[uniform.Name].Data.Vec4 = matParams[uniform.Name].as<glm::vec4>();
+					break;
+				case ShaderDataType::Mat4:
+					m_Uniforms[uniform.Name].Data.Mat4 = matParams[uniform.Name].as<glm::mat4>();
+					break;
+
+				case ShaderDataType::Int:
+					m_Uniforms[uniform.Name].Data.Int = matParams[uniform.Name].as<int>();
+					break;
+				case ShaderDataType::Bool:
+					m_Uniforms[uniform.Name].Data.Bool = matParams[uniform.Name].as<bool>();
+					break;
+				case ShaderDataType::Sampler2D:
+				{
+					// TODO: add scale and offset to texture?
+
+					// Load the texture data
+					YAML::Node textureNode = matParams[uniform.Name];
+					// Load the actual texture
+					UUID texID = textureNode["ID"].as<uint64_t>();
+					Ref<Texture2D> texture = AssetManager::Request<Texture2D>(texID);
+
+					m_Uniforms[uniform.Name].Data.Texture = texID;
+				}
 				break;
 
-			case ShaderDataType::Int:
-				m_Uniforms[uniform.Name].Data.Int = matParams[uniform.Name].as<int>();
-				break;
-			case ShaderDataType::Bool:
-				m_Uniforms[uniform.Name].Data.Bool = matParams[uniform.Name].as<bool>();
-				break;
-			case ShaderDataType::Sampler2D:
-			{
-				// TODO: add scale and offset to texture?
-
-				// Load the texture data
-				YAML::Node textureNode = matParams[uniform.Name];
-				// Load the actual texture
-				UUID texID = textureNode["ID"].as<uint64_t>();
-				Ref<Texture2D> texture = AssetManager::Request<Texture2D>(texID);
-
-				m_Uniforms[uniform.Name].Data.Texture = texID;
-			}
-			break;
-
-			default:
-				Log.CoreError("Material type {0} for uniform {1} isn't supported", (int)uniform.Type, uniform.Name);
-				break;
+				default:
+					Log.CoreError("Material type {0} for uniform {1} isn't supported", (int)uniform.Type, uniform.Name);
+					break;
+				}
 			}
 		}
 
@@ -225,6 +228,7 @@ namespace Debut
 		Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
 		if (shader->GetID() != s_PrevShader)
 			shader->Bind();
+		uint32_t currSlot = 0;
 		SetMat4("u_ViewProjection", cameraTransform);
 		
 		for (auto& uniform : m_Uniforms)
@@ -244,9 +248,17 @@ namespace Debut
 				shader->SetMat4(uniform.second.Name, uniform.second.Data.Mat4);
 				break;
 			case ShaderDataType::Sampler2D:
+			{
+				Ref<Texture2D> texture;
 				if (uniform.second.Data.Texture != 0)
-					shader->SetInt(uniform.second.Name, AssetManager::Request<Texture2D>(uniform.second.Data.Texture)->GetID());
+					texture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
+				else
+					texture = AssetManager::Request<Texture2D>(DBT_WHITE_TEXTURE_UUID);
+
+				texture->Bind(currSlot);
+				currSlot++;
 				break;
+			}
 			case ShaderDataType::SamplerCube:
 				shader->SetInt(uniform.second.Name, uniform.second.Data.Cubemap);
 				break;
