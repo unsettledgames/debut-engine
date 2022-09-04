@@ -384,6 +384,7 @@ namespace Debut
 			DrawAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DrawAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DrawAddComponentEntry<MeshRendererComponent>("Mesh Renderer");
+			DrawAddComponentEntry<DirectionalLightComponent>("Directional Light");
 
 			ImGui::EndPopup();
 		}
@@ -595,6 +596,13 @@ namespace Debut
 				UUID material = ImGuiUtils::DragDestination("Physics material", ".physmat2d", component.Material);
 				if (material != 0)
 					component.Material = material;
+			});
+
+		DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component)
+			{
+				ImGuiUtils::RGBVec3("Direction", { "X", "Y", "Z"}, {&component.Direction.x, &component.Direction.y, &component.Direction.z});
+				ImGuiUtils::RGBVec3("Color", { "R","G","B" }, { &component.Color.x, &component.Color.g, &component.Color.b });
+				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.1f);
 			});
 	}
 

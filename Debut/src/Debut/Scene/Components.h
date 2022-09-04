@@ -19,7 +19,7 @@
 
 namespace Debut
 {
-	// BASIC
+	// CORE
 
 	struct IDComponent
 	{
@@ -101,7 +101,7 @@ namespace Debut
 		}
 	};
 
-	// RENDERING
+	// GEOMETRY
 
 	struct CameraComponent
 	{
@@ -134,6 +134,19 @@ namespace Debut
 		MeshRendererComponent()  {}
 		MeshRendererComponent(const MeshRendererComponent&) = default;
 		MeshRendererComponent(UUID mesh, UUID material) : Material(material), Mesh(mesh), Instanced(false) {}
+	};
+
+	// LIGHTING
+	struct DirectionalLightComponent
+	{
+		glm::vec3 Direction;
+		glm::vec3 Color;
+		float Intensity;
+	};
+
+	struct PointLightComponent
+	{
+
 	};
 
 	// PHYSICS AND COLLIDERS

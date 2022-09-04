@@ -62,6 +62,8 @@ namespace Debut
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(MeshRendererComponent& bc2d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(DirectionalLightComponent& dl, Entity entity) {}
 
 	template <typename Component>
 	static void CopyComponent(entt::registry& dst, const entt::registry& src, const std::unordered_map<UUID, entt::entity> enttMap)
