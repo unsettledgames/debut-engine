@@ -66,6 +66,72 @@ namespace Debut
 		return ret;
 	}
 
+	bool ImGuiUtils::Color3(const std::string& label, float values[3])
+	{
+		bool ret = false;
+		std::string pickerString = label + "-picker";
+		std::string buttonString = label + "-button";
+		const char* pickerLabel = pickerString.c_str();
+		const char* buttonLabel = buttonString.c_str();
+
+		ImGui::PushID(label.c_str());
+
+		ImGuiUtils::ResetColumns();
+		ImGuiUtils::StartColumns(2, { 150, 200 });
+		ImColor color = { values[0], values[1], values[2] };
+
+		ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0,0 });
+
+		ImGui::Text(label.c_str());
+		ImGui::PopItemWidth();
+		ImGui::NextColumn();
+
+		ImGui::SetNextItemWidth(200);
+		if (ImGui::ColorButton(buttonLabel, color, 0, { ImGui::CalcItemWidth(), GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f }))
+			ImGui::OpenPopup(pickerLabel);
+		if (ImGui::BeginPopup(pickerLabel))
+		{
+			ret = ImGui::ColorPicker3("##picker", values, ImGuiColorEditFlags_None);
+			ImGui::EndPopup();
+		}
+
+		ImGui::NextColumn();
+
+		ImGui::PopStyleVar();
+		ImGui::PopID();
+
+		ImGuiUtils::ResetColumns();
+
+		return ret;
+	}
+
+	bool ImGuiUtils::Color4(const std::string& label, float values[4])
+	{
+		bool ret = false;
+
+		ImGui::PushID(label.c_str());
+
+		ImGuiUtils::ResetColumns();
+		ImGuiUtils::StartColumns(2, { 150, 200 });
+
+		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
+
+		ImGui::Text(label.c_str());
+		ImGui::PopItemWidth();
+		ImGui::NextColumn();
+
+		ret = ImGui::ColorEdit4(label.c_str(), values, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+		ImGui::NextColumn();
+
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+
+		ImGuiUtils::ResetColumns();
+
+		return ret;
+	}
+
 	void ImGuiUtils::RGBVec2(const char* id, std::vector<const char*>labels, std::vector<float*>values, float resetValue, uint32_t columnWidth)
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -80,7 +146,6 @@ namespace Debut
 		ImGui::NextColumn();
 
 		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
-		
 
 		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 		ImVec2 buttonSize = { lineHeight, lineHeight };

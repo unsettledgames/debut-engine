@@ -112,9 +112,17 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Editor update");
 
-		// 3D Rendering
-		Renderer3D::BeginScene(camera, m_Skybox, glm::inverse(camera.GetView()));
+		std::vector<LightComponent*> lights;
+		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
+		for (auto entity : lightGroup)
+		{
+			auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
+			lights.push_back(&light);
+		}
 
+		// 3D Rendering
+		Renderer3D::BeginScene(camera, m_Skybox, glm::inverse(camera.GetView()), lights);
+		
 		auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
 		for (auto entity : group3D)
 		{
@@ -214,7 +222,15 @@ namespace Debut
 			// 3D Rendering
 			{
 				DBT_PROFILE_SCOPE("Renderer3D update");
-				Renderer3D::BeginScene(*mainCamera, m_Skybox, cameraTransform);
+				// Get lights
+				std::vector<LightComponent*> lights;
+				auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
+				for (auto entity : lightGroup)
+				{
+					auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
+					lights.push_back(&light);
+				}
+				Renderer3D::BeginScene(*mainCamera, m_Skybox, cameraTransform, lights);
 
 				auto group = m_Registry.view<TransformComponent, MeshRendererComponent>();
 				for (auto entity : group)

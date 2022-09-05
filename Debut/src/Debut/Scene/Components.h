@@ -139,7 +139,7 @@ namespace Debut
 
 	struct SpriteRendererComponent
 	{
-		glm::vec4 Color;
+		glm::vec4 Color = glm::vec4(1.0f);
 		UUID Texture = 0;
 		float TilingFactor = 1.0f;
 
@@ -163,9 +163,9 @@ namespace Debut
 	// LIGHTING
 	struct DirectionalLightComponent : LightComponent
 	{
-		glm::vec3 Direction;
-		glm::vec3 Color;
-		float Intensity;
+		glm::vec3 Direction = glm::vec3(1.0f);
+		glm::vec3 Color = glm::vec3(1.0f);
+		float Intensity = 1.0f;
 
 		DirectionalLightComponent() { Type = LightType::Directional; }
 	};

@@ -93,7 +93,7 @@ namespace Debut
 
 		for (auto& uniform : uniforms)
 		{
-			if (matParams[uniform.Name])
+			if (matParams[uniform.Name].IsDefined())
 			{
 				m_Uniforms[uniform.Name] = uniform;
 				switch (uniform.Type)

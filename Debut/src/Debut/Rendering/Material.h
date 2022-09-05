@@ -35,6 +35,7 @@ namespace Debut
 
 	class Material
 	{
+		friend class Renderer3D;
 	public:
 		Material() = default;
 		Material(const std::string& path, const std::string& metaPath);
