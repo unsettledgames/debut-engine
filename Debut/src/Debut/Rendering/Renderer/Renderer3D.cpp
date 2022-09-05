@@ -45,10 +45,12 @@ namespace Debut
 		s_Data.VertexArray->AddIndexBuffer(s_Data.IndexBuffer);
 	}
 
-	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& cameraTransform, std::vector<LightComponent*>& lights)
+	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& cameraTransform, std::vector<LightComponent*>& lights,
+		std::vector<ShaderUniform> globalUniforms)
 	{
 		s_Data.CameraTransform = camera.GetProjection() * glm::inverse(cameraTransform);
 		s_Data.Lights = lights;
+		s_Data.GlobalUniforms = globalUniforms;
 
 		// Draw the skybox
 		if (skybox != nullptr)
@@ -182,6 +184,7 @@ namespace Debut
 			{
 				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
 				SendLights(material);
+				SendGlobals(material);
 				material.SetMat4("u_Transform", transform * mesh.GetTransform());
 				material.Use(s_Data.CameraTransform);
 			}
@@ -251,6 +254,12 @@ namespace Debut
 				break;
 			}
 		}
+	}
+
+	void Renderer3D::SendGlobals(Material& material)
+	{
+		for (auto& uniform : s_Data.GlobalUniforms)
+			material.m_Uniforms[uniform.Name] = uniform;
 	}
 
 	void Renderer3D::AddBatch(const UUID& id)

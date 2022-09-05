@@ -112,6 +112,7 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Editor update");
 
+		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms();
 		std::vector<LightComponent*> lights;
 		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
 		for (auto entity : lightGroup)
@@ -121,7 +122,7 @@ namespace Debut
 		}
 
 		// 3D Rendering
-		Renderer3D::BeginScene(camera, m_Skybox, glm::inverse(camera.GetView()), lights);
+		Renderer3D::BeginScene(camera, m_Skybox, glm::inverse(camera.GetView()), lights, globalUniforms);
 		
 		auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
 		for (auto entity : group3D)

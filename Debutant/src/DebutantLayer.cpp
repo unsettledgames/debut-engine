@@ -231,7 +231,6 @@ namespace Debut
 
             if (ImGui::BeginTabItem("Lighting"))
             {
-
                 // Skybox options
                 ImGuiUtils::BoldText("Skybox");
                 Ref<Skybox> currSkybox = m_ActiveScene->GetSkybox();
@@ -241,6 +240,11 @@ namespace Debut
                     m_ActiveScene->SetSkybox(skybox);
                 else if (skybox != 0 &&m_ActiveScene->GetSkybox()->GetID() != skybox)
                     m_ActiveScene->SetSkybox(skybox);
+
+                // Ambient light
+                glm::vec3 ambientLight = m_ActiveScene->GetAmbientLight();
+                ImGuiUtils::Color3("Ambient light", glm::value_ptr(ambientLight));
+                m_ActiveScene->SetAmbientLight(ambientLight);
 
                 ImGui::EndTabItem();
             }

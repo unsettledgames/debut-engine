@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entt.hpp>
+#include <glm/glm.hpp>
 #include <vector>
 
 #include <Debut/Core/Core.h>
@@ -41,8 +42,10 @@ namespace Debut
 		Entity GetPrimaryCameraEntity();
 		Entity GetEntityByID(uint64_t id);
 		Ref<Skybox> GetSkybox() { return m_Skybox; }
+		glm::vec3 GetAmbientLight() { return m_AmbientLight; }
 
 		void SetSkybox(UUID path);
+		void SetAmbientLight(glm::vec3 light) { m_AmbientLight = light; }
 
 		static Ref<Scene> Copy(Ref<Scene> other);
 
@@ -61,6 +64,7 @@ namespace Debut
 
 		// Lighting
 		Ref<Skybox> m_Skybox;
+		glm::vec3 m_AmbientLight;
 	};
 }
 
