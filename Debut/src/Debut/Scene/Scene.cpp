@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "Debut/Scene/Entity.h"
 #include "Debut/Scene/Components.h"
+#include "Debut/Rendering/Shader.h"
 #include "Debut/Rendering/Renderer/Renderer2D.h"
 #include "Debut/Rendering/Renderer/Renderer3D.h"
 #include "Debut/AssetManager/AssetManager.h"
@@ -225,13 +226,15 @@ namespace Debut
 				DBT_PROFILE_SCOPE("Renderer3D update");
 				// Get lights
 				std::vector<LightComponent*> lights;
+				std::vector<ShaderUniform> globals = GetGlobalUniforms();
+
 				auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
 				for (auto entity : lightGroup)
 				{
 					auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
 					lights.push_back(&light);
 				}
-				Renderer3D::BeginScene(*mainCamera, m_Skybox, cameraTransform, lights);
+				Renderer3D::BeginScene(*mainCamera, m_Skybox, cameraTransform, lights, globals);
 
 				auto group = m_Registry.view<TransformComponent, MeshRendererComponent>();
 				for (auto entity : group)
@@ -463,6 +466,18 @@ namespace Debut
 		newScene->m_Skybox = other->m_Skybox;
 
 		return newScene;
+	}
+
+	std::vector<ShaderUniform> Scene::GetGlobalUniforms()
+	{
+		std::vector<ShaderUniform> ret;
+		ShaderUniform::UniformData data;
+
+		// Ambient light
+		data.Vec3 = m_AmbientLight;
+		ret.push_back(ShaderUniform("u_AmbientLightColor", ShaderDataType::Float3, data));
+
+		return ret;
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)

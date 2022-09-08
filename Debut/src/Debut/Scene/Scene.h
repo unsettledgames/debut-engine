@@ -13,6 +13,8 @@ class b2World;
 namespace Debut
 {
 	struct EntitySceneNode;
+	struct ShaderUniform;
+
 	class Camera;
 	class Skybox;
 
@@ -48,6 +50,7 @@ namespace Debut
 		void SetAmbientLight(glm::vec3 light) { m_AmbientLight = light; }
 
 		static Ref<Scene> Copy(Ref<Scene> other);
+		std::vector<ShaderUniform> GetGlobalUniforms();
 
 	private:
 		template<typename T>
@@ -64,7 +67,7 @@ namespace Debut
 
 		// Lighting
 		Ref<Skybox> m_Skybox;
-		glm::vec3 m_AmbientLight;
+		glm::vec3 m_AmbientLight = glm::vec3(1.0f);
 	};
 }
 

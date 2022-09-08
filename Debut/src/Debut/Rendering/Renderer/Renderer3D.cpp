@@ -46,7 +46,7 @@ namespace Debut
 	}
 
 	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& cameraTransform, std::vector<LightComponent*>& lights,
-		std::vector<ShaderUniform> globalUniforms)
+		std::vector<ShaderUniform>& globalUniforms)
 	{
 		s_Data.CameraTransform = camera.GetProjection() * glm::inverse(cameraTransform);
 		s_Data.Lights = lights;
@@ -144,7 +144,7 @@ namespace Debut
 		else
 		{
 			{
-				DBT_PROFILE_SCOPE("DrawModel::SetDataAndIndices");
+				DBT_PROFILE_SCOPE("DrawModel::SendGeometry");
 				std::vector<float>& positions = mesh.GetPositions();
 				std::vector<int>& indices = mesh.GetIndices();
 				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
@@ -238,16 +238,16 @@ namespace Debut
 				ShaderUniform::UniformData data;
 
 				data.Vec3 = dirLight->Direction;
-				material.m_Uniforms["u_AmbientLightDirection"] = {
-					ShaderUniform("u_AmbientLightDirection", ShaderDataType::Float3, data) };
+				material.m_Uniforms["u_DirectionalLightDir"] = {
+					ShaderUniform("u_DirectionalLightDir", ShaderDataType::Float3, data) };
 
 				data.Vec3 = dirLight->Color;
-				material.m_Uniforms["u_AmbientLightColor"] = {
-					ShaderUniform("u_AmbientLightColor", ShaderDataType::Float3, data) };
+				material.m_Uniforms["u_DirectionalLightCol"] = {
+					ShaderUniform("u_DirectionalLightCol", ShaderDataType::Float3, data) };
 
 				data.Float = dirLight->Intensity;
-				material.m_Uniforms["u_AmbientLightIntensity"] = {
-					ShaderUniform("u_AmbientLightIntensity", ShaderDataType::Float, data) };
+				material.m_Uniforms["u_DirectionalLightIntensity"] = {
+					ShaderUniform("u_DirectionalLightIntensity", ShaderDataType::Float, data) };
 				break;
 			}
 			case LightComponent::LightType::Point:
