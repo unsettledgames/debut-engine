@@ -667,10 +667,10 @@ namespace Debut
             OnSceneStop();
 
         m_RuntimeScene = nullptr;
+        m_EditorScene = CreateRef<Scene>();
 
         SceneSerializer ss(m_EditorScene);
-        auto [scene, sceneHierarchy] = ss.DeserializeText(path.string());
-        m_EditorScene = scene;
+        EntitySceneNode* sceneHierarchy = ss.DeserializeText(path.string());
 
         m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
         m_ScenePath = path.string();
@@ -689,7 +689,7 @@ namespace Debut
             return;
         }
         SceneSerializer ss(m_ActiveScene);
-        ss.SerializeText(m_ScenePath, *m_SceneHierarchy.GetSceneGraph(), m_ActiveScene);
+        ss.SerializeText(m_ScenePath, *m_SceneHierarchy.GetSceneGraph());
     }
 
     void DebutantLayer::SaveSceneAs()
@@ -698,7 +698,7 @@ namespace Debut
         if (!path.empty())
         {
             SceneSerializer ss(m_ActiveScene);
-            ss.SerializeText(path, *m_SceneHierarchy.GetSceneGraph(), m_ActiveScene);
+            ss.SerializeText(path, *m_SceneHierarchy.GetSceneGraph());
 
             m_ScenePath = path;
         }

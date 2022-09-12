@@ -265,7 +265,7 @@ namespace Debut
 		out << YAML::EndMap;
 	}
 
-	void SceneSerializer::SerializeText(const std::string& fileName, EntitySceneNode& sceneGraph, const Ref<Scene> scene)
+	void SceneSerializer::SerializeText(const std::string& fileName, EntitySceneNode& sceneGraph)
 	{
 		YAML::Emitter out;
 		std::ofstream outFile(fileName);
@@ -274,8 +274,8 @@ namespace Debut
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled scene";
 		
 		out << YAML::Key << "Lighting" << YAML::Value << YAML::BeginMap;
-		out << YAML::Key << "AmbientLightColor" << YAML::Value << scene->GetAmbientLight();
-		out << YAML::Key << "AmbientLightIntensity" << YAML::Value << scene->GetAmbientLightIntensity();
+		out << YAML::Key << "AmbientLightColor" << YAML::Value << m_Scene->GetAmbientLight();
+		out << YAML::Key << "AmbientLightIntensity" << YAML::Value << m_Scene->GetAmbientLightIntensity();
 		out << YAML::EndMap;
 
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
@@ -291,10 +291,10 @@ namespace Debut
 		outFile << out.c_str();
 	}
 
-	std::pair<Ref<Scene>, EntitySceneNode*> SceneSerializer::DeserializeText(const std::string& fileName)
+	EntitySceneNode* SceneSerializer::DeserializeText(const std::string& fileName)
 	{
 		if (!CppUtils::String::endsWith(fileName, ".debut"))
-			return {nullptr, nullptr};
+			return nullptr;
 
 		std::ifstream inFile(fileName);
 		std::stringstream strStream;
@@ -304,10 +304,9 @@ namespace Debut
 		YAML::Node in = YAML::Load(strStream.str());
 
 		if (!in["Scene"])
-			return { nullptr, nullptr };
+			return nullptr;
 
 		auto entities = in["Entities"];
-		Ref<Scene> scene = CreateRef<Scene>();
 		EntitySceneNode* sceneTree = new EntitySceneNode();
 		sceneTree->IsRoot = true;
 
@@ -315,10 +314,13 @@ namespace Debut
 			for (auto yamlEntity : entities)
 				sceneTree->Children.push_back(DeserializeEntity(yamlEntity));
 
-		scene->SetAmbientLight(in["AmbientLightColor"].as<glm::vec4>());
-		scene->SetAmbientLightIntensity(in["AmbientLightIntensity"].as<float>());
+		YAML::Node lighting = in["Lighting"];
+		if (lighting["AmbientLightColor"].IsDefined())
+			m_Scene->SetAmbientLight(lighting["AmbientLightColor"].as<glm::vec3>());
+		if (lighting["AmbientLightIntensity"].IsDefined())
+			m_Scene->SetAmbientLightIntensity(lighting["AmbientLightIntensity"].as<float>());
 
-		return { scene, sceneTree };
+		return sceneTree;
 	}
 
 	EntitySceneNode* SceneSerializer::DeserializeEntity(YAML::Node& yamlEntity)
