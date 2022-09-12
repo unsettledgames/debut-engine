@@ -1,0 +1,13 @@
+---
+Name: Material
+Shader: 16775874381677145436
+Parameters:
+  u_DirectionalLightDir: [0, 0, 0]
+  u_AmbientLightColor: [0, 0, 0]
+  u_AmbientLightIntensity: 0
+  u_DiffuseTexture:
+    ID: 0
+  u_ViewProjection: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+  u_DirectionalLightCol: [0, 0, 0]
+  u_DirectionalLightIntensity: 0
+  u_Transform: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]

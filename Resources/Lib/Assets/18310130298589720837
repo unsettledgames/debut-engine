@@ -1,0 +1,11 @@
+---
+Name: map_3_castle
+Shader: 16775874381677145436
+Parameters:
+  u_AmbientLightColor: [0, 0, 0]
+  u_AmbientLightDirection: [0, 0, 0]
+  u_AmbintLightIntensity: 0
+  u_DiffuseTexture:
+    ID: 11067372720266226294
+  u_Transform: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+  u_ViewProjection: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]

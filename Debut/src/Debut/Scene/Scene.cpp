@@ -476,6 +476,9 @@ namespace Debut
 		// Ambient light
 		data.Vec3 = m_AmbientLight;
 		ret.push_back(ShaderUniform("u_AmbientLightColor", ShaderDataType::Float3, data));
+		// Ambient light intensity
+		data.Float = m_AmbientLightIntensity;
+		ret.push_back(ShaderUniform("u_AmbientLightIntensity", ShaderDataType::Float, data));
 
 		return ret;
 	}

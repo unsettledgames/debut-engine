@@ -1,0 +1,51 @@
+Scene: Untitled scene
+Entities:
+  - "Entity: ": 10106035691706100823
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 10106035691706100823
+    TagComponent:
+      Name: untitled.obj.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 17323584355437030026
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 17323584355437030026
+        TagComponent:
+          Name: untitled.obj.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 10106035691706100823
+        MeshRendererComponent:
+          Mesh: 17316858568804613208
+          Material: 7287311396842011444
+          Instanced: false
+        Children:
+          []
+  - "Entity: ": 7953147367299215467
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 7953147367299215467
+    TagComponent:
+      Name: Directional light
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    DirectionalLightComponent:
+      Direction: [-0.800000012, 3.0999999, -14.6000004]
+      Color: [1, 1, 1]
+      Intensity: 1
+    Children:
+      []

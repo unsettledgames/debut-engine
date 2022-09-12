@@ -1,0 +1,84 @@
+Scene: Untitled scene
+Entities:
+  - "Entity: ": 15143013945858414092
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 15143013945858414092
+    TagComponent:
+      Name: 1
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 675374037112481193
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 675374037112481193
+        TagComponent:
+          Name: 2
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 15143013945858414092
+        Children:
+          []
+      - "Entity: ": 18257545778794870744
+        HierarchyOrder: 1
+        IDComponent:
+          ID: 18257545778794870744
+        TagComponent:
+          Name: 3
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 15143013945858414092
+        Children:
+          []
+  - "Entity: ": 18114199693554534187
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 18114199693554534187
+    TagComponent:
+      Name: 4
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 5875223062360737070
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 5875223062360737070
+        TagComponent:
+          Name: 5
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 18114199693554534187
+        Children:
+          []
+      - "Entity: ": 2378991750001826142
+        HierarchyOrder: 1
+        IDComponent:
+          ID: 2378991750001826142
+        TagComponent:
+          Name: 6
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 18114199693554534187
+        Children:
+          []

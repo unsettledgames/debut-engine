@@ -1,0 +1,104 @@
+Scene: Untitled scene
+Entities:
+  - "Entity: ": 14168974415925709052
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 14168974415925709052
+    TagComponent:
+      Name: TexturedCrypt.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    DirectionalLightComponent:
+      Direction: [0.850000024, 3.70000005, 2.95000005]
+      Color: [1, 1, 1]
+      Intensity: 1.39999998
+    Children:
+      - "Entity: ": 2789924519650691078
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 2789924519650691078
+        TagComponent:
+          Name: TexturedCrypt.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 14168974415925709052
+        Children:
+          - "Entity: ": 15499225550124456402
+            HierarchyOrder: 0
+            IDComponent:
+              ID: 15499225550124456402
+            TagComponent:
+              Name: TexturedCrypt. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 2789924519650691078
+            MeshRendererComponent:
+              Mesh: 5254943363781197530
+              Material: 6154583896295416476
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 10961868265089229409
+            HierarchyOrder: 1
+            IDComponent:
+              ID: 10961868265089229409
+            TagComponent:
+              Name: TexturedCrypt. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 2789924519650691078
+            MeshRendererComponent:
+              Mesh: 9514351186501337453
+              Material: 18310130298589720837
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 7591570337675072133
+            HierarchyOrder: 2
+            IDComponent:
+              ID: 7591570337675072133
+            TagComponent:
+              Name: TexturedCrypt. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 2789924519650691078
+            MeshRendererComponent:
+              Mesh: 10963705380392894176
+              Material: 9018545847508596985
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 3808729396310868198
+            HierarchyOrder: 3
+            IDComponent:
+              ID: 3808729396310868198
+            TagComponent:
+              Name: TexturedCrypt. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 2789924519650691078
+            MeshRendererComponent:
+              Mesh: 17314757891654079855
+              Material: 1613540950041657364
+              Instanced: false
+            Children:
+              []

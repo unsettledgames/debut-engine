@@ -1,6 +1,0 @@
-pushd .\..
-mkdir Build
-cd Build
-call cmake -G VERBOSE=1 "Visual Studio 17 2022" -DWINDOWS_BUILD=ON ./..
-popd
-PAUSE

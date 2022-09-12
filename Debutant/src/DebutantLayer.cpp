@@ -245,6 +245,10 @@ namespace Debut
                 glm::vec3 ambientLight = m_ActiveScene->GetAmbientLight();
                 ImGuiUtils::Color3("Ambient light", glm::value_ptr(ambientLight));
                 m_ActiveScene->SetAmbientLight(ambientLight);
+                // Ambient light intensity
+                float ambientIntensity = m_ActiveScene->GetAmbientLightIntensity();
+                if (ImGuiUtils::DragFloat("Ambient light intensity", &ambientIntensity, 0.1f, 0.0))
+                    m_ActiveScene->SetAmbientLightIntensity(ambientIntensity);
 
                 ImGui::EndTabItem();
             }
@@ -662,11 +666,11 @@ namespace Debut
         if (m_SceneState != SceneState::Edit)
             OnSceneStop();
 
-        m_EditorScene = CreateRef<Scene>();
         m_RuntimeScene = nullptr;
 
         SceneSerializer ss(m_EditorScene);
-        EntitySceneNode* sceneHierarchy = ss.DeserializeText(path.string());
+        auto [scene, sceneHierarchy] = ss.DeserializeText(path.string());
+        m_EditorScene = scene;
 
         m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
         m_ScenePath = path.string();
@@ -685,7 +689,7 @@ namespace Debut
             return;
         }
         SceneSerializer ss(m_ActiveScene);
-        ss.SerializeText(m_ScenePath, *m_SceneHierarchy.GetSceneGraph());
+        ss.SerializeText(m_ScenePath, *m_SceneHierarchy.GetSceneGraph(), m_ActiveScene);
     }
 
     void DebutantLayer::SaveSceneAs()
@@ -694,7 +698,7 @@ namespace Debut
         if (!path.empty())
         {
             SceneSerializer ss(m_ActiveScene);
-            ss.SerializeText(path, *m_SceneHierarchy.GetSceneGraph());
+            ss.SerializeText(path, *m_SceneHierarchy.GetSceneGraph(), m_ActiveScene);
 
             m_ScenePath = path;
         }

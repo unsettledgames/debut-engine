@@ -265,13 +265,19 @@ namespace Debut
 		out << YAML::EndMap;
 	}
 
-	void SceneSerializer::SerializeText(const std::string& fileName, EntitySceneNode& sceneGraph)
+	void SceneSerializer::SerializeText(const std::string& fileName, EntitySceneNode& sceneGraph, const Ref<Scene> scene)
 	{
 		YAML::Emitter out;
 		std::ofstream outFile(fileName);
 		
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled scene";
+		
+		out << YAML::Key << "Lighting" << YAML::Value << YAML::BeginMap;
+		out << YAML::Key << "AmbientLightColor" << YAML::Value << scene->GetAmbientLight();
+		out << YAML::Key << "AmbientLightIntensity" << YAML::Value << scene->GetAmbientLightIntensity();
+		out << YAML::EndMap;
+
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
 		for (uint32_t i = 0; i < sceneGraph.Children.size(); i++)
@@ -285,10 +291,10 @@ namespace Debut
 		outFile << out.c_str();
 	}
 
-	EntitySceneNode* SceneSerializer::DeserializeText(const std::string& fileName)
+	std::pair<Ref<Scene>, EntitySceneNode*> SceneSerializer::DeserializeText(const std::string& fileName)
 	{
 		if (!CppUtils::String::endsWith(fileName, ".debut"))
-			return false;
+			return {nullptr, nullptr};
 
 		std::ifstream inFile(fileName);
 		std::stringstream strStream;
@@ -298,17 +304,21 @@ namespace Debut
 		YAML::Node in = YAML::Load(strStream.str());
 
 		if (!in["Scene"])
-			return false;
+			return { nullptr, nullptr };
 
 		auto entities = in["Entities"];
-		EntitySceneNode* ret = new EntitySceneNode();
-		ret->IsRoot = true;
+		Ref<Scene> scene = CreateRef<Scene>();
+		EntitySceneNode* sceneTree = new EntitySceneNode();
+		sceneTree->IsRoot = true;
 
 		if (entities)
 			for (auto yamlEntity : entities)
-				ret->Children.push_back(DeserializeEntity(yamlEntity));
+				sceneTree->Children.push_back(DeserializeEntity(yamlEntity));
 
-		return ret;
+		scene->SetAmbientLight(in["AmbientLightColor"].as<glm::vec4>());
+		scene->SetAmbientLightIntensity(in["AmbientLightIntensity"].as<float>());
+
+		return { scene, sceneTree };
 	}
 
 	EntitySceneNode* SceneSerializer::DeserializeEntity(YAML::Node& yamlEntity)

@@ -6,6 +6,9 @@ Build/
 # Debut files
 *.log
 
+# Stuff created by programs I use to debug things
+**.bak
+
 # Visual Studio files and folder
 .vs/
 **.sln
