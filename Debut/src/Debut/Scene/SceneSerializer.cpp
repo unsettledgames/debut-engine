@@ -124,6 +124,13 @@ namespace Debut
 		out << YAML::Key << "Intensity" << YAML::Value << c.Intensity;
 	}
 
+	static void SerializeComponent(const PointLightComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Color" << YAML::Value << c.Color;
+		out << YAML::Key << "Intensity" << YAML::Value << c.Intensity;
+		out << YAML::Key << "Attenuation" << YAML::Value << c.Attenuation;
+	}
+
 	template <typename T>
 	static void DeserializeComponent(Entity e, YAML::Node& in, Ref<Scene> scene = nullptr)
 	{
@@ -238,6 +245,18 @@ namespace Debut
 		dl.Direction = in["Direction"].as<glm::vec3>();
 		dl.Color = in["Color"].as<glm::vec3>();
 		dl.Intensity = in["Intensity"].as<float>();
+	}
+
+	template<>
+	static void DeserializeComponent<PointLightComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		PointLightComponent& dl = e.AddComponent<PointLightComponent>();
+
+		dl.Color = in["Color"].as<glm::vec3>();
+		dl.Intensity = in["Intensity"].as<float>();
+		dl.Intensity = in["Attenuation"].as<float>();
 	}
 
 	void SceneSerializer::SerializeEntity(EntitySceneNode& node, YAML::Emitter& out)

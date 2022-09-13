@@ -168,11 +168,18 @@ namespace Debut
 		float Intensity = 1.0f;
 
 		DirectionalLightComponent() { Type = LightType::Directional; }
+		DirectionalLightComponent(const DirectionalLightComponent&) = default;
 	};
 
-	struct PointLightComponent
+	struct PointLightComponent : LightComponent
 	{
+		glm::vec3 Color = glm::vec3(1.0f);
 
+		float Intensity = 1.0f;
+		float Attenuation = 1.0f;
+
+		PointLightComponent() { Type = LightType::Point; }
+		PointLightComponent(const PointLightComponent&) = default;
 	};
 
 	// PHYSICS AND COLLIDERS

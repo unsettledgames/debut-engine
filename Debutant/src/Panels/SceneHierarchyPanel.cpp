@@ -385,6 +385,7 @@ namespace Debut
 			DrawAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DrawAddComponentEntry<MeshRendererComponent>("Mesh Renderer");
 			DrawAddComponentEntry<DirectionalLightComponent>("Directional Light");
+			DrawAddComponentEntry<PointLightComponent>("Point Light");
 
 			ImGui::EndPopup();
 		}
@@ -603,6 +604,13 @@ namespace Debut
 				ImGuiUtils::RGBVec3("Direction", { "X", "Y", "Z"}, {&component.Direction.x, &component.Direction.y, &component.Direction.z});
 				ImGuiUtils::Color3("Color", glm::value_ptr(component.Color));
 				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.1f);
+			});
+
+		DrawComponent<PointLightComponent>("Point Light", entity, [](auto& component)
+			{
+				ImGuiUtils::RGBVec3("Color", { "R", "G", "B" }, { &component.Color.x, &component.Color.y, &component.Color.z });
+				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.02f, 0.0f);
+				ImGuiUtils::DragFloat("Attenuation", &component.Attenuation, 0.02f, 0.0f);
 			});
 	}
 
