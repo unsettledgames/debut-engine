@@ -275,6 +275,7 @@ namespace Debut
 		SerializeComponent<BoxCollider2DComponent>(entity, "BoxCollider2DComponent", out);
 		SerializeComponent<CircleCollider2DComponent>(entity, "CircleCollider2DComponent", out);
 		SerializeComponent<DirectionalLightComponent>(entity, "DirectionalLightComponent", out);
+		SerializeComponent<PointLightComponent>(entity, "PointLightComponent", out);
 
 		out << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
 		for (uint32_t i = 0; i < node.Children.size(); i++)
@@ -361,6 +362,7 @@ namespace Debut
 		DeserializeComponent<CircleCollider2DComponent>(entity, yamlEntity["CircleCollider2DComponent"]);
 		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
 		DeserializeComponent<DirectionalLightComponent>(entity, yamlEntity["DirectionalLightComponent"]);
+		DeserializeComponent<PointLightComponent>(entity, yamlEntity["PointLightComponent"]);
 
 		auto children = yamlEntity["Children"];
 		for (auto child : children)

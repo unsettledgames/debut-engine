@@ -228,6 +228,8 @@ namespace Debut
 
 	void Renderer3D::SendLights(Material& material)
 	{
+		std::vector<PointLightComponent> pointLights;
+
 		for (LightComponent* light : s_Data.Lights)
 		{
 			switch (light->Type)
@@ -251,8 +253,30 @@ namespace Debut
 				break;
 			}
 			case LightComponent::LightType::Point:
+			{
+				PointLightComponent* pointLight = static_cast<PointLightComponent*>(light);
+				pointLights.push_back(*pointLight);
 				break;
 			}
+			}
+		}
+
+		// Send point lights
+		for (uint32_t i = 0; i < pointLights.size(); i++)
+		{
+			std::stringstream lightName;
+			ShaderUniform::UniformData data;
+			lightName << "u_PointLights[" << i << "]";
+
+			data.Vec3 = pointLights[i].Color;
+			material.m_Uniforms[lightName.str() + ".Color"] = { ShaderUniform(lightName.str() + ".Color", ShaderDataType::Float3, data) };
+			data.Vec3 = pointLights[i].Position;
+			material.m_Uniforms[lightName.str() + ".Position"] = { ShaderUniform(lightName.str() + ".Position", ShaderDataType::Float3, data) };
+
+			data.Float = pointLights[i].Intensity;
+			material.m_Uniforms[lightName.str() + ".Intensity"] = { ShaderUniform(lightName.str() + ".Intensity", ShaderDataType::Float, data) };
+			data.Float = pointLights[i].Attenuation;
+			material.m_Uniforms[lightName.str() + ".Attenuation"] = { ShaderUniform(lightName.str() + ".Attenuation", ShaderDataType::Float, data) };
 		}
 	}
 

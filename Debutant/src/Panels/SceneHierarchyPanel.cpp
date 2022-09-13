@@ -606,11 +606,13 @@ namespace Debut
 				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.1f);
 			});
 
-		DrawComponent<PointLightComponent>("Point Light", entity, [](auto& component)
+		DrawComponent<PointLightComponent>("Point Light", entity, [&](auto& component)
 			{
 				ImGuiUtils::RGBVec3("Color", { "R", "G", "B" }, { &component.Color.x, &component.Color.y, &component.Color.z });
 				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.02f, 0.0f);
 				ImGuiUtils::DragFloat("Attenuation", &component.Attenuation, 0.02f, 0.0f);
+
+				component.Position = entity.Transform().Translation;
 			});
 	}
 

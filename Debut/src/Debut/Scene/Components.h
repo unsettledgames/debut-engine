@@ -31,7 +31,6 @@
 
 namespace Debut
 {
-	// BASE COMPONENT STRUCTS
 	struct Collider2DComponent
 	{
 		enum class Collider2DType { Circle = 0, Box, Polygon};
@@ -174,6 +173,7 @@ namespace Debut
 	struct PointLightComponent : LightComponent
 	{
 		glm::vec3 Color = glm::vec3(1.0f);
+		glm::vec3 Position = glm::vec3(0.0f);
 
 		float Intensity = 1.0f;
 		float Attenuation = 1.0f;

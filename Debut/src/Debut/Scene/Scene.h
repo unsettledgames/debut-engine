@@ -52,7 +52,7 @@ namespace Debut
 		inline void SetAmbientLightIntensity(float light) { m_AmbientLightIntensity = light; }
 
 		static Ref<Scene> Copy(Ref<Scene> other);
-		std::vector<ShaderUniform> GetGlobalUniforms();
+		std::vector<ShaderUniform> GetGlobalUniforms(glm::vec3 cameraPos);
 
 	private:
 		template<typename T>

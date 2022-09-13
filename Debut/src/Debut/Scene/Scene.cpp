@@ -114,13 +114,22 @@ namespace Debut
 	void Scene::OnEditorUpdate(Timestep ts, Camera& camera)
 	{
 		DBT_PROFILE_SCOPE("Editor update");
-
-		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms();
+		
+		glm::mat4 transform = camera.GetView();
+		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms({ transform[0][3], transform[1][3], transform[2][3] });
 		std::vector<LightComponent*> lights;
+		// Directional light
 		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
 		for (auto entity : lightGroup)
 		{
 			auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
+			lights.push_back(&light);
+		}
+		// Point lights
+		auto pointLights = m_Registry.view<TransformComponent, PointLightComponent>();
+		for (auto entity : pointLights)
+		{
+			auto& [transform, light] = pointLights.get<TransformComponent, PointLightComponent>(entity);
 			lights.push_back(&light);
 		}
 
@@ -227,13 +236,20 @@ namespace Debut
 			{
 				DBT_PROFILE_SCOPE("Renderer3D update");
 				// Get lights
+				glm::mat4 cameraView = mainCamera->GetView();
 				std::vector<LightComponent*> lights;
-				std::vector<ShaderUniform> globals = GetGlobalUniforms();
+				std::vector<ShaderUniform> globals = GetGlobalUniforms({ cameraView[0][3], cameraView[1][3], cameraView[2][3]});
 
 				auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
 				for (auto entity : lightGroup)
 				{
 					auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
+					lights.push_back(&light);
+				}
+				auto pointLights = m_Registry.view<TransformComponent, PointLightComponent>();
+				for (auto entity : pointLights)
+				{
+					auto& [transform, light] = pointLights.get<TransformComponent, PointLightComponent>(entity);
 					lights.push_back(&light);
 				}
 				Renderer3D::BeginScene(*mainCamera, m_Skybox, cameraTransform, lights, globals);
@@ -470,10 +486,14 @@ namespace Debut
 		return newScene;
 	}
 
-	std::vector<ShaderUniform> Scene::GetGlobalUniforms()
+	std::vector<ShaderUniform> Scene::GetGlobalUniforms(glm::vec3 cameraPos)
 	{
 		std::vector<ShaderUniform> ret;
 		ShaderUniform::UniformData data;
+
+		// Vectors and transforms
+		data.Vec3 = cameraPos;
+		ret.push_back(ShaderUniform("u_CameraPosition", ShaderDataType::Float3, data));
 
 		// Ambient light
 		data.Vec3 = m_AmbientLight;
