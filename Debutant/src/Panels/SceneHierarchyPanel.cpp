@@ -610,7 +610,7 @@ namespace Debut
 			{
 				ImGuiUtils::Color3("Color", { &component.Color.x, &component.Color.y, &component.Color.z });
 				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.02f, 0.0f);
-				ImGuiUtils::DragFloat("Attenuation", &component.Attenuation, 0.02f, 0.0f);
+				ImGuiUtils::DragFloat("Attenuation", &component.Attenuation, 0.001f, 0.0f);
 
 				component.Position = entity.Transform().Translation;
 			});

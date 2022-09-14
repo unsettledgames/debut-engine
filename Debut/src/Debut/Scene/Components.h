@@ -22,6 +22,7 @@
 	- Add a struct in this file, containing the necessary data
 	- Add the entry in the AddComponent menu
 		- Implement OnComponentAdded<ComponentType>
+		- Implement CopyComponent in Scene.cpp for that component
 	- Implement component rendering in the Inspector
 	- Add (de)serialization in SceneSerializer
 		- Implement DeserializeComponent and SerializeComponent for that component
