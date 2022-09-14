@@ -355,77 +355,92 @@ namespace Debut
 		}
 		delete[] shaders;
 
+		std::vector<std::string> defaultUniforms = Material::GetDefaultUniforms();
+
 		if (ImGui::TreeNodeEx("mat_shader_props", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap
 			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding, "Properties"))
 		{
 			// Draw Material properties
 			for (auto uniform : config.Uniforms)
 			{
-				switch (uniform.second.Type)
+				bool draw = true;
+				for (auto& defaultUniform : defaultUniforms)
 				{
-				case ShaderDataType::Float:
+					if (uniform.second.Name.find(defaultUniform) != std::string::npos)
+					{
+						draw = false;
+						break;
+					}
+				}
+				
+				if (draw)
 				{
-					float value = uniform.second.Data.Float;
-					if (ImGuiUtils::DragFloat(uniform.second.Name, &value, 0.15f))
-						config.Uniforms[uniform.second.Name].Data.Float = value;
-					break;
+					switch (uniform.second.Type)
+					{
+					case ShaderDataType::Float:
+					{
+						float value = uniform.second.Data.Float;
+						if (ImGuiUtils::DragFloat(uniform.second.Name, &value, 0.15f))
+							config.Uniforms[uniform.second.Name].Data.Float = value;
+						break;
+					}
+					case ShaderDataType::Float2:
+					{
+						float a = uniform.second.Data.Vec2.x, b = uniform.second.Data.Vec2.y;
+						ImGuiUtils::RGBVec2(uniform.second.Name.c_str(), { "A","B" }, { &a, &b });
+						config.Uniforms[uniform.second.Name].Data.Vec2 = { a, b };
+
+						break;
+					}
+					case ShaderDataType::Float3:
+					{
+						float a = uniform.second.Data.Vec3.x, b = uniform.second.Data.Vec3.y, c = uniform.second.Data.Vec3.z;
+						ImGuiUtils::RGBVec3(uniform.second.Name.c_str(), { "A","B","C" }, { &a, &b, &c });
+						config.Uniforms[uniform.second.Name].Data.Vec3 = { a, b, c };
+
+						break;
+					}
+					case ShaderDataType::Float4:
+					{
+						float a = uniform.second.Data.Vec3.x, b = uniform.second.Data.Vec3.y, c = uniform.second.Data.Vec3.z, d = uniform.second.Data.Vec4.w;
+						ImGuiUtils::RGBVec4(uniform.second.Name.c_str(), { "A","B","C","D" }, { &a, &b, &c, &d });
+						config.Uniforms[uniform.second.Name].Data.Vec4 = { a, b, c, d };
+
+						break;
+					}
+					case ShaderDataType::Sampler2D:
+					{
+						ImGuiUtils::StartColumns(2, { 80, (uint32_t)ImGui::GetContentRegionAvail().x - 80 });
+						// Load the texture: if it doesn't exist, just use a white default texture
+						uint32_t rendererID;
+						Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
+						if (currTexture == nullptr)
+							rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
+						else
+							rendererID = currTexture->GetRendererID();
+
+						// Texture preview button
+						Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 64, 64 });
+						if (newTexture != nullptr)
+							config.Uniforms[uniform.second.Name].Data.Texture = newTexture->GetID();
+
+						ImGui::NextColumn();
+
+						// Texture title
+						ImGui::Text(("Texture " + uniform.second.Name).c_str());
+
+						ImGuiUtils::ResetColumns();
+
+						// TODO: Size and offset?
+						break;
+					}
+
+					default:
+						break;
+					}
+
+					ImGuiUtils::VerticalSpace(5);
 				}
-				case ShaderDataType::Float2:
-				{
-					float a = uniform.second.Data.Vec2.x, b = uniform.second.Data.Vec2.y;
-					ImGuiUtils::RGBVec2(uniform.second.Name.c_str(), { "A","B" }, { &a, &b });
-					config.Uniforms[uniform.second.Name].Data.Vec2 = { a, b };
-
-					break;
-				}
-				case ShaderDataType::Float3:
-				{
-					float a = uniform.second.Data.Vec3.x, b = uniform.second.Data.Vec3.y, c = uniform.second.Data.Vec3.z;
-					ImGuiUtils::RGBVec3(uniform.second.Name.c_str(), { "A","B","C" }, { &a, &b, &c });
-					config.Uniforms[uniform.second.Name].Data.Vec3 = { a, b, c };
-
-					break;
-				}
-				case ShaderDataType::Float4:
-				{
-					float a = uniform.second.Data.Vec3.x, b = uniform.second.Data.Vec3.y, c = uniform.second.Data.Vec3.z, d = uniform.second.Data.Vec4.w;
-					ImGuiUtils::RGBVec4(uniform.second.Name.c_str(), { "A","B","C","D" }, { &a, &b, &c, &d });
-					config.Uniforms[uniform.second.Name].Data.Vec4 = { a, b, c, d };
-
-					break;
-				}
-				case ShaderDataType::Sampler2D:
-				{
-					ImGuiUtils::StartColumns(2, { 80, (uint32_t)ImGui::GetContentRegionAvail().x - 80 });
-					// Load the texture: if it doesn't exist, just use a white default texture
-					uint32_t rendererID;
-					Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
-					if (currTexture == nullptr)
-						rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
-					else
-						rendererID = currTexture->GetRendererID();
-
-					// Texture preview button
-					Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 64, 64 });
-					if (newTexture != nullptr)
-						config.Uniforms[uniform.second.Name].Data.Texture = newTexture->GetID();
-
-					ImGui::NextColumn();
-
-					// Texture title
-					ImGui::Text(("Texture " + uniform.second.Name).c_str());
-
-					ImGuiUtils::ResetColumns();
-
-					// TODO: Size and offset?
-					break;
-				}
-
-				default:
-					break;
-				}
-
-				ImGuiUtils::VerticalSpace(10);
 			}
 
 			ImGui::TreePop();

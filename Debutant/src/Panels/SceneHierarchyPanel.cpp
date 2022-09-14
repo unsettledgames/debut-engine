@@ -602,13 +602,13 @@ namespace Debut
 		DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component)
 			{
 				ImGuiUtils::RGBVec3("Direction", { "X", "Y", "Z"}, {&component.Direction.x, &component.Direction.y, &component.Direction.z});
-				ImGuiUtils::Color3("Color", glm::value_ptr(component.Color));
+				ImGuiUtils::Color3("Color", { &component.Color.r,&component.Color.g,&component.Color.b });
 				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.1f);
 			});
 
 		DrawComponent<PointLightComponent>("Point Light", entity, [&](auto& component)
 			{
-				ImGuiUtils::RGBVec3("Color", { "R", "G", "B" }, { &component.Color.x, &component.Color.y, &component.Color.z });
+				ImGuiUtils::Color3("Color", { &component.Color.x, &component.Color.y, &component.Color.z });
 				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.02f, 0.0f);
 				ImGuiUtils::DragFloat("Attenuation", &component.Attenuation, 0.02f, 0.0f);
 

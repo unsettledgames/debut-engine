@@ -44,6 +44,9 @@ namespace Debut
 		std::unordered_map<UUID, RenderBatch3D*> Batches;
 
 		glm::mat4 CameraTransform;
+		glm::mat4 CameraView;
+		glm::mat4 CameraProjection;
+
 		std::vector<LightComponent*> Lights;
 		std::vector<ShaderUniform> GlobalUniforms;
 	};

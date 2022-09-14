@@ -48,7 +48,10 @@ namespace Debut
 	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& cameraTransform, std::vector<LightComponent*>& lights,
 		std::vector<ShaderUniform>& globalUniforms)
 	{
-		s_Data.CameraTransform = camera.GetProjection() * glm::inverse(cameraTransform);
+		s_Data.CameraView = glm::inverse(cameraTransform);
+		s_Data.CameraProjection = camera.GetProjection();
+		s_Data.CameraTransform = s_Data.CameraProjection * s_Data.CameraView;
+		
 		s_Data.Lights = lights;
 		s_Data.GlobalUniforms = globalUniforms;
 
@@ -64,7 +67,8 @@ namespace Debut
 					* glm::inverse(glm::mat4(glm::mat3(cameraTransform)));
 			
 			skybox->Bind();
-			skyboxMaterial->Use(skyboxTransform);
+			skyboxMaterial->SetMat4("u_ViewProjection", skyboxTransform);
+			skyboxMaterial->Use();
 
 			std::vector<float>& positions = skybox->GetMesh().GetPositions();
 			std::vector<int>& indices = skybox->GetMesh().GetIndices();
@@ -186,7 +190,10 @@ namespace Debut
 				SendLights(material);
 				SendGlobals(material);
 				material.SetMat4("u_Transform", transform * mesh.GetTransform());
-				material.Use(s_Data.CameraTransform);
+				material.SetMat4("u_ViewMatrix", s_Data.CameraView);
+				material.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
+				material.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+				material.Use();
 			}
 
 			{
@@ -207,7 +214,10 @@ namespace Debut
 
 		for (auto& batch : s_Data.Batches)
 		{
-			batch.second->Material->Use(s_Data.CameraTransform);
+			batch.second->Material->SetMat4("u_ViewMatrix", s_Data.CameraView);
+			batch.second->Material->SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
+			batch.second->Material->SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+			batch.second->Material->Use();
 
 			// Setup buffers
 			for (auto& buffer : batch.second->Buffers)

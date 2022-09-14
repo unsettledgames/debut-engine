@@ -130,6 +130,8 @@ namespace Debut
 		for (auto entity : pointLights)
 		{
 			auto& [transform, light] = pointLights.get<TransformComponent, PointLightComponent>(entity);
+			// Update light position
+			light.Position = transform.Translation;
 			lights.push_back(&light);
 		}
 

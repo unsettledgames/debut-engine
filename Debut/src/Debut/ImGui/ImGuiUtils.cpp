@@ -66,7 +66,7 @@ namespace Debut
 		return ret;
 	}
 
-	bool ImGuiUtils::Color3(const std::string& label, float values[3])
+	bool ImGuiUtils::Color3(const std::string& label, std::vector<float*> values)
 	{
 		bool ret = false;
 		std::string pickerString = label + "-picker";
@@ -78,7 +78,7 @@ namespace Debut
 
 		ImGuiUtils::ResetColumns();
 		ImGuiUtils::StartColumns(2, { 150, 200 });
-		ImColor color = { values[0], values[1], values[2] };
+		ImColor color = { *values[0], *values[1], *values[2] };
 
 		ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0,0 });
@@ -92,7 +92,9 @@ namespace Debut
 			ImGui::OpenPopup(pickerLabel);
 		if (ImGui::BeginPopup(pickerLabel))
 		{
-			ret = ImGui::ColorPicker3("##picker", values, ImGuiColorEditFlags_None);
+			float vec[3] = { *values[0],*values[1],*values[2] };
+			ret = ImGui::ColorPicker3("##picker", vec, ImGuiColorEditFlags_None);
+			*values[0] = vec[0]; *values[1] = vec[1]; *values[2] = vec[2];
 			ImGui::EndPopup();
 		}
 
@@ -106,7 +108,7 @@ namespace Debut
 		return ret;
 	}
 
-	bool ImGuiUtils::Color4(const std::string& label, float values[4])
+	bool ImGuiUtils::Color4(const std::string& label, std::vector<float*> values)
 	{
 		bool ret = false;
 
@@ -121,7 +123,9 @@ namespace Debut
 		ImGui::PopItemWidth();
 		ImGui::NextColumn();
 
-		ret = ImGui::ColorEdit4(label.c_str(), values, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+		float vec[4] = { *values[0],*values[1],*values[2],*values[3] };
+		ret = ImGui::ColorEdit4(label.c_str(), vec, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+		*values[0] = vec[0]; *values[1] = vec[1]; *values[2] = vec[2]; *values[3] = vec[3];
 		ImGui::NextColumn();
 
 		ImGui::PopItemWidth();

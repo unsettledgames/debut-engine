@@ -256,7 +256,7 @@ namespace Debut
 
 		dl.Color = in["Color"].as<glm::vec3>();
 		dl.Intensity = in["Intensity"].as<float>();
-		dl.Intensity = in["Attenuation"].as<float>();
+		dl.Attenuation = in["Attenuation"].as<float>();
 	}
 
 	void SceneSerializer::SerializeEntity(EntitySceneNode& node, YAML::Emitter& out)

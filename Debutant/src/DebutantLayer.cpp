@@ -243,7 +243,7 @@ namespace Debut
 
                 // Ambient light
                 glm::vec3 ambientLight = m_ActiveScene->GetAmbientLight();
-                ImGuiUtils::Color3("Ambient light", glm::value_ptr(ambientLight));
+                ImGuiUtils::Color3("Ambient light", { &ambientLight.r, &ambientLight.g, &ambientLight.b });
                 m_ActiveScene->SetAmbientLight(ambientLight);
                 // Ambient light intensity
                 float ambientIntensity = m_ActiveScene->GetAmbientLightIntensity();

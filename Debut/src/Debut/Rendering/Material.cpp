@@ -23,6 +23,9 @@
 namespace Debut
 {
 	UUID Material::s_PrevShader;
+	std::vector<std::string> Material::s_DefaultUniforms = {
+		"u_ViewProjection", "u_ViewMatrix", "u_ProjectionMatrix", "u_PointLights"
+	};
 
 	Material::Material(const std::string& path, const std::string& metaPath) : m_Path(path), m_MetaPath(metaPath)
 	{
@@ -222,14 +225,13 @@ namespace Debut
 
 	}
 
-	void Material::Use(const glm::mat4& cameraTransform)
+	void Material::Use()
 	{
 		// OPTIMIZABLE: Cache this?
 		Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
 		if (shader->GetID() != s_PrevShader)
 			shader->Bind();
 		uint32_t currSlot = 0;
-		SetMat4("u_ViewProjection", cameraTransform);
 		
 		for (auto& uniform : m_Uniforms)
 		{
