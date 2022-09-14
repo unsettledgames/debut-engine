@@ -285,8 +285,8 @@ namespace Debut
 
 			data.Float = pointLights[i].Intensity;
 			material.m_Uniforms[lightName.str() + ".Intensity"] = { ShaderUniform(lightName.str() + ".Intensity", ShaderDataType::Float, data) };
-			data.Float = pointLights[i].Attenuation;
-			material.m_Uniforms[lightName.str() + ".Attenuation"] = { ShaderUniform(lightName.str() + ".Attenuation", ShaderDataType::Float, data) };
+			data.Float = pointLights[i].Radius;
+			material.m_Uniforms[lightName.str() + ".Radius"] = { ShaderUniform(lightName.str() + ".Radius", ShaderDataType::Float, data) };
 		}
 	}
 

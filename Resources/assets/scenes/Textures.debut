@@ -1,4 +1,7 @@
 Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
 Entities:
   - "Entity: ": 12005445627570926876
     HierarchyOrder: 0
@@ -31,10 +34,10 @@ Entities:
           Instanced: false
         Children:
           []
-  - "Entity: ": 1340665136309673492
+  - "Entity: ": 5726226557709946165
     HierarchyOrder: 1
     IDComponent:
-      ID: 1340665136309673492
+      ID: 5726226557709946165
     TagComponent:
       Name: TexturedCrypt.model
       Tag: Untagged
@@ -44,10 +47,10 @@ Entities:
       Scale: [1, 1, 1]
       Parent: 0
     Children:
-      - "Entity: ": 3526699018267927033
+      - "Entity: ": 14985707488952926318
         HierarchyOrder: 0
         IDComponent:
-          ID: 3526699018267927033
+          ID: 14985707488952926318
         TagComponent:
           Name: TexturedCrypt.
           Tag: Untagged
@@ -55,12 +58,12 @@ Entities:
           Translation: [0, 0, 0]
           Rotation: [0, 0, 0]
           Scale: [1, 1, 1]
-          Parent: 1340665136309673492
+          Parent: 5726226557709946165
         Children:
-          - "Entity: ": 740448317301460560
+          - "Entity: ": 9474992311843597460
             HierarchyOrder: 0
             IDComponent:
-              ID: 740448317301460560
+              ID: 9474992311843597460
             TagComponent:
               Name: TexturedCrypt. i
               Tag: Untagged
@@ -68,17 +71,17 @@ Entities:
               Translation: [0, 0, 0]
               Rotation: [0, 0, 0]
               Scale: [1, 1, 1]
-              Parent: 3526699018267927033
+              Parent: 14985707488952926318
             MeshRendererComponent:
-              Mesh: 7811621963757909708
-              Material: 1944079880989969420
+              Mesh: 5254943363781197530
+              Material: 6154583896295416476
               Instanced: false
             Children:
               []
-          - "Entity: ": 15737571429234316727
+          - "Entity: ": 2118787521465396720
             HierarchyOrder: 1
             IDComponent:
-              ID: 15737571429234316727
+              ID: 2118787521465396720
             TagComponent:
               Name: TexturedCrypt. i
               Tag: Untagged
@@ -86,17 +89,17 @@ Entities:
               Translation: [0, 0, 0]
               Rotation: [0, 0, 0]
               Scale: [1, 1, 1]
-              Parent: 3526699018267927033
+              Parent: 14985707488952926318
             MeshRendererComponent:
-              Mesh: 12064185613463546268
-              Material: 16822884921576582853
+              Mesh: 9514351186501337453
+              Material: 18310130298589720837
               Instanced: false
             Children:
               []
-          - "Entity: ": 18039442601035197057
+          - "Entity: ": 4772645766765156466
             HierarchyOrder: 2
             IDComponent:
-              ID: 18039442601035197057
+              ID: 4772645766765156466
             TagComponent:
               Name: TexturedCrypt. i
               Tag: Untagged
@@ -104,17 +107,17 @@ Entities:
               Translation: [0, 0, 0]
               Rotation: [0, 0, 0]
               Scale: [1, 1, 1]
-              Parent: 3526699018267927033
+              Parent: 14985707488952926318
             MeshRendererComponent:
-              Mesh: 5080365044278813261
-              Material: 3071070225552337879
+              Mesh: 10963705380392894176
+              Material: 9018545847508596985
               Instanced: false
             Children:
               []
-          - "Entity: ": 17254746800221617536
+          - "Entity: ": 9148746139296574954
             HierarchyOrder: 3
             IDComponent:
-              ID: 17254746800221617536
+              ID: 9148746139296574954
             TagComponent:
               Name: TexturedCrypt. i
               Tag: Untagged
@@ -122,10 +125,10 @@ Entities:
               Translation: [0, 0, 0]
               Rotation: [0, 0, 0]
               Scale: [1, 1, 1]
-              Parent: 3526699018267927033
+              Parent: 14985707488952926318
             MeshRendererComponent:
-              Mesh: 2108757492586025227
-              Material: 10729387411835148267
+              Mesh: 17314757891654079855
+              Material: 1613540950041657364
               Instanced: false
             Children:
               []

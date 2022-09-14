@@ -177,7 +177,7 @@ namespace Debut
 		glm::vec3 Position = glm::vec3(0.0f);
 
 		float Intensity = 1.0f;
-		float Attenuation = 1.0f;
+		float Radius = 5.0f;
 
 		PointLightComponent() { Type = LightType::Point; }
 		PointLightComponent(const PointLightComponent&) = default;

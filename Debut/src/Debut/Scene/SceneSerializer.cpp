@@ -128,7 +128,7 @@ namespace Debut
 	{
 		out << YAML::Key << "Color" << YAML::Value << c.Color;
 		out << YAML::Key << "Intensity" << YAML::Value << c.Intensity;
-		out << YAML::Key << "Attenuation" << YAML::Value << c.Attenuation;
+		out << YAML::Key << "Radius" << YAML::Value << c.Radius;
 	}
 
 	template <typename T>
@@ -256,7 +256,7 @@ namespace Debut
 
 		dl.Color = in["Color"].as<glm::vec3>();
 		dl.Intensity = in["Intensity"].as<float>();
-		dl.Attenuation = in["Attenuation"].as<float>();
+		dl.Radius = in["Radius"].as<float>();
 	}
 
 	void SceneSerializer::SerializeEntity(EntitySceneNode& node, YAML::Emitter& out)

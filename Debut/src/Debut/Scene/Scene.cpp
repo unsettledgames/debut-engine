@@ -389,6 +389,9 @@ namespace Debut
 		CopyComponentIfExists<CircleCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CameraComponent>(duplicate, entity);
 		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
+		CopyComponentIfExists<MeshRendererComponent>(duplicate, entity);
+		CopyComponentIfExists<DirectionalLightComponent>(duplicate, entity);
+		CopyComponentIfExists<PointLightComponent>(duplicate, entity);
 		
 		duplicate.Transform().Parent = duplicate.Transform().Parent;
 	}
@@ -473,6 +476,9 @@ namespace Debut
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<MeshRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<DirectionalLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<PointLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		// Restore transforms
 		auto transformView = dstSceneRegistry.view<TransformComponent>();

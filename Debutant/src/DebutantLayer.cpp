@@ -79,6 +79,7 @@ namespace Debut
 
     void DebutantLayer::OnUpdate(Timestep& ts)
     {
+        DBT_PROFILE_FUNCTION();
         //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
         if (m_ViewportFocused)

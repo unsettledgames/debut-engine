@@ -1,0 +1,175 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+Entities:
+  - "Entity: ": 5327833333171252586
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 5327833333171252586
+    TagComponent:
+      Name: 12.obj.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 5249330269305865181
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 5249330269305865181
+        TagComponent:
+          Name: 12.obj.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 5327833333171252586
+        Children:
+          - "Entity: ": 7901616429344634082
+            HierarchyOrder: 0
+            IDComponent:
+              ID: 7901616429344634082
+            TagComponent:
+              Name: 12.obj. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 5249330269305865181
+            MeshRendererComponent:
+              Mesh: 17318409602889519711
+              Material: 5982566636387253859
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 449967825992957750
+            HierarchyOrder: 1
+            IDComponent:
+              ID: 449967825992957750
+            TagComponent:
+              Name: 12.obj. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 5249330269305865181
+            MeshRendererComponent:
+              Mesh: 8434523327281896512
+              Material: 4258262007857519361
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 10383502840637569315
+            HierarchyOrder: 2
+            IDComponent:
+              ID: 10383502840637569315
+            TagComponent:
+              Name: 12.obj. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 5249330269305865181
+            MeshRendererComponent:
+              Mesh: 12584511903700701300
+              Material: 5536688442258380492
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 16012706173991078975
+            HierarchyOrder: 3
+            IDComponent:
+              ID: 16012706173991078975
+            TagComponent:
+              Name: 12.obj. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 5249330269305865181
+            MeshRendererComponent:
+              Mesh: 15905078527726551994
+              Material: 5777505432473138583
+              Instanced: false
+            Children:
+              []
+  - "Entity: ": 733540297428374690
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 733540297428374690
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [-1.63330293, 9.30017471, -14.937067]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [0.587591231, 0.792290568, 1]
+      Intensity: 3.61999989
+      Attenuation: 0.163000003
+    Children:
+      []
+  - "Entity: ": 6989053011140991455
+    HierarchyOrder: 2
+    IDComponent:
+      ID: 6989053011140991455
+    TagComponent:
+      Name: New Entity Copy
+      Tag: Untagged
+    TransformComponent:
+      Translation: [1.7441628, 9.71967125, 23.5582962]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [0.375566155, 0.386861324, 0]
+      Intensity: 6.57999992
+      Attenuation: 0.0890000015
+    Children:
+      []
+  - "Entity: ": 6205705194433848574
+    HierarchyOrder: 3
+    IDComponent:
+      ID: 6205705194433848574
+    TagComponent:
+      Name: New Entity Copy Copy
+      Tag: Untagged
+    TransformComponent:
+      Translation: [1.3848927, 9.99020481, 20.8816166]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [1, 0, 0]
+      Intensity: 1
+      Attenuation: 0.0549999997
+    Children:
+      []
+  - "Entity: ": 17778803927052734478
+    HierarchyOrder: 4
+    IDComponent:
+      ID: 17778803927052734478
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [1.24954593, 10.3515625, 7.05374098]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [0, 0.649635315, 1]
+      Intensity: 0.50999999
+      Attenuation: 0.0560000017
+    Children:
+      []

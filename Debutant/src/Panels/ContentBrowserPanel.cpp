@@ -217,6 +217,10 @@ namespace Debut
 
 	void ContentBrowserPanel::DrawModelHierarchy(const Ref<Model>& model)
 	{
+		static std::unordered_map<UUID, MaterialMetadata> materialDataCache;
+		static std::unordered_map<UUID, MeshMetadata> meshDataCache;
+
+		DBT_PROFILE_FUNCTION();
 		if (model == nullptr)
 			return;
 
@@ -259,15 +263,25 @@ namespace Debut
 			// Meshes
 			for (Debut::UUID mesh : model->GetMeshes())
 			{
-				auto meshData = Mesh::GetMetadata(mesh);
+				// Get metadata
+				MeshMetadata meshData;
+				if (meshDataCache.find(mesh) != meshDataCache.end())
+					meshData = meshDataCache[mesh];
+				else
+				{
+					meshData = Mesh::GetMetadata(mesh);
+					meshDataCache[mesh] = meshData;
+				}
+
+				// Format name
 				std::stringstream ss;
 				ss << mesh;
 				std::stringstream meshIDStr;
 				meshIDStr << meshData.Name << ".mesh##" << mesh;
 
+				// Render treenode
 				ImGuiTreeNodeFlags meshFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding
 					| ImGuiTreeNodeFlags_Leaf;
-
 				if (meshIDStr.str() == m_SelectedAsset)
 					meshFlags |= ImGuiTreeNodeFlags_Selected;
 
@@ -287,14 +301,27 @@ namespace Debut
 			// Materials
 			for (Debut::UUID material : model->GetMaterials())
 			{
-				auto materialData = Material::GetMetadata(material);
+				DBT_PROFILE_SCOPE("ContentBrowser::RenderMaterial");
+
+				// Get metadata
+				MaterialMetadata materialData;
+				if (materialDataCache.find(material) != materialDataCache.end())
+					materialData = materialDataCache[material];
+				else
+				{
+					materialData = Material::GetMetadata(material);
+					materialDataCache[material] = materialData;
+				}
+
+				// Setup name
 				std::stringstream ss;
 				ss << material;
 				std::stringstream matIDStr;
 				matIDStr << materialData.Name << ".mat##" << material;
+
+				// Render treenode
 				ImGuiTreeNodeFlags matFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding
 					| ImGuiTreeNodeFlags_Leaf;
-
 				if (matIDStr.str() == m_SelectedAsset)
 					matFlags |= ImGuiTreeNodeFlags_Selected;
 

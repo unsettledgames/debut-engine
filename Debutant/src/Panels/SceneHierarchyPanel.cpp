@@ -588,7 +588,7 @@ namespace Debut
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)
 			{
 				ImGuiUtils::RGBVec2("Offset", { "X", "Y" }, { &component.Offset.x, &component.Offset.y });
-				ImGuiUtils::DragFloat("Radius", &component.Radius, 0.1f);
+				ImGuiUtils::DragFloat("Radius", &component.Radius, 1.0f);
 
 				ImGui::Dummy({ 0.0f, 10.0f });
 				ImGui::Separator();
@@ -610,7 +610,7 @@ namespace Debut
 			{
 				ImGuiUtils::Color3("Color", { &component.Color.x, &component.Color.y, &component.Color.z });
 				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.02f, 0.0f);
-				ImGuiUtils::DragFloat("Attenuation", &component.Attenuation, 0.001f, 0.0f);
+				ImGuiUtils::DragFloat("Radius", &component.Radius, 0.001f, 0.0f);
 
 				component.Position = entity.Transform().Translation;
 			});
