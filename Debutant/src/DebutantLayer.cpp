@@ -22,8 +22,13 @@
 
 /*
     TODO:
-    - Model texturing
-        - Transparency issues
+    - Specular lighting
+    - Normal maps
+    - Specular maps
+    - Roughness maps?
+    - Occlusion maps?
+    - Parallax mapping
+    - Displacement maps?
 
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking

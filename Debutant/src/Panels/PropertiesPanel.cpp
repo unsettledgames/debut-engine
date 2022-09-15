@@ -363,6 +363,10 @@ namespace Debut
 			// Draw Material properties
 			for (auto uniform : config.Uniforms)
 			{
+				if (uniform.second.Name.compare("u_SpecularStrength") == 0)
+					Log.CoreInfo("sas");
+				if (uniform.second.Name.compare("u_SpecularShininess") == 0)
+					Log.CoreInfo("sas");
 				bool draw = true;
 				for (auto& defaultUniform : defaultUniforms)
 				{

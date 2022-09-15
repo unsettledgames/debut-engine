@@ -62,6 +62,9 @@ uniform float u_AmbientLightIntensity;
 uniform vec3 u_AmbientLightColor;
 uniform PointLight u_PointLights[N_MAX_LIGHTS];
 
+uniform float u_SpecularShininess;
+uniform float u_SpecularStrength;
+
 uniform sampler2D u_DiffuseTexture;
 uniform sampler2D u_NormalMap;
 uniform sampler2D u_RoughnessMap;
@@ -80,10 +83,6 @@ vec3 DirectionalPhong(vec3 normal, vec3 lightDir)
 
 vec3 PointPhong(vec3 normal, PointLight light, vec3 viewDir, vec3 lightDir)
 {
-	// Diffuse component
-    float diff = max(dot(normal, normalize(lightDir)), 0.0);
-    vec3 diffuse = diff * light.Color;
-	
 	// Attenuation
 	float distance = length(lightDir);
 	float attenuation = 1.0 / (1 + distance * (2 / light.Radius) + (1.0 / pow(light.Radius,2)) * pow(distance, 2));
@@ -91,7 +90,14 @@ vec3 PointPhong(vec3 normal, PointLight light, vec3 viewDir, vec3 lightDir)
 	// Intensity
 	float intensity = light.Intensity / pow((distance / light.Radius + 1), 2);
 	
-    return diffuse * attenuation * light.Intensity;
+	// Diffuse component
+    float diff = max(dot(normal, normalize(lightDir)), 0.0);
+	
+	// Specular component
+	vec3 reflectDir = reflect(-normalize(lightDir), normal);
+	float spec = pow(max(dot(normalize(viewDir), reflectDir), 0.0), u_SpecularShininess) * u_SpecularStrength;
+	
+    return (diff + spec) * light.Intensity * light.Color * attenuation ;
 }
 
 void main()
