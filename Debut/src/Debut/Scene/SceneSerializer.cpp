@@ -117,6 +117,20 @@ namespace Debut
 		out << YAML::Key << "Material" << YAML::Value << c.Material;
 	}
 
+	static void SerializeComponent(const DirectionalLightComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Direction" << YAML::Value << c.Direction;
+		out << YAML::Key << "Color" << YAML::Value << c.Color;
+		out << YAML::Key << "Intensity" << YAML::Value << c.Intensity;
+	}
+
+	static void SerializeComponent(const PointLightComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Color" << YAML::Value << c.Color;
+		out << YAML::Key << "Intensity" << YAML::Value << c.Intensity;
+		out << YAML::Key << "Radius" << YAML::Value << c.Radius;
+	}
+
 	template <typename T>
 	static void DeserializeComponent(Entity e, YAML::Node& in, Ref<Scene> scene = nullptr)
 	{
@@ -221,6 +235,30 @@ namespace Debut
 		bc2d.Material = in["Material"].as<uint64_t>();
 	}
 
+	template<>
+	static void DeserializeComponent<DirectionalLightComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		DirectionalLightComponent& dl = e.AddComponent<DirectionalLightComponent>();
+
+		dl.Direction = in["Direction"].as<glm::vec3>();
+		dl.Color = in["Color"].as<glm::vec3>();
+		dl.Intensity = in["Intensity"].as<float>();
+	}
+
+	template<>
+	static void DeserializeComponent<PointLightComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		PointLightComponent& dl = e.AddComponent<PointLightComponent>();
+
+		dl.Color = in["Color"].as<glm::vec3>();
+		dl.Intensity = in["Intensity"].as<float>();
+		dl.Radius = in["Radius"].as<float>();
+	}
+
 	void SceneSerializer::SerializeEntity(EntitySceneNode& node, YAML::Emitter& out)
 	{
 		Entity entity = node.EntityData;
@@ -236,6 +274,8 @@ namespace Debut
 		SerializeComponent<Rigidbody2DComponent>(entity, "Rigidbody2DComponent", out);
 		SerializeComponent<BoxCollider2DComponent>(entity, "BoxCollider2DComponent", out);
 		SerializeComponent<CircleCollider2DComponent>(entity, "CircleCollider2DComponent", out);
+		SerializeComponent<DirectionalLightComponent>(entity, "DirectionalLightComponent", out);
+		SerializeComponent<PointLightComponent>(entity, "PointLightComponent", out);
 
 		out << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
 		for (uint32_t i = 0; i < node.Children.size(); i++)
@@ -252,6 +292,12 @@ namespace Debut
 		
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled scene";
+		
+		out << YAML::Key << "Lighting" << YAML::Value << YAML::BeginMap;
+		out << YAML::Key << "AmbientLightColor" << YAML::Value << m_Scene->GetAmbientLight();
+		out << YAML::Key << "AmbientLightIntensity" << YAML::Value << m_Scene->GetAmbientLightIntensity();
+		out << YAML::EndMap;
+
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
 		for (uint32_t i = 0; i < sceneGraph.Children.size(); i++)
@@ -268,7 +314,7 @@ namespace Debut
 	EntitySceneNode* SceneSerializer::DeserializeText(const std::string& fileName)
 	{
 		if (!CppUtils::String::endsWith(fileName, ".debut"))
-			return false;
+			return nullptr;
 
 		std::ifstream inFile(fileName);
 		std::stringstream strStream;
@@ -278,17 +324,23 @@ namespace Debut
 		YAML::Node in = YAML::Load(strStream.str());
 
 		if (!in["Scene"])
-			return false;
+			return nullptr;
 
 		auto entities = in["Entities"];
-		EntitySceneNode* ret = new EntitySceneNode();
-		ret->IsRoot = true;
+		EntitySceneNode* sceneTree = new EntitySceneNode();
+		sceneTree->IsRoot = true;
 
 		if (entities)
 			for (auto yamlEntity : entities)
-				ret->Children.push_back(DeserializeEntity(yamlEntity));
+				sceneTree->Children.push_back(DeserializeEntity(yamlEntity));
 
-		return ret;
+		YAML::Node lighting = in["Lighting"];
+		if (lighting["AmbientLightColor"].IsDefined())
+			m_Scene->SetAmbientLight(lighting["AmbientLightColor"].as<glm::vec3>());
+		if (lighting["AmbientLightIntensity"].IsDefined())
+			m_Scene->SetAmbientLightIntensity(lighting["AmbientLightIntensity"].as<float>());
+
+		return sceneTree;
 	}
 
 	EntitySceneNode* SceneSerializer::DeserializeEntity(YAML::Node& yamlEntity)
@@ -309,6 +361,8 @@ namespace Debut
 		DeserializeComponent<BoxCollider2DComponent>(entity, yamlEntity["BoxCollider2DComponent"]);
 		DeserializeComponent<CircleCollider2DComponent>(entity, yamlEntity["CircleCollider2DComponent"]);
 		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
+		DeserializeComponent<DirectionalLightComponent>(entity, yamlEntity["DirectionalLightComponent"]);
+		DeserializeComponent<PointLightComponent>(entity, yamlEntity["PointLightComponent"]);
 
 		auto children = yamlEntity["Children"];
 		for (auto child : children)

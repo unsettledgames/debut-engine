@@ -1,0 +1,759 @@
+Associations:
+  - ID: 5358015539333961059
+    Path: assets\icons\sample_icon.png
+  - ID: 509981780089462213
+    Path: assets\icons\back.png
+  - ID: 11157412299242596915
+    Path: assets\icons\directory.png
+  - ID: 15845720391556833847
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 6989039394482446116
+    Path: assets\icons\search.png
+  - ID: 330883934568764279
+    Path: assets\icons\file.png
+  - ID: 7341766252568961677
+    Path: assets\icons\material.png
+  - ID: 6200042631025989068
+    Path: assets\icons\menu.png
+  - ID: 8172962406618386249
+    Path: assets\models\cone\RootNode.model
+  - ID: 12742834648474320585
+    Path: assets\icons\model.png
+  - ID: 11181189206938698485
+    Path: assets\shaders\skybox.glsl
+  - ID: 8653149696889396285
+    Path: assets\shaders\texture.glsl
+  - ID: 5825200471377077168
+    Path: assets\icons\mesh.png
+  - ID: 2421915490094419824
+    Path: assets\models\pyramid\textures\1.png
+  - ID: 6154583896295416476
+    Path: .\Lib\Assets\6154583896295416476
+  - ID: 15022988404336776979
+    Path: assets\models\rock\textures\Rock_Albedo.tga.png
+  - ID: 2817101069178506648
+    Path: assets\icons\play.png
+  - ID: 9828398193754875208
+    Path: assets\textures\Icons.png
+  - ID: 8983391379497963090
+    Path: assets\textures\Skybox\bottom.png
+  - ID: 11765279437213816736
+    Path: assets\icons\stop.png
+  - ID: 1619658718523619808
+    Path: assets\models\rock\textures\rock_texture_occlusion.png
+  - ID: 5478880988778211712
+    Path: assets\icons\unimported_model.png
+  - ID: 366586767067093058
+    Path: potcrab.fbx.model
+  - ID: 17546517671823756921
+    Path: assets\models\house\source\domik2\bakpho.png
+  - ID: 18364337540135797738
+    Path: assets\textures\penguins.png
+  - ID: 6602497616341718374
+    Path: assets\HqSkybox.skybox
+  - ID: 4858329117054149760
+    Path: assets\materials\NewMaterial-copy-copy-copy.mat
+  - ID: 6225563645503148339
+    Path: assets\textures\Skybox\down.png
+  - ID: 7919529551984038348
+    Path: assets\materials\NewMaterial-copy-copy.mat
+  - ID: 2938159329337987758
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 8062737941872910722
+    Path: assets\models\crypt\textures\1_map_3_castle.png
+  - ID: 16775874381677145436
+    Path: assets\shaders\default-3d.glsl
+  - ID: 8831543769636242346
+    Path: assets\models\steampunk-pistol\textures\steampunk_pistol_Base_Color.jpeg
+  - ID: 8294294578217565759
+    Path: assets\materials\NewMaterial-copy.mat
+  - ID: 10269437512418338655
+    Path: .\Lib\Assets\10269437512418338655
+  - ID: 6992967764417543385
+    Path: assets\models\tree\source\WaterPlane_Tex_OPACITY.png
+  - ID: 3980985276479593213
+    Path: .\Lib\Assets\3980985276479593213
+  - ID: 11265617226424827983
+    Path: assets\models\tree\textures\WaterPlane_Tex_OPACITY.png
+  - ID: 16159296930488248006
+    Path: assets\models\crypt\textures\map_3_terrain.tga
+  - ID: 6983606267478850555
+    Path: assets\models\crypt\textures\1_initialShadingGroup.png
+  - ID: 16161946277406227187
+    Path: assets\textures\Skybox\front.png
+  - ID: 2667175530554083545
+    Path: assets\models\pyramid\source\1.png
+  - ID: 481858647925578241
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 10627846506600207461
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 11587864260767165539
+    Path: assets\models\sands-location\source\sands-location\map_terrain.tga
+  - ID: 1496836227447428244
+    Path: assets\models\crypt\textures\map_2_fire.png
+  - ID: 7306195545097283145
+    Path: assets\NewPhysicsMaterial2D-copy.physmat2d
+  - ID: 4009817718386055433
+    Path: assets\textures\penguins.png
+  - ID: 7848742645266738104
+    Path: assets\textures\Banner2.png
+  - ID: 13580004515384864828
+    Path: assets\textures\Skybox\NewSkybox.skybox
+  - ID: 6620885174084287217
+    Path: .\Lib\Assets\6620885174084287217
+  - ID: 2290441045770949820
+    Path: assets\models\house\source\domik2\HouseDiffuseWithPadding.tga.png
+  - ID: 16408341511911183803
+    Path: assets\models\crypt\textures\1_initialShadingGroup.png
+  - ID: 10063214878580233599
+    Path: assets\models\house\textures\bakpho.png
+  - ID: 12157534753583906862
+    Path: assets\shaders\unlit.glsl
+  - ID: 7587298459034673770
+    Path: assets\textures\penguin.png
+  - ID: 4828538092107330917
+    Path: assets\models\house\textures\HouseDiffuseWithPadding.tga.png
+  - ID: 12960942012691071675
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 5479918735226014170
+    Path: assets\textures\akita.png
+  - ID: 13176089378558113518
+    Path: assets\NewPhysicsMaterial2D-copy-copy.physmat2d
+  - ID: 11731884570579735675
+    Path: assets\models\sands-location\source\sands-location\map_terrain.tga\map_terrain.tga
+  - ID: 11964801237634747550
+    Path: assets\models\rock\textures\New_Graph_normal.tga.png
+  - ID: 6331583443537816612
+    Path: assets\models\tree\source\LeavesOP_OP.png
+  - ID: 7092460958445725147
+    Path: assets\models\tree\textures\LeavesOP_OP.png
+  - ID: 17434486806553253939
+    Path: assets\NewPhysicsMaterial2D-copy-copy-copy.physmat2d
+  - ID: 1613540950041657364
+    Path: .\Lib\Assets\1613540950041657364
+  - ID: 16151118103032596159
+    Path: assets\textures\checkerboard.png
+  - ID: 5421040676474789243
+    Path: assets\NewPhysicsMaterial2D.physmat2d
+  - ID: 13030341039562043998
+    Path: assets\textures\Skybox\penguin.png
+  - ID: 6802134631384993882
+    Path: assets\textures\penguins.png
+  - ID: 14782759418488697461
+    Path: assets\shaders\line.glsl
+  - ID: 2322057360066817412
+    Path: assets\textures\checkerboard.png
+  - ID: 3133057341532145780
+    Path: assets\models\crypt\source\TexturedCrypt.model
+  - ID: 8589927704512064956
+    Path: assets\textures\WholeSketch.png
+  - ID: 1047074544457932094
+    Path: assets\textures\penguin.png
+  - ID: 12755579250371982529
+    Path: assets\NewSkybox.skybox
+  - ID: 13562356483974966658
+    Path: assets\textures\Skybox\front.png
+  - ID: 2248465260613176009
+    Path: assets\models\crypt\textures\1_map_3_terrain1.png
+  - ID: 14946849011822746332
+    Path: assets\textures\Skybox\left.png
+  - ID: 9641445013691029584
+    Path: assets\textures\Skybox\right.png
+  - ID: 9581583335151974542
+    Path: assets\textures\penguins.png
+  - ID: 17448910839167487138
+    Path: assets\models\sands-location\source\sands-location\map_2_fire.TGA
+  - ID: 14555436149183398938
+    Path: assets\textures\Skybox\up.png
+  - ID: 4934736558412219012
+    Path: assets\textures\penguin.png
+  - ID: 8208545082458552778
+    Path: assets\textures\Penguins\penguin2.png
+  - ID: 11819736729571273128
+    Path: assets\textures\Skybox\bottom.png
+  - ID: 5278968887692662132
+    Path: assets\textures\Skybox\down.png
+  - ID: 6963972306599269214
+    Path: assets\textures\Skybox\left.png
+  - ID: 954042991584058393
+    Path: assets\models\crypt\textures\1_map_3_objects1.png
+  - ID: 7217483432193069447
+    Path: assets\textures\Skybox\right.png
+  - ID: 5386395199063075642
+    Path: assets\textures\Skybox\up.png
+  - ID: 8373003301469266890
+    Path: assets\models\cube\untitled.obj.model
+  - ID: 17229889868651551825
+    Path: assets\textures\akita.png
+  - ID: 17263308769706613274
+    Path: assets\textures\penguins.png
+  - ID: 7505567880320595863
+    Path: assets\textures\akita.png
+  - ID: 13056964601202845957
+    Path: assets\textures\Banner2.png
+  - ID: 2234808135164298906
+    Path: assets\textures\penguins.png
+  - ID: 15597075337608564408
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 4315768808964055204
+    Path: assets\textures\akita.png
+  - ID: 14030399132150542550
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 18135787110070487581
+    Path: assets\textures\Icons.png
+  - ID: 15497128086234682238
+    Path: assets\textures\Icons.png
+  - ID: 8473882687246500875
+    Path: assets\textures\Icons.png
+  - ID: 3688679230506998638
+    Path: assets\textures\Icons.png
+  - ID: 5255530326338000047
+    Path: assets\textures\penguin.png
+  - ID: 10527155267705445874
+    Path: assets\textures\akita.png
+  - ID: 1362424475177055249
+    Path: assets\textures\Icons.png
+  - ID: 8180571382487675707
+    Path: assets\textures\checkerboard.png
+  - ID: 10749995492974098991
+    Path: assets\textures\Icons.png
+  - ID: 537206344599464795
+    Path: assets\akita.skybox
+  - ID: 12871066923900627534
+    Path: assets\akita.skybox
+  - ID: 17223410447606070564
+    Path: assets\akita.skybox
+  - ID: 16497627164106645225
+    Path: assets\akita.skybox
+  - ID: 5149539377041923515
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 3675583522431289682
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 13871393827905602219
+    Path: assets\akita.skybox
+  - ID: 3090763563331469130
+    Path: assets\materials\Prova.mat
+  - ID: 1747995656076413226
+    Path: assets\materials\Skybox.mat
+  - ID: 7516133265342531461
+    Path: assets\textures\Skybox hq\Bottom.png
+  - ID: 8333690582045390542
+    Path: assets\textures\Skybox hq\Front.png
+  - ID: 15401656041968384818
+    Path: assets\models\sands-location\source\sands-location\map_island.tga
+  - ID: 6833387253705383495
+    Path: assets\textures\Skybox hq\Left.png
+  - ID: 8024388086190907450
+    Path: assets\textures\Skybox hq\Right.png
+  - ID: 5951189314172612957
+    Path: assets\textures\HqSkybox\front.jpg
+  - ID: 9430746249542370903
+    Path: assets\textures\Skybox hq\Top.png
+  - ID: 4741712884909093759
+    Path: assets\textures\Skybox hq\Down.png
+  - ID: 14111436088010648796
+    Path: assets\textures\HqSkybox\back.jpg
+  - ID: 8832926628906678256
+    Path: assets\textures\HqSkybox\front.jpg
+  - ID: 11078801700310037829
+    Path: .\Lib\Assets\11078801700310037829
+  - ID: 7505474093536566365
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 2433880129176333811
+    Path: assets\textures\HqSkybox\left.jpg
+  - ID: 10763203028662864067
+    Path: assets\textures\HqSkybox\right.jpg
+  - ID: 14760036465950135340
+    Path: assets\textures\HqSkybox\top.jpg
+  - ID: 9038622143519185467
+    Path: assets\textures\HqSkybox\bottom.jpg
+  - ID: 8985297040350523946
+    Path: 12.obj.model
+  - ID: 15581116657773999373
+    Path: assets\models\sands-location\source\sands-location\assets\models\sands-location\source\sands-location\map_terrain.tga
+  - ID: 9030861870079506868
+    Path: assets\models\pot\source\12.obj.model
+  - ID: 16284340623155264214
+    Path: assets\textures\akita.png
+  - ID: 8727717703273611711
+    Path: .\Lib\Assets\8727717703273611711
+  - ID: 8478426945964507138
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 3355953525694686086
+    Path: .\Lib\Assets\3355953525694686086
+  - ID: 11455305468741703044
+    Path: assets\models\pot\source\potcrab.fbx.model
+  - ID: 1425530757998658906
+    Path: .\Lib\Assets\1425530757998658906
+  - ID: 14406967578416466616
+    Path: potcrab.fbx.model
+  - ID: 4086015692948835856
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 13181538801038879880
+    Path: assets\models\rock\source\rock.model
+  - ID: 13078806249491461043
+    Path: .\Lib\Assets\13078806249491461043
+  - ID: 16432542877339333375
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 1849558421588353018
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 6440745637447426980
+    Path: .\Lib\Assets\6440745637447426980
+  - ID: 14031551369592523380
+    Path: assets\models\cylinder\cylinder.obj.model
+  - ID: 18143502886565724911
+    Path: 12.obj.model
+  - ID: 11854322992597412541
+    Path: .\Lib\Assets\11854322992597412541
+  - ID: 2413061005671088622
+    Path: .\Lib\Assets\2413061005671088622
+  - ID: 1
+    Path: white_texture
+  - ID: 4110260900675793813
+    Path: assets\models\cube\untitled.obj.model
+  - ID: 10642574826225111280
+    Path: assets\models\pot\source\potcrab.fbx.model
+  - ID: 10604636423148198942
+    Path: .\Lib\Assets\10604636423148198942
+  - ID: 14709557656244421086
+    Path: assets\models\rock\source\rock.obj.model
+  - ID: 3431924949263660318
+    Path: assets\models\pyramid\source\1.obj.model
+  - ID: 13867917321154358116
+    Path: .\Lib\Assets\13867917321154358116
+  - ID: 6305572206173454821
+    Path: .\Lib\Assets\6305572206173454821
+  - ID: 5466004678159062249
+    Path: rock.model
+  - ID: 10203458192241008006
+    Path: assets\models\rock\source\rock.obj.model
+  - ID: 508308155579382350
+    Path: assets\models\crypt\textures\1_map_3_objects1.png
+  - ID: 2126455392707318283
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 13493598359333310756
+    Path: assets\models\crypt\textures\1_map_3_castle.png
+  - ID: 7976745778681102681
+    Path: assets\models\sands-location\source\sands-location\map_island.tga\map_island.tga
+  - ID: 8393925351512146033
+    Path: assets\models\crypt\textures\1_map_3_terrain1.png
+  - ID: 2413467931280478410
+    Path: assets\models\rock\textures\Rock_Albedo.tga.png
+  - ID: 2766814386403205802
+    Path: assets\models\crypt\textures\1_map_3_objects1.png
+  - ID: 1342789290667764982
+    Path: .\Lib\Assets\1342789290667764982
+  - ID: 13223067902751322441
+    Path: assets\models\crypt\source\assets\models\crypt\source.model
+  - ID: 13825854653081194563
+    Path: assets\models\crypt\source\assets\models\crypt\source.model
+  - ID: 18421858923012561834
+    Path: 12.obj\map_3_terrain.tga
+  - ID: 4276992020406500695
+    Path: assets\models\crypt\source\assets\models\crypt\source.model
+  - ID: 287474549828098060
+    Path: assets\models\crypt\source\map_3_object.tga
+  - ID: 4559901962760650668
+    Path: assets\models\crypt\source\map_3_terrain.tga
+  - ID: 9962929026990545763
+    Path: assets\models\crypt\source\12.obj.model
+  - ID: 13086537763140883852
+    Path: assets\models\crypt\textures\1_map_3_terrain1.png
+  - ID: 755297699824222160
+    Path: assets\models\crypt\textures\1_initialShadingGroup.png
+  - ID: 308514441287316499
+    Path: assets\models\crypt\textures\1_map_3_castle.png
+  - ID: 1540001693546378290
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 51568806588511096
+    Path: assets\models\crypt\textures\1_map_3_objects1.png
+  - ID: 751823955432672452
+    Path: assets\models\rock\textures\Rock_Albedo.tga.png
+  - ID: 18021937715246743953
+    Path: assets\models\crypt\textures\1_map_3_terrain1.png
+  - ID: 13972811256864094723
+    Path: assets\models\crypt\textures\1_initialShadingGroup.png
+  - ID: 2172188542675550929
+    Path: assets\models\crypt\textures\1_map_3_castle.png
+  - ID: 18063848597932233975
+    Path: TexturedCrypt.model
+  - ID: 14412564267496858417
+    Path: assets\models\crypt\textures\1_map_3_objects1.png
+  - ID: 15905360889214108977
+    Path: assets\models\sands-location\source\sands-location\assets\models\sands-location\source\sands-location\map_objects.tga
+  - ID: 10201850823975809900
+    Path: assets\models\sands-location\source\sands-location\assets\models\sands-location\source\sands-location\map_island.tga
+  - ID: 11340640613334995868
+    Path: assets\models\sands-location\source\sands-location\assets\models\sands-location\source\sands-location\map_2_fire.TGA
+  - ID: 16633401511482498124
+    Path: assets\models\crypt\source\initialShadingGroup.tga
+  - ID: 13533665288588787582
+    Path: assets\models\sands-location\source\sands-location\map_objects.tga\map_objects.tga
+  - ID: 13388120765877642902
+    Path: assets\models\sands-location\source\sands-location\map_2_fire.TGA\map_2_fire.TGA
+  - ID: 12338691005014033072
+    Path: assets\models\sands-location\source\sands-location\map_objects.tga
+  - ID: 15690709307722966098
+    Path: assets\models\sands-location\source\sands-location\map_terrain.tga
+  - ID: 2920512642135403899
+    Path: assets\models\sands-location\source\sands-location\map_island.tga
+  - ID: 13998116013644660153
+    Path: assets\models\sands-location\source\sands-location\map_2_fire.TGA
+  - ID: 1813801028392180388
+    Path: assets\models\crypt\textures\1_map_3_terrain1.png
+  - ID: 17992322794258261263
+    Path: assets\models\steampunk-pistol\source\steampunk pistol.fbx.model
+  - ID: 2534852683331114837
+    Path: .\Lib\Assets\2534852683331114837
+  - ID: 2660068793228829303
+    Path: .\Lib\Assets\2660068793228829303
+  - ID: 2263929691760504179
+    Path: assets\models\steampunk-pistol\textures\steampunk_pistol_Base_Color.jpeg
+  - ID: 15240056703387121139
+    Path: assets\models\steampunk-pistol\source\steampunk pistol2.fbx.model
+  - ID: 6600386956465976739
+    Path: assets\models\crypt\textures\1_map_3_castle.png
+  - ID: 3106829892322953229
+    Path: assets\models\crypt\textures\1_map_3_objects1.png
+  - ID: 8960971078065146704
+    Path: assets\models\sands-location\source\sands-location\map_objects.tga
+  - ID: 8610235279974697029
+    Path: assets\models\sands-location\source\sands-location\map_island.tga
+  - ID: 9911171668777384199
+    Path: assets\textures\HqSkybox\back.jpg
+  - ID: 9613133522610725571
+    Path: assets\textures\HqSkybox\left.jpg
+  - ID: 4196432856261294964
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 17816843077709050341
+    Path: assets\textures\HqSkybox\right.jpg
+  - ID: 2083421331964978554
+    Path: assets\textures\HqSkybox\top.jpg
+  - ID: 8129721320370741649
+    Path: assets\textures\HqSkybox\bottom.jpg
+  - ID: 11184256477192238917
+    Path: assets\models\crypt\textures\1_map_3_terrain1.png
+  - ID: 4296593215545975224
+    Path: assets\models\crypt\textures\1_initialShadingGroup.png
+  - ID: 18023037431017681255
+    Path: assets\models\crypt\source\initialShadingGroup.tga
+  - ID: 12165106653362456796
+    Path: assets\models\crypt\textures\1_initialShadingGroup.png
+  - ID: 9561012628197870106
+    Path: assets\models\crypt\textures\1_map_3_castle.png
+  - ID: 14063141230207927227
+    Path: assets\models\crypt\textures\1_map_3_objects1.png
+  - ID: 15494643878785794778
+    Path: assets\models\crypt\textures\1_map_3_terrain1.png
+  - ID: 18283101352945646619
+    Path: assets\models\crypt\textures\1_initialShadingGroup.png
+  - ID: 16995446910649747181
+    Path: assets\models\crypt\textures\1_map_3_castle.png
+  - ID: 12625404942040202839
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 12554713315960677311
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 5122667079930505411
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 8031739445171812921
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 14228663827315929103
+    Path: assets\models\crypt\source\initialShadingGroup.tga
+  - ID: 9783099972173237701
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 5286307114493197490
+    Path: assets\models\steampunk-pistol\textures\steampunk_pistol_Base_Color.jpeg
+  - ID: 7431942966913849314
+    Path: assets\models\crypt\source\initialShadingGroup.tga
+  - ID: 6071438547009599040
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 10962431333827447376
+    Path: assets\models\crypt\source\initialShadingGroup.tga
+  - ID: 12086143877599841330
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 2534971851710200630
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 11067372720266226294
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 259194631554984797
+    Path: assets\models\crypt\textures\map_3_object.tga
+  - ID: 11293621402857016042
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 15180933235038053127
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 17314757891654079855
+    Path: .\Lib\Assets\17314757891654079855
+  - ID: 10963705380392894176
+    Path: .\Lib\Assets\10963705380392894176
+  - ID: 5357588206388185146
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 9018545847508596985
+    Path: .\Lib\Assets\9018545847508596985
+  - ID: 7520678473109147498
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 9514351186501337453
+    Path: .\Lib\Assets\9514351186501337453
+  - ID: 18353504744405760034
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 18310130298589720837
+    Path: .\Lib\Assets\18310130298589720837
+  - ID: 5254943363781197530
+    Path: .\Lib\Assets\5254943363781197530
+  - ID: 7533243245425291304
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 18188679635949781246
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 9113172815792028573
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 7781838477964943296
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 5885446815946424967
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 17877861255960955513
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 18147267910554521621
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 6216936954159291170
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 6282674495892740000
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 15434173211650008318
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 12017017314334943581
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 14492567805674166346
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 13200727616702326811
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 10868523649629460618
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 4215603074846739042
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 13010521832865027613
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 930461170057508231
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 15927870992933195161
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 9324156161278884954
+    Path: assets\models\sands-location\source\sands-location\map_2_fire.TGA
+  - ID: 2416682289891282704
+    Path: assets\models\sands-location\source\sands-location\map_objects.tga
+  - ID: 16855006585371146888
+    Path: assets\models\sands-location\source\sands-location\map_terrain.tga
+  - ID: 3642892159212930029
+    Path: assets\models\sands-location\source\sands-location\sands location.obj.model
+  - ID: 2588625468283765729
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 11693833156430491664
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 4993522094463792482
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 12592327792483119185
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 13936635394321344374
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 9955249043470402883
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 5782517007516531919
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 17175036086231779232
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 2900974077740336962
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 4322540558846119074
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 11087668505068895031
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 9175768478356884226
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 3140200324752624462
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 9192682753207874078
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 8639471445380244010
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 16000075077076137374
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 1389077213120314728
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 16418970667473152681
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 5473858056777530610
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 14558660127249958824
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 14305563925973995451
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 16457017829492464717
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 3774299101985491
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 10170238787139678103
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 6424862962828973931
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 18088575123081312725
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 2175834530596209708
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 70865587286220384
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 16883424877025203424
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 1596986274774940349
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 9382301657346639220
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 10656527782766522272
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 187660130681768257
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 14101800917052565427
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 14398870188543884828
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 8517823749329097538
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 5362399081429794561
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 9787023099490006894
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 10203452858280690580
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 9123314344138913789
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 11648963702940542842
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 17663074581187777616
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 16853161794242842464
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 2408928168285355884
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 17432145445735718562
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 10597798699818057041
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 7404259638715069494
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 17728597839287331413
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 6664769307623936593
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 17551256913702040032
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 5733789209582996312
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 11387599114985253376
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 10814562036274750473
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 11783167958700026567
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 5408311035215258517
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 5424318860299677604
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 9562418873270503638
+    Path: .\Lib\Assets\9562418873270503638
+  - ID: 16492507911881279046
+    Path: assets\models\sands-location\source\sands-location\map_2_fire.TGA
+  - ID: 13254638953758142890
+    Path: .\Lib\Assets\13254638953758142890
+  - ID: 5792914940101487230
+    Path: .\Lib\Assets\5792914940101487230
+  - ID: 9291278493145663849
+    Path: assets\models\sands-location\source\sands-location\map_island.tga
+  - ID: 6660544467496847897
+    Path: .\Lib\Assets\6660544467496847897
+  - ID: 14052015640745949029
+    Path: .\Lib\Assets\14052015640745949029
+  - ID: 6017549440802613789
+    Path: assets\models\sands-location\source\sands-location\map_objects.tga
+  - ID: 11780244239306741719
+    Path: .\Lib\Assets\11780244239306741719
+  - ID: 11318075133982465027
+    Path: .\Lib\Assets\11318075133982465027
+  - ID: 6951542353216384381
+    Path: assets\models\sands-location\source\sands-location\map_terrain.tga
+  - ID: 5264144094036457687
+    Path: .\Lib\Assets\5264144094036457687
+  - ID: 16705776351659923448
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 17006358160095570088
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 15343160930985069750
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 2379408598715950332
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 13218065586859167202
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 5578726943562959621
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 2539260636486802519
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 13324056805413078855
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 8554312336383065469
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 7914080308684120168
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 7334046597587244197
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 9032920023369020597
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 8776647862987858608
+    Path: .\Lib\Assets\8776647862987858608
+  - ID: 14184556609963599454
+    Path: assets\models\steampunk-pistol\textures\steampunk_pistol_Base_Color.jpeg
+  - ID: 11299083572860115948
+    Path: .\Lib\Assets\11299083572860115948
+  - ID: 108585959030924506
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 14718627500637567830
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 17038647733416681668
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 615807823560887925
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 6196646533480992002
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 935263680729710654
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 18326491930998488027
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 1711829246806760844
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 8283647944231456521
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 10036487218635902323
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 8031805403873121805
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 17281753942959521765
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 16321546103680457473
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 14723056094489202467
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 7034169328369129652
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 7462140196578155323
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 2476641010161789670
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 6939110402054183244
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 1722689414441202701
+    Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 4555775566152174572
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 7783894371445777697
+    Path: assets\textures\akita.png
+  - ID: 8555160754084762170
+    Path: assets\models\rock\textures\Rock_Albedo.tga.png
+  - ID: 17316858568804613208
+    Path: .\Lib\Assets\17316858568804613208
+  - ID: 7287311396842011444
+    Path: .\Lib\Assets\7287311396842011444

@@ -35,11 +35,12 @@ namespace Debut
 
 	class Material
 	{
+		friend class Renderer3D;
 	public:
 		Material() = default;
 		Material(const std::string& path, const std::string& metaPath);
 
-		void Use(const glm::mat4& cameraTransform);
+		void Use();
 		void Unuse();
 
 		void SetShader(Ref<Shader> shader);
@@ -74,6 +75,7 @@ namespace Debut
 
 		void Reload();
 		static MaterialMetadata GetMetadata(UUID id);
+		static std::vector<std::string> GetDefaultUniforms() { return s_DefaultUniforms; }
 
 	private:
 		void Load(std::ifstream& file);
@@ -89,5 +91,7 @@ namespace Debut
 		std::string m_Path;
 		std::string m_MetaPath;
 		std::string m_Name;
+
+		static std::vector<std::string> s_DefaultUniforms;
 	};
 }

@@ -1,0 +1,116 @@
+Scene: Untitled scene
+Entities:
+  - "Entity: ": 9054631664072566459
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 9054631664072566459
+    TagComponent:
+      Name: Ground
+      Tag: Untagged
+    TransformComponent:
+      Translation: [-0.117507935, 0.965239525, 0]
+      Rotation: [0, 0, 0]
+      Scale: [16.7594719, 0.862908661, 1]
+      Parent: 0
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: 0
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      Type: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [1, 1]
+      Offset: [0, 0]
+      Material: 0
+    Children:
+      []
+  - "Entity: ": 14091586700939842283
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 14091586700939842283
+    TagComponent:
+      Name: Camera
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0.0592803918, 4.34711456, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    CameraComponent:
+      FixedAspectRatio: false
+      Primary: true
+      CameraData:
+        ProjectionType: 1
+        OrthoNear: 10
+        OrthoFar: -10
+        PerspNear: 10
+        PerspFar: -10
+        OrthoSize: 20
+        PerspFOV: 0.785398185
+    Children:
+      []
+  - "Entity: ": 9039041565478747475
+    HierarchyOrder: 2
+    IDComponent:
+      ID: 9039041565478747475
+    TagComponent:
+      Name: Red
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0.259557247, 10.5291386, 0]
+      Rotation: [0, 0, -0.817157447]
+      Scale: [2.07372808, 2.07372808, 2.07372856]
+      Parent: 0
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+      Texture: 0
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [1, 1]
+      Offset: [0, 0]
+      Material: 0
+    Children:
+      []
+  - "Entity: ": 3899721359534674442
+    HierarchyOrder: 3
+    IDComponent:
+      ID: 3899721359534674442
+    TagComponent:
+      Name: Green
+      Tag: Untagged
+    TransformComponent:
+      Translation: [5.76899624, 14.3483887, 0]
+      Rotation: [0, 0, -0.513424754]
+      Scale: [3.59699988, 3.59699988, 3.59699965]
+      Parent: 0
+    SpriteRendererComponent:
+      Color: [0.314567834, 0.933333337, 0.45207122, 1]
+      Texture: 0
+      TilingFactor: 1
+    Children:
+      - "Entity: ": 6262226846506299503
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 6262226846506299503
+        TagComponent:
+          Name: Blue
+          Tag: Untagged
+        TransformComponent:
+          Translation: [-2.98604083, -1.20989347, -3.31413226e-08]
+          Rotation: [0, 0, 1.9699024]
+          Scale: [1.60537684, 1.60537684, 1.6053673]
+          Parent: 3899721359534674442
+        SpriteRendererComponent:
+          Color: [0, 0.222222328, 1, 1]
+          Texture: 0
+          TilingFactor: 1
+        BoxCollider2DComponent:
+          Size: [1, 1]
+          Offset: [0, 0]
+          Material: 0
+        Children:
+          []

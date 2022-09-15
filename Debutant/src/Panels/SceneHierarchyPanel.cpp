@@ -384,6 +384,8 @@ namespace Debut
 			DrawAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DrawAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
 			DrawAddComponentEntry<MeshRendererComponent>("Mesh Renderer");
+			DrawAddComponentEntry<DirectionalLightComponent>("Directional Light");
+			DrawAddComponentEntry<PointLightComponent>("Point Light");
 
 			ImGui::EndPopup();
 		}
@@ -586,7 +588,7 @@ namespace Debut
 		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)
 			{
 				ImGuiUtils::RGBVec2("Offset", { "X", "Y" }, { &component.Offset.x, &component.Offset.y });
-				ImGuiUtils::DragFloat("Radius", &component.Radius, 0.1f);
+				ImGuiUtils::DragFloat("Radius", &component.Radius, 1.0f);
 
 				ImGui::Dummy({ 0.0f, 10.0f });
 				ImGui::Separator();
@@ -595,6 +597,22 @@ namespace Debut
 				UUID material = ImGuiUtils::DragDestination("Physics material", ".physmat2d", component.Material);
 				if (material != 0)
 					component.Material = material;
+			});
+
+		DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component)
+			{
+				ImGuiUtils::RGBVec3("Direction", { "X", "Y", "Z"}, {&component.Direction.x, &component.Direction.y, &component.Direction.z});
+				ImGuiUtils::Color3("Color", { &component.Color.r,&component.Color.g,&component.Color.b });
+				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.1f);
+			});
+
+		DrawComponent<PointLightComponent>("Point Light", entity, [&](auto& component)
+			{
+				ImGuiUtils::Color3("Color", { &component.Color.x, &component.Color.y, &component.Color.z });
+				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.02f, 0.0f);
+				ImGuiUtils::DragFloat("Radius", &component.Radius, 0.001f, 0.0f);
+
+				component.Position = entity.Transform().Translation;
 			});
 	}
 

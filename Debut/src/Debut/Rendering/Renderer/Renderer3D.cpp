@@ -45,9 +45,15 @@ namespace Debut
 		s_Data.VertexArray->AddIndexBuffer(s_Data.IndexBuffer);
 	}
 
-	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& transform)
+	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& cameraTransform, std::vector<LightComponent*>& lights,
+		std::vector<ShaderUniform>& globalUniforms)
 	{
-		s_Data.CameraTransform = camera.GetProjection() * glm::inverse(transform);
+		s_Data.CameraView = glm::inverse(cameraTransform);
+		s_Data.CameraProjection = camera.GetProjection();
+		s_Data.CameraTransform = s_Data.CameraProjection * s_Data.CameraView;
+		
+		s_Data.Lights = lights;
+		s_Data.GlobalUniforms = globalUniforms;
 
 		// Draw the skybox
 		if (skybox != nullptr)
@@ -55,13 +61,14 @@ namespace Debut
 			Ref<Material> skyboxMaterial = AssetManager::Request<Material>(skybox->GetMaterial());
 			glm::mat4 skyboxTransform;
 			if (camera.GetProjectionType() == Camera::ProjectionType::Perspective)
-				skyboxTransform = camera.GetProjection() * glm::inverse(glm::mat4(glm::mat3(transform)));
+				skyboxTransform = camera.GetProjection() * glm::inverse(glm::mat4(glm::mat3(cameraTransform)));
 			else
 				skyboxTransform = glm::perspective(45.0f, 16.0f/9.0f, camera.GetNearPlane(), camera.GetFarPlane())
-					* glm::inverse(glm::mat4(glm::mat3(transform)));
+					* glm::inverse(glm::mat4(glm::mat3(cameraTransform)));
 			
 			skybox->Bind();
-			skyboxMaterial->Use(skyboxTransform);
+			skyboxMaterial->SetMat4("u_ViewProjection", skyboxTransform);
+			skyboxMaterial->Use();
 
 			std::vector<float>& positions = skybox->GetMesh().GetPositions();
 			std::vector<int>& indices = skybox->GetMesh().GetIndices();
@@ -103,85 +110,7 @@ namespace Debut
 			return;
 		}
 
-		// Instanced rendering if the MeshRenderer is instanced
-		if (meshComponent.Instanced)
-		{
-			if (s_Data.Batches.find(meshComponent.Material) == s_Data.Batches.end())
-				AddBatch(meshComponent.Material);
-			RenderBatch3D* currBatch = s_Data.Batches[meshComponent.Material];
-
-			// Send data to buffers
-			{
-				DBT_PROFILE_SCOPE("Renderer3D::PushData");
-				currBatch->Buffers["Positions"]->PushData(mesh->GetPositions().data(), sizeof(float) * mesh->GetPositions().size());
-				
-				if (mesh->HasColors())
-					currBatch->Buffers["Colors"]->PushData(mesh->GetColors().data(), sizeof(float) * mesh->GetColors().size());
-				if (mesh->HasNormals())
-					currBatch->Buffers["Normals"]->PushData(mesh->GetNormals().data(), sizeof(float) * mesh->GetNormals().size());
-				if (mesh->HasTangents())
-					currBatch->Buffers["Tangents"]->PushData(mesh->GetTangents().data(), sizeof(float) * mesh->GetTangents().size());
-				if (mesh->HasBitangents())
-					currBatch->Buffers["Bitangents"]->PushData(mesh->GetBitangents().data(), sizeof(float) * mesh->GetBitangents().size());
-
-				// Add indices
-				size_t currIndicesSize = currBatch->Indices.size();
-				currBatch->Indices.resize(currBatch->Indices.size() + mesh->GetIndices().size());
-				memcpy(currBatch->Indices.data() + currIndicesSize, mesh->GetIndices().data(), mesh->GetIndices().size() * sizeof(int));
-			}
-		}
-		// Just draw the model otherwise
-		else
-		{
-			{
-				DBT_PROFILE_SCOPE("DrawModel::SetDataAndIndices");
-				std::vector<float>& positions = mesh->GetPositions();
-				std::vector<int>& indices = mesh->GetIndices();
-				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
-				s_Data.IndexBuffer->SetData(indices.data(), indices.size());
-
-				if (mesh->HasColors())
-				{
-					std::vector<float>& colors = mesh->GetColors();
-					s_Data.VertexBuffers["Colors"]->SetData(colors.data(), colors.size() * sizeof(float));
-				}
-
-				if (mesh->HasNormals())
-				{
-					std::vector<float>& normals = mesh->GetNormals();
-					s_Data.VertexBuffers["Normals"]->SetData(normals.data(), normals.size() * sizeof(float));
-				}
-
-				if (mesh->HasTangents())
-				{
-					std::vector<float>& tangents = mesh->GetTangents();
-					s_Data.VertexBuffers["Tangents"]->SetData(tangents.data(), tangents.size() * sizeof(float));
-				}
-
-				if (mesh->HasBitangents())
-				{
-					std::vector<float>& bitangents = mesh->GetBitangents();
-					s_Data.VertexBuffers["Bitangents"]->SetData(bitangents.data(), bitangents.size() * sizeof(float));
-				}
-
-				if (mesh->HasTexCoords(0))
-				{
-					std::vector<float>& texCoords = mesh->GetTexCoords(0);
-					s_Data.VertexBuffers["TexCoords0"]->SetData(texCoords.data(), texCoords.size() * sizeof(float));
-				}
-			}
-			
-			{
-				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
-				material->SetMat4("u_Transform", transform * mesh->GetTransform());
-				material->Use(s_Data.CameraTransform);
-			}
-			
-			{
-				DBT_PROFILE_SCOPE("DrawModel::DrawIndexed");
-				RenderCommand::DrawIndexed(s_Data.VertexArray, mesh->GetIndices().size());
-			}
-		}
+		DrawModel(*mesh.get(), *material.get(), transform, meshComponent.Instanced);
 	}
 
 	void Renderer3D::DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, bool instanced /* = false*/)
@@ -219,7 +148,7 @@ namespace Debut
 		else
 		{
 			{
-				DBT_PROFILE_SCOPE("DrawModel::SetDataAndIndices");
+				DBT_PROFILE_SCOPE("DrawModel::SendGeometry");
 				std::vector<float>& positions = mesh.GetPositions();
 				std::vector<int>& indices = mesh.GetIndices();
 				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
@@ -258,8 +187,13 @@ namespace Debut
 
 			{
 				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
+				SendLights(material);
+				SendGlobals(material);
 				material.SetMat4("u_Transform", transform * mesh.GetTransform());
-				material.Use(s_Data.CameraTransform);
+				material.SetMat4("u_ViewMatrix", s_Data.CameraView);
+				material.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
+				material.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+				material.Use();
 			}
 
 			{
@@ -280,7 +214,10 @@ namespace Debut
 
 		for (auto& batch : s_Data.Batches)
 		{
-			batch.second->Material->Use(s_Data.CameraTransform);
+			batch.second->Material->SetMat4("u_ViewMatrix", s_Data.CameraView);
+			batch.second->Material->SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
+			batch.second->Material->SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+			batch.second->Material->Use();
 
 			// Setup buffers
 			for (auto& buffer : batch.second->Buffers)
@@ -297,6 +234,66 @@ namespace Debut
 	void Renderer3D::Shutdown()
 	{
 		// Delete all batches buffers
+	}
+
+	void Renderer3D::SendLights(Material& material)
+	{
+		std::vector<PointLightComponent> pointLights;
+
+		for (LightComponent* light : s_Data.Lights)
+		{
+			switch (light->Type)
+			{
+			case LightComponent::LightType::Directional:
+			{
+				DirectionalLightComponent* dirLight = static_cast<DirectionalLightComponent*>(light);
+				ShaderUniform::UniformData data;
+
+				data.Vec3 = dirLight->Direction;
+				material.m_Uniforms["u_DirectionalLightDir"] = {
+					ShaderUniform("u_DirectionalLightDir", ShaderDataType::Float3, data) };
+
+				data.Vec3 = dirLight->Color;
+				material.m_Uniforms["u_DirectionalLightCol"] = {
+					ShaderUniform("u_DirectionalLightCol", ShaderDataType::Float3, data) };
+
+				data.Float = dirLight->Intensity;
+				material.m_Uniforms["u_DirectionalLightIntensity"] = {
+					ShaderUniform("u_DirectionalLightIntensity", ShaderDataType::Float, data) };
+				break;
+			}
+			case LightComponent::LightType::Point:
+			{
+				PointLightComponent* pointLight = static_cast<PointLightComponent*>(light);
+				pointLights.push_back(*pointLight);
+				break;
+			}
+			}
+		}
+
+		// Send point lights
+		for (uint32_t i = 0; i < pointLights.size(); i++)
+		{
+			std::stringstream lightName;
+			ShaderUniform::UniformData data;
+			lightName << "u_PointLights[" << i << "]";
+
+			data.Vec3 = pointLights[i].Color;
+			material.m_Uniforms[lightName.str() + ".Color"] = { ShaderUniform(lightName.str() + ".Color", ShaderDataType::Float3, data) };
+			data.Vec3 = pointLights[i].Position;
+			material.m_Uniforms[lightName.str() + ".Position"] = { ShaderUniform(lightName.str() + ".Position", ShaderDataType::Float3, data) };
+
+			data.Float = pointLights[i].Intensity;
+			material.m_Uniforms[lightName.str() + ".Intensity"] = { ShaderUniform(lightName.str() + ".Intensity", ShaderDataType::Float, data) };
+			data.Float = pointLights[i].Radius;
+			material.m_Uniforms[lightName.str() + ".Radius"] = { ShaderUniform(lightName.str() + ".Radius", ShaderDataType::Float, data) };
+		}
+	}
+
+	void Renderer3D::SendGlobals(Material& material)
+	{
+		for (auto& uniform : s_Data.GlobalUniforms)
+			material.m_Uniforms[uniform.Name] = uniform;
 	}
 
 	void Renderer3D::AddBatch(const UUID& id)

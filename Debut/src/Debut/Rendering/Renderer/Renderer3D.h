@@ -14,6 +14,8 @@ namespace Debut
 	class Mesh;
 
 	struct MeshRendererComponent;
+	struct LightComponent;
+	struct ShaderUniform;
 
 	struct RenderBatch3D
 	{
@@ -42,6 +44,11 @@ namespace Debut
 		std::unordered_map<UUID, RenderBatch3D*> Batches;
 
 		glm::mat4 CameraTransform;
+		glm::mat4 CameraView;
+		glm::mat4 CameraProjection;
+
+		std::vector<LightComponent*> Lights;
+		std::vector<ShaderUniform> GlobalUniforms;
 	};
 
 	class Renderer3D
@@ -50,12 +57,16 @@ namespace Debut
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& transform);
+		static void BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& transform, std::vector<LightComponent*>& lights,
+			std::vector<ShaderUniform>& globalUniforms);
 		static void EndScene();
 		static void Flush();
 
 		static void DrawModel(const MeshRendererComponent& model, const glm::mat4& transform);
 		static void DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, bool instanced = false);
+
+		static void SendLights(Material& material);
+		static void SendGlobals(Material& material);
 
 	private:
 		static void AddBatch(const UUID& material);

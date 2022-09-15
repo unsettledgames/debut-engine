@@ -1,0 +1,100 @@
+Scene: Untitled scene
+Entities:
+  - "Entity: ": 2675377818833175504
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 2675377818833175504
+    TagComponent:
+      Name: 12.obj.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 17890243722811410999
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 17890243722811410999
+        TagComponent:
+          Name: 12.obj.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 2675377818833175504
+        Children:
+          - "Entity: ": 6989245914643795551
+            HierarchyOrder: 0
+            IDComponent:
+              ID: 6989245914643795551
+            TagComponent:
+              Name: 12.obj. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 17890243722811410999
+            MeshRendererComponent:
+              Mesh: 6206156415756759981
+              Material: 3703365253131983093
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 8602947149315674379
+            HierarchyOrder: 1
+            IDComponent:
+              ID: 8602947149315674379
+            TagComponent:
+              Name: 12.obj. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 17890243722811410999
+            MeshRendererComponent:
+              Mesh: 3361024061865662422
+              Material: 14265324825381589555
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 7337768233459779713
+            HierarchyOrder: 2
+            IDComponent:
+              ID: 7337768233459779713
+            TagComponent:
+              Name: 12.obj. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 17890243722811410999
+            MeshRendererComponent:
+              Mesh: 15926164847185470480
+              Material: 10490493422204841935
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 6064915381421639794
+            HierarchyOrder: 3
+            IDComponent:
+              ID: 6064915381421639794
+            TagComponent:
+              Name: 12.obj. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 17890243722811410999
+            MeshRendererComponent:
+              Mesh: 13247128635036664166
+              Material: 5565905990454893265
+              Instanced: false
+            Children:
+              []

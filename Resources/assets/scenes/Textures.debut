@@ -1,0 +1,134 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+Entities:
+  - "Entity: ": 12005445627570926876
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 12005445627570926876
+    TagComponent:
+      Name: rock.obj.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 7263758332417810987
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 7263758332417810987
+        TagComponent:
+          Name: rock.obj.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 12005445627570926876
+        MeshRendererComponent:
+          Mesh: 10269437512418338655
+          Material: 1342789290667764982
+          Instanced: false
+        Children:
+          []
+  - "Entity: ": 5726226557709946165
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 5726226557709946165
+    TagComponent:
+      Name: TexturedCrypt.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 14985707488952926318
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 14985707488952926318
+        TagComponent:
+          Name: TexturedCrypt.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 5726226557709946165
+        Children:
+          - "Entity: ": 9474992311843597460
+            HierarchyOrder: 0
+            IDComponent:
+              ID: 9474992311843597460
+            TagComponent:
+              Name: TexturedCrypt. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 14985707488952926318
+            MeshRendererComponent:
+              Mesh: 5254943363781197530
+              Material: 6154583896295416476
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 2118787521465396720
+            HierarchyOrder: 1
+            IDComponent:
+              ID: 2118787521465396720
+            TagComponent:
+              Name: TexturedCrypt. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 14985707488952926318
+            MeshRendererComponent:
+              Mesh: 9514351186501337453
+              Material: 18310130298589720837
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 4772645766765156466
+            HierarchyOrder: 2
+            IDComponent:
+              ID: 4772645766765156466
+            TagComponent:
+              Name: TexturedCrypt. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 14985707488952926318
+            MeshRendererComponent:
+              Mesh: 10963705380392894176
+              Material: 9018545847508596985
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 9148746139296574954
+            HierarchyOrder: 3
+            IDComponent:
+              ID: 9148746139296574954
+            TagComponent:
+              Name: TexturedCrypt. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 14985707488952926318
+            MeshRendererComponent:
+              Mesh: 17314757891654079855
+              Material: 1613540950041657364
+              Instanced: false
+            Children:
+              []

@@ -1,0 +1,77 @@
+Scene: Untitled scene
+Entities:
+  - "Entity: ": 8816300609158737073
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 8816300609158737073
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0.0637815073, -1.63736212, 0]
+      Rotation: [0, 0, -0.488155901]
+      Scale: [26.4656963, 1, 1]
+      Parent: 0
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: 0
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      Type: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Size: [1, 1]
+      Offset: [0, 0]
+      Material: 7306195545097283145
+    Children:
+      []
+  - "Entity: ": 6549928607154499293
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 6549928607154499293
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [-6.44072104, 7.63498974, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: 16284340623155264214
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      Type: Dynamic
+      FixedRotation: false
+    CircleCollider2DComponent:
+      Radius: 1
+      Offset: [0, 0]
+      Material: 0
+    Children:
+      []
+  - "Entity: ": 15429156406467623790
+    HierarchyOrder: 2
+    IDComponent:
+      ID: 15429156406467623790
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    CameraComponent:
+      FixedAspectRatio: false
+      Primary: true
+      CameraData:
+        ProjectionType: 1
+        OrthoNear: 0
+        OrthoFar: 1000
+        PerspNear: 0
+        PerspFar: 1000
+        OrthoSize: 20
+        PerspFOV: 0.785398185
+    Children:
+      []

@@ -17,10 +17,34 @@
 		- Runtime physics material in Colliders?
 */
 
+/*
+	I want to add a component! What do I do?
+	- Add a struct in this file, containing the necessary data
+	- Add the entry in the AddComponent menu
+		- Implement OnComponentAdded<ComponentType>
+		- Implement CopyComponent in Scene.cpp for that component
+	- Implement component rendering in the Inspector
+	- Add (de)serialization in SceneSerializer
+		- Implement DeserializeComponent and SerializeComponent for that component
+		- Add calls to them in SerializeText / DeserializeText
+	- Implement actual behaviour
+*/
+
 namespace Debut
 {
-	// BASIC
+	struct Collider2DComponent
+	{
+		enum class Collider2DType { Circle = 0, Box, Polygon};
+		Collider2DType Type;
+	};
+	
+	struct LightComponent
+	{
+		enum class LightType {Directional = 0, Point, Area, Shape};
+		LightType Type;
+	};
 
+	// CORE
 	struct IDComponent
 	{
 		UUID ID;
@@ -101,7 +125,7 @@ namespace Debut
 		}
 	};
 
-	// RENDERING
+	// GEOMETRY
 
 	struct CameraComponent
 	{
@@ -115,7 +139,7 @@ namespace Debut
 
 	struct SpriteRendererComponent
 	{
-		glm::vec4 Color;
+		glm::vec4 Color = glm::vec4(1.0f);
 		UUID Texture = 0;
 		float TilingFactor = 1.0f;
 
@@ -134,6 +158,29 @@ namespace Debut
 		MeshRendererComponent()  {}
 		MeshRendererComponent(const MeshRendererComponent&) = default;
 		MeshRendererComponent(UUID mesh, UUID material) : Material(material), Mesh(mesh), Instanced(false) {}
+	};
+
+	// LIGHTING
+	struct DirectionalLightComponent : LightComponent
+	{
+		glm::vec3 Direction = glm::vec3(1.0f);
+		glm::vec3 Color = glm::vec3(1.0f);
+		float Intensity = 1.0f;
+
+		DirectionalLightComponent() { Type = LightType::Directional; }
+		DirectionalLightComponent(const DirectionalLightComponent&) = default;
+	};
+
+	struct PointLightComponent : LightComponent
+	{
+		glm::vec3 Color = glm::vec3(1.0f);
+		glm::vec3 Position = glm::vec3(0.0f);
+
+		float Intensity = 1.0f;
+		float Radius = 5.0f;
+
+		PointLightComponent() { Type = LightType::Point; }
+		PointLightComponent(const PointLightComponent&) = default;
 	};
 
 	// PHYSICS AND COLLIDERS
@@ -160,7 +207,7 @@ namespace Debut
 		}
 	};
 
-	struct BoxCollider2DComponent
+	struct BoxCollider2DComponent : Collider2DComponent
 	{
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		glm::vec2 Size = { 1.0f, 1.0f };
@@ -169,11 +216,11 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent() { Type = Collider2DType::Box; };
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
 
-	struct CircleCollider2DComponent
+	struct CircleCollider2DComponent : Collider2DComponent
 	{
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		float Radius = 1.0f;
@@ -182,7 +229,7 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		CircleCollider2DComponent() = default;
+		CircleCollider2DComponent() { Type = Collider2DType::Circle; };
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 

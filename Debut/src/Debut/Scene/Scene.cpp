@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "Debut/Scene/Entity.h"
 #include "Debut/Scene/Components.h"
+#include "Debut/Rendering/Shader.h"
 #include "Debut/Rendering/Renderer/Renderer2D.h"
 #include "Debut/Rendering/Renderer/Renderer3D.h"
 #include "Debut/AssetManager/AssetManager.h"
@@ -62,6 +63,10 @@ namespace Debut
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(MeshRendererComponent& bc2d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(DirectionalLightComponent& dl, Entity entity) {}
+	template<>
+	void Scene::OnComponentAdded(PointLightComponent& dl, Entity entity) {}
 
 	template <typename Component>
 	static void CopyComponent(entt::registry& dst, const entt::registry& src, const std::unordered_map<UUID, entt::entity> enttMap)
@@ -109,10 +114,30 @@ namespace Debut
 	void Scene::OnEditorUpdate(Timestep ts, Camera& camera)
 	{
 		DBT_PROFILE_SCOPE("Editor update");
+		
+		glm::mat4 transform = camera.GetView();
+		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms({ transform[0][3], transform[1][3], transform[2][3] });
+		std::vector<LightComponent*> lights;
+		// Directional light
+		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
+		for (auto entity : lightGroup)
+		{
+			auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
+			lights.push_back(&light);
+		}
+		// Point lights
+		auto pointLights = m_Registry.view<TransformComponent, PointLightComponent>();
+		for (auto entity : pointLights)
+		{
+			auto& [transform, light] = pointLights.get<TransformComponent, PointLightComponent>(entity);
+			// Update light position
+			light.Position = transform.Translation;
+			lights.push_back(&light);
+		}
 
 		// 3D Rendering
-		Renderer3D::BeginScene(camera, m_Skybox, glm::inverse(camera.GetView()));
-
+		Renderer3D::BeginScene(camera, m_Skybox, glm::inverse(camera.GetView()), lights, globalUniforms);
+		
 		auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
 		for (auto entity : group3D)
 		{
@@ -212,7 +237,24 @@ namespace Debut
 			// 3D Rendering
 			{
 				DBT_PROFILE_SCOPE("Renderer3D update");
-				Renderer3D::BeginScene(*mainCamera, m_Skybox, cameraTransform);
+				// Get lights
+				glm::mat4 cameraView = mainCamera->GetView();
+				std::vector<LightComponent*> lights;
+				std::vector<ShaderUniform> globals = GetGlobalUniforms({ cameraView[0][3], cameraView[1][3], cameraView[2][3]});
+
+				auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
+				for (auto entity : lightGroup)
+				{
+					auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
+					lights.push_back(&light);
+				}
+				auto pointLights = m_Registry.view<TransformComponent, PointLightComponent>();
+				for (auto entity : pointLights)
+				{
+					auto& [transform, light] = pointLights.get<TransformComponent, PointLightComponent>(entity);
+					lights.push_back(&light);
+				}
+				Renderer3D::BeginScene(*mainCamera, m_Skybox, cameraTransform, lights, globals);
 
 				auto group = m_Registry.view<TransformComponent, MeshRendererComponent>();
 				for (auto entity : group)
@@ -347,6 +389,9 @@ namespace Debut
 		CopyComponentIfExists<CircleCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CameraComponent>(duplicate, entity);
 		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
+		CopyComponentIfExists<MeshRendererComponent>(duplicate, entity);
+		CopyComponentIfExists<DirectionalLightComponent>(duplicate, entity);
+		CopyComponentIfExists<PointLightComponent>(duplicate, entity);
 		
 		duplicate.Transform().Parent = duplicate.Transform().Parent;
 	}
@@ -431,6 +476,9 @@ namespace Debut
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<MeshRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<DirectionalLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<PointLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		// Restore transforms
 		auto transformView = dstSceneRegistry.view<TransformComponent>();
@@ -444,6 +492,25 @@ namespace Debut
 		newScene->m_Skybox = other->m_Skybox;
 
 		return newScene;
+	}
+
+	std::vector<ShaderUniform> Scene::GetGlobalUniforms(glm::vec3 cameraPos)
+	{
+		std::vector<ShaderUniform> ret;
+		ShaderUniform::UniformData data;
+
+		// Vectors and transforms
+		data.Vec3 = cameraPos;
+		ret.push_back(ShaderUniform("u_CameraPosition", ShaderDataType::Float3, data));
+
+		// Ambient light
+		data.Vec3 = m_AmbientLight;
+		ret.push_back(ShaderUniform("u_AmbientLightColor", ShaderDataType::Float3, data));
+		// Ambient light intensity
+		data.Float = m_AmbientLightIntensity;
+		ret.push_back(ShaderUniform("u_AmbientLightIntensity", ShaderDataType::Float, data));
+
+		return ret;
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)

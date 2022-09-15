@@ -79,6 +79,7 @@ namespace Debut
 
     void DebutantLayer::OnUpdate(Timestep& ts)
     {
+        DBT_PROFILE_FUNCTION();
         //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
         if (m_ViewportFocused)
@@ -231,7 +232,6 @@ namespace Debut
 
             if (ImGui::BeginTabItem("Lighting"))
             {
-
                 // Skybox options
                 ImGuiUtils::BoldText("Skybox");
                 Ref<Skybox> currSkybox = m_ActiveScene->GetSkybox();
@@ -241,6 +241,15 @@ namespace Debut
                     m_ActiveScene->SetSkybox(skybox);
                 else if (skybox != 0 &&m_ActiveScene->GetSkybox()->GetID() != skybox)
                     m_ActiveScene->SetSkybox(skybox);
+
+                // Ambient light
+                glm::vec3 ambientLight = m_ActiveScene->GetAmbientLight();
+                ImGuiUtils::Color3("Ambient light", { &ambientLight.r, &ambientLight.g, &ambientLight.b });
+                m_ActiveScene->SetAmbientLight(ambientLight);
+                // Ambient light intensity
+                float ambientIntensity = m_ActiveScene->GetAmbientLightIntensity();
+                if (ImGuiUtils::DragFloat("Ambient light intensity", &ambientIntensity, 0.1f, 0.0))
+                    m_ActiveScene->SetAmbientLightIntensity(ambientIntensity);
 
                 ImGui::EndTabItem();
             }
@@ -658,8 +667,8 @@ namespace Debut
         if (m_SceneState != SceneState::Edit)
             OnSceneStop();
 
-        m_EditorScene = CreateRef<Scene>();
         m_RuntimeScene = nullptr;
+        m_EditorScene = CreateRef<Scene>();
 
         SceneSerializer ss(m_EditorScene);
         EntitySceneNode* sceneHierarchy = ss.DeserializeText(path.string());

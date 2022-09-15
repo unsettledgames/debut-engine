@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entt.hpp>
+#include <glm/glm.hpp>
 #include <vector>
 
 #include <Debut/Core/Core.h>
@@ -12,6 +13,8 @@ class b2World;
 namespace Debut
 {
 	struct EntitySceneNode;
+	struct ShaderUniform;
+
 	class Camera;
 	class Skybox;
 
@@ -40,11 +43,16 @@ namespace Debut
 
 		Entity GetPrimaryCameraEntity();
 		Entity GetEntityByID(uint64_t id);
-		Ref<Skybox> GetSkybox() { return m_Skybox; }
+		inline Ref<Skybox> GetSkybox() { return m_Skybox; }
+		inline glm::vec3 GetAmbientLight() { return m_AmbientLight; }
+		inline float GetAmbientLightIntensity() { return m_AmbientLightIntensity; }
 
 		void SetSkybox(UUID path);
+		inline void SetAmbientLight(glm::vec3 light) { m_AmbientLight = light; }
+		inline void SetAmbientLightIntensity(float light) { m_AmbientLightIntensity = light; }
 
 		static Ref<Scene> Copy(Ref<Scene> other);
+		std::vector<ShaderUniform> GetGlobalUniforms(glm::vec3 cameraPos);
 
 	private:
 		template<typename T>
@@ -61,6 +69,8 @@ namespace Debut
 
 		// Lighting
 		Ref<Skybox> m_Skybox;
+		glm::vec3 m_AmbientLight = glm::vec3(0.0f);
+		float m_AmbientLightIntensity = 1.0f;
 	};
 }
 

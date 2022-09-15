@@ -28,10 +28,12 @@ namespace Debut
 		static void Separator();
 
 		static bool DragFloat(const std::string& label, float* value, float power, float min = -100000.0f, float max = 100000.0f);
+		static bool Color3(const std::string& label, std::vector<float*> values);
+		static bool Color4(const std::string& label, std::vector<float*> values);
+
 		static void RGBVec2(const char* id, std::vector<const char*>labels, std::vector<float*>values, float resetValue = 0, uint32_t columnWidth = 130);
 		static void RGBVec4(const char* id, std::vector<const char*>labels, std::vector<float*>values, float resetValue = 0, uint32_t columnWidth = 130);
 		static void RGBVec3(const char* id, std::vector<const char*>labels, std::vector<float*>values, float resetValue = 0, uint32_t columnWidth = 130);
-		
 
 		static bool ImageButton(Ref<Texture2D> texture, ImVec2 size, ImVec4 color = {0.1f, 0.2f, 0.4f, 1.0f});
 		static void BoldText(const std::string& label);
