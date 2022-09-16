@@ -60,6 +60,8 @@ uniform float u_DirectionalLightIntensity;
 
 uniform float u_AmbientLightIntensity;
 uniform vec3 u_AmbientLightColor;
+
+uniform int u_NPointLights;
 uniform PointLight u_PointLights[N_MAX_LIGHTS];
 
 uniform float u_SpecularShininess;
@@ -90,12 +92,10 @@ vec3 PointPhong(vec3 normal, PointLight light, vec3 viewDir, vec3 lightDir)
 	// Intensity
 	float intensity = light.Intensity / pow((distance / light.Radius + 1), 2);
 	
-	// Diffuse component
-    float diff = max(dot(normal, normalize(lightDir)), 0.0);
-	
-	// Specular component
-	vec3 reflectDir = reflect(-normalize(lightDir), normal);
+	vec3 reflectDir = reflect(-normalize(lightDir), normal);  
 	float spec = pow(max(dot(normalize(viewDir), reflectDir), 0.0), u_SpecularShininess) * u_SpecularStrength;
+	
+	float diff = max(dot(normal, normalize(lightDir)), 0.0);
 	
     return (diff + spec) * light.Intensity * light.Color * attenuation ;
 }
@@ -112,8 +112,8 @@ void main()
 	color = texColor * vec4(u_AmbientLightColor*u_AmbientLightIntensity, 1.0) + 
 			texColor * vec4(DirectionalPhong(normal, lightDir), 1.0);
 	
-	for (int i=0; i<N_MAX_LIGHTS; i++)
+	for (int i=0; i<1; i++)
 		color += texColor * vec4(PointPhong
-			(normal, u_PointLights[i], u_PointLights[i].Position - u_CameraPosition, 
+			(normal, u_PointLights[i], u_CameraPosition - v_FragPos, 
 			u_PointLights[i].Position - v_FragPos), 1.0);
 }

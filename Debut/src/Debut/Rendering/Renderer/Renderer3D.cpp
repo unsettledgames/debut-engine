@@ -239,6 +239,7 @@ namespace Debut
 	void Renderer3D::SendLights(Material& material)
 	{
 		std::vector<PointLightComponent> pointLights;
+		ShaderUniform::UniformData data;
 
 		for (LightComponent* light : s_Data.Lights)
 		{
@@ -247,7 +248,6 @@ namespace Debut
 			case LightComponent::LightType::Directional:
 			{
 				DirectionalLightComponent* dirLight = static_cast<DirectionalLightComponent*>(light);
-				ShaderUniform::UniformData data;
 
 				data.Vec3 = dirLight->Direction;
 				material.m_Uniforms["u_DirectionalLightDir"] = {
@@ -275,7 +275,6 @@ namespace Debut
 		for (uint32_t i = 0; i < pointLights.size(); i++)
 		{
 			std::stringstream lightName;
-			ShaderUniform::UniformData data;
 			lightName << "u_PointLights[" << i << "]";
 
 			data.Vec3 = pointLights[i].Color;
@@ -288,6 +287,9 @@ namespace Debut
 			data.Float = pointLights[i].Radius;
 			material.m_Uniforms[lightName.str() + ".Radius"] = { ShaderUniform(lightName.str() + ".Radius", ShaderDataType::Float, data) };
 		}
+
+		data.Int = pointLights.size();
+		material.m_Uniforms["u_NPointLights"] = { ShaderUniform("u_NPointLights", ShaderDataType::Int, data) };
 	}
 
 	void Renderer3D::SendGlobals(Material& material)

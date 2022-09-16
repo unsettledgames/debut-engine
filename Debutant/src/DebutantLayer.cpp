@@ -22,7 +22,6 @@
 
 /*
     TODO:
-    - Specular lighting
     - Normal maps
     - Specular maps
     - Roughness maps?

@@ -115,8 +115,8 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Editor update");
 		
-		glm::mat4 transform = camera.GetView();
-		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms({ transform[0][3], transform[1][3], transform[2][3] });
+		glm::mat4 transform = glm::inverse(camera.GetView());
+		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms(transform[3]);
 		std::vector<LightComponent*> lights;
 		// Directional light
 		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
@@ -496,6 +496,7 @@ namespace Debut
 
 	std::vector<ShaderUniform> Scene::GetGlobalUniforms(glm::vec3 cameraPos)
 	{
+		//Log.CoreInfo("X{0}Y{1}Z{2}", cameraPos[0], cameraPos[1], cameraPos[2]);
 		std::vector<ShaderUniform> ret;
 		ShaderUniform::UniformData data;
 

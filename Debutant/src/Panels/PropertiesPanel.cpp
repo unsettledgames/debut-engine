@@ -363,10 +363,6 @@ namespace Debut
 			// Draw Material properties
 			for (auto uniform : config.Uniforms)
 			{
-				if (uniform.second.Name.compare("u_SpecularStrength") == 0)
-					Log.CoreInfo("sas");
-				if (uniform.second.Name.compare("u_SpecularShininess") == 0)
-					Log.CoreInfo("sas");
 				bool draw = true;
 				for (auto& defaultUniform : defaultUniforms)
 				{
@@ -528,7 +524,7 @@ namespace Debut
 
 		if (std::find(s_ModelExtensions.begin(), s_ModelExtensions.end(), m_AssetPath.extension().string()) != s_ModelExtensions.end())
 			m_AssetType = AssetType::Model;
-		else if (path.extension() == ".png")
+		else if (path.extension() == ".png" || path.extension() == ".jpg" || path.extension() == ".jpeg" || path.extension() == ".tga")
 			m_AssetType = AssetType::Texture2D;
 		else if (path.extension() == ".physmat2d")
 			m_AssetType = AssetType::PhysicsMaterial2D;

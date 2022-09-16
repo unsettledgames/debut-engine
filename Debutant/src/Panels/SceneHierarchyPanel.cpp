@@ -544,7 +544,7 @@ namespace Debut
 						const wchar_t* path = (const wchar_t*)payload->Data;
 						std::filesystem::path pathStr(path);
 
-						if (pathStr.extension() == ".png")
+						if (pathStr.extension() == ".png" || pathStr.extension() == ".jpg")
 						{
 							Ref<Texture2D> selectedTexture = AssetManager::Request<Texture2D>(pathStr.string());
 							component.Texture = selectedTexture->GetID();
@@ -609,8 +609,8 @@ namespace Debut
 		DrawComponent<PointLightComponent>("Point Light", entity, [&](auto& component)
 			{
 				ImGuiUtils::Color3("Color", { &component.Color.x, &component.Color.y, &component.Color.z });
-				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.02f, 0.0f);
-				ImGuiUtils::DragFloat("Radius", &component.Radius, 0.001f, 0.0f);
+				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.04f, 0.0f);
+				ImGuiUtils::DragFloat("Radius", &component.Radius, 0.05f, 0.0f);
 
 				component.Position = entity.Transform().Translation;
 			});

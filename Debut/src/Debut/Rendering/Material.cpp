@@ -237,6 +237,9 @@ namespace Debut
 		{
 			switch (uniform.second.Type)
 			{
+			case ShaderDataType::Int:
+				shader->SetInt(uniform.second.Name, uniform.second.Data.Int);
+				break;
 			case ShaderDataType::Float:
 				shader->SetFloat(uniform.second.Name, uniform.second.Data.Float);
 				break;
