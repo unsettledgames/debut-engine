@@ -18,6 +18,7 @@ namespace Debut
 		void Unbind() const override;
 
 		virtual void SetInt(const std::string& name, int value) override;
+		virtual void SetBool(const std::string& name, bool value) override;
 		virtual void SetIntArray(const std::string& name, int* data, uint32_t count) override;
 		virtual void SetMat4(const std::string& name, const glm::mat4& uniform) override;
 		virtual void SetFloat(const std::string& name, float uniform) override;
@@ -35,6 +36,7 @@ namespace Debut
 		void UploadUniformFloat3(const std::string& name, const glm::vec3& vec);
 		void UploadUniformFloat4(const std::string& name, const glm::vec4& vec);
 
+		void UploadUniformBool(const std::string& name, bool val);
 		void UploadUniformInt(const std::string& name, int val);
 		void UploadUniformInt2(const std::string& name, const glm::ivec2& vec);
 		void UploadUniformInt3(const std::string& name, const glm::ivec3& vec);

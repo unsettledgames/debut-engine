@@ -74,6 +74,7 @@ namespace Debut
 		virtual std::vector<ShaderUniform> GetUniforms() const = 0;
 
 		virtual void SetInt(const std::string& name, int value) = 0;
+		virtual void SetBool(const std::string& name, bool value) = 0;
 		virtual void SetIntArray(const std::string& name, int* data, uint32_t count) = 0;
 		
 		virtual void SetFloat(const std::string& name, float uniform) = 0;

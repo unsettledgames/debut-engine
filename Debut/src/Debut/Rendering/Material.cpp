@@ -240,6 +240,9 @@ namespace Debut
 			case ShaderDataType::Int:
 				shader->SetInt(uniform.second.Name, uniform.second.Data.Int);
 				break;
+			case ShaderDataType::Bool:
+				shader->SetBool(uniform.second.Name, uniform.second.Data.Int);
+				break;
 			case ShaderDataType::Float:
 				shader->SetFloat(uniform.second.Name, uniform.second.Data.Float);
 				break;
@@ -259,7 +262,7 @@ namespace Debut
 					texture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
 				else
 					texture = AssetManager::Request<Texture2D>(DBT_WHITE_TEXTURE_UUID);
-
+				shader->SetInt(uniform.second.Name, currSlot);
 				texture->Bind(currSlot);
 				currSlot++;
 				break;

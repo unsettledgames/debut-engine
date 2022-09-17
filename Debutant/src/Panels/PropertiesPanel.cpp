@@ -377,6 +377,11 @@ namespace Debut
 				{
 					switch (uniform.second.Type)
 					{
+					case ShaderDataType::Bool:
+						if (ImGui::Checkbox(uniform.second.Name.c_str(), &uniform.second.Data.Bool))
+							config.Uniforms[uniform.second.Name].Data.Bool = uniform.second.Data.Bool;
+						break;
+
 					case ShaderDataType::Float:
 					{
 						float value = uniform.second.Data.Float;
@@ -431,7 +436,7 @@ namespace Debut
 
 						ImGuiUtils::ResetColumns();
 
-						// TODO: Size and offset?
+						// TODO: Tiling and offset
 						break;
 					}
 
