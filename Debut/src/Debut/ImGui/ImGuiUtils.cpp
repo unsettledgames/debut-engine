@@ -38,14 +38,14 @@ namespace Debut
 		ImGui::Dummy({ 0, 3 });
 	}
 
-	bool ImGuiUtils::DragFloat(const std::string& label, float* value, float power, float min, float max)
+	bool ImGuiUtils::DragFloat(const std::string& label, float* value, float power, float min, float max, uint32_t columnWidth)
 	{
 		bool ret = false;
 
 		ImGui::PushID(label.c_str());
 
 		ImGuiUtils::ResetColumns();
-		ImGuiUtils::StartColumns(2, { 150, 200 });
+		ImGuiUtils::StartColumns(2, { (uint32_t)columnWidth, 200 });
 		
 		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
@@ -354,11 +354,14 @@ namespace Debut
 		return ImGui::ImageButton((ImTextureID)texture->GetRendererID(), size, { 1, 0 }, { 0, 1 }, -1, color);
 	}
 
-	template Ref<Texture2D> ImGuiUtils::ImageDragDestination(uint32_t, ImVec2);
+	template Ref<Texture2D> ImGuiUtils::ImageDragDestination(uint32_t, ImVec2, const char* id);
 	template<typename T>
-	Ref<T> ImGuiUtils::ImageDragDestination(uint32_t rendererID, ImVec2 size)
+	Ref<T> ImGuiUtils::ImageDragDestination(uint32_t rendererID, ImVec2 size, const char* id)
 	{
 		Ref<T> selectedAsset = nullptr;
+
+		if (id != 0)
+			ImGui::PushID(id);
 		// Accept PNG files to use as textures for the sprite renderer
 		ImGui::ImageButton((ImTextureID)rendererID, size, { 0, 1 }, { 1, 0 });
 		if (ImGui::BeginDragDropTarget())
@@ -374,6 +377,9 @@ namespace Debut
 			}
 			ImGui::EndDragDropTarget();
 		}
+
+		if (id != 0)
+			ImGui::PopID();
 
 		return selectedAsset;
 	}

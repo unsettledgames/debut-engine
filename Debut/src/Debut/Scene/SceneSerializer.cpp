@@ -313,7 +313,7 @@ namespace Debut
 
 	EntitySceneNode* SceneSerializer::DeserializeText(const std::string& fileName)
 	{
-		if (!CppUtils::String::endsWith(fileName, ".debut"))
+		if (!CppUtils::String::EndsWith(fileName, ".debut"))
 			return nullptr;
 
 		std::ifstream inFile(fileName);

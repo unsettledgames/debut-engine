@@ -22,13 +22,18 @@
 
 /*
     TODO:
+    - Refactor material interface to allow for texture tiling and offset, use Texture structure in shader
+
     - Specular maps
     - Roughness maps?
     - Occlusion maps?
     - Parallax mapping
     - Displacement maps?
 
-    - Refactor material interface to allow for texture tiling and offset, use Texture structure in shader
+    Extra:
+    - add .debut to end of scene
+    - Reset directional light when it is deleted from the scene
+    -
 
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking
