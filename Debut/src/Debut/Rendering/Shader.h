@@ -19,7 +19,7 @@ namespace Debut
 	struct ShaderUniform
 	{
 		std::string Name;
-		ShaderDataType Type;
+		ShaderDataType Type = ShaderDataType::None;
 		union UniformData
 		{
 			float Float;
@@ -78,6 +78,7 @@ namespace Debut
 		virtual void SetIntArray(const std::string& name, int* data, uint32_t count) = 0;
 		
 		virtual void SetFloat(const std::string& name, float uniform) = 0;
+		virtual void SetFloat2(const std::string& name, const glm::vec2& uniform) = 0;
 		virtual void SetFloat3(const std::string& name, const glm::vec3& uniform) = 0;
 		virtual void SetFloat4(const std::string& name, const glm::vec4& uniform) = 0;
 

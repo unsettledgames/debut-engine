@@ -22,11 +22,10 @@
 
 /*
     TODO:
-    - Refactor material interface to allow for texture tiling and offset, use Texture structure in shader
-
     - Specular maps
-    - Roughness maps?
-    - Occlusion maps?
+    - Roughness maps
+    - Occlusion maps
+    - Reflection maps
     - Parallax mapping
     - Displacement maps?
 

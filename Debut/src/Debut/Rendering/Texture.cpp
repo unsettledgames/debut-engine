@@ -15,7 +15,7 @@ namespace Debut
 		std::stringstream strStream;
 
 		// Load texture parameters
-		Texture2DConfig texParams = GetConfig(metaFilePath);
+		Texture2DConfig texParams = GetConfig(correctMeta);
 		// If the texture doesn't have a meta file, save some default ones
 		if (texParams.ID == 0)
 		{
@@ -75,7 +75,7 @@ namespace Debut
 
 	Texture2DConfig Texture2D::GetConfig(const std::string& path)
 	{
-		std::ifstream metaFile(path + ".meta");
+		std::ifstream metaFile(path);
 		std::stringstream strStream;
 		Texture2DConfig texParams;
 

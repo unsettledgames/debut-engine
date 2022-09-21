@@ -8,13 +8,24 @@ layout(location = 3) in vec3 a_Tangent;
 layout(location = 4) in vec3 a_Bitangent;
 layout(location = 5) in vec2 a_TexCoords0;
 
+struct Texture2D
+{
+	vec2 Tiling;
+	vec2 Offset;
+	
+	float Intensity;
+	bool Use;
+	
+	sampler2D Sampler;
+};
+
+uniform Texture2D u_NormalMap;
+
 uniform mat4 u_ViewProjection;
 uniform mat4 u_ViewMatrix;
 uniform mat4 u_ProjectionMatrix;
 uniform vec3 u_CameraPosition;
 uniform mat4 u_Transform;
-
-uniform bool u_UseNormalMap;
 
 out vec4 v_Color;
 out vec3 v_Normal;
@@ -27,13 +38,20 @@ void main()
 {
 	mat4 viewProj = u_ProjectionMatrix * u_ViewMatrix;
 	mat4 mvp = viewProj * u_Transform;
+	
+	vec3 normal = mat3(transpose(inverse(u_Transform))) * a_Normal;
 
 	v_Color = a_Color;
-	if (u_UseNormalMap)
-		v_TangentSpace = mat3(a_Tangent, a_Bitangent, normalize(cross(a_Tangent, a_Bitangent)));
+	if (u_NormalMap.Use)
+	{
+		vec4 tangent = normalize(u_Transform * vec4(a_Tangent, 1.0));
+		vec4 bitangent = normalize(u_Transform * vec4(a_Bitangent, 1.0));
+		
+		v_TangentSpace = mat3(vec3(tangent), vec3(bitangent), normal);
+	}
 	// TODO: send the matrix via CPU
 	else
-		v_Normal = mat3(transpose(inverse(u_Transform))) * a_Normal;
+		v_Normal = normal;
 		
 	v_TexCoords = a_TexCoords0;
 	v_FragPos = vec3(u_Transform * vec4(a_Position, 1.0));
@@ -44,7 +62,7 @@ void main()
 #type fragment
 #version 410
 
-#define N_MAX_LIGHTS	128
+#define N_MAX_LIGHTS	16
 
 struct PointLight
 {
@@ -53,6 +71,17 @@ struct PointLight
 	
 	float Intensity;
 	float Radius;
+};
+
+struct Texture2D
+{
+	vec2 Tiling;
+	vec2 Offset;
+	
+	float Intensity;
+	bool Use;
+	
+	sampler2D Sampler;
 };
 
 in vec4 v_Color;
@@ -79,24 +108,23 @@ uniform PointLight u_PointLights[N_MAX_LIGHTS];
 uniform float u_SpecularShininess;
 uniform float u_SpecularStrength;
 
-uniform sampler2D u_NormalMap;
-uniform sampler2D u_DiffuseTexture;
-
-
-uniform bool u_UseNormalMap;
+uniform Texture2D u_NormalMap;
+uniform Texture2D u_DiffuseTexture;
 
 uniform sampler2D u_RoughnessMap;
 uniform sampler2D u_MetalnessMap;
 uniform sampler2D u_DisplacementMap;
 
 
-vec3 DirectionalPhong(vec3 normal, vec3 lightDir)
+vec3 DirectionalPhong(vec3 normal, vec3 lightDir, vec3 viewDir)
 {
     // Diffuse component
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = diff * u_DirectionalLightCol;
 	
-    return diffuse * u_DirectionalLightIntensity;
+	vec3 reflectDir = reflect(-normalize(lightDir), normal);  
+	float spec = pow(max(dot(normalize(viewDir), reflectDir), 0.0), u_SpecularShininess) * u_SpecularStrength;
+	
+    return (diff + spec) * u_DirectionalLightCol * u_DirectionalLightIntensity;
 }
 
 vec3 PointPhong(vec3 normal, PointLight light, vec3 viewDir, vec3 lightDir)
@@ -118,7 +146,7 @@ vec3 PointPhong(vec3 normal, PointLight light, vec3 viewDir, vec3 lightDir)
 
 void main()
 {
-	vec4 texColor = texture(u_DiffuseTexture, v_TexCoords);
+	vec4 texColor = texture(u_DiffuseTexture.Sampler, v_TexCoords * u_DiffuseTexture.Tiling + u_DiffuseTexture.Offset);
 	if (texColor.w < 0.1)
 		discard;
 		
@@ -126,15 +154,19 @@ void main()
 	vec3 lightDir = normalize(u_DirectionalLightDir);	
 	
 	// Sample normalmap
-	if (u_UseNormalMap)
-		normal = normalize(v_TangentSpace * vec3(texture(u_NormalMap, v_TexCoords) * 2 - 1));
+	if (u_NormalMap.Use)
+	{
+		normal = normalize(v_TangentSpace * vec3(vec4(u_NormalMap.Intensity, u_NormalMap.Intensity, 1.0, 1.0) * 
+			(texture(u_NormalMap.Sampler, v_TexCoords * u_NormalMap.Tiling) * 2 - 1)));
+	}
 		
 	// Get color
 	color = texColor * vec4(u_AmbientLightColor*u_AmbientLightIntensity, 1.0) + 
-			texColor * vec4(DirectionalPhong(normal, lightDir), 1.0);
+			texColor * vec4(DirectionalPhong(normal, lightDir, u_CameraPosition - v_FragPos), 1.0);
 	
 	for (int i=0; i<u_NPointLights; i++)
 		color += texColor * vec4(PointPhong
 			(normal, u_PointLights[i], u_CameraPosition - v_FragPos, 
 			u_PointLights[i].Position - v_FragPos), 1.0);
+
 }

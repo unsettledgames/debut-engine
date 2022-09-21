@@ -236,6 +236,11 @@ namespace Debut
 		UploadUniformFloat(name, uniform);
 	}
 
+	void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& uniform)
+	{
+		UploadUniformFloat2(name, uniform);
+	}
+
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& uniform)
 	{
 		UploadUniformFloat3(name, uniform);

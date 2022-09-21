@@ -490,7 +490,10 @@ namespace Debut
 							ImGui::BeginChild("Next data", {ImGui::GetContentRegionAvail().x, 100});
 
 							// Texture title and use button
-							ImGui::Checkbox(("Texture " + uniform.second.Name).c_str(), &config.Uniforms[textureName + ".Use"].Data.Bool);
+							bool val = config.Uniforms[textureName + ".Use"].Data.Bool;
+							if (ImGui::Checkbox(("Texture " + uniform.second.Name).c_str(), &val))
+								config.Uniforms[textureName + ".Use"].Data.Bool = val;
+
 							
 							// Tiling
 							glm::vec2 tiling = config.Uniforms[textureName + ".Tiling"].Data.Vec2;
@@ -512,7 +515,8 @@ namespace Debut
 						
 						break;
 					}
-
+					case ShaderDataType::None:
+						break;
 					default:
 						break;
 					}

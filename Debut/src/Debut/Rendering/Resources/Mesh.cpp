@@ -4,7 +4,6 @@
 
 #include <yaml-cpp/yaml.h>
 #include <Debut/Utils/YamlUtils.h>
-
 #include <lz4.h>
 
 namespace Debut
@@ -18,17 +17,19 @@ namespace Debut
 	static void EmitBuffer(std::vector<T>& buffer, std::ofstream& file)
 	{
 		size_t uncompressedSize = sizeof(T) * buffer.size();
+		size_t compressBound = LZ4_compressBound(uncompressedSize);
 		size_t compressedSize;
 
 		const char* byteArrayBegin = reinterpret_cast<char*>(buffer.data());
-		char* compressedByteArray = new char[uncompressedSize];
+		char* compressedByteArray = new char[compressBound];
+		memset(compressedByteArray, 0, uncompressedSize);
 		
 		{
 			DBT_PROFILE_SCOPE("SaveMesh::CompressBuffer");
-			Log.CoreInfo("Compressing");
-			compressedSize = LZ4_compress_default(byteArrayBegin, compressedByteArray, uncompressedSize, uncompressedSize);
+			compressedSize = LZ4_compress_default(byteArrayBegin, compressedByteArray, uncompressedSize, compressBound);
+
 			if (compressedSize == 0)
-				Log.CoreError("Compression error");
+				Log.CoreError("Compression error: {0}", compressedSize);
 		}
 		
 		{
@@ -151,12 +152,19 @@ namespace Debut
 					outFile << m_Transform[i][j] << " ";
 			outFile << "\n";
 
+			Log.CoreInfo("Vertices");
 			outFile << "Vertices" << "\n"; EmitBuffer<float>(m_Vertices, outFile);
+			Log.CoreInfo("Colors");
 			outFile << "\nColors\n"; EmitBuffer<float>(m_Colors, outFile);
+			Log.CoreInfo("Normals");
 			outFile << "\nNormals" << "\n"; EmitBuffer<float>(m_Normals, outFile);
+			Log.CoreInfo("Tangents");
 			outFile << "\nTangents" << "\n"; EmitBuffer<float>(m_Tangents, outFile);
+			Log.CoreInfo("Bitangents");
 			outFile << "\nBitangents" << "\n"; EmitBuffer<float>(m_Bitangents, outFile);
+			Log.CoreInfo("Indices");
 			outFile << "\nIndices" << "\n"; EmitBuffer<int>(m_Indices, outFile);
+			Log.CoreInfo("TexCoords");
 			outFile << "\nTexCoords" << "\n";
 			for (uint32_t i = 0; i < m_TexCoords.size(); i++)
 			{
