@@ -16,29 +16,48 @@ namespace Debut
 	template<typename T>
 	static void EmitBuffer(std::vector<T>& buffer, std::ofstream& file)
 	{
+		if (buffer.size() == 0)
+		{
+			file << 0 << "\n";
+			file << false << "\n";
+			return;
+		}
+
 		size_t uncompressedSize = sizeof(T) * buffer.size();
 		size_t compressBound = LZ4_compressBound(uncompressedSize);
 		size_t compressedSize;
 
 		const char* byteArrayBegin = reinterpret_cast<char*>(buffer.data());
-		char* compressedByteArray = new char[compressBound];
-		memset(compressedByteArray, 0, uncompressedSize);
-		
-		{
-			DBT_PROFILE_SCOPE("SaveMesh::CompressBuffer");
-			compressedSize = LZ4_compress_default(byteArrayBegin, compressedByteArray, uncompressedSize, compressBound);
 
-			if (compressedSize == 0)
-				Log.CoreError("Compression error: {0}", compressedSize);
-		}
-		
+		// Don't compress if the compression produces more data than before
+		if (compressBound > uncompressedSize)
 		{
-			DBT_PROFILE_SCOPE("SaveMesh::SaveToFile");
-			file << compressedSize << "\n";
-			file.write((const char*)compressedByteArray, compressedSize);
-
-			delete[] compressedByteArray;
+			file << uncompressedSize << "\n";
+			file << false << "\n";
+			file.write(byteArrayBegin, uncompressedSize);
 		}
+		else
+		{
+			char* compressedByteArray = new char[compressBound];
+			memset(compressedByteArray, 0, uncompressedSize);
+
+			{
+				DBT_PROFILE_SCOPE("SaveMesh::CompressBuffer");
+				compressedSize = LZ4_compress_default(byteArrayBegin, compressedByteArray, uncompressedSize, compressBound);
+
+				if (compressedSize == 0)
+					Log.CoreError("Compression error: {0}", compressedSize);
+			}
+
+			{
+				DBT_PROFILE_SCOPE("SaveMesh::SaveToFile");
+				file << true << "\n";
+				file << compressedSize << "\n";
+				file.write((const char*)compressedByteArray, compressedSize);
+
+				delete[] compressedByteArray;
+			}
+		}		
 	}
 
 	template<typename T>
@@ -46,13 +65,18 @@ namespace Debut
 	{
 		std::string string = "";
 		std::string compressedString;
+		std::string hasCompressedStr;
 
+		bool compressed;
 		size_t compressedSize;
 		size_t decompressedSize;
 
 		while (string.compare("") == 0 || string.compare(" ") == 0)
 			std::getline(file, string);	
 		std::getline(file, compressedString);
+		std::getline(file, hasCompressedStr);
+
+		compressed = std::stoi(hasCompressedStr);
 		compressedSize = std::stoi(compressedString);
 
 		if (compressedSize == 0)
@@ -71,10 +95,13 @@ namespace Debut
 			Log.CoreInfo("Bad? {0}", file.bad());
 		}
 
-		char* dst = (char*)malloc(sizeof(T) * nElements);
-		decompressedSize = LZ4_decompress_safe((const char*)buffer.data(), dst, compressedSize, sizeof(T) * nElements);
-		memcpy(buffer.data(), dst, sizeof(T) * nElements);
-		free(dst);
+		if (compressed)
+		{
+			char* dst = (char*)malloc(sizeof(T) * nElements);
+			decompressedSize = LZ4_decompress_safe((const char*)buffer.data(), dst, compressedSize, sizeof(T) * nElements);
+			memcpy(buffer.data(), dst, sizeof(T) * nElements);
+			free(dst);
+		}
 	}
 
 

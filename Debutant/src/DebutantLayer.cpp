@@ -385,7 +385,8 @@ namespace Debut
                 if (ImGui::MenuItem("Save scene as...", "Ctrl+Shift+S"))
                     SaveSceneAs();
 
-                if (ImGui::MenuItem("Exit")) Application::Get().Close();
+                if (ImGui::MenuItem("Exit")) 
+                    Application::Get().Close();
                 ImGui::EndMenu();
             }
 
