@@ -112,6 +112,7 @@ uniform Texture2D u_DiffuseTexture;
 uniform Texture2D u_NormalMap;
 uniform Texture2D u_SpecularMap;
 uniform Texture2D u_OcclusionMap;
+uniform Texture2D u_EmissionMap;
 
 uniform sampler2D u_RoughnessMap;
 uniform sampler2D u_MetalnessMap;
@@ -192,6 +193,16 @@ void main()
 	{
 		vec4 occ = texture(u_OcclusionMap.Sampler, v_TexCoords * u_OcclusionMap.Tiling + u_OcclusionMap.Offset);
 		if (occ.w > 0.0)
-			color *= occ;
+			color *= occ * u_OcclusionMap.Intensity;
+	}
+	
+	if (u_EmissionMap.Use)
+	{
+		vec3 emissiveCol = (texture(u_EmissionMap.Sampler, v_TexCoords * u_EmissionMap.Tiling + u_EmissionMap.Offset)).xyz;
+		if (length(emissiveCol) > 0)
+		{
+			color += vec4(emissiveCol, 1.0) * u_EmissionMap.Intensity;
+			return;
+		}
 	}
 }

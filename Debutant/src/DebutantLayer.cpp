@@ -22,17 +22,16 @@
 
 /*
     TODO:
-    - Roughness maps
+    - Roughness maps (PBR)
     - Emission maps
-    - Occlusion maps
-    - Reflection maps
     - Parallax mapping
+    - Reflection maps
     - Displacement maps
 
     Extra:
     - add .debut to end of scene
     - Reset directional light when it is deleted from the scene
-    -
+    - Find out why some models are huge sometimes
 
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking
