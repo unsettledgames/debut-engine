@@ -24,10 +24,11 @@
     TODO:
     - Specular maps
     - Roughness maps
+    - Emission maps
     - Occlusion maps
     - Reflection maps
     - Parallax mapping
-    - Displacement maps?
+    - Displacement maps
 
     Extra:
     - add .debut to end of scene

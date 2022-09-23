@@ -1,0 +1,526 @@
+---
+Name: map_3_castle
+Shader: 16775874381677145436
+Parameters:
+  u_PointLights[10].Intensity: 0
+  u_DirectionalLightDir: [0, 0, 0]
+  u_AmbientLightColor: [0, 0, 0]
+  u_PointLights[12].Position: [0, 0, 0]
+  u_AmbientLightIntensity: 0
+  u_PointLights[11].Radius: 0
+  u_PointLights[117].Position: [0, 0, 0]
+  u_PointLights[52].Color: [0, 0, 0]
+  u_PointLights[35].Radius: 0
+  u_PointLights[5].Intensity: 0
+  u_PointLights[58].Position: [0, 0, 0]
+  u_DiffuseTexture:
+    ID: 3019328515098947542
+  u_DirectionalLightCol: [0, 0, 0]
+  u_PointLights[97].Color: [0, 0, 0]
+  u_PointLights[0].Intensity: 0
+  u_PointLights[49].Intensity: 0
+  u_PointLights[15].Radius: 0
+  u_PointLights[7].Intensity: 0
+  u_PointLights[120].Intensity: 0
+  u_PointLights[106].Position: [0, 0, 0]
+  u_DirectionalLightIntensity: 0
+  u_PointLights[0].Color: [0, 0, 0]
+  u_PointLights[0].Position: [0, 0, 0]
+  u_PointLights[12].Intensity: 0
+  u_PointLights[127].Radius: 0
+  u_PointLights[3].Position: [0, 0, 0]
+  u_PointLights[124].Position: [0, 0, 0]
+  u_PointLights[0].Radius: 0
+  u_PointLights[82].Radius: 0
+  u_PointLights[1].Color: [0, 0, 0]
+  u_PointLights[1].Intensity: 0
+  u_PointLights[1].Position: [0, 0, 0]
+  u_PointLights[1].Radius: 0
+  u_PointLights[118].Position: [0, 0, 0]
+  u_PointLights[2].Color: [0, 0, 0]
+  u_PointLights[125].Intensity: 0
+  u_PointLights[7].Radius: 0
+  u_PointLights[49].Radius: 0
+  u_PointLights[74].Radius: 0
+  u_PointLights[2].Intensity: 0
+  u_PointLights[57].Color: [0, 0, 0]
+  u_PointLights[2].Position: [0, 0, 0]
+  u_PointLights[14].Intensity: 0
+  u_PointLights[2].Radius: 0
+  u_PointLights[124].Color: [0, 0, 0]
+  u_PointLights[47].Position: [0, 0, 0]
+  u_PointLights[9].Position: [0, 0, 0]
+  u_PointLights[83].Intensity: 0
+  u_PointLights[3].Color: [0, 0, 0]
+  u_PointLights[47].Color: [0, 0, 0]
+  u_PointLights[9].Color: [0, 0, 0]
+  u_PointLights[3].Intensity: 0
+  u_PointLights[3].Radius: 0
+  u_PointLights[28].Position: [0, 0, 0]
+  u_PointLights[4].Color: [0, 0, 0]
+  u_PointLights[4].Intensity: 0
+  u_PointLights[109].Color: [0, 0, 0]
+  u_PointLights[12].Radius: 0
+  u_PointLights[20].Color: [0, 0, 0]
+  u_PointLights[4].Position: [0, 0, 0]
+  u_PointLights[87].Color: [0, 0, 0]
+  u_PointLights[4].Radius: 0
+  u_PointLights[52].Intensity: 0
+  u_PointLights[5].Color: [0, 0, 0]
+  u_PointLights[5].Position: [0, 0, 0]
+  u_PointLights[122].Radius: 0
+  u_PointLights[6].Color: [0, 0, 0]
+  u_PointLights[48].Color: [0, 0, 0]
+  u_PointLights[5].Radius: 0
+  u_PointLights[78].Radius: 0
+  u_PointLights[11].Color: [0, 0, 0]
+  u_Transform: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+  u_PointLights[51].Position: [0, 0, 0]
+  u_PointLights[6].Intensity: 0
+  u_PointLights[48].Intensity: 0
+  u_PointLights[48].Position: [0, 0, 0]
+  u_PointLights[6].Position: [0, 0, 0]
+  u_PointLights[108].Intensity: 0
+  u_PointLights[48].Radius: 0
+  u_PointLights[34].Color: [0, 0, 0]
+  u_PointLights[6].Radius: 0
+  u_PointLights[49].Color: [0, 0, 0]
+  u_PointLights[25].Intensity: 0
+  u_PointLights[7].Color: [0, 0, 0]
+  u_PointLights[49].Position: [0, 0, 0]
+  u_PointLights[7].Position: [0, 0, 0]
+  u_PointLights[46].Color: [0, 0, 0]
+  u_PointLights[8].Color: [0, 0, 0]
+  u_PointLights[46].Intensity: 0
+  u_PointLights[8].Intensity: 0
+  u_PointLights[86].Color: [0, 0, 0]
+  u_PointLights[8].Position: [0, 0, 0]
+  u_PointLights[46].Position: [0, 0, 0]
+  u_PointLights[92].Intensity: 0
+  u_PointLights[10].Color: [0, 0, 0]
+  u_PointLights[46].Radius: 0
+  u_PointLights[8].Radius: 0
+  u_PointLights[47].Intensity: 0
+  u_PointLights[12].Color: [0, 0, 0]
+  u_PointLights[9].Intensity: 0
+  u_PointLights[47].Radius: 0
+  u_PointLights[9].Radius: 0
+  u_PointLights[81].Color: [0, 0, 0]
+  u_PointLights[10].Position: [0, 0, 0]
+  u_PointLights[13].Color: [0, 0, 0]
+  u_PointLights[10].Radius: 0
+  u_PointLights[11].Intensity: 0
+  u_PointLights[11].Position: [0, 0, 0]
+  u_PointLights[13].Intensity: 0
+  u_PointLights[13].Position: [0, 0, 0]
+  u_PointLights[13].Radius: 0
+  u_PointLights[14].Color: [0, 0, 0]
+  u_PointLights[14].Position: [0, 0, 0]
+  u_PointLights[97].Position: [0, 0, 0]
+  u_PointLights[14].Radius: 0
+  u_PointLights[80].Intensity: 0
+  u_PointLights[41].Radius: 0
+  u_PointLights[15].Color: [0, 0, 0]
+  u_PointLights[15].Intensity: 0
+  u_PointLights[102].Radius: 0
+  u_PointLights[15].Position: [0, 0, 0]
+  u_PointLights[16].Color: [0, 0, 0]
+  u_PointLights[16].Intensity: 0
+  u_PointLights[77].Radius: 0
+  u_PointLights[16].Position: [0, 0, 0]
+  u_PointLights[16].Radius: 0
+  u_PointLights[17].Color: [0, 0, 0]
+  u_PointLights[17].Intensity: 0
+  u_PointLights[17].Position: [0, 0, 0]
+  u_PointLights[17].Radius: 0
+  u_PointLights[67].Intensity: 0
+  u_PointLights[28].Radius: 0
+  u_PointLights[18].Color: [0, 0, 0]
+  u_PointLights[70].Color: [0, 0, 0]
+  u_PointLights[18].Intensity: 0
+  u_PointLights[21].Intensity: 0
+  u_PointLights[18].Position: [0, 0, 0]
+  u_PointLights[18].Radius: 0
+  u_PointLights[19].Color: [0, 0, 0]
+  u_PointLights[19].Intensity: 0
+  u_PointLights[19].Position: [0, 0, 0]
+  u_PointLights[119].Position: [0, 0, 0]
+  u_PointLights[19].Radius: 0
+  u_PointLights[20].Intensity: 0
+  u_PointLights[20].Position: [0, 0, 0]
+  u_PointLights[65].Color: [0, 0, 0]
+  u_PointLights[45].Intensity: 0
+  u_PointLights[20].Radius: 0
+  u_PointLights[89].Position: [0, 0, 0]
+  u_PointLights[21].Color: [0, 0, 0]
+  u_PointLights[21].Position: [0, 0, 0]
+  u_PointLights[21].Radius: 0
+  u_PointLights[35].Position: [0, 0, 0]
+  u_PointLights[22].Color: [0, 0, 0]
+  u_PointLights[77].Color: [0, 0, 0]
+  u_PointLights[22].Intensity: 0
+  u_PointLights[77].Intensity: 0
+  u_PointLights[35].Color: [0, 0, 0]
+  u_PointLights[22].Position: [0, 0, 0]
+  u_PointLights[74].Color: [0, 0, 0]
+  u_PointLights[22].Radius: 0
+  u_PointLights[23].Color: [0, 0, 0]
+  u_PointLights[23].Intensity: 0
+  u_PointLights[23].Position: [0, 0, 0]
+  u_PointLights[64].Color: [0, 0, 0]
+  u_PointLights[23].Radius: 0
+  u_PointLights[24].Color: [0, 0, 0]
+  u_PointLights[108].Radius: 0
+  u_PointLights[80].Color: [0, 0, 0]
+  u_PointLights[24].Intensity: 0
+  u_PointLights[24].Position: [0, 0, 0]
+  u_PointLights[24].Radius: 0
+  u_PointLights[120].Position: [0, 0, 0]
+  u_PointLights[25].Color: [0, 0, 0]
+  u_PointLights[25].Position: [0, 0, 0]
+  u_PointLights[25].Radius: 0
+  u_PointLights[114].Position: [0, 0, 0]
+  u_PointLights[26].Color: [0, 0, 0]
+  u_PointLights[60].Position: [0, 0, 0]
+  u_PointLights[26].Intensity: 0
+  u_PointLights[26].Position: [0, 0, 0]
+  u_PointLights[72].Position: [0, 0, 0]
+  u_PointLights[26].Radius: 0
+  u_PointLights[76].Position: [0, 0, 0]
+  u_PointLights[27].Color: [0, 0, 0]
+  u_PointLights[38].Position: [0, 0, 0]
+  u_PointLights[32].Color: [0, 0, 0]
+  u_PointLights[27].Intensity: 0
+  u_PointLights[27].Position: [0, 0, 0]
+  u_PointLights[27].Radius: 0
+  u_PointLights[62].Intensity: 0
+  u_PointLights[28].Color: [0, 0, 0]
+  u_PointLights[50].Radius: 0
+  u_PointLights[28].Intensity: 0
+  u_PointLights[81].Intensity: 0
+  u_PointLights[29].Color: [0, 0, 0]
+  u_PointLights[29].Intensity: 0
+  u_PointLights[126].Intensity: 0
+  u_PointLights[29].Position: [0, 0, 0]
+  u_PointLights[71].Color: [0, 0, 0]
+  u_PointLights[29].Radius: 0
+  u_PointLights[60].Intensity: 0
+  u_PointLights[30].Color: [0, 0, 0]
+  u_PointLights[30].Intensity: 0
+  u_PointLights[30].Position: [0, 0, 0]
+  u_PointLights[30].Radius: 0
+  u_PointLights[58].Radius: 0
+  u_PointLights[31].Color: [0, 0, 0]
+  u_PointLights[31].Intensity: 0
+  u_PointLights[31].Position: [0, 0, 0]
+  u_PointLights[54].Intensity: 0
+  u_PointLights[31].Radius: 0
+  u_PointLights[32].Intensity: 0
+  u_PointLights[32].Position: [0, 0, 0]
+  u_PointLights[32].Radius: 0
+  u_PointLights[33].Color: [0, 0, 0]
+  u_PointLights[98].Radius: 0
+  u_PointLights[33].Intensity: 0
+  u_PointLights[124].Radius: 0
+  u_PointLights[33].Position: [0, 0, 0]
+  u_PointLights[97].Intensity: 0
+  u_PointLights[106].Intensity: 0
+  u_PointLights[33].Radius: 0
+  u_PointLights[102].Position: [0, 0, 0]
+  u_PointLights[99].Radius: 0
+  u_PointLights[34].Intensity: 0
+  u_PointLights[70].Intensity: 0
+  u_PointLights[37].Radius: 0
+  u_PointLights[34].Position: [0, 0, 0]
+  u_PointLights[34].Radius: 0
+  u_PointLights[55].Position: [0, 0, 0]
+  u_PointLights[35].Intensity: 0
+  u_PointLights[91].Radius: 0
+  u_PointLights[36].Color: [0, 0, 0]
+  u_PointLights[36].Intensity: 0
+  u_PointLights[113].Intensity: 0
+  u_PointLights[36].Position: [0, 0, 0]
+  u_PointLights[53].Radius: 0
+  u_PointLights[36].Radius: 0
+  u_PointLights[92].Radius: 0
+  u_PointLights[37].Color: [0, 0, 0]
+  u_PointLights[121].Position: [0, 0, 0]
+  u_PointLights[37].Intensity: 0
+  u_PointLights[37].Position: [0, 0, 0]
+  u_PointLights[38].Color: [0, 0, 0]
+  u_PointLights[38].Intensity: 0
+  u_PointLights[73].Position: [0, 0, 0]
+  u_PointLights[38].Radius: 0
+  u_PointLights[94].Radius: 0
+  u_PointLights[39].Color: [0, 0, 0]
+  u_PointLights[77].Position: [0, 0, 0]
+  u_PointLights[39].Intensity: 0
+  u_PointLights[82].Intensity: 0
+  u_PointLights[39].Position: [0, 0, 0]
+  u_PointLights[56].Color: [0, 0, 0]
+  u_PointLights[39].Radius: 0
+  u_PointLights[62].Position: [0, 0, 0]
+  u_PointLights[40].Color: [0, 0, 0]
+  u_PointLights[40].Intensity: 0
+  u_PointLights[114].Color: [0, 0, 0]
+  u_PointLights[40].Position: [0, 0, 0]
+  u_PointLights[61].Radius: 0
+  u_PointLights[98].Position: [0, 0, 0]
+  u_PointLights[72].Intensity: 0
+  u_PointLights[40].Radius: 0
+  u_PointLights[41].Color: [0, 0, 0]
+  u_PointLights[58].Color: [0, 0, 0]
+  u_PointLights[41].Intensity: 0
+  u_PointLights[52].Position: [0, 0, 0]
+  u_PointLights[41].Position: [0, 0, 0]
+  u_PointLights[42].Color: [0, 0, 0]
+  u_PointLights[42].Intensity: 0
+  u_PointLights[42].Position: [0, 0, 0]
+  u_PointLights[42].Radius: 0
+  u_PointLights[43].Color: [0, 0, 0]
+  u_PointLights[43].Intensity: 0
+  u_PointLights[120].Color: [0, 0, 0]
+  u_PointLights[43].Position: [0, 0, 0]
+  u_PointLights[53].Color: [0, 0, 0]
+  u_PointLights[43].Radius: 0
+  u_PointLights[44].Color: [0, 0, 0]
+  u_PointLights[44].Intensity: 0
+  u_PointLights[113].Radius: 0
+  u_PointLights[44].Position: [0, 0, 0]
+  u_PointLights[44].Radius: 0
+  u_PointLights[45].Color: [0, 0, 0]
+  u_PointLights[113].Color: [0, 0, 0]
+  u_PointLights[45].Position: [0, 0, 0]
+  u_PointLights[45].Radius: 0
+  u_PointLights[50].Color: [0, 0, 0]
+  u_PointLights[50].Intensity: 0
+  u_PointLights[69].Intensity: 0
+  u_PointLights[50].Position: [0, 0, 0]
+  u_PointLights[51].Color: [0, 0, 0]
+  u_PointLights[51].Intensity: 0
+  u_PointLights[51].Radius: 0
+  u_PointLights[52].Radius: 0
+  u_PointLights[53].Intensity: 0
+  u_PointLights[121].Color: [0, 0, 0]
+  u_PointLights[53].Position: [0, 0, 0]
+  u_PointLights[54].Color: [0, 0, 0]
+  u_PointLights[54].Position: [0, 0, 0]
+  u_PointLights[54].Radius: 0
+  u_PointLights[55].Color: [0, 0, 0]
+  u_PointLights[55].Intensity: 0
+  u_PointLights[55].Radius: 0
+  u_PointLights[56].Intensity: 0
+  u_PointLights[56].Position: [0, 0, 0]
+  u_PointLights[114].Intensity: 0
+  u_PointLights[56].Radius: 0
+  u_PointLights[73].Color: [0, 0, 0]
+  u_PointLights[57].Intensity: 0
+  u_PointLights[57].Position: [0, 0, 0]
+  u_PointLights[57].Radius: 0
+  u_PointLights[58].Intensity: 0
+  u_PointLights[118].Intensity: 0
+  u_PointLights[112].Position: [0, 0, 0]
+  u_PointLights[59].Color: [0, 0, 0]
+  u_PointLights[59].Intensity: 0
+  u_PointLights[59].Position: [0, 0, 0]
+  u_PointLights[59].Radius: 0
+  u_PointLights[60].Color: [0, 0, 0]
+  u_PointLights[60].Radius: 0
+  u_PointLights[96].Intensity: 0
+  u_PointLights[61].Color: [0, 0, 0]
+  u_PointLights[61].Intensity: 0
+  u_PointLights[61].Position: [0, 0, 0]
+  u_PointLights[62].Color: [0, 0, 0]
+  u_PointLights[62].Radius: 0
+  u_PointLights[63].Color: [0, 0, 0]
+  u_PointLights[115].Position: [0, 0, 0]
+  u_PointLights[63].Intensity: 0
+  u_PointLights[63].Position: [0, 0, 0]
+  u_PointLights[66].Intensity: 0
+  u_PointLights[63].Radius: 0
+  u_PointLights[75].Position: [0, 0, 0]
+  u_PointLights[64].Intensity: 0
+  u_PointLights[64].Position: [0, 0, 0]
+  u_PointLights[67].Position: [0, 0, 0]
+  u_PointLights[64].Radius: 0
+  u_PointLights[65].Intensity: 0
+  u_PointLights[84].Radius: 0
+  u_PointLights[65].Position: [0, 0, 0]
+  u_PointLights[65].Radius: 0
+  u_PointLights[123].Intensity: 0
+  u_PointLights[66].Color: [0, 0, 0]
+  u_PointLights[66].Position: [0, 0, 0]
+  u_PointLights[66].Radius: 0
+  u_PointLights[67].Color: [0, 0, 0]
+  u_PointLights[67].Radius: 0
+  u_PointLights[91].Position: [0, 0, 0]
+  u_PointLights[68].Color: [0, 0, 0]
+  u_PointLights[68].Intensity: 0
+  u_PointLights[68].Position: [0, 0, 0]
+  u_PointLights[85].Intensity: 0
+  u_PointLights[68].Radius: 0
+  u_PointLights[69].Color: [0, 0, 0]
+  u_PointLights[118].Radius: 0
+  u_PointLights[69].Position: [0, 0, 0]
+  u_PointLights[115].Color: [0, 0, 0]
+  u_PointLights[69].Radius: 0
+  u_PointLights[127].Intensity: 0
+  u_PointLights[70].Position: [0, 0, 0]
+  u_PointLights[70].Radius: 0
+  u_PointLights[71].Intensity: 0
+  u_PointLights[90].Radius: 0
+  u_PointLights[71].Position: [0, 0, 0]
+  u_PointLights[117].Intensity: 0
+  u_PointLights[71].Radius: 0
+  u_PointLights[72].Color: [0, 0, 0]
+  u_PointLights[116].Intensity: 0
+  u_PointLights[72].Radius: 0
+  u_PointLights[73].Intensity: 0
+  u_PointLights[73].Radius: 0
+  u_PointLights[74].Intensity: 0
+  u_PointLights[94].Color: [0, 0, 0]
+  u_PointLights[74].Position: [0, 0, 0]
+  u_PointLights[84].Position: [0, 0, 0]
+  u_PointLights[75].Color: [0, 0, 0]
+  u_PointLights[75].Intensity: 0
+  u_PointLights[75].Radius: 0
+  u_PointLights[76].Color: [0, 0, 0]
+  u_PointLights[76].Intensity: 0
+  u_PointLights[76].Radius: 0
+  u_PointLights[78].Color: [0, 0, 0]
+  u_PointLights[78].Intensity: 0
+  u_PointLights[78].Position: [0, 0, 0]
+  u_PointLights[79].Color: [0, 0, 0]
+  u_PointLights[79].Intensity: 0
+  u_PointLights[79].Position: [0, 0, 0]
+  u_PointLights[106].Color: [0, 0, 0]
+  u_PointLights[79].Radius: 0
+  u_PointLights[94].Position: [0, 0, 0]
+  u_PointLights[125].Color: [0, 0, 0]
+  u_PointLights[80].Position: [0, 0, 0]
+  u_PointLights[80].Radius: 0
+  u_PointLights[81].Position: [0, 0, 0]
+  u_PointLights[81].Radius: 0
+  u_PointLights[116].Position: [0, 0, 0]
+  u_PointLights[82].Color: [0, 0, 0]
+  u_PointLights[82].Position: [0, 0, 0]
+  u_PointLights[101].Radius: 0
+  u_PointLights[83].Color: [0, 0, 0]
+  u_PointLights[83].Position: [0, 0, 0]
+  u_PointLights[86].Intensity: 0
+  u_PointLights[83].Radius: 0
+  u_PointLights[84].Color: [0, 0, 0]
+  u_PointLights[84].Intensity: 0
+  u_PointLights[85].Color: [0, 0, 0]
+  u_PointLights[85].Position: [0, 0, 0]
+  u_PointLights[85].Radius: 0
+  u_PointLights[112].Color: [0, 0, 0]
+  u_PointLights[86].Position: [0, 0, 0]
+  u_PointLights[86].Radius: 0
+  u_PointLights[87].Intensity: 0
+  u_PointLights[87].Position: [0, 0, 0]
+  u_PointLights[87].Radius: 0
+  u_PointLights[88].Color: [0, 0, 0]
+  u_PointLights[88].Intensity: 0
+  u_PointLights[88].Position: [0, 0, 0]
+  u_PointLights[88].Radius: 0
+  u_PointLights[89].Color: [0, 0, 0]
+  u_PointLights[89].Intensity: 0
+  u_PointLights[89].Radius: 0
+  u_PointLights[90].Color: [0, 0, 0]
+  u_PointLights[121].Radius: 0
+  u_PointLights[90].Intensity: 0
+  u_PointLights[102].Color: [0, 0, 0]
+  u_PointLights[90].Position: [0, 0, 0]
+  u_PointLights[91].Color: [0, 0, 0]
+  u_PointLights[91].Intensity: 0
+  u_PointLights[100].Intensity: 0
+  u_PointLights[92].Color: [0, 0, 0]
+  u_PointLights[92].Position: [0, 0, 0]
+  u_PointLights[93].Color: [0, 0, 0]
+  u_PointLights[123].Color: [0, 0, 0]
+  u_PointLights[93].Intensity: 0
+  u_PointLights[93].Position: [0, 0, 0]
+  u_PointLights[93].Radius: 0
+  u_PointLights[94].Intensity: 0
+  u_PointLights[95].Color: [0, 0, 0]
+  u_PointLights[95].Intensity: 0
+  u_PointLights[119].Radius: 0
+  u_PointLights[95].Position: [0, 0, 0]
+  u_PointLights[95].Radius: 0
+  u_PointLights[96].Color: [0, 0, 0]
+  u_PointLights[96].Position: [0, 0, 0]
+  u_PointLights[96].Radius: 0
+  u_PointLights[97].Radius: 0
+  u_PointLights[98].Color: [0, 0, 0]
+  u_PointLights[98].Intensity: 0
+  u_PointLights[99].Color: [0, 0, 0]
+  u_PointLights[99].Intensity: 0
+  u_PointLights[99].Position: [0, 0, 0]
+  u_PointLights[100].Color: [0, 0, 0]
+  u_PointLights[100].Position: [0, 0, 0]
+  u_PointLights[100].Radius: 0
+  u_ViewMatrix: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+  u_PointLights[101].Color: [0, 0, 0]
+  u_PointLights[101].Intensity: 0
+  u_PointLights[101].Position: [0, 0, 0]
+  u_PointLights[112].Radius: 0
+  u_PointLights[108].Color: [0, 0, 0]
+  u_PointLights[102].Intensity: 0
+  u_PointLights[103].Color: [0, 0, 0]
+  u_PointLights[103].Intensity: 0
+  u_PointLights[103].Position: [0, 0, 0]
+  u_PointLights[122].Position: [0, 0, 0]
+  u_PointLights[103].Radius: 0
+  u_PointLights[104].Color: [0, 0, 0]
+  u_PointLights[104].Intensity: 0
+  u_PointLights[104].Position: [0, 0, 0]
+  u_PointLights[104].Radius: 0
+  u_PointLights[105].Color: [0, 0, 0]
+  u_PointLights[105].Intensity: 0
+  u_PointLights[105].Position: [0, 0, 0]
+  u_PointLights[105].Radius: 0
+  u_PointLights[106].Radius: 0
+  u_PointLights[107].Color: [0, 0, 0]
+  u_PointLights[107].Intensity: 0
+  u_PointLights[107].Position: [0, 0, 0]
+  u_PointLights[107].Radius: 0
+  u_PointLights[108].Position: [0, 0, 0]
+  u_PointLights[109].Intensity: 0
+  u_PointLights[120].Radius: 0
+  u_PointLights[109].Position: [0, 0, 0]
+  u_PointLights[109].Radius: 0
+  u_PointLights[110].Color: [0, 0, 0]
+  u_PointLights[110].Intensity: 0
+  u_PointLights[110].Position: [0, 0, 0]
+  u_PointLights[110].Radius: 0
+  u_PointLights[111].Color: [0, 0, 0]
+  u_PointLights[111].Intensity: 0
+  u_PointLights[111].Position: [0, 0, 0]
+  u_PointLights[123].Position: [0, 0, 0]
+  u_PointLights[111].Radius: 0
+  u_PointLights[112].Intensity: 0
+  u_PointLights[113].Position: [0, 0, 0]
+  u_PointLights[114].Radius: 0
+  u_PointLights[115].Intensity: 0
+  u_PointLights[115].Radius: 0
+  u_PointLights[116].Color: [0, 0, 0]
+  u_PointLights[116].Radius: 0
+  u_PointLights[117].Color: [0, 0, 0]
+  u_PointLights[117].Radius: 0
+  u_PointLights[125].Position: [0, 0, 0]
+  u_PointLights[118].Color: [0, 0, 0]
+  u_PointLights[119].Color: [0, 0, 0]
+  u_PointLights[119].Intensity: 0
+  u_PointLights[121].Intensity: 0
+  u_PointLights[122].Color: [0, 0, 0]
+  u_PointLights[122].Intensity: 0
+  u_PointLights[123].Radius: 0
+  u_PointLights[124].Intensity: 0
+  u_PointLights[125].Radius: 0
+  u_PointLights[126].Color: [0, 0, 0]
+  u_PointLights[126].Position: [0, 0, 0]
+  u_PointLights[126].Radius: 0
+  u_PointLights[127].Color: [0, 0, 0]
+  u_PointLights[127].Position: [0, 0, 0]
+  u_ProjectionMatrix: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]

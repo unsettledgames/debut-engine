@@ -108,8 +108,9 @@ uniform PointLight u_PointLights[N_MAX_LIGHTS];
 uniform float u_SpecularShininess;
 uniform float u_SpecularStrength;
 
-uniform Texture2D u_NormalMap;
 uniform Texture2D u_DiffuseTexture;
+uniform Texture2D u_NormalMap;
+uniform Texture2D u_SpecularMap;
 
 uniform sampler2D u_RoughnessMap;
 uniform sampler2D u_MetalnessMap;
@@ -136,20 +137,36 @@ vec3 PointPhong(vec3 normal, PointLight light, vec3 viewDir, vec3 lightDir)
 	// Intensity
 	float intensity = light.Intensity / pow((distance / light.Radius + 1), 2);
 	
-	vec3 reflectDir = reflect(-normalize(lightDir), normal);  
-	float spec = pow(max(dot(normalize(viewDir), reflectDir), 0.0), u_SpecularShininess) * u_SpecularStrength;
-	
+	// Diffuse component
 	float diff = max(dot(normal, normalize(lightDir)), 0.0);
+	
+	// Specular component
+	float specStrength;
+	if (u_SpecularMap.Use)
+		specStrength = texture(u_SpecularMap.Sampler, v_TexCoords * u_SpecularMap.Tiling + u_SpecularMap.Offset).r * u_SpecularStrength;
+	else
+		specStrength = u_SpecularStrength;
+	vec3 reflectDir = reflect(-normalize(lightDir), normal);  
+	float spec = pow(max(dot(normalize(viewDir), reflectDir), 0.0), u_SpecularShininess) * specStrength;
 	
     return (diff + spec) * light.Intensity * light.Color * attenuation ;
 }
 
 void main()
 {
-	vec4 texColor = texture(u_DiffuseTexture.Sampler, v_TexCoords * u_DiffuseTexture.Tiling + u_DiffuseTexture.Offset);
-	if (texColor.w < 0.1)
-		discard;
-		
+	vec4 texColor;
+	
+	if (u_DiffuseTexture.Use)
+	{
+		texColor = texture(u_DiffuseTexture.Sampler, v_TexCoords * u_DiffuseTexture.Tiling + u_DiffuseTexture.Offset);
+		if (texColor.w < 0.1)
+			discard;
+	}
+	else
+	{
+		texColor = v_Color;
+	}
+	
 	vec3 normal = normalize(v_Normal);
 	vec3 lightDir = normalize(u_DirectionalLightDir);	
 	
@@ -157,7 +174,7 @@ void main()
 	if (u_NormalMap.Use)
 	{
 		normal = normalize(v_TangentSpace * vec3(vec4(u_NormalMap.Intensity, u_NormalMap.Intensity, 1.0, 1.0) * 
-			(texture(u_NormalMap.Sampler, v_TexCoords * u_NormalMap.Tiling) * 2 - 1)));
+			(texture(u_NormalMap.Sampler, v_TexCoords * u_NormalMap.Tiling + u_NormalMap.Offset) * 2 - 1)));
 	}
 		
 	// Get color

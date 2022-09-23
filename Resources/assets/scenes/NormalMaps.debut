@@ -1,0 +1,94 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+Entities:
+  - "Entity: ": 2610937792807730244
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 2610937792807730244
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [-1.89828753, 4.0398159, 2.77844834]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    DirectionalLightComponent:
+      Direction: [-0.649999976, 1, 1]
+      Color: [1, 1, 1]
+      Intensity: 0
+    PointLightComponent:
+      Color: [1, 1, 1]
+      Intensity: 1.08000004
+      Radius: 7.94999981
+    Children:
+      []
+  - "Entity: ": 11920862692807592529
+    HierarchyOrder: 2
+    IDComponent:
+      ID: 11920862692807592529
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [-4.13816547, 0.266618967, -2.49265099]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [0, 0.496350527, 1]
+      Intensity: 2.5999999
+      Radius: 5
+    Children:
+      []
+  - "Entity: ": 16933902736390357932
+    HierarchyOrder: 3
+    IDComponent:
+      ID: 16933902736390357932
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [1.6678952, 2.88186169, -2.15941954]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [1, 0.306569338, 0]
+      Intensity: 1
+      Radius: 5
+    Children:
+      []
+  - "Entity: ": 6758744109803773468
+    HierarchyOrder: 3
+    IDComponent:
+      ID: 6758744109803773468
+    TagComponent:
+      Name: rock.obj.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 10268164991715629172
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 10268164991715629172
+        TagComponent:
+          Name: rock.obj.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 6758744109803773468
+        MeshRendererComponent:
+          Mesh: 12390770547143609265
+          Material: 18326471430508098500
+          Instanced: false
+        Children:
+          []

@@ -1,43 +1,25 @@
 Scene: Untitled scene
 Lighting:
-  AmbientLightColor: [0.114124365, 0.122804619, 0.262773752]
-  AmbientLightIntensity: 0
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
 Entities:
-  - "Entity: ": 15395684864807256545
+  - "Entity: ": 7050776549743612119
     HierarchyOrder: 0
     IDComponent:
-      ID: 15395684864807256545
-    TagComponent:
-      Name: Directional light
-      Tag: Untagged
-    TransformComponent:
-      Translation: [-1.15045357, -0.66558063, 1.28591919]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-      Parent: 0
-    DirectionalLightComponent:
-      Direction: [0.550000012, 1.75, 2.5]
-      Color: [1, 1, 1]
-      Intensity: 0
-    Children:
-      []
-  - "Entity: ": 14895088604314310414
-    HierarchyOrder: 1
-    IDComponent:
-      ID: 14895088604314310414
+      ID: 7050776549743612119
     TagComponent:
       Name: untitled.obj.model
       Tag: Untagged
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [0, 0, -1.52148867]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       Parent: 0
     Children:
-      - "Entity: ": 9515075363078834275
+      - "Entity: ": 13397823028484641616
         HierarchyOrder: 0
         IDComponent:
-          ID: 9515075363078834275
+          ID: 13397823028484641616
         TagComponent:
           Name: untitled.obj.
           Tag: Untagged
@@ -45,46 +27,46 @@ Entities:
           Translation: [0, 0, 0]
           Rotation: [0, 0, 0]
           Scale: [1, 1, 1]
-          Parent: 14895088604314310414
+          Parent: 7050776549743612119
         MeshRendererComponent:
           Mesh: 17316858568804613208
           Material: 7287311396842011444
           Instanced: false
         Children:
           []
-  - "Entity: ": 7080702793916817718
-    HierarchyOrder: 2
+  - "Entity: ": 923218551636611849
+    HierarchyOrder: 1
     IDComponent:
-      ID: 7080702793916817718
+      ID: 923218551636611849
     TagComponent:
-      Name: Point light
+      Name: New Entity
       Tag: Untagged
     TransformComponent:
-      Translation: [1.45056176, 1.38763595, -1.44465375]
+      Translation: [0, 0, 1.29431987]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       Parent: 0
     PointLightComponent:
-      Color: [14.8000002, -0.800000012, 0.100000001]
-      Intensity: 0.0799999982
-      Attenuation: 1
+      Color: [1, 1, 1]
+      Intensity: 1
+      Radius: 5
     Children:
       []
-  - "Entity: ": 16195644976773519831
-    HierarchyOrder: 3
+  - "Entity: ": 17286534926174987587
+    HierarchyOrder: 2
     IDComponent:
-      ID: 16195644976773519831
+      ID: 17286534926174987587
     TagComponent:
-      Name: Point light blue
+      Name: New Entity
       Tag: Untagged
     TransformComponent:
-      Translation: [-1.54951656, -1.48737836, 1.66663599]
+      Translation: [0, 1.74447632, 3]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [3.70000005, 3.70000005, 3.70000005]
       Parent: 0
-    PointLightComponent:
-      Color: [0, 0, 1]
-      Intensity: 1
-      Attenuation: 1
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: 13987153642540634882
+      TilingFactor: 1
     Children:
       []

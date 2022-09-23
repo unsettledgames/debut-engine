@@ -43,48 +43,50 @@ flat in int v_EntityID;
 uniform sampler2D u_Textures[32];
 uniform float u_TilingFactor;
 
-sampler2D GetTexture()
+vec4 GetTexColor()
 {
-	switch (v_TexIndex)
+	switch (int(v_TexIndex))
 	{
-		case  0: u_Textures[ 0]; break;
-		case  1: u_Textures[ 1]; break;
-		case  2: u_Textures[ 2]; break;
-		case  3: u_Textures[ 3]; break;
-		case  4: u_Textures[ 4]; break;
-		case  5: u_Textures[ 5]; break;
-		case  6: u_Textures[ 6]; break;
-		case  7: u_Textures[ 7]; break;
-		case  8: u_Textures[ 8]; break;
-		case  9: u_Textures[ 9]; break;
-		case 10: u_Textures[10]; break;
-		case 11: u_Textures[11]; break;
-		case 12: u_Textures[12]; break;
-		case 13: u_Textures[13]; break;
-		case 14: u_Textures[14]; break;
-		case 15: u_Textures[15]; break;
-		case 16: u_Textures[16]; break;
-		case 17: u_Textures[17]; break;
-		case 18: u_Textures[18]; break;
-		case 19: u_Textures[19]; break;
-		case 20: u_Textures[20]; break;
-		case 21: u_Textures[21]; break;
-		case 22: u_Textures[22]; break;
-		case 23: u_Textures[23]; break;
-		case 24: u_Textures[24]; break;
-		case 25: u_Textures[25]; break;
-		case 26: u_Textures[26]; break;
-		case 27: u_Textures[27]; break;
-		case 28: u_Textures[28]; break;
-		case 29: u_Textures[29]; break;
-		case 30: u_Textures[30]; break;
-		case 31: u_Textures[31]; break;
+		case  0: return texture(u_Textures[ 0], v_UV * v_TilingFactor); break;
+		case  1: return texture(u_Textures[ 1], v_UV * v_TilingFactor); break;
+		case  2: return texture(u_Textures[ 2], v_UV * v_TilingFactor); break;
+		case  3: return texture(u_Textures[ 3], v_UV * v_TilingFactor); break;
+		case  4: return texture(u_Textures[ 4], v_UV * v_TilingFactor); break;
+		case  5: return texture(u_Textures[ 5], v_UV * v_TilingFactor); break;
+		case  6: return texture(u_Textures[ 6], v_UV * v_TilingFactor); break;
+		case  7: return texture(u_Textures[ 7], v_UV * v_TilingFactor); break;
+		case  8: return texture(u_Textures[ 8], v_UV * v_TilingFactor); break;
+		case  9: return texture(u_Textures[ 9], v_UV * v_TilingFactor); break;
+		case 10: return texture(u_Textures[10], v_UV * v_TilingFactor); break;
+		case 11: return texture(u_Textures[11], v_UV * v_TilingFactor); break;
+		case 12: return texture(u_Textures[12], v_UV * v_TilingFactor); break;
+		case 13: return texture(u_Textures[13], v_UV * v_TilingFactor); break;
+		case 14: return texture(u_Textures[14], v_UV * v_TilingFactor); break;
+		case 15: return texture(u_Textures[15], v_UV * v_TilingFactor); break;
+		case 16: return texture(u_Textures[16], v_UV * v_TilingFactor); break;
+		case 17: return texture(u_Textures[17], v_UV * v_TilingFactor); break;
+		case 18: return texture(u_Textures[18], v_UV * v_TilingFactor); break;
+		case 19: return texture(u_Textures[19], v_UV * v_TilingFactor); break;
+		case 20: return texture(u_Textures[20], v_UV * v_TilingFactor); break;
+		case 21: return texture(u_Textures[21], v_UV * v_TilingFactor); break;
+		case 22: return texture(u_Textures[22], v_UV * v_TilingFactor); break;
+		case 23: return texture(u_Textures[23], v_UV * v_TilingFactor); break;
+		case 24: return texture(u_Textures[24], v_UV * v_TilingFactor); break;
+		case 25: return texture(u_Textures[25], v_UV * v_TilingFactor); break;
+		case 26: return texture(u_Textures[26], v_UV * v_TilingFactor); break;
+		case 27: return texture(u_Textures[27], v_UV * v_TilingFactor); break;
+		case 28: return texture(u_Textures[28], v_UV * v_TilingFactor); break;
+		case 29: return texture(u_Textures[29], v_UV * v_TilingFactor); break;
+		case 30: return texture(u_Textures[30], v_UV * v_TilingFactor); break;
+		case 31: return texture(u_Textures[31], v_UV * v_TilingFactor); break;
 	}
+	
+	return texture(u_Textures[0], v_UV * v_TilingFactor);
 }
 
 void main()
 {
-	sampler2D texture = GetTexture();
-	color = texture(texture, v_UV * v_TilingFactor) * v_Color;
+	vec4 texColor = GetTexColor();
+	color = texColor * v_Color;
 	id = v_EntityID;
 }

@@ -1,0 +1,72 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+Entities:
+  - "Entity: ": 1062563319226988808
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 1062563319226988808
+    TagComponent:
+      Name: SpecularTest.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, -5.23207808]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 14762095002741523515
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 14762095002741523515
+        TagComponent:
+          Name: SpecularTest.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 1062563319226988808
+        MeshRendererComponent:
+          Mesh: 6321637187019122074
+          Material: 934977014409149497
+          Instanced: false
+        Children:
+          []
+  - "Entity: ": 15368051797623340884
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 15368051797623340884
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    DirectionalLightComponent:
+      Direction: [1, 1, 1]
+      Color: [1, 1, 1]
+      Intensity: 0
+    Children:
+      []
+  - "Entity: ": 16226176878881918339
+    HierarchyOrder: 2
+    IDComponent:
+      ID: 16226176878881918339
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [4.70947933, 8.10152435, -8.17141533]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [1, 1, 1]
+      Intensity: 6.51999998
+      Radius: 5
+    Children:
+      []

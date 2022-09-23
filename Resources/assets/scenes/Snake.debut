@@ -1,0 +1,85 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+Entities:
+  - "Entity: ": 8728694085058349654
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 8728694085058349654
+    TagComponent:
+      Name: SNAKE.fbx.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [0.200000003, 0.200000003, 0.200000003]
+      Parent: 0
+    Children:
+      - "Entity: ": 994900421118313923
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 994900421118313923
+        TagComponent:
+          Name: SNAKE.fbx.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 8728694085058349654
+        Children:
+          - "Entity: ": 3166299698360433835
+            HierarchyOrder: 0
+            IDComponent:
+              ID: 3166299698360433835
+            TagComponent:
+              Name: SNAKE.fbx. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [-33.3043518, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 994900421118313923
+            MeshRendererComponent:
+              Mesh: 10468925653892098171
+              Material: 14770776201715964801
+              Instanced: false
+            Children:
+              []
+          - "Entity: ": 5483011011320330900
+            HierarchyOrder: 1
+            IDComponent:
+              ID: 5483011011320330900
+            TagComponent:
+              Name: SNAKE.fbx. i
+              Tag: Untagged
+            TransformComponent:
+              Translation: [-22.3943329, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 994900421118313923
+            MeshRendererComponent:
+              Mesh: 13998798539824449042
+              Material: 12653706769385569228
+              Instanced: false
+            Children:
+              []
+  - "Entity: ": 6136427414278906685
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 6136427414278906685
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [81.5737305, 163.777573, 113.578949]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [1, 1, 1]
+      Intensity: 5
+      Radius: 50
+    Children:
+      []
