@@ -22,7 +22,6 @@
 
 /*
     TODO:
-    - Specular maps
     - Roughness maps
     - Emission maps
     - Occlusion maps

@@ -111,6 +111,7 @@ uniform float u_SpecularStrength;
 uniform Texture2D u_DiffuseTexture;
 uniform Texture2D u_NormalMap;
 uniform Texture2D u_SpecularMap;
+uniform Texture2D u_OcclusionMap;
 
 uniform sampler2D u_RoughnessMap;
 uniform sampler2D u_MetalnessMap;
@@ -143,7 +144,7 @@ vec3 PointPhong(vec3 normal, PointLight light, vec3 viewDir, vec3 lightDir)
 	// Specular component
 	float specStrength;
 	if (u_SpecularMap.Use)
-		specStrength = texture(u_SpecularMap.Sampler, v_TexCoords * u_SpecularMap.Tiling + u_SpecularMap.Offset).r * u_SpecularStrength;
+		specStrength = texture(u_SpecularMap.Sampler, v_TexCoords * u_SpecularMap.Tiling + u_SpecularMap.Offset).r * u_SpecularMap.Intensity;
 	else
 		specStrength = u_SpecularStrength;
 	vec3 reflectDir = reflect(-normalize(lightDir), normal);  
@@ -185,5 +186,12 @@ void main()
 		color += texColor * vec4(PointPhong
 			(normal, u_PointLights[i], u_CameraPosition - v_FragPos, 
 			u_PointLights[i].Position - v_FragPos), 1.0);
-
+	
+	// Occlusion
+	if (u_OcclusionMap.Use)
+	{
+		vec4 occ = texture(u_OcclusionMap.Sampler, v_TexCoords * u_OcclusionMap.Tiling + u_OcclusionMap.Offset);
+		if (occ.w > 0.0)
+			color *= occ;
+	}
 }

@@ -36,7 +36,7 @@ namespace Debut
 	void PropertiesPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Properties");
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 2,2 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
 
 		if (m_AssetPath != "")
 		{
