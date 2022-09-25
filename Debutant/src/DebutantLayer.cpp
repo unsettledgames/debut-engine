@@ -22,16 +22,16 @@
 
 /*
     TODO:
-    - Roughness maps (PBR)
-    - Emission maps
-    - Parallax mapping
-    - Reflection maps
-    - Displacement maps
+    - Parallax mapping: investigate transform issue
+    - Displacement maps?
 
+    - Roughness maps (PBR)
+    - Reflection maps (PBR)
+    
     Extra:
     - add .debut to end of scene
     - Reset directional light when it is deleted from the scene
-    - Find out why some models are huge sometimes
+    - Find out why some models are huge or super small sometimes
 
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking

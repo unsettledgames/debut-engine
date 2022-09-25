@@ -1,0 +1,55 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+  Skybox: 0
+Entities:
+  - "Entity: ": 13327811481627971080
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 13327811481627971080
+    TagComponent:
+      Name: plane.obj.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 5717684109838337695
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 5717684109838337695
+        TagComponent:
+          Name: plane.obj.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 13327811481627971080
+        MeshRendererComponent:
+          Mesh: 14465440846783980101
+          Material: 93274382301896432
+          Instanced: false
+        Children:
+          []
+  - "Entity: ": 11437959544315113157
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 11437959544315113157
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0.0915847048, 0.509547055, -0.206520945]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [1, 1, 1]
+      Intensity: 1
+      Radius: 5
+    Children:
+      []

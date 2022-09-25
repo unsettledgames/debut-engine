@@ -1,0 +1,73 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+  Skybox: 0
+Entities:
+  - "Entity: ": 7068694255291027222
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 7068694255291027222
+    TagComponent:
+      Name: Magmarion.fbx.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [0.00499999989, 0.00499999989, 0.00499999989]
+      Parent: 0
+    Children:
+      - "Entity: ": 13742413380266594895
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 13742413380266594895
+        TagComponent:
+          Name: Magmarion.fbx.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 7068694255291027222
+        MeshRendererComponent:
+          Mesh: 9268856829888650321
+          Material: 11965128317319471170
+          Instanced: false
+        Children:
+          []
+  - "Entity: ": 11432328751414972516
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 11432328751414972516
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    DirectionalLightComponent:
+      Direction: [1, 1, 1]
+      Color: [1, 1, 1]
+      Intensity: 0
+    Children:
+      []
+  - "Entity: ": 3325368820920127882
+    HierarchyOrder: 2
+    IDComponent:
+      ID: 3325368820920127882
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [31.9211903, 62.269455, 5.20077848]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [0.636341333, 0.317518234, 1]
+      Intensity: 5
+      Radius: 5
+    Children:
+      []

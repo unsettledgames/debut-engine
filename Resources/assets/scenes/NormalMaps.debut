@@ -1,7 +1,8 @@
 Scene: Untitled scene
 Lighting:
-  AmbientLightColor: [0, 0, 0]
+  AmbientLightColor: [0.215328455, 0.215328455, 0.215328455]
   AmbientLightIntensity: 1
+  Skybox: 6602497616341718374
 Entities:
   - "Entity: ": 2610937792807730244
     HierarchyOrder: 1

@@ -1,0 +1,86 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+  Skybox: 0
+Entities:
+  - "Entity: ": 3434071394710234799
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 3434071394710234799
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0.217371598, 0.297611117, 0.329898477]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [1, 1, 1]
+      Intensity: 1
+      Radius: 5
+    Children:
+      []
+  - "Entity: ": 16393691719406110598
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 16393691719406110598
+    TagComponent:
+      Name: parallax_plane.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [1.57079637, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 11177963471986777835
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 11177963471986777835
+        TagComponent:
+          Name: parallax_plane.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 16393691719406110598
+        MeshRendererComponent:
+          Mesh: 16042514667033753809
+          Material: 1420164544645635477
+          Instanced: false
+        Children:
+          []
+  - "Entity: ": 522548124999854419
+    HierarchyOrder: 2
+    IDComponent:
+      ID: 522548124999854419
+    TagComponent:
+      Name: plane_bricks.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [3.35484171, 3.94433641, -0.154952064]
+      Rotation: [1.57079625, 0, 0]
+      Scale: [1, 0.999993145, 0.999993145]
+      Parent: 0
+    Children:
+      - "Entity: ": 16661823214713486488
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 16661823214713486488
+        TagComponent:
+          Name: plane_bricks.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 522548124999854419
+        MeshRendererComponent:
+          Mesh: 16238352811152569358
+          Material: 4995879526974478990
+          Instanced: false
+        Children:
+          []
