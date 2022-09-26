@@ -1853,3 +1853,9 @@ Associations:
     Path: .\Lib\Assets\4995879526974478990
   - ID: 3735481657713192254
     Path: assets\models\rock\textures\rock_heightmap.png
+  - ID: 1418662701905176250
+    Path: assets\models\plane\coinplane.model
+  - ID: 5977369063083290551
+    Path: assets\textures\Coin\plane_0.jpg
+  - ID: 10730754667949693981
+    Path: assets\textures\Coin\normals.png

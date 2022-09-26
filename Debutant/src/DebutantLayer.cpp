@@ -22,9 +22,6 @@
 
 /*
     TODO:
-    - Parallax mapping: investigate transform issue
-    - Displacement maps?
-
     - Roughness maps (PBR)
     - Reflection maps (PBR)
     

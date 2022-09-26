@@ -42,14 +42,15 @@ void main()
 	mat4 mvp = viewProj * u_Transform;
 	
 	// TODO: send the matrix via CPU
-	vec3 normal = normalize((transpose(inverse(u_Transform)) * vec4(a_Normal, 1.0)).xyz);
+	mat4 normalMatrix = transpose(inverse(u_Transform));
+	vec3 normal = normalize(normalMatrix * vec4(a_Normal, 1.0)).xyz;
 	vec4 position = mvp * vec4(a_Position, 1.0);
 
 	v_Color = a_Color;
 	if (u_NormalMap.Use)
 	{
-		vec4 tangent = normalize(u_Transform * vec4(a_Tangent, 1.0));
-		vec4 bitangent = normalize(u_Transform * vec4(a_Bitangent, 1.0));
+		vec4 tangent = normalize(normalMatrix * vec4(a_Tangent, 1.0));
+		vec4 bitangent = normalize(normalMatrix * vec4(a_Bitangent, 1.0));
 		
 		v_TangentSpace = mat3(tangent.xyz, bitangent.xyz, normal);
 	}
@@ -63,6 +64,8 @@ void main()
 	
 	v_TexCoords = a_TexCoords0;
 	v_FragPos = vec3(u_Transform * vec4(a_Position, 1.0));
+	v_CameraPosTangent = inverseTangentSpace * u_CameraPosition;
+	v_FragPosTangent = inverseTangentSpace * v_FragPos;
 	
 	gl_Position = position;
 }
@@ -171,7 +174,7 @@ vec2 ParallaxMapping()
 	const float minLayers = 10.0;
 	const float maxLayers = 32.0;
 	
-	vec3 viewDir = normalize(u_CameraPosition - v_FragPos);
+	vec3 viewDir = normalize(v_CameraPosTangent - v_FragPosTangent);
 	float nLayers = mix(maxLayers, minLayers, max(dot(vec3(0.0, 0.0, 1.0), viewDir), 0.0));
 	
 	float layerDepth = 1.0 / nLayers;
