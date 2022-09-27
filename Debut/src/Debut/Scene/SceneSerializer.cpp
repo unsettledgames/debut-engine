@@ -4,6 +4,7 @@
 #include "Debut/Utils/CppUtils.h"
 #include <Debut/Utils/YamlUtils.h>
 #include <Debut/Scene/Scene.h>
+#include <Debut/Rendering/Resources/Skybox.h>
 #include <yaml-cpp/yaml.h>
 
 namespace Debut
@@ -296,6 +297,8 @@ namespace Debut
 		out << YAML::Key << "Lighting" << YAML::Value << YAML::BeginMap;
 		out << YAML::Key << "AmbientLightColor" << YAML::Value << m_Scene->GetAmbientLight();
 		out << YAML::Key << "AmbientLightIntensity" << YAML::Value << m_Scene->GetAmbientLightIntensity();
+		Ref<Skybox> skybox = m_Scene->GetSkybox();
+		out << YAML::Key << "Skybox" << YAML::Value << (skybox == nullptr ? 0 : m_Scene->GetSkybox()->GetID());
 		out << YAML::EndMap;
 
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
@@ -313,7 +316,7 @@ namespace Debut
 
 	EntitySceneNode* SceneSerializer::DeserializeText(const std::string& fileName)
 	{
-		if (!CppUtils::String::endsWith(fileName, ".debut"))
+		if (!CppUtils::String::EndsWith(fileName, ".debut"))
 			return nullptr;
 
 		std::ifstream inFile(fileName);
@@ -339,6 +342,8 @@ namespace Debut
 			m_Scene->SetAmbientLight(lighting["AmbientLightColor"].as<glm::vec3>());
 		if (lighting["AmbientLightIntensity"].IsDefined())
 			m_Scene->SetAmbientLightIntensity(lighting["AmbientLightIntensity"].as<float>());
+		if (lighting["Skybox"].IsDefined() && lighting["Skybox"].as<uint64_t>() != 0)
+			m_Scene->SetSkybox(lighting["Skybox"].as<uint64_t>());
 
 		return sceneTree;
 	}

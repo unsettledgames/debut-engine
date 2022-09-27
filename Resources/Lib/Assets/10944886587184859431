@@ -1,0 +1,89 @@
+---
+Name: sNAKE
+Shader: 16775874381677145436
+Parameters:
+  u_PointLights[10].Intensity: 0
+  u_DirectionalLightDir: [0, 0, 0]
+  u_AmbientLightColor: [0, 0, 0]
+  u_DiffuseTexture.Sampler:
+    ID: 0
+  u_PointLights[12].Position: [0, 0, 0]
+  u_PointLights[11].Radius: 0
+  u_AmbientLightIntensity: 0
+  u_SpecularStrength: 0
+  u_PointLights[4].Intensity: 0
+  u_DiffuseTexture.Offset: [0, 0]
+  u_PointLights[2].Position: [0, 0, 0]
+  u_CameraPosition: [0, 0, 0]
+  u_PointLights[0].Intensity: 0
+  u_DirectionalLightCol: [0, 0, 0]
+  u_PointLights[11].Intensity: 0
+  u_DiffuseTexture.Tiling: [0, 0]
+  u_PointLights[7].Intensity: 0
+  u_PointLights[15].Radius: 0
+  u_DirectionalLightIntensity: 0
+  u_PointLights[2].Radius: 0
+  u_PointLights[14].Intensity: 0
+  u_NPointLights: 0
+  u_PointLights[4].Color: [0, 0, 0]
+  u_NormalMap.Intensity: 0
+  u_NormalMap.Sampler:
+    ID: 0
+  u_NormalMap.Tiling: [0, 0]
+  u_PointLights[10].Radius: 0
+  u_NormalMap.Use: false
+  u_PointLights[0].Color: [0, 0, 0]
+  u_PointLights[0].Position: [0, 0, 0]
+  u_PointLights[3].Position: [0, 0, 0]
+  u_PointLights[12].Intensity: 0
+  u_PointLights[0].Radius: 0
+  u_PointLights[1].Color: [0, 0, 0]
+  u_PointLights[1].Intensity: 0
+  u_PointLights[1].Position: [0, 0, 0]
+  u_PointLights[1].Radius: 0
+  u_ViewMatrix: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+  u_PointLights[2].Color: [0, 0, 0]
+  u_PointLights[7].Radius: 0
+  u_PointLights[2].Intensity: 0
+  u_PointLights[9].Position: [0, 0, 0]
+  u_PointLights[3].Color: [0, 0, 0]
+  u_PointLights[3].Intensity: 0
+  u_PointLights[9].Color: [0, 0, 0]
+  u_PointLights[3].Radius: 0
+  u_PointLights[4].Position: [0, 0, 0]
+  u_PointLights[4].Radius: 0
+  u_PointLights[5].Color: [0, 0, 0]
+  u_PointLights[14].Position: [0, 0, 0]
+  u_PointLights[5].Intensity: 0
+  u_PointLights[5].Position: [0, 0, 0]
+  u_PointLights[6].Color: [0, 0, 0]
+  u_PointLights[5].Radius: 0
+  u_PointLights[6].Intensity: 0
+  u_PointLights[11].Color: [0, 0, 0]
+  u_Transform: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+  u_PointLights[6].Position: [0, 0, 0]
+  u_PointLights[6].Radius: 0
+  u_PointLights[7].Color: [0, 0, 0]
+  u_PointLights[7].Position: [0, 0, 0]
+  u_PointLights[8].Color: [0, 0, 0]
+  u_PointLights[14].Radius: 0
+  u_PointLights[8].Intensity: 0
+  u_PointLights[8].Position: [0, 0, 0]
+  u_PointLights[10].Color: [0, 0, 0]
+  u_PointLights[8].Radius: 0
+  u_PointLights[12].Color: [0, 0, 0]
+  u_PointLights[9].Intensity: 0
+  u_PointLights[9].Radius: 0
+  u_PointLights[10].Position: [0, 0, 0]
+  u_PointLights[11].Position: [0, 0, 0]
+  u_PointLights[12].Radius: 0
+  u_PointLights[13].Color: [0, 0, 0]
+  u_PointLights[13].Intensity: 0
+  u_ProjectionMatrix: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+  u_PointLights[13].Position: [0, 0, 0]
+  u_PointLights[13].Radius: 0
+  u_SpecularShininess: 0
+  u_PointLights[14].Color: [0, 0, 0]
+  u_PointLights[15].Color: [0, 0, 0]
+  u_PointLights[15].Intensity: 0
+  u_PointLights[15].Position: [0, 0, 0]

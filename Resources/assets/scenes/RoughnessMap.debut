@@ -1,0 +1,59 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+  Skybox: 0
+Entities:
+  - "Entity: ": 954251333038085110
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 954251333038085110
+    TagComponent:
+      Name: pot_enamel_01_4k.fbx.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+      Parent: 0
+    Children:
+      - "Entity: ": 2035334631247256307
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 2035334631247256307
+        TagComponent:
+          Name: pot_enamel_01_4k.fbx.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 954251333038085110
+        MeshRendererComponent:
+          Mesh: 10048771861235756640
+          Material: 9683473178817963546
+          Instanced: false
+        Children:
+          []
+  - "Entity: ": 5489449977453354554
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 5489449977453354554
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0.226696849, 0.695909619, 1.14434803]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    DirectionalLightComponent:
+      Direction: [1, 1, 1]
+      Color: [1, 1, 1]
+      Intensity: 1
+    PointLightComponent:
+      Color: [1, 1, 1]
+      Intensity: 1
+      Radius: 5
+    Children:
+      []

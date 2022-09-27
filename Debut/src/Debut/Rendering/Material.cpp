@@ -1,6 +1,7 @@
 #include <Debut/dbtpch.h>
 #include <yaml-cpp/yaml.h>
 #include <Debut/Utils/YamlUtils.h>
+#include <Debut/Utils/CppUtils.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Rendering/Material.h>
 #include <Debut/Rendering/Shader.h>
@@ -24,7 +25,8 @@ namespace Debut
 {
 	UUID Material::s_PrevShader;
 	std::vector<std::string> Material::s_DefaultUniforms = {
-		"u_ViewProjection", "u_ViewMatrix", "u_ProjectionMatrix", "u_PointLights"
+		"u_ViewProjection", "u_ViewMatrix", "u_ProjectionMatrix", "u_PointLights", "u_AmbientLightColor", "u_DirectionalLightDir",
+		"u_AmbientLightIntensity", "u_CameraPosition", "u_DirectionalLightCol", "u_DirectionalLightIntensity"
 	};
 
 	Material::Material(const std::string& path, const std::string& metaPath) : m_Path(path), m_MetaPath(metaPath)
@@ -125,8 +127,6 @@ namespace Debut
 					break;
 				case ShaderDataType::Sampler2D:
 				{
-					// TODO: add scale and offset to texture?
-
 					// Load the texture data
 					YAML::Node textureNode = matParams[uniform.Name];
 					// Load the actual texture
@@ -237,8 +237,17 @@ namespace Debut
 		{
 			switch (uniform.second.Type)
 			{
+			case ShaderDataType::Int:
+				shader->SetInt(uniform.second.Name, uniform.second.Data.Int);
+				break;
+			case ShaderDataType::Bool:
+				shader->SetBool(uniform.second.Name, uniform.second.Data.Bool);
+				break;
 			case ShaderDataType::Float:
 				shader->SetFloat(uniform.second.Name, uniform.second.Data.Float);
+				break;
+			case ShaderDataType::Float2:
+				shader->SetFloat2(uniform.second.Name, uniform.second.Data.Vec2);
 				break;
 			case ShaderDataType::Float3:
 				shader->SetFloat3(uniform.second.Name, uniform.second.Data.Vec3);
@@ -256,7 +265,7 @@ namespace Debut
 					texture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
 				else
 					texture = AssetManager::Request<Texture2D>(DBT_WHITE_TEXTURE_UUID);
-
+				shader->SetInt(uniform.second.Name, currSlot);
 				texture->Bind(currSlot);
 				currSlot++;
 				break;
@@ -264,8 +273,10 @@ namespace Debut
 			case ShaderDataType::SamplerCube:
 				shader->SetInt(uniform.second.Name, uniform.second.Data.Cubemap);
 				break;
+			case ShaderDataType::None:
+				break;
 			default:
-				Log.CoreError("Shader data type not supported while trying to use material {0}", m_Name);
+				Log.CoreError("Shader data type for uniform {0} not supported while trying to use material {1}", uniform.second.Name, m_Name);
 				break;
 			}
 		}

@@ -27,7 +27,7 @@ namespace Debut
 		static void VerticalSpace(uint32_t amount);
 		static void Separator();
 
-		static bool DragFloat(const std::string& label, float* value, float power, float min = -100000.0f, float max = 100000.0f);
+		static bool DragFloat(const std::string& label, float* value, float power, float min = -100000.0f, float max = 100000.0f, uint32_t columnWidth = 130);
 		static bool Color3(const std::string& label, std::vector<float*> values);
 		static bool Color4(const std::string& label, std::vector<float*> values);
 
@@ -46,6 +46,6 @@ namespace Debut
 		static UUID DragDestination(const std::string& label, const std::string& acceptedExtension, UUID currentID);
 
 		template <typename T>
-		static Ref<T> ImageDragDestination(uint32_t rendererID, ImVec2 size);
+		static Ref<T> ImageDragDestination(uint32_t rendererID, ImVec2 size, const char* id = 0);
 	};
 }

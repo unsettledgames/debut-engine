@@ -1,0 +1,67 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+Entities:
+  - "Entity: ": 1395628017533671057
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 1395628017533671057
+    TagComponent:
+      Name: spher.obj.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    Children:
+      - "Entity: ": 3368022498147594696
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 3368022498147594696
+        TagComponent:
+          Name: spher.obj.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 1395628017533671057
+        Children:
+          - "Entity: ": 10898798299783798730
+            HierarchyOrder: 0
+            IDComponent:
+              ID: 10898798299783798730
+            TagComponent:
+              Name: Sphere.
+              Tag: Untagged
+            TransformComponent:
+              Translation: [0, 0, 0]
+              Rotation: [0, 0, 0]
+              Scale: [1, 1, 1]
+              Parent: 3368022498147594696
+            MeshRendererComponent:
+              Mesh: 3446896272368023474
+              Material: 8987360132596487935
+              Instanced: false
+            Children:
+              []
+  - "Entity: ": 8592051997154187785
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 8592051997154187785
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0.767979622, -1.03128994, -1.55782843]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    PointLightComponent:
+      Color: [1, 1, 1]
+      Intensity: 2
+      Radius: 10
+    Children:
+      []

@@ -216,6 +216,11 @@ namespace Debut
 		UploadUniformInt(name, uniform);
 	}
 
+	void OpenGLShader::SetBool(const std::string& name, bool uniform)
+	{
+		UploadUniformBool(name, uniform);
+	}
+
 	void OpenGLShader::SetIntArray(const std::string& name, int* data, uint32_t count)
 	{
 		UploadUniformIntArray(name, data, count);
@@ -229,6 +234,11 @@ namespace Debut
 	void OpenGLShader::SetFloat(const std::string& name, float uniform)
 	{
 		UploadUniformFloat(name, uniform);
+	}
+
+	void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& uniform)
+	{
+		UploadUniformFloat2(name, uniform);
 	}
 
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& uniform)
@@ -277,6 +287,13 @@ namespace Debut
 		GLCall(glUniform4f(location, vec.x, vec.y, vec.z, vec.w));
 	}
 	
+
+	void OpenGLShader::UploadUniformBool(const std::string& name, bool val)
+	{
+		GLuint location = glGetUniformLocation(m_ProgramID, name.c_str());
+		glUniform1i(location, val);
+	}
+
 
 	void OpenGLShader::UploadUniformInt(const std::string& name, int val)
 	{

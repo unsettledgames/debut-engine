@@ -66,7 +66,7 @@ namespace Debut
 
 	void OpenGLTexture2D::Reload()
 	{
-		Texture2DConfig config = OpenGLTexture2D::GetConfig(m_Path);
+		Texture2DConfig config = OpenGLTexture2D::GetConfig(m_Path + ".meta");
 
 		m_FilteringMode = config.Filtering;
 		m_WrapMode = config.WrapMode;

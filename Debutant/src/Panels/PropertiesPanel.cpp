@@ -36,7 +36,7 @@ namespace Debut
 	void PropertiesPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Properties");
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 2, 2 });
 
 		if (m_AssetPath != "")
 		{
@@ -355,15 +355,25 @@ namespace Debut
 		}
 		delete[] shaders;
 
+		// Get uniforms that are set by the engine so the user can't edit them
 		std::vector<std::string> defaultUniforms = Material::GetDefaultUniforms();
-
+		// Get texture uniforms so we can render all the attributes together
+		std::vector<std::string> samplers;
+		for (auto& uniform : config.Uniforms)
+			if (uniform.second.Type == ShaderDataType::Sampler2D && CppUtils::String::EndsWith(uniform.second.Name, ".Sampler"))
+				samplers.push_back(uniform.second.Name.substr(0, uniform.second.Name.find_last_of(".")));
+				
 		if (ImGui::TreeNodeEx("mat_shader_props", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap
 			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding, "Properties"))
 		{
 			// Draw Material properties
-			for (auto uniform : config.Uniforms)
+			for (auto& uniform : config.Uniforms)
 			{
 				bool draw = true;
+				bool textureStruct = false;
+				std::string textureName;
+
+				// Don't draw uniforms set by the engine, the user has no control over them
 				for (auto& defaultUniform : defaultUniforms)
 				{
 					if (uniform.second.Name.find(defaultUniform) != std::string::npos)
@@ -372,11 +382,33 @@ namespace Debut
 						break;
 					}
 				}
+
+				// Don't draw attributes belonging to the Texture structure, it will be taken care of in the Sampler2D case
+				for (auto& texture : samplers)
+				{
+					if (CppUtils::String::StartsWith(uniform.second.Name, texture))
+					{
+						if (uniform.second.Type == ShaderDataType::Sampler2D)
+						{
+							textureStruct = true;
+							textureName = texture;
+						}
+						else
+							draw = false;
+						break;
+					}
+				}
 				
 				if (draw)
 				{
+					ImGui::PushID(uniform.second.Name.c_str());
 					switch (uniform.second.Type)
 					{
+					case ShaderDataType::Bool:
+						if (ImGui::Checkbox(uniform.second.Name.c_str(), &uniform.second.Data.Bool))
+							config.Uniforms[uniform.second.Name].Data.Bool = uniform.second.Data.Bool;
+						break;
+
 					case ShaderDataType::Float:
 					{
 						float value = uniform.second.Data.Float;
@@ -410,36 +442,87 @@ namespace Debut
 					}
 					case ShaderDataType::Sampler2D:
 					{
-						ImGuiUtils::StartColumns(2, { 80, (uint32_t)ImGui::GetContentRegionAvail().x - 80 });
-						// Load the texture: if it doesn't exist, just use a white default texture
-						uint32_t rendererID;
-						Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
-						if (currTexture == nullptr)
-							rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
+						if (!textureStruct)
+						{
+							ImGuiUtils::StartColumns(2, { 90, (uint32_t)ImGui::GetContentRegionAvail().x - 90 });
+							// Load the texture: if it doesn't exist, just use a white default texture
+							uint32_t rendererID;
+							Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
+							if (currTexture == nullptr)
+								rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
+							else
+								rendererID = currTexture->GetRendererID();
+
+							// Texture preview button
+							std::stringstream ss;
+							ss << "Texture" << rendererID << uniform.second.Name;
+							Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 80, 80 }, ss.str().c_str());
+							if (newTexture != nullptr)
+								config.Uniforms[uniform.second.Name].Data.Texture = newTexture->GetID();
+
+							ImGui::NextColumn();
+
+							// Texture title
+							ImGui::Text(("Texture " + uniform.second.Name).c_str());
+
+							ImGuiUtils::ResetColumns();
+						}
 						else
-							rendererID = currTexture->GetRendererID();
+						{
+							ImGuiUtils::StartColumns(2, { 110, (uint32_t)ImGui::GetContentRegionAvail().x - 100 });
+							// Load the texture: if it doesn't exist, just use a white default texture
+							uint32_t rendererID;
+							Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
+							if (currTexture == nullptr)
+								rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
+							else
+								rendererID = currTexture->GetRendererID();
 
-						// Texture preview button
-						Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 64, 64 });
-						if (newTexture != nullptr)
-							config.Uniforms[uniform.second.Name].Data.Texture = newTexture->GetID();
+							// Texture preview button
+							std::stringstream ss;
+							ss << "Texture" << rendererID << uniform.second.Name;
+							Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 90, 90 }, ss.str().c_str());
+							if (newTexture != nullptr)
+								config.Uniforms[uniform.second.Name].Data.Texture = newTexture->GetID();
 
-						ImGui::NextColumn();
+							ImGui::NextColumn();
 
-						// Texture title
-						ImGui::Text(("Texture " + uniform.second.Name).c_str());
+							ImGui::BeginChild("Next data", {ImGui::GetContentRegionAvail().x, 100});
 
-						ImGuiUtils::ResetColumns();
+							// Texture title and use button
+							bool val = config.Uniforms[textureName + ".Use"].Data.Bool;
+							if (ImGui::Checkbox(("Texture " + uniform.second.Name).c_str(), &val))
+								config.Uniforms[textureName + ".Use"].Data.Bool = val;
 
-						// TODO: Size and offset?
+							
+							// Tiling
+							glm::vec2 tiling = config.Uniforms[textureName + ".Tiling"].Data.Vec2;
+							ImGuiUtils::RGBVec2("Tiling", { "X","Y" }, { &tiling.x, &tiling.y }, 0.0f, 80);
+							config.Uniforms[textureName + ".Tiling"].Data.Vec2 = tiling;
+
+
+							// Offset
+							glm::vec2 offset = config.Uniforms[textureName + ".Offset"].Data.Vec2;
+							ImGuiUtils::RGBVec2("Offset", { "X","Y" }, { &offset.x, &offset.y }, 0.0f, 80);
+							config.Uniforms[textureName + ".Offset"].Data.Vec2 = offset;
+
+							// Intensity
+							ImGuiUtils::DragFloat("Intensity", &config.Uniforms[textureName + ".Intensity"].Data.Float, 0.1f, -1000, 1000, 80);
+							
+							ImGui::EndChild();
+							ImGuiUtils::ResetColumns();
+						}
+						
 						break;
 					}
-
+					case ShaderDataType::None:
+						break;
 					default:
 						break;
 					}
 
 					ImGuiUtils::VerticalSpace(5);
+					ImGui::PopID();
 				}
 			}
 
@@ -524,7 +607,7 @@ namespace Debut
 
 		if (std::find(s_ModelExtensions.begin(), s_ModelExtensions.end(), m_AssetPath.extension().string()) != s_ModelExtensions.end())
 			m_AssetType = AssetType::Model;
-		else if (path.extension() == ".png")
+		else if (path.extension() == ".png" || path.extension() == ".jpg" || path.extension() == ".jpeg" || path.extension() == ".tga")
 			m_AssetType = AssetType::Texture2D;
 		else if (path.extension() == ".physmat2d")
 			m_AssetType = AssetType::PhysicsMaterial2D;
