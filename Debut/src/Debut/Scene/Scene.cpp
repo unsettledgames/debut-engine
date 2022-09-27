@@ -120,11 +120,20 @@ namespace Debut
 		std::vector<LightComponent*> lights;
 		// Directional light
 		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
+		bool full = false;
 		for (auto entity : lightGroup)
 		{
 			auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
 			lights.push_back(&light);
+			full = true;
 		}
+		DirectionalLightComponent tmpDirLight;
+		if (!full)
+		{
+			tmpDirLight.Intensity = 0;
+			lights.push_back(&tmpDirLight);
+		}
+
 		// Point lights
 		auto pointLights = m_Registry.view<TransformComponent, PointLightComponent>();
 		for (auto entity : pointLights)

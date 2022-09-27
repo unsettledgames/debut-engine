@@ -25,11 +25,7 @@
     - Roughness maps (PBR)
     - Reflection maps (PBR)
     
-    Extra:
-    - add .debut to end of scene
-    - Reset directional light when it is deleted from the scene
     - Find out why some models are huge or super small sometimes
-
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
@@ -704,6 +700,8 @@ namespace Debut
         std::string path = FileDialogs::SaveFile("Debut Scene (*.debut)\0*.debut\0");
         if (!path.empty())
         {
+            if (!CppUtils::String::EndsWith(path, ".debut"))
+                path += ".debut";
             SceneSerializer ss(m_ActiveScene);
             ss.SerializeText(path, *m_SceneHierarchy.GetSceneGraph());
 
