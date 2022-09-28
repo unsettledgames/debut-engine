@@ -34,7 +34,7 @@ namespace Debut
 {
 	struct Collider2DComponent
 	{
-		enum class Collider2DType { Circle = 0, Box, Polygon};
+		enum class Collider2DType { Circle = 0, Box, Polygon, None};
 		Collider2DType Type;
 	};
 	

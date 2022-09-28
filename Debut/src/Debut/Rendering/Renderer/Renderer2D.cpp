@@ -23,8 +23,6 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION();
 
-		RenderCommand::SetLineWidth(1.3f);
-
 		// Initialize index buffer
 		int* quadIndices = new int[s_Data.MaxIndices];
 		uint32_t offset = 0;
@@ -80,8 +78,8 @@ namespace Debut
 			samplers[i] = i;
 
 		// Texture / shader setup
-		s_Data.TextureShader = Shader::Create("C:/dev/Debut/Debut/assets/shaders/texture.glsl");
-		s_Data.LineShader = Shader::Create("C:/dev/Debut/Debut/assets/shaders/line.glsl");
+		s_Data.TextureShader = Shader::Create("assets/shaders/texture.glsl");
+		s_Data.LineShader = Shader::Create("assets/shaders/line.glsl");
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 

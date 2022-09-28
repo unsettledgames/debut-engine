@@ -40,11 +40,17 @@ namespace Debut
 
 		// UI panels
 		void DrawUIToolbar();
-		void DrawGizmos();
 		void DrawViewport();
 		void DrawTopBar();
 		void DrawSettingsWindow();
 		void DrawAssetMapWindow();
+
+		// Debug & Gizmos
+		void DrawGizmos();
+		void DrawTransformGizmos(Entity currSelection);
+		void DrawPhysicsGizmos(Entity currSelection);
+		// TODO
+		void DrawLightGizmos();
 
 		// Drag & droppable objects
 		void LoadModel(const std::filesystem::path path);
@@ -89,9 +95,5 @@ namespace Debut
 
 		// Gizmos
 		ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-
-		// DEBUG ONLY
-		Ref<Model> m_Model;
-		Ref<Model> m_Model2;
 	};
 }

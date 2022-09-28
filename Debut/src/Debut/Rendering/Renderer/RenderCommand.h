@@ -32,6 +32,11 @@ namespace Debut
 			s_RendererAPI->DrawLines(va, vertexCount);
 		}
 
+		inline static void DrawPoints(const Ref<VertexArray>& va, uint32_t vertexCount = 0)
+		{
+			s_RendererAPI->DrawPoints(va, vertexCount);
+		}
+
 		inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 		{
 			s_RendererAPI->SetViewport(x, y, width, height);
@@ -40,6 +45,11 @@ namespace Debut
 		inline static void SetLineWidth(float thickness)
 		{
 			s_RendererAPI->SetLineWidth(thickness);
+		}
+
+		inline static void SetPointSize(float thickness)
+		{
+			s_RendererAPI->SetPointSize(thickness);
 		}
 
 	private:

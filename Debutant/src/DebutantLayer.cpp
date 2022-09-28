@@ -22,6 +22,26 @@
 
 /*
     TODO:
+    - 2 main things!
+        - Collider gizmos
+            - BoxCollider: drag center to move, drag vertices to edit
+            - CircleCollider: drag center to move, drag one of the 4 points to expand
+
+            In general
+                - Center and vertices should each render a point, that should be big enough to let the user select them: 
+                  rendering should probably happen at the end, on top of the FrameBuffer. When the user clicks on it,
+                  we get the colour and check if it's pure green. What if there's something else that is green is clicked?
+                    - Collider and vertices are only displayed if the entity is selected
+                    - When clicking on a green point, we check if it's near (distance < 3 pixels) from one of the vertices
+                    - Similar approach to adding points to a possible polygon collider: add only if the point is near enough
+                      to a polygon edge
+                - Right click deletes a vertex, if appliable
+                - Editing happens in 3D space, but the effects should be limited to 2D space, in which the up vector 
+                  is the normal of the quad
+        - Polygon Collider
+            - Gizmos: drag center to move, drag vertices to edit
+
+
     - Roughness maps (PBR)
     - Reflection maps (PBR)
     
@@ -108,6 +128,8 @@ namespace Debut
             m_ActiveScene->OnEditorUpdate(ts, m_EditorCamera);
             break;
         }
+
+        // Render debug
 
         m_FrameBuffer->Unbind();
     }
@@ -514,43 +536,74 @@ namespace Debut
         // Draw gizmos
         Entity currSelection = m_SceneHierarchy.GetSelectionContext();
 
+        if (currSelection)
+        {
+            float winWidth = ImGui::GetWindowWidth();
+            float winHeight = ImGui::GetWindowHeight();
+
+            ImGuizmo::SetOrthographic(false);
+            ImGuizmo::SetDrawlist();
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
+
+            DrawTransformGizmos(currSelection);
+        }
+    }
+
+    void DebutantLayer::DrawTransformGizmos(Entity currSelection)
+    {
+        auto& tc = currSelection.Transform();
+        glm::mat4 transform = tc.GetTransform();
+
+        const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
+        const glm::mat4& cameraProj = m_EditorCamera.GetProjection();
+
         bool snapping = Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL);
         float snapAmount = 0.5f;
         if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
             snapAmount = 45;
         float snapValues[] = { snapAmount, snapAmount, snapAmount };
 
-        if (currSelection)
+        ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
+            m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr);
+
+        if (ImGuizmo::IsUsing())
         {
-            float winWidth = ImGui::GetWindowWidth();
-            float winHeight = ImGui::GetWindowHeight();
+            glm::vec3 finalTrans, finalRot, finalScale;
+            transform = (tc.Parent ? glm::inverse(tc.Parent.Transform().GetTransform()) : glm::mat4(1.0)) * transform;
+            Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
 
-            const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
-            const glm::mat4& cameraProj = m_EditorCamera.GetProjection();
+            glm::vec3 deltaRot = finalRot - tc.Rotation;
 
-            ImGuizmo::SetOrthographic(false);
-            ImGuizmo::SetDrawlist();
-            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
-
-            auto& tc = currSelection.Transform();
-            glm::mat4 transform = tc.GetTransform();
-
-            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
-                m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr);
-
-            if (ImGuizmo::IsUsing())
-            {
-                glm::vec3 finalTrans, finalRot, finalScale;
-                transform = (tc.Parent ? glm::inverse(tc.Parent.Transform().GetTransform()) : glm::mat4(1.0)) * transform;
-                Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
-
-                glm::vec3 deltaRot = finalRot - tc.Rotation;
-
-                tc.Translation = finalTrans;
-                tc.Rotation += deltaRot;
-                tc.Scale = finalScale;
-            }
+            tc.Translation = finalTrans;
+            tc.Rotation += deltaRot;
+            tc.Scale = finalScale;
         }
+    }
+
+    void DebutantLayer::DrawPhysicsGizmos(Entity currSelection)
+    {
+        // 2D PHYSICS GIZMOS
+        // Get vertices and gizmos
+        Collider2DComponent::Collider2DType colliderType = Collider2DComponent::Collider2DType::None;
+        if (currSelection.HasComponent<BoxCollider2DComponent>())
+            colliderType = Collider2DComponent::Collider2DType::Box;
+        else if (currSelection.HasComponent<CircleCollider2DComponent>())
+            colliderType = Collider2DComponent::Collider2DType::Circle;
+
+        switch (colliderType)
+        {
+        case Collider2DComponent::Collider2DType::Box:
+            break;
+        case Collider2DComponent::Collider2DType::Circle:
+            break;
+        case Collider2DComponent::Collider2DType::Polygon:
+            break;
+        default:
+            break;
+        }
+
+        // Render points
+
     }
 
     void DebutantLayer::OnEvent(Event& e)

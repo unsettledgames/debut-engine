@@ -85,7 +85,6 @@ namespace Debut
 
 		static void BeginScene(Camera& camera, const glm::mat4 transform);
 		static void EndScene();
-		static void Flush();
 
 		// Primitives
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const glm::vec4 color);
@@ -101,6 +100,7 @@ namespace Debut
 		static Render2DStats GetStats() { return s_Data.Stats; }
 	
 	private:
+		static void Flush();
 		static void FlushAndReset();
 		static void StartBatch();
 

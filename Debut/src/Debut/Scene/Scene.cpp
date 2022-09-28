@@ -166,7 +166,7 @@ namespace Debut
 			Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 
 			// Render debug info
-			// Test: visualize box colliders
+			// Visualize box colliders
 			auto boxView = m_Registry.view<BoxCollider2DComponent>();
 			for (auto e : boxView)
 			{
