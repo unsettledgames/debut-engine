@@ -46,11 +46,8 @@ namespace Debut
 		void DrawAssetMapWindow();
 
 		// Debug & Gizmos
-		void DrawGizmos();
-		void DrawTransformGizmos(Entity currSelection);
-		void DrawPhysicsGizmos(Entity currSelection);
-		// TODO
-		void DrawLightGizmos();
+		void DrawTransformGizmos();
+		void DrawPhysicsGizmos();
 
 		// Drag & droppable objects
 		void LoadModel(const std::filesystem::path path);

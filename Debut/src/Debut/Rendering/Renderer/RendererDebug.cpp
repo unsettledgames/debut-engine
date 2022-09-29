@@ -12,8 +12,8 @@ namespace Debut
 
 	void RendererDebug::Init()
 	{
-		RenderCommand::SetLineWidth(1.3f);
-		RenderCommand::SetPointSize(3.0f);
+		RenderCommand::SetLineWidth(3.0f);
+		RenderCommand::SetPointSize(6.0f);
 
 		BufferLayout layout = {
 			{ShaderDataType::Float3, "a_Position", false},
@@ -24,12 +24,14 @@ namespace Debut
 		s_Storage.LineVertexBuffer = VertexBuffer::Create((uint32_t)0, s_Storage.MaxLines * sizeof(LineVertex));
 		s_Storage.LineVertexBuffer->SetLayout(layout);
 		s_Storage.LineVertexBase = new LineVertex[s_Storage.MaxLines];
+		s_Storage.LineVertexArray->AddVertexBuffer(s_Storage.LineVertexBuffer);
 		s_Storage.CurrentLineVertex = s_Storage.LineVertexBase;
 
 		s_Storage.PointVertexArray = VertexArray::Create();
 		s_Storage.PointVertexBuffer = VertexBuffer::Create((uint32_t)0, s_Storage.MaxPoints * sizeof(PointVertex));
 		s_Storage.PointVertexBuffer->SetLayout(layout);
 		s_Storage.PointVertexBase = new PointVertex[s_Storage.MaxPoints];
+		s_Storage.PointVertexArray->AddVertexBuffer(s_Storage.PointVertexBuffer);
 		s_Storage.CurrentPointVertex = s_Storage.PointVertexBase;
 
 		s_Storage.LineShader = Shader::Create("assets\\shaders\\line.glsl");
@@ -137,7 +139,7 @@ namespace Debut
 	void RendererDebug::FlushLines()
 	{
 		// Draw call
-		RenderCommand::DrawLines(s_Storage.LineVertexArray, s_Storage.LineCount);
+		RenderCommand::DrawLines(s_Storage.LineVertexArray, s_Storage.LineCount * 2);
 		s_Storage.LineCount = 0;
 		s_Storage.CurrentLineVertex = s_Storage.LineVertexBase;
 	}

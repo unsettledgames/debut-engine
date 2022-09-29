@@ -2,13 +2,11 @@
 #include <Debut/Core/Window.h>
 #include <Debut/Core/UUID.h>
 #include "Debut/Core/Instrumentor.h"
-#include "Camera/EditorCamera.h"
 #include <Utils/EditorCache.h>
-#include <Debut/Rendering/Resources/Model.h>
-#include <Debut/AssetManager/ModelImporter.h>
 #include <Debut/Utils/PlatformUtils.h>
 #include <Debut/Utils/CppUtils.h>
-#include <Debut/Rendering/Renderer/Renderer3D.h>
+#include <Camera/EditorCamera.h>
+#include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Rendering/Resources/Skybox.h>
 
 #include <chrono>
@@ -126,10 +124,10 @@ namespace Debut
             break;
         case SceneState::Edit:
             m_ActiveScene->OnEditorUpdate(ts, m_EditorCamera);
+            // Render debug
+            DrawPhysicsGizmos();
             break;
         }
-
-        // Render debug
 
         m_FrameBuffer->Unbind();
     }
@@ -475,7 +473,7 @@ namespace Debut
             m_ViewportBounds[1] = { maxBound.x, maxBound.y };
 
             if (m_SceneState == SceneState::Edit)
-                DrawGizmos();
+                DrawTransformGizmos();
 
             ImGui::PopStyleVar();
         }
@@ -531,7 +529,7 @@ namespace Debut
             LoadModelNode(AssetManager::Request<Model>(model->GetSubmodels()[i]), modelEntity);
     }
 
-    void DebutantLayer::DrawGizmos()
+    void DebutantLayer::DrawTransformGizmos()
     {
         // Draw gizmos
         Entity currSelection = m_SceneHierarchy.GetSelectionContext();
@@ -545,65 +543,78 @@ namespace Debut
             ImGuizmo::SetDrawlist();
             ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
 
-            DrawTransformGizmos(currSelection);
+            auto& tc = currSelection.Transform();
+            glm::mat4 transform = tc.GetTransform();
+
+            const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
+            const glm::mat4& cameraProj = m_EditorCamera.GetProjection();
+
+            bool snapping = Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL);
+            float snapAmount = 0.5f;
+            if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+                snapAmount = 45;
+            float snapValues[] = { snapAmount, snapAmount, snapAmount };
+
+            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
+                m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr);
+
+            if (ImGuizmo::IsUsing())
+            {
+                glm::vec3 finalTrans, finalRot, finalScale;
+                transform = (tc.Parent ? glm::inverse(tc.Parent.Transform().GetTransform()) : glm::mat4(1.0)) * transform;
+                Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
+
+                glm::vec3 deltaRot = finalRot - tc.Rotation;
+
+                tc.Translation = finalTrans;
+                tc.Rotation += deltaRot;
+                tc.Scale = finalScale;
+            }
         }
     }
 
-    void DebutantLayer::DrawTransformGizmos(Entity currSelection)
+    void DebutantLayer::DrawPhysicsGizmos()
     {
-        auto& tc = currSelection.Transform();
-        glm::mat4 transform = tc.GetTransform();
+        Entity currSelection = m_SceneHierarchy.GetSelectionContext();
 
-        const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
-        const glm::mat4& cameraProj = m_EditorCamera.GetProjection();
-
-        bool snapping = Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL);
-        float snapAmount = 0.5f;
-        if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
-            snapAmount = 45;
-        float snapValues[] = { snapAmount, snapAmount, snapAmount };
-
-        ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
-            m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr);
-
-        if (ImGuizmo::IsUsing())
+        if (currSelection)
         {
-            glm::vec3 finalTrans, finalRot, finalScale;
-            transform = (tc.Parent ? glm::inverse(tc.Parent.Transform().GetTransform()) : glm::mat4(1.0)) * transform;
-            Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
+            TransformComponent& transform = currSelection.Transform();
+            // 2D PHYSICS GIZMOS
+            // Get vertices and gizmos
+            Collider2DComponent::Collider2DType colliderType = Collider2DComponent::Collider2DType::None;
+            if (currSelection.HasComponent<BoxCollider2DComponent>())
+                colliderType = Collider2DComponent::Collider2DType::Box;
+            else if (currSelection.HasComponent<CircleCollider2DComponent>())
+                colliderType = Collider2DComponent::Collider2DType::Circle;
 
-            glm::vec3 deltaRot = finalRot - tc.Rotation;
+            RendererDebug::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
 
-            tc.Translation = finalTrans;
-            tc.Rotation += deltaRot;
-            tc.Scale = finalScale;
+            switch (colliderType)
+            {
+            case Collider2DComponent::Collider2DType::Box:
+            {
+                BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
+                RendererDebug::DrawRect(transform.GetTransform(), boxCollider.Size, boxCollider.Offset, { 0.0, 1.0, 0.0, 1.0 });
+                break;
+            }
+
+            case Collider2DComponent::Collider2DType::Circle:
+            {
+                break;
+            }
+            case Collider2DComponent::Collider2DType::Polygon:
+            {
+                break;
+            }
+            default:
+                break;
+            }
+
+            // Render points
+
+            RendererDebug::EndScene();
         }
-    }
-
-    void DebutantLayer::DrawPhysicsGizmos(Entity currSelection)
-    {
-        // 2D PHYSICS GIZMOS
-        // Get vertices and gizmos
-        Collider2DComponent::Collider2DType colliderType = Collider2DComponent::Collider2DType::None;
-        if (currSelection.HasComponent<BoxCollider2DComponent>())
-            colliderType = Collider2DComponent::Collider2DType::Box;
-        else if (currSelection.HasComponent<CircleCollider2DComponent>())
-            colliderType = Collider2DComponent::Collider2DType::Circle;
-
-        switch (colliderType)
-        {
-        case Collider2DComponent::Collider2DType::Box:
-            break;
-        case Collider2DComponent::Collider2DType::Circle:
-            break;
-        case Collider2DComponent::Collider2DType::Polygon:
-            break;
-        default:
-            break;
-        }
-
-        // Render points
-
     }
 
     void DebutantLayer::OnEvent(Event& e)

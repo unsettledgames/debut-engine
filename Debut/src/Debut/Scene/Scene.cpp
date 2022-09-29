@@ -165,16 +165,6 @@ namespace Debut
 		{
 			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 			Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-
-			// Render debug info
-			// Visualize box colliders
-			auto boxView = m_Registry.view<BoxCollider2DComponent>();
-			for (auto e : boxView)
-			{
-				Entity entity = { e, this };
-				BoxCollider2DComponent component = m_Registry.get<BoxCollider2DComponent>(e);
-				//RendererDebug::DrawRect(entity.Transform().GetTransform(), component.Size, component.Offset, glm::vec4(0.2f, 1.0f, 0.4f, 1.0f));
-			}
 		}
 
 		Renderer2D::EndScene();
