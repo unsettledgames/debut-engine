@@ -61,9 +61,11 @@ namespace Debut
 		static void DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec2& offset, const glm::vec4& color);
 
 	private:
-		static void Flush();
-		static void FlushAndReset();
-		static void StartBatch();
+		static void FlushLines();
+		static void FlushPoints();
+
+		static void StartLineBatch();
+		static void StartPointBatch();
 
 	private:
 		static RendererDebugStorage s_Storage;

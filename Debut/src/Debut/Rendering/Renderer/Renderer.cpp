@@ -3,6 +3,7 @@
 #include "RenderCommand.h"
 #include "Renderer2D.h"
 #include "Renderer3D.h"
+#include "RendererDebug.h"
 
 namespace Debut
 {
@@ -11,6 +12,7 @@ namespace Debut
 	void Renderer::Init()
 	{
 		RenderCommand::Init();
+		RendererDebug::Init();
 		Renderer2D::Init();
 		Renderer3D::Init();
 	}

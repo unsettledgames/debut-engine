@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Debut/Core/Log.h>
 #include <Debut/Rendering/Shader.h>
 
 namespace Debut

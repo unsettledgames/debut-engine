@@ -59,16 +59,6 @@ namespace Debut
 		s_Data.QuadVertexArray->AddIndexBuffer(textIndBuffer);
 		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
 
-		s_Data.LineVertexArray = VertexArray::Create();
-		s_Data.LineVertexBuffer = VertexBuffer::Create((uint32_t)0, s_Data.MaxVertices * sizeof(LineVertex));
-		BufferLayout lineLayout = {
-			{ShaderDataType::Float3, "a_Position", false},
-			{ShaderDataType::Float4, "a_Color", false}
-		};
-		s_Data.LineVertexBuffer->SetLayout(lineLayout);
-		s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
-		s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxVertices];
-
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t data = 0xffffffff;
 		s_Data.WhiteTexture->SetData(&data, sizeof(data));
@@ -79,7 +69,6 @@ namespace Debut
 
 		// Texture / shader setup
 		s_Data.TextureShader = Shader::Create("assets/shaders/texture.glsl");
-		s_Data.LineShader = Shader::Create("assets/shaders/line.glsl");
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
@@ -94,7 +83,7 @@ namespace Debut
 	void Renderer2D::Shutdown()
 	{
 		DBT_PROFILE_FUNCTION();
-		delete[] s_Data.QuadVertexBufferBase;	
+		delete[] s_Data.QuadVertexBufferBase;
 	}
 
 	void Renderer2D::BeginScene(Camera& camera, const glm::mat4 transform)
@@ -110,12 +99,6 @@ namespace Debut
 		s_Data.TextureShader->SetFloat("u_TilingFactor", 1.0f);
 		s_Data.TextureShader->Unbind();
 
-		s_Data.LineShader->Bind();
-		s_Data.LineShader->SetMat4("u_ViewProjection", viewProj);
-		s_Data.LineShader->SetMat4("u_ViewMatrix", glm::inverse(transform));
-		s_Data.LineShader->SetMat4("u_ProjectionMatrix", camera.GetProjection());
-		s_Data.LineShader->Unbind();
-
 		StartBatch();
 	}
 
@@ -130,16 +113,6 @@ namespace Debut
 			s_Data.TextureShader->Bind();
 			Flush();
 			s_Data.TextureShader->Unbind();
-		}
-
-		if (s_Data.LineVertexCount)
-		{
-			uint64_t dataSize = (uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase;
-			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
-
-			s_Data.LineShader->Bind();			
-			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
-			s_Data.LineShader->Unbind();
 		}
 	}
 
@@ -160,34 +133,6 @@ namespace Debut
 		// Draw call
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 		s_Data.Stats.DrawCalls++;
-	}
-
-	void Renderer2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
-	{
-		s_Data.LineVertexBufferPtr->Position = p0;
-		s_Data.LineVertexBufferPtr->Color = color;
-		s_Data.LineVertexBufferPtr++;
-
-		s_Data.LineVertexBufferPtr->Position = p1;
-		s_Data.LineVertexBufferPtr->Color = color;
-		s_Data.LineVertexBufferPtr++;
-
-		s_Data.LineVertexCount += 2;
-	}
-
-	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec2& offset,const glm::vec4& color)
-	{
-		glm::vec3 topRight, bottomRight, topLeft, bottomLeft;
-
-		topRight = transform * glm::vec4(-size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f, 1.0f);
-		bottomRight = transform * glm::vec4(-size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f);
-		topLeft = transform * glm::vec4(size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f, 1.0f);
-		bottomLeft = transform * glm::vec4(size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f);
-
-		DrawLine(topRight, bottomRight, color);
-		DrawLine(topLeft, bottomLeft, color);
-		DrawLine(topLeft, topRight, color);
-		DrawLine(bottomLeft, bottomRight, color);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const glm::vec4 color)
@@ -342,11 +287,10 @@ namespace Debut
 		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
 			FlushAndReset();
 
-		Ref<Texture2D> texture = AssetManager::Request<Texture2D>(src.Texture);
-
 		float textureIndex = 0.0f;
 		if (src.Texture)
 		{
+			Ref<Texture2D> texture = AssetManager::Request<Texture2D>(src.Texture);
 			for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 			{
 				if (*s_Data.TextureSlots[i].get() == *(texture.get()))
@@ -390,8 +334,5 @@ namespace Debut
 		s_Data.TextureSlotIndex = 1;
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-		s_Data.LineVertexCount = 0;
-		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 	}
 }

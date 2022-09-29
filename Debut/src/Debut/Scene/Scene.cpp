@@ -4,6 +4,7 @@
 #include "Debut/Scene/Entity.h"
 #include "Debut/Scene/Components.h"
 #include "Debut/Rendering/Shader.h"
+#include <Debut/Rendering/Renderer/RendererDebug.h>
 #include "Debut/Rendering/Renderer/Renderer2D.h"
 #include "Debut/Rendering/Renderer/Renderer3D.h"
 #include "Debut/AssetManager/AssetManager.h"
@@ -172,7 +173,7 @@ namespace Debut
 			{
 				Entity entity = { e, this };
 				BoxCollider2DComponent component = m_Registry.get<BoxCollider2DComponent>(e);
-				Renderer2D::DrawRect(entity.Transform().GetTransform(), component.Size, component.Offset, glm::vec4(0.2f, 1.0f, 0.4f, 1.0f));
+				//RendererDebug::DrawRect(entity.Transform().GetTransform(), component.Size, component.Offset, glm::vec4(0.2f, 1.0f, 0.4f, 1.0f));
 			}
 		}
 

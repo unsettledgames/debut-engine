@@ -43,6 +43,14 @@ namespace Debut
 		va->Unbind();
 	}
 
+	void OpenGLRendererAPI::DrawPoints(const Ref<VertexArray>& va, uint32_t vertexCount)
+	{
+		va->Bind();
+		GLCall(glDrawArrays(GL_POINTS, 0, vertexCount));
+		va->Unbind();
+	}
+
+
 	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
 		GLCall(glViewport(x, y, width, height));
@@ -51,5 +59,10 @@ namespace Debut
 	void OpenGLRendererAPI::SetLineWidth(float thickness)
 	{
 		GLCall(glLineWidth(thickness));
+	}
+
+	void OpenGLRendererAPI::SetPointSize(float thickness)
+	{
+		GLCall(glPointSize(thickness));
 	}
 }
