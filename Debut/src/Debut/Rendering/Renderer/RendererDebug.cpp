@@ -13,7 +13,7 @@ namespace Debut
 	void RendererDebug::Init()
 	{
 		RenderCommand::SetLineWidth(3.0f);
-		RenderCommand::SetPointSize(6.0f);
+		RenderCommand::SetPointSize(12.0f);
 
 		BufferLayout layout = {
 			{ShaderDataType::Float3, "a_Position", false},
@@ -87,12 +87,18 @@ namespace Debut
 		}
 	}
 
-	void RendererDebug::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color)
+	void RendererDebug::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, bool highlightVertices)
 	{
 		if (s_Storage.LineCount > s_Storage.MaxLines)
 		{
 			FlushLines();
 			StartLineBatch();
+		}
+
+		if (highlightVertices)
+		{
+			DrawPoint(p0, color);
+			DrawPoint(p1, color);
 		}
 
 		s_Storage.CurrentLineVertex->Position = p0;
@@ -121,7 +127,7 @@ namespace Debut
 		s_Storage.PointCount++;
 	}
 
-	void RendererDebug::DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec2& offset, const glm::vec4& color)
+	void RendererDebug::DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec2& offset, const glm::vec4& color, bool highlightVertices)
 	{
 		glm::vec3 topRight, bottomRight, topLeft, bottomLeft;
 
@@ -129,6 +135,14 @@ namespace Debut
 		bottomRight = transform * glm::vec4(-size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f);
 		topLeft = transform * glm::vec4(size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f, 1.0f);
 		bottomLeft = transform * glm::vec4(size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f);
+
+		if (highlightVertices)
+		{
+			DrawPoint(topRight, color);
+			DrawPoint(bottomRight, color);
+			DrawPoint(topLeft, color);
+			DrawPoint(bottomLeft, color);
+		}
 
 		DrawLine(topRight, bottomRight, color);
 		DrawLine(topLeft, bottomLeft, color);

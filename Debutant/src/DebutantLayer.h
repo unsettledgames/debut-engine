@@ -6,9 +6,20 @@
 #include <Panels/SceneHierarchyPanel.h>
 #include <Panels/ContentBrowserPanel.h>
 #include <Camera/EditorCamera.h>
+#include <Debut/Scene/Components.h>
 
 namespace Debut
 {
+	struct PhysicsColliderSelection
+	{
+		Collider2DComponent::Collider2DType ColliderType = Collider2DComponent::Collider2DType::None;
+		
+		glm::vec3 SelectedPoint = {0,0,0};
+		std::string SelectedName = "";
+
+		bool Dragging = false;
+	};
+
 	class DebutantLayer : public Layer
 	{
 	public:
@@ -37,6 +48,10 @@ namespace Debut
 
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+
+	private:
+		glm::vec4 GetHoveredPixel(uint32_t attachmentIndex);
+		glm::vec2 GetFrameBufferCoords();
 
 		// UI panels
 		void DrawUIToolbar();

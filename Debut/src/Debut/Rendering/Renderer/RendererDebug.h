@@ -56,9 +56,9 @@ namespace Debut
 		static void BeginScene(Camera& camera, glm::mat4& transform);
 		static void EndScene();
 		
-		static void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color);
+		static void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, bool highlightVertices = false);
 		static void DrawPoint(const glm::vec3& p0, const glm::vec4& color);
-		static void DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec2& offset, const glm::vec4& color);
+		static void DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec2& offset, const glm::vec4& color, bool highlightVertices = false);
 
 	private:
 		static void FlushLines();

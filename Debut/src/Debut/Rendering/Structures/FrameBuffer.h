@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 namespace Debut
 {
 	enum class FrameBufferTextureFormat
@@ -51,13 +53,16 @@ namespace Debut
 		virtual ~FrameBuffer() = default;
 		static Ref<FrameBuffer> Create(const FrameBufferSpecifications& specs);
 
-		virtual void Bind() const = 0;
-		virtual void Unbind() const = 0;
+		virtual void Bind() = 0;
+		virtual void Unbind() = 0;
 
 		virtual void Invalidate() = 0;
 		virtual void Resize(uint32_t x, uint32_t y) = 0;
-		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 		virtual void ClearAttachment(uint32_t index, int value) = 0;
+
+		virtual int ReadRedPixel(uint32_t attachmentIndex, int x, int y) = 0;
+		virtual int ReadDepthPixel(uint32_t index, int x, int y) = 0;
+		virtual glm::vec4 ReadPixel(uint32_t index, int x, int y) = 0;
 
 		virtual const FrameBufferSpecifications& GetSpecs() = 0;
 		virtual uint32_t GetColorAttachment(int idx = 0) const = 0;

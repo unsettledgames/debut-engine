@@ -2,6 +2,7 @@
 #include "OpenGLFrameBuffer.h"
 #include "OpenGLError.h"
 #include "glad/glad.h"
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Debut
 {
@@ -213,9 +214,14 @@ namespace Debut
 		Invalidate();
 	}
 
-	int OpenGLFrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+	int OpenGLFrameBuffer::ReadRedPixel(uint32_t attachmentIndex, int x, int y)
 	{
-		Bind();
+		bool unbind = false;
+		if (!m_Bound)
+		{
+			Bind();
+			unbind = true;
+		}
 
 		int pixelData;
 
@@ -223,8 +229,32 @@ namespace Debut
 		GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex));
 		GLCall(glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData));
 
-		Unbind();
+		if (unbind)
+			Unbind();
 
+		return pixelData;
+	}
+
+	glm::vec4 OpenGLFrameBuffer::ReadPixel(uint32_t index, int x, int y)
+	{
+		unsigned char col[4];
+		glm::vec4 pixelData;
+
+		bool unbind = false;
+		if (!m_Bound)
+		{
+			Bind();
+			unbind = true;
+		}
+
+		DBT_CORE_ASSERT(index < m_ColorAttachments.size() && index >= 0);
+		GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0 + index));
+		GLCall(glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, col));
+
+		if (unbind)
+			Unbind();
+
+		pixelData.x = col[0]; pixelData.y = col[1]; pixelData.z = col[2]; pixelData.w = col[3];
 		return pixelData;
 	}
 
@@ -237,14 +267,16 @@ namespace Debut
 	}
 
 
-	void OpenGLFrameBuffer::Bind() const
+	void OpenGLFrameBuffer::Bind()
 	{
+		m_Bound = true;
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
 		GLCall(glViewport(0, 0, m_Specs.Width, m_Specs.Height));
 	}
 
-	void OpenGLFrameBuffer::Unbind() const
+	void OpenGLFrameBuffer::Unbind()
 	{
+		m_Bound = false;
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	}
 }

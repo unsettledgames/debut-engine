@@ -20,6 +20,9 @@
 
 /*
     TODO:
+    - WAIT
+        - Depth testing is necessary to implement the ScreenToWorld function (we need the z coordinate in the 
+
     - 2 main things!
         - Collider gizmos
             - BoxCollider: drag center to move, drag vertices to edit
@@ -595,7 +598,22 @@ namespace Debut
             case Collider2DComponent::Collider2DType::Box:
             {
                 BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
-                RendererDebug::DrawRect(transform.GetTransform(), boxCollider.Size, boxCollider.Offset, { 0.0, 1.0, 0.0, 1.0 });
+                RendererDebug::DrawRect(transform.GetTransform(), boxCollider.Size, boxCollider.Offset, { 0.0, 1.0, 0.0, 1.0 }, false);
+
+                glm::mat4 transformMat = transform.GetTransform();
+                glm::vec2 size = boxCollider.Size;
+                glm::vec2 offset = boxCollider.Offset;
+
+                glm::vec3 topRight = transformMat * glm::vec4(-size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f, 1.0f);
+                glm::vec3 bottomRight = transformMat * glm::vec4(-size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f);
+                glm::vec3 topLeft = transformMat * glm::vec4(size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f, 1.0f);
+                glm::vec3 bottomLeft = transformMat * glm::vec4(size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f);
+
+                RendererDebug::DrawPoint(topRight, { 0, 1, 0, 1 });
+                RendererDebug::DrawPoint(bottomRight, { 0, 1, 0, 1 });
+                RendererDebug::DrawPoint(topLeft, { 0, 1, 0, 1 });
+                RendererDebug::DrawPoint(bottomLeft, { 0, 1, 0, 1 });
+                
                 break;
             }
 
@@ -614,6 +632,26 @@ namespace Debut
             // Render points
 
             RendererDebug::EndScene();
+
+            // IMPLEMENT LOGIC
+            // Get hovered color
+            glm::vec2 coords = GetFrameBufferCoords();
+            glm::vec4 pixel = m_FrameBuffer->ReadPixel(0, coords.x, coords.y);
+
+            /*
+                - Transform all necessary points
+                - Do stuff in screen space instead of world space. Basically transform the points instead of the point of 
+                  the mouse position. Which kinda sucks and apparently Unity does it with only the near camera plane.
+                  Ask in the cherno server maybe? I really don't want to implement depth buffers right now...
+                - Screw it. Thought about it and this seems the best way.
+            */
+
+            // Convert from screen to world
+            glm::vec3 worldSpaceCoords = glm::unProject(glm::vec3(coords.x, coords.y, 0.1f), m_EditorCamera.GetView(), m_EditorCamera.GetProjection(),
+                glm::vec4(0, 0, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y));
+
+            // Compute distance between worldspace coords and point worldspace coords
+            Log.CoreInfo("Mouse in world: {0},{1},{2}", worldSpaceCoords.x, worldSpaceCoords.y, worldSpaceCoords.z);
         }
     }
 
@@ -677,6 +715,30 @@ namespace Debut
     bool DebutantLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
     {
         // Mouse picking
+        if (e.GetMouseButton() == DBT_MOUSE_BUTTON_LEFT && !ImGuizmo::IsUsing() && !ImGuizmo::IsOver())
+        {
+            glm::vec2 mouseCoords = GetFrameBufferCoords();
+            int col = m_FrameBuffer->ReadRedPixel(1, mouseCoords.x, mouseCoords.y);
+
+            if (col < -0)
+                m_HoveredEntity = {};
+            else
+            {
+                Entity entity = { (entt::entity)col, m_ActiveScene.get()};
+                if (entity.IsValid())
+                    m_HoveredEntity = entity;
+                else
+                    m_HoveredEntity = {};
+
+                m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
+            }
+        }
+
+        return true;
+    }
+
+    glm::vec2 DebutantLayer::GetFrameBufferCoords()
+    {
         auto [mouseX, mouseY] = ImGui::GetMousePos();
         mouseX -= m_ViewportBounds[0].x;
         mouseY -= m_ViewportBounds[0].y;
@@ -685,25 +747,7 @@ namespace Debut
         int intMouseX = (int)mouseX;
         int intMouseY = (int)(viewportSize.y - mouseY);
 
-        if (e.GetMouseButton() == DBT_MOUSE_BUTTON_LEFT && !ImGuizmo::IsUsing() && !ImGuizmo::IsOver())
-        {
-            if (m_ViewportHovered)
-            {
-                int hoveredID = m_FrameBuffer->ReadPixel(1, intMouseX, intMouseY);
-
-                if (hoveredID < 0)
-                    m_HoveredEntity = {};
-                else
-                {
-                    m_HoveredEntity = { (entt::entity)hoveredID, m_ActiveScene.get() };
-
-                    if (m_HoveredEntity.IsValid())
-                        m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
-                }
-            }
-        }
-
-        return true;
+        return { intMouseX, intMouseY };
     }
 
     void DebutantLayer::NewScene()
