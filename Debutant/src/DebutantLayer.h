@@ -14,6 +14,7 @@ namespace Debut
 	{
 		Collider2DComponent::Collider2DType ColliderType = Collider2DComponent::Collider2DType::None;
 		
+		Entity SelectedEntity;
 		glm::vec3 SelectedPoint = {0,0,0};
 		std::string SelectedName = "";
 
@@ -107,5 +108,6 @@ namespace Debut
 
 		// Gizmos
 		ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+		PhysicsColliderSelection m_PhysicsSelection;
 	};
 }
