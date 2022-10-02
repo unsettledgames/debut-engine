@@ -601,8 +601,6 @@ namespace Debut
             case ColliderType::Box2D:
             {
                 BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
-                RendererDebug::DrawRect(transform.GetTransform(), boxCollider.Size, boxCollider.Offset, { 0.0, 1.0, 0.0, 1.0 }, false);
-
                 glm::mat4 transformMat = transform.GetTransform();
                 glm::vec2 size = boxCollider.Size;
                 glm::vec2 offset = boxCollider.Offset;
@@ -610,7 +608,9 @@ namespace Debut
                 glm::vec3 topLeft = transformMat * glm::vec4(-size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f, 1.0f);
                 glm::vec3 bottomLeft = transformMat * glm::vec4(-size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f);
                 glm::vec3 topRight = transformMat * glm::vec4(size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f, 1.0f);
-                glm::vec3 bottomRight = transformMat * glm::vec4(size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f);
+                glm::vec3 bottomRight = transformMat * glm::vec4(size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f); 
+                
+                RendererDebug::DrawRect(transformMat, boxCollider.Size, boxCollider.Offset, { 0.0, 1.0, 0.0, 1.0 }, false);
 
                 RendererDebug::DrawPoint(topRight, (m_PhysicsSelection.SelectedName != "TopRight" ? glm::vec4(0, 1, 0, 1) : glm::vec4(0.2, 0.5, 1, 1)));
                 RendererDebug::DrawPoint(bottomRight, (m_PhysicsSelection.SelectedName != "BottomRight" ? glm::vec4(0, 1, 0, 1) : glm::vec4(0.2, 0.5, 1, 1)));
@@ -665,7 +665,6 @@ namespace Debut
                 {
                     BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
                     glm::mat4 viewProj = m_EditorCamera.GetViewProjection();
-                    RendererDebug::DrawRect(transform.GetTransform(), boxCollider.Size, boxCollider.Offset, { 0.0, 1.0, 0.0, 1.0 }, false);
 
                     glm::mat4 transformMat = transform.GetTransform();
                     glm::vec2 size = boxCollider.Size;
@@ -722,8 +721,7 @@ namespace Debut
         if (currSelection)
         {
             // Convert from collider space to world space
-            glm::vec3 pointLocalTranslation = glm::vec3(m_PhysicsSelection.PointRotation * glm::vec4(m_PhysicsSelection.SelectedPoint, 1.0));
-            glm::mat4 pointTransform = glm::translate(m_PhysicsSelection.PointTransform, pointLocalTranslation);
+            glm::mat4 pointTransform = glm::translate(m_PhysicsSelection.PointTransform, m_PhysicsSelection.SelectedPoint);
 
             // Manipulate the selected point
             if (ImGuizmo::Manipulate(glm::value_ptr(m_EditorCamera.GetView()),
