@@ -20,7 +20,13 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
-*   CURRENT: separate physics gizmos rendering from actual manipulation
+*   BUGS:
+*   - Render points on top of everything
+* 
+*   TEST:
+*   - See if it works when an object isn't in 0,0,0
+*   - See if editing colliders work in colliders that are children of others
+*   - See if editing collider work in non-2D oriented quads
 * 
     TODO:
     - 2 main things!
@@ -530,7 +536,7 @@ namespace Debut
         // Draw gizmos
         Entity currSelection = m_SceneHierarchy.GetSelectionContext();
 
-        if (currSelection && !m_PhysicsSelection.Dragging)
+        if (currSelection)
         {
             float winWidth = ImGui::GetWindowWidth();
             float winHeight = ImGui::GetWindowHeight();
@@ -539,32 +545,37 @@ namespace Debut
             ImGuizmo::SetDrawlist();
             ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
 
-            auto& tc = currSelection.Transform();
-            glm::mat4 transform = tc.GetTransform();
-
-            const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
-            const glm::mat4& cameraProj = m_EditorCamera.GetProjection();
-
-            bool snapping = Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL);
-            float snapAmount = 0.5f;
-            if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
-                snapAmount = 45;
-            float snapValues[] = { snapAmount, snapAmount, snapAmount };
-
-            ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
-                m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr);
-
-            if (ImGuizmo::IsUsing())
+            if (!m_PhysicsSelection.Valid)
             {
-                glm::vec3 finalTrans, finalRot, finalScale;
-                transform = (tc.Parent ? glm::inverse(tc.Parent.Transform().GetTransform()) : glm::mat4(1.0)) * transform;
-                Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
+                auto& tc = currSelection.Transform();
+                glm::mat4 transform = tc.GetTransform();
 
-                glm::vec3 deltaRot = finalRot - tc.Rotation;
+                const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
+                const glm::mat4& cameraProj = m_EditorCamera.GetProjection();
 
-                tc.Translation = finalTrans;
-                tc.Rotation += deltaRot;
-                tc.Scale = finalScale;
+                bool snapping = Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL);
+                float snapAmount = 0.5f;
+                if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+                    snapAmount = 45;
+                float snapValues[] = { snapAmount, snapAmount, snapAmount };
+
+                if (ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
+                    m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr))
+                {
+                    glm::vec3 finalTrans, finalRot, finalScale;
+                    transform = (tc.Parent ? glm::inverse(tc.Parent.Transform().GetTransform()) : glm::mat4(1.0)) * transform;
+                    Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
+
+                    glm::vec3 deltaRot = finalRot - tc.Rotation;
+
+                    tc.Translation = finalTrans;
+                    tc.Rotation += deltaRot;
+                    tc.Scale = finalScale;
+                }
+            }
+            else
+            {
+                ManipulatePhysicsGizmos();
             }
         }
     }
@@ -579,17 +590,17 @@ namespace Debut
             TransformComponent& transform = currSelection.Transform();
             // 2D PHYSICS GIZMOS
             // Get vertices and gizmos
-            Collider2DComponent::Collider2DType colliderType = Collider2DComponent::Collider2DType::None;
+            ColliderType colliderType = ColliderType::None;
             if (currSelection.HasComponent<BoxCollider2DComponent>())
-                colliderType = Collider2DComponent::Collider2DType::Box;
+                colliderType = ColliderType::Box2D;
             else if (currSelection.HasComponent<CircleCollider2DComponent>())
-                colliderType = Collider2DComponent::Collider2DType::Circle;
+                colliderType = ColliderType::Circle2D;
 
             RendererDebug::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
 
             switch (colliderType)
             {
-            case Collider2DComponent::Collider2DType::Box:
+            case ColliderType::Box2D:
             {
                 BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
                 RendererDebug::DrawRect(transform.GetTransform(), boxCollider.Size, boxCollider.Offset, { 0.0, 1.0, 0.0, 1.0 }, false);
@@ -611,11 +622,11 @@ namespace Debut
                 break;
             }
 
-            case Collider2DComponent::Collider2DType::Circle:
+            case ColliderType::Circle2D:
             {
                 break;
             }
-            case Collider2DComponent::Collider2DType::Polygon:
+            case ColliderType::Polygon:
             {
                 break;
             }
@@ -629,18 +640,30 @@ namespace Debut
 
             // IMPLEMENT LOGIC
             // Selection and dragging
-            if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
             {
+                // Don't edit the selection if the user is dragging a vertex
+                if (ImGuizmo::IsUsing())
+                    return;
+
                 // Get hovered color
                 glm::vec2 coords = GetFrameBufferCoords();
                 glm::vec4 pixel = m_FrameBuffer->ReadPixel(0, coords.x, coords.y);
 
-                if (!(pixel.r == 0.0 && pixel.g == 255.0 && pixel.b == 0.0 && pixel.a == 255))
+                // Check that the distance is far from the selected point before disabling TODO
+                if (!(pixel.r == 0.0 && pixel.g == 255.0 && pixel.b == 0.0 && pixel.a == 255) && 
+                    glm::distance(TransformationUtils::WorldToScreenPos(m_PhysicsSelection.SelectedPoint,
+                        m_EditorCamera.GetViewProjection(), transform.GetTransform(), viewport), 
+                        glm::vec3(coords, m_PhysicsSelection.SelectedPoint.z)) > 6.0f)
+                {
+                    m_PhysicsSelection.Valid = false;
+                    m_PhysicsSelection.SelectedName = "";
                     return;
+                }
 
                 switch (colliderType)
                 {
-                case Collider2DComponent::Collider2DType::Box:
+                case ColliderType::Box2D:
                 {
                     BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
                     glm::mat4 viewProj = m_EditorCamera.GetViewProjection();
@@ -662,32 +685,15 @@ namespace Debut
                         glm::vec3 screenPoint = TransformationUtils::WorldToScreenPos(points[i], viewProj, transformMat, viewport);
                         if (glm::distance(screenPoint, glm::vec3(coords, screenPoint.z)) < 6.0f)
                         {
+                            glm::vec3 trans, rot, scale;
+                            Math::DecomposeTransform(transformMat, trans, rot, scale);
                             m_PhysicsSelection.ColliderType = colliderType;
-                            m_PhysicsSelection.Dragging = true;
+                            m_PhysicsSelection.Valid = true;
                             m_PhysicsSelection.SelectedName = pointNames[i];
                             m_PhysicsSelection.SelectedPoint = points[i];
                             m_PhysicsSelection.SelectedEntity = currSelection;
-
-                            glm::mat4 pointTransform = glm::translate(transformMat, glm::vec3(transformMat * glm::vec4(points[i], 1.0)));
-
-                            // Manipulate this point (could be isolated to be the same function for each point?)
-                            ImGuizmo::Manipulate(glm::value_ptr(m_EditorCamera.GetView()), 
-                                glm::value_ptr(m_EditorCamera.GetProjection()), ImGuizmo::TRANSLATE,
-                                ImGuizmo::MODE::LOCAL, glm::value_ptr(pointTransform));
-
-                           /* if (ImGuizmo::IsUsing())
-                            {
-                                glm::vec3 finalTrans, finalRot, finalScale;
-                                glm::mat4 newTransform = glm::inverse(transformMat) * pointTransform;
-                                Math::DecomposeTransform(newTransform, finalTrans, finalRot, finalScale);
-
-                                newPoints[i] = finalTrans;
-                            }
-                            else
-                                newPoints[i] = points[i];
-
-                            boxCollider.Size = { std::fabs(newPoints[0].x - newPoints[2].x),std::fabs(newPoints[0].y - newPoints[1].y) };*/
-                            // What if recycling ImGuizmo? Probably the best approach to save me some headaches
+                            m_PhysicsSelection.PointTransform = transformMat;
+                            m_PhysicsSelection.PointRotation = glm::eulerAngleXYZ(rot.x, rot.y, rot.z);
                         }
                     }
 
@@ -696,11 +702,11 @@ namespace Debut
                     break;
                 }
 
-                case Collider2DComponent::Collider2DType::Circle:
+                case ColliderType::Circle2D:
                 {
                     break;
                 }
-                case Collider2DComponent::Collider2DType::Polygon:
+                case ColliderType::Polygon:
                 {
                     break;
                 }
@@ -708,32 +714,48 @@ namespace Debut
                     break;
                 }
             }
-            else if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+        }
+    }
+
+    void DebutantLayer::ManipulatePhysicsGizmos()
+    {
+        Entity currSelection = m_SceneHierarchy.GetSelectionContext();
+
+        if (currSelection)
+        {
+            // Convert from collider space to world space
+            glm::vec3 pointLocalTranslation = glm::vec3(m_PhysicsSelection.PointRotation * glm::vec4(m_PhysicsSelection.SelectedPoint, 1.0));
+            glm::mat4 pointTransform = glm::translate(m_PhysicsSelection.PointTransform, pointLocalTranslation);
+
+            // Manipulate the selected point
+            if (ImGuizmo::Manipulate(glm::value_ptr(m_EditorCamera.GetView()),
+                glm::value_ptr(m_EditorCamera.GetProjection()), ImGuizmo::TRANSLATE,
+                ImGuizmo::MODE::LOCAL, glm::value_ptr(pointTransform)))
             {
-                // Edit 
+                // Apply the changes
+                glm::vec3 newPoint = m_PhysicsSelection.SelectedPoint;
+
+                glm::vec3 finalTrans, finalRot, finalScale;
+                Math::DecomposeTransform(pointTransform, finalTrans, finalRot, finalScale);
+                // Convert back to collider space
+                newPoint = glm::vec3(glm::inverse(m_PhysicsSelection.PointTransform) * glm::vec4(finalTrans, 1.0f));
+
+                // Send the changes to the collider
+                if (newPoint != m_PhysicsSelection.SelectedPoint)
+                {
+                    switch (m_PhysicsSelection.ColliderType)
+                    {
+                    case ColliderType::Box2D:
+                    {
+                        BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
+                        boxCollider.SetPoint(glm::vec2(newPoint.x, newPoint.y), m_PhysicsSelection.SelectedName);
+                        break;
+                    }
+                    case ColliderType::Circle2D:
+                        break;
+                    }
+                }
             }
-            else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
-            {
-                // Reset selection
-                m_PhysicsSelection.ColliderType = Collider2DComponent::Collider2DType::None;
-                m_PhysicsSelection.Dragging = false;
-                m_PhysicsSelection.SelectedName = "";
-                m_PhysicsSelection.SelectedPoint = { 0,0,0 };
-                m_PhysicsSelection.SelectedEntity = {};
-            }
-
-            /*
-                - Transform all necessary points
-                - Do stuff in screen space instead of world space. Basically transform the points instead of the point of 
-                  the mouse position. Which kinda sucks and apparently Unity does it with only the near camera plane.
-                  Ask in the cherno server maybe? I really don't want to implement depth buffers right now...
-                - Screw it. Thought about it and this seems the best way.
-            */
-
-            // Convert from screen to world
-            /*glm::vec3 worldSpaceCoords = glm::unProject(glm::vec3(coords.x, coords.y, 0.1f), m_EditorCamera.GetView(), m_EditorCamera.GetProjection(),
-                glm::vec4(0, 0, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y));*/
-
         }
     }
 

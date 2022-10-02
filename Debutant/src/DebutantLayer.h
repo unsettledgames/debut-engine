@@ -12,13 +12,15 @@ namespace Debut
 {
 	struct PhysicsColliderSelection
 	{
-		Collider2DComponent::Collider2DType ColliderType = Collider2DComponent::Collider2DType::None;
+		ColliderType ColliderType = ColliderType::None;
 		
 		Entity SelectedEntity;
 		glm::vec3 SelectedPoint = {0,0,0};
+		glm::mat4 PointTransform = glm::mat4(1.0);
+		glm::mat4 PointRotation = glm::mat4(1.0);
 		std::string SelectedName = "";
 
-		bool Dragging = false;
+		bool Valid = false;
 	};
 
 	class DebutantLayer : public Layer
@@ -64,6 +66,7 @@ namespace Debut
 		// Debug & Gizmos
 		void DrawTransformGizmos();
 		void DrawPhysicsGizmos();
+		void ManipulatePhysicsGizmos();
 
 		// Drag & droppable objects
 		void LoadModel(const std::filesystem::path path);

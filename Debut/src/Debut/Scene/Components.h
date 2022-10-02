@@ -32,10 +32,10 @@
 
 namespace Debut
 {
+	enum class ColliderType { Circle2D = 0, Box2D, Polygon, None, Box, Sphere, Mesh };
 	struct Collider2DComponent
 	{
-		enum class Collider2DType { Circle = 0, Box, Polygon, None};
-		Collider2DType Type;
+		ColliderType Type;
 	};
 	
 	struct LightComponent
@@ -216,7 +216,47 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		BoxCollider2DComponent() { Type = Collider2DType::Box; };
+		void SetPoint(glm::vec2& point, std::string& type)
+		{
+			glm::vec2 diff;
+			if (type == "TopLeft")
+			{
+				// Get the current top left 
+				glm::vec2 current = glm::vec2(-Size.x / 2.0 + Offset.x, Size.y / 2.0 + Offset.y);
+				diff = point - current;
+				// Half the difference goes in offset
+				Offset += diff / 2.0f;
+				// The difference goes in size
+				Size.x += -diff.x;
+				Size.y += diff.y;
+			}
+			else if (type == "TopRight")
+			{
+				glm::vec2 current = glm::vec2(Size.x / 2.0 + Offset.x, Size.y / 2.0 + Offset.y);
+				diff = point - current;
+				Offset += diff / 2.0f;
+				Size.x += diff.x;
+				Size.y += diff.y;
+			}
+			else if (type == "BottomLeft")
+			{
+				glm::vec2 current = glm::vec2(-Size.x / 2.0 + Offset.x, -Size.y / 2.0 + Offset.y);
+				diff = point - current;
+				Offset += diff / 2.0f;
+				Size.x += -diff.x;
+				Size.y += -diff.y;
+			}
+			else if (type == "BottomRight")
+			{
+				glm::vec2 current = glm::vec2(Size.x / 2.0 + Offset.x, -Size.y / 2.0 + Offset.y);
+				diff = point - current;
+				Offset += diff / 2.0f;
+				Size.x += diff.x;
+				Size.y += -diff.y;
+			}
+		}
+
+		BoxCollider2DComponent() { Type = ColliderType::Box2D; };
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
 
@@ -229,7 +269,7 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		CircleCollider2DComponent() { Type = Collider2DType::Circle; };
+		CircleCollider2DComponent() { Type = ColliderType::Circle2D; };
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
