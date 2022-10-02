@@ -315,7 +315,7 @@ namespace Debut
 				Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(bc2d.Material);
 
 				b2PolygonShape boxShape;
-				boxShape.SetAsBox(transform.Scale.x * bc2d.Size.x / 2, transform.Scale.y * bc2d.Size.y / 2, b2Vec2(bc2d.Offset.x, bc2d.Offset.y), 0);
+				boxShape.SetAsBox(transform.Scale.x * bc2d.Size.x / 2, transform.Scale.y * bc2d.Size.y / 2, b2Vec2(transform.Scale.x * bc2d.Offset.x, transform.Scale.y * bc2d.Offset.y), 0);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;

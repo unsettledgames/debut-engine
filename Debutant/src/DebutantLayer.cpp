@@ -24,9 +24,7 @@
 *   - Render points on top of everything
 * 
 *   TEST:
-*   - See if it works when an object isn't in 0,0,0
 *   - See if editing colliders work in colliders that are children of others
-*   - See if editing collider work in non-2D oriented quads
 * 
     TODO:
     - 2 main things!
