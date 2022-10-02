@@ -269,6 +269,42 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
+		void SetPoint(glm::vec2& point, std::string& type)
+		{
+			glm::vec2 diff;
+			if (type == "Left")
+			{
+				// Get the current left 
+				glm::vec2 current = glm::vec2(-Radius + Offset.x, 0.0f + Offset.y);
+				diff = point - current;
+				// Half the difference goes in offset
+				Offset.x += diff.x / 2.0f;
+				// The difference goes in size
+				Radius += -diff.x / 2.0f;
+			}
+			else if (type == "Top")
+			{
+				glm::vec2 current = glm::vec2(0.0f + Offset.x, Radius + Offset.y);
+				diff = point - current;
+				Offset.y += diff.y / 2.0f;
+				Radius += diff.y / 2.0f;
+			}
+			else if (type == "Right")
+			{
+				glm::vec2 current = glm::vec2(Radius + Offset.x, 0.0f + Offset.y);
+				diff = point - current;
+				Offset.x += diff.x / 2.0f;
+				Radius += diff.x / 2.0f;
+			}
+			else if (type == "Bottom")
+			{
+				glm::vec2 current = glm::vec2(0.0f, -Radius + Offset.y);
+				diff = point - current;
+				Offset.y += diff.y / 2.0f;
+				Radius += -diff.y / 2.0f;
+			}
+		}
+
 		CircleCollider2DComponent() { Type = ColliderType::Circle2D; };
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};

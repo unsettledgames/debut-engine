@@ -4,6 +4,7 @@
 #include <Debut/Rendering/Structures/VertexArray.h>
 #include <Debut/Rendering/Structures/Buffer.h>
 
+#include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Rendering/Camera.h>
 
 namespace Debut
@@ -12,7 +13,7 @@ namespace Debut
 
 	void RendererDebug::Init()
 	{
-		RenderCommand::SetLineWidth(3.0f);
+		RenderCommand::SetLineWidth(2.0f);
 		RenderCommand::SetPointSize(12.0f);
 
 		BufferLayout layout = {
