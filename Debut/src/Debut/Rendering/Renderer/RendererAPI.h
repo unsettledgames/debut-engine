@@ -18,6 +18,7 @@ namespace Debut
 		virtual void Init() = 0;
 
 		virtual void Clear() = 0;
+		virtual void ClearDepth() = 0;
 		virtual void SetClearColor(const glm::vec4 color) = 0;
 
 		virtual void DrawLines(const Ref<VertexArray>& va, uint32_t vertexCount) = 0;

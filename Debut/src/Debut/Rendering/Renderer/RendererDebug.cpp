@@ -46,6 +46,7 @@ namespace Debut
 
 	void RendererDebug::BeginScene(Camera& camera, glm::mat4& transform)
 	{
+		RenderCommand::ClearDepth();
 		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
 
 		s_Storage.LineShader->Bind();

@@ -20,25 +20,16 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
-*   BUGS:
-*   - Render points on top of everything
-* 
-*   TEST:
-*   - See if editing colliders work in colliders that are children of others
 * 
     TODO:
     - 2 main things!
         - Collider gizmos
-            - BoxCollider: drag vertices to edit
             - CircleCollider: drag one of the 4 points to expand
 
             In general
                 - Right click deletes a vertex, if appliable
-                - Editing happens in 3D space, but the effects should be limited to 2D space, in which the up vector 
-                  is the normal of the quad
         - Polygon Collider
             - Gizmos: drag center to move, drag vertices to edit
-
 
     - Roughness maps (PBR)
     - Reflection maps (PBR)

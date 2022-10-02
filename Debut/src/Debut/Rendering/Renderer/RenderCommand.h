@@ -22,6 +22,11 @@ namespace Debut
 			s_RendererAPI->Clear(); 
 		}
 
+		inline static void ClearDepth()
+		{
+			s_RendererAPI->ClearDepth();
+		}
+
 		inline static void DrawIndexed(const Ref<VertexArray>& va, uint32_t indexCount = 0)
 		{
 			s_RendererAPI->DrawIndexed(va, indexCount);
