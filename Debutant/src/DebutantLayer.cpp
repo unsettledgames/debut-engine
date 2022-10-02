@@ -21,13 +21,12 @@
 
 /*
 * 
+*   BUGS:
+*   - After you edit a point, you can't edit stuff anymore
+* 
     TODO:
     - 2 main things!
-        - Collider gizmos
-            - CircleCollider: drag one of the 4 points to expand
-
-            In general
-                - Right click deletes a vertex, if appliable
+        - Right click deletes a vertex, if appliable
         - Polygon Collider
             - Gizmos: drag center to move, drag vertices to edit
 
@@ -615,7 +614,7 @@ namespace Debut
             case ColliderType::Circle2D:
             {
                 CircleCollider2DComponent& cc = currSelection.GetComponent<CircleCollider2DComponent>();
-                glm::vec3 center = transform.Translation + glm::vec3(cc.Offset, 0.0f);
+                glm::vec3 center = glm::vec3(cc.Offset, 0.0f);
                 float nIterations = 40;
                 float angleIncrease = glm::radians(360.0f) / nIterations;
                 float currentAngle = 0;
@@ -705,8 +704,8 @@ namespace Debut
                     CircleCollider2DComponent& cc = currSelection.GetComponent<CircleCollider2DComponent>();
 
                     points = {
-                        glm::vec3(-cc.Radius, 0.0f, 0.0f), glm::vec3(0.0f, cc.Radius, 0.0f),
-                        glm::vec3(cc.Radius, 0.0f, 0.0f), glm::vec3(0.0f, -cc.Radius, 0.0f)
+                        glm::vec3(-cc.Radius + cc.Offset.x, cc.Offset.y, 0.0f), glm::vec3(cc.Offset.x, cc.Radius + cc.Offset.y, 0.0f),
+                        glm::vec3(cc.Radius + cc.Offset.x, cc.Offset.y, 0.0f), glm::vec3(cc.Offset.x, -cc.Radius + cc.Offset.y, 0.0f)
                     };
                     labels = { "Left", "Top", "Right", "Bottom" };
                     break;
@@ -774,6 +773,11 @@ namespace Debut
                     }
                     case ColliderType::Circle2D:
                         CircleCollider2DComponent& circleCollider = currSelection.GetComponent<CircleCollider2DComponent>();
+                        if (m_PhysicsSelection.SelectedName == "Top" || m_PhysicsSelection.SelectedName == "Bottom")
+                            newPoint.x = circleCollider.Offset.x;
+                        else
+                            newPoint.y = circleCollider.Offset.y;
+
                         circleCollider.SetPoint(glm::vec2(newPoint.x, newPoint.y), m_PhysicsSelection.SelectedName);
                         break;
                     }
