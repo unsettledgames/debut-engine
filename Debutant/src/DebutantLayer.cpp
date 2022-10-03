@@ -23,7 +23,9 @@
 /*
 * 
 *   CURRENT:
-*       - PolygonCollider component
+*       - + button to add a polygon vertex
+*       - - button to delete a polygon vertex (make the treenode entries selectable)
+
     TODO:
     - 2 main things!
         - Right click deletes a vertex, if appliable
@@ -740,6 +742,14 @@ namespace Debut
                 }
                 case ColliderType::Polygon:
                 {
+                    PolygonCollider2DComponent& pc = currSelection.GetComponent<PolygonCollider2DComponent>();
+                    for (uint32_t i = 0; i < pc.Points.size(); i++)
+                    {
+                        std::stringstream ss;
+                        ss << i;
+                        points.push_back(glm::vec3(pc.Points[i], 0.0f));
+                        labels.push_back(ss.str());
+                    }
                     break;
                 }
                 default:
@@ -796,10 +806,11 @@ namespace Debut
                     case ColliderType::Box2D:
                     {
                         BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
-                        boxCollider.SetPoint(glm::vec2(newPoint.x, newPoint.y), m_PhysicsSelection.SelectedName);
+                        boxCollider.SetPoint(glm::vec2(newPoint), m_PhysicsSelection.SelectedName);
                         break;
                     }
                     case ColliderType::Circle2D:
+                    {
                         CircleCollider2DComponent& circleCollider = currSelection.GetComponent<CircleCollider2DComponent>();
                         if (m_PhysicsSelection.SelectedName == "Top" || m_PhysicsSelection.SelectedName == "Bottom")
                             newPoint.x = circleCollider.Offset.x;
@@ -808,6 +819,12 @@ namespace Debut
 
                         circleCollider.SetPoint(glm::vec2(newPoint.x, newPoint.y), m_PhysicsSelection.SelectedName);
                         break;
+                    }
+                    case ColliderType::Polygon:
+                    {
+                        PolygonCollider2DComponent& polygonCollider = currSelection.GetComponent<PolygonCollider2DComponent>();
+                        polygonCollider.SetPoint(std::stoi(m_PhysicsSelection.SelectedName), glm::vec2(newPoint));
+                    }
                     }
                 }
 

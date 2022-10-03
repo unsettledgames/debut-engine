@@ -47,7 +47,6 @@ namespace Debut
 
 	void RendererDebug::BeginScene(Camera& camera, glm::mat4& transform)
 	{
-		RenderCommand::ClearDepth();
 		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
 
 		s_Storage.LineShader->Bind();
@@ -154,6 +153,8 @@ namespace Debut
 
 	void RendererDebug::FlushLines()
 	{
+		// Render on top 
+		RenderCommand::ClearDepth();
 		// Draw call
 		RenderCommand::DrawLines(s_Storage.LineVertexArray, s_Storage.LineCount * 2);
 		s_Storage.LineCount = 0;
@@ -162,6 +163,8 @@ namespace Debut
 
 	void RendererDebug::FlushPoints()
 	{
+		// Render on top of everything, including lines
+		RenderCommand::ClearDepth();
 		// Draw call
 		RenderCommand::DrawPoints(s_Storage.PointVertexArray, s_Storage.PointCount);
 		s_Storage.PointCount = 0;

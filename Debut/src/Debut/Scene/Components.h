@@ -321,6 +321,8 @@ namespace Debut
 
 		void SetPoint(int index, glm::vec2 value)
 		{
+			// Update point
+			Points[index] = value;
 			// Add point
 			// Keep anti-clockwise
 			// Triangulate
@@ -332,7 +334,7 @@ namespace Debut
 			ret.resize(Indices.size() / 3);
 
 			for (uint32_t i = 0; i < Indices.size(); i += 3)
-				ret[i / 3] = { Points[i], Points[i + 1], Points[i + 2] };
+				ret[i / 3] = { Points[Indices[i]], Points[Indices[i + 1]], Points[Indices[i + 2]]};
 			
 			return ret;
 		}
@@ -340,7 +342,7 @@ namespace Debut
 		PolygonCollider2DComponent() 
 		{ 
 			Type = ColliderType::Polygon;
-			Points = { {0.0f, 0.5f}, {-0.5f, -0.5f}, {0.5f, -0.5f} };
+			Points = { {-0.5f, 0.5f}, {0.5f, 0.5f}, {0.5f, -0.5f}, {-0.5f, -0.5f} };
 			Indices = MathUtils::Triangulate(Points);
 		}
 		PolygonCollider2DComponent(const PolygonCollider2DComponent&) = default;
