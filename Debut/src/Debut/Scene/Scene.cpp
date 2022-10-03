@@ -59,6 +59,8 @@ namespace Debut
 	template<>
 	void Scene::OnComponentAdded(BoxCollider2DComponent& bc2d, Entity entity) { }
 	template<>
+	void Scene::OnComponentAdded(PolygonCollider2DComponent& pc2d, Entity entity) {}
+	template<>
 	void Scene::OnComponentAdded(CircleCollider2DComponent& bc2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
@@ -387,6 +389,7 @@ namespace Debut
 		CopyComponentIfExists<Rigidbody2DComponent>(duplicate, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CircleCollider2DComponent>(duplicate, entity);
+		CopyComponentIfExists<PolygonCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CameraComponent>(duplicate, entity);
 		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
 		CopyComponentIfExists<MeshRendererComponent>(duplicate, entity);

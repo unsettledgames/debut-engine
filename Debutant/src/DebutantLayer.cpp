@@ -6,6 +6,7 @@
 #include <Debut/Utils/PlatformUtils.h>
 #include <Debut/Utils/TransformationUtils.h>
 #include <Debut/Utils/CppUtils.h>
+#include <Debut/Utils/MathUtils.h>
 #include <Camera/EditorCamera.h>
 #include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Rendering/Resources/Skybox.h>
@@ -21,9 +22,8 @@
 
 /*
 * 
-*   BUGS:
-*   - After you edit a point, you can't edit stuff anymore
-* 
+*   CURRENT:
+*       - PolygonCollider component
     TODO:
     - 2 main things!
         - Right click deletes a vertex, if appliable
@@ -552,7 +552,7 @@ namespace Debut
                 {
                     glm::vec3 finalTrans, finalRot, finalScale;
                     transform = (tc.Parent ? glm::inverse(tc.Parent.Transform().GetTransform()) : glm::mat4(1.0)) * transform;
-                    Math::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
+                    MathUtils::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
 
                     glm::vec3 deltaRot = finalRot - tc.Rotation;
 
@@ -585,6 +585,8 @@ namespace Debut
                 colliderType = ColliderType::Box2D;
             else if (currSelection.HasComponent<CircleCollider2DComponent>())
                 colliderType = ColliderType::Circle2D;
+            else if (currSelection.HasComponent<PolygonCollider2DComponent>())
+                colliderType = ColliderType::Polygon;
 
             RendererDebug::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
 
@@ -644,6 +646,32 @@ namespace Debut
             }
             case ColliderType::Polygon:
             {
+                PolygonCollider2DComponent& polygon = currSelection.GetComponent<PolygonCollider2DComponent>();
+                glm::vec3 center = glm::vec3(polygon.Offset, 0.0f);
+
+                // Render points
+                for (uint32_t i = 0; i < polygon.Points.size(); i++)
+                {
+                    glm::vec2 currPoint = polygon.Points[i];
+                    RendererDebug::DrawPoint(glm::vec3(transformMat * glm::vec4(center + glm::vec3(currPoint, 0.0f), 1.0f)), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+                }
+
+                // Render triangle lines
+                std::vector<std::vector<glm::vec2>>& triangles = polygon.GetTriangles();
+                for (uint32_t i = 0; i < triangles.size(); i++)
+                {
+                    for (uint32_t j = 0; j < 3; j++)
+                    {
+                        glm::vec2 curr = triangles[i][j];
+                        glm::vec2 next = triangles[i][(j + 1) % 3];
+                        RendererDebug::DrawLine(
+                            glm::vec3(transformMat * glm::vec4(center + glm::vec3(curr, 0.0f), 1.0f)),
+                            glm::vec3(transformMat * glm::vec4(center + glm::vec3(next, 0.0f), 1.0f)),
+                            glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)
+                        );
+                    }
+                }
+
                 break;
             }
             default:
@@ -724,7 +752,7 @@ namespace Debut
                     if (glm::distance(screenPoint, glm::vec3(coords, screenPoint.z)) < 6.0f)
                     {
                         glm::vec3 trans, rot, scale;
-                        Math::DecomposeTransform(transformMat, trans, rot, scale);
+                        MathUtils::DecomposeTransform(transformMat, trans, rot, scale);
                         m_PhysicsSelection.ColliderType = colliderType;
                         m_PhysicsSelection.Valid = true;
                         m_PhysicsSelection.SelectedName = labels[i];
@@ -756,7 +784,7 @@ namespace Debut
                 glm::vec3 newPoint = m_PhysicsSelection.SelectedPoint;
 
                 glm::vec3 finalTrans, finalRot, finalScale;
-                Math::DecomposeTransform(pointTransform, finalTrans, finalRot, finalScale);
+                MathUtils::DecomposeTransform(pointTransform, finalTrans, finalRot, finalScale);
                 // Convert back to collider space
                 newPoint = glm::vec3(glm::inverse(m_PhysicsSelection.PointTransform) * glm::vec4(finalTrans, 1.0f));
 

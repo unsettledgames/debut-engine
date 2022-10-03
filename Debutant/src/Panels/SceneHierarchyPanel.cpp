@@ -383,6 +383,7 @@ namespace Debut
 			DrawAddComponentEntry<Rigidbody2DComponent>("Rigidbody2D");
 			DrawAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DrawAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
+			DrawAddComponentEntry<PolygonCollider2DComponent>("Polygon Collider");
 			DrawAddComponentEntry<MeshRendererComponent>("Mesh Renderer");
 			DrawAddComponentEntry<DirectionalLightComponent>("Directional Light");
 			DrawAddComponentEntry<PointLightComponent>("Point Light");
@@ -589,6 +590,33 @@ namespace Debut
 			{
 				ImGuiUtils::RGBVec2("Offset", { "X", "Y" }, { &component.Offset.x, &component.Offset.y });
 				ImGuiUtils::DragFloat("Radius", &component.Radius, 1.0f);
+
+				ImGui::Dummy({ 0.0f, 10.0f });
+				ImGui::Separator();
+				ImGui::Dummy({ 0.0f, 10.0f });
+
+				UUID material = ImGuiUtils::DragDestination("Physics material", ".physmat2d", component.Material);
+				if (material != 0)
+					component.Material = material;
+			});
+
+		DrawComponent<PolygonCollider2DComponent>("Polygon Collider", entity, [](auto& component)
+			{
+				std::vector<glm::vec2>& points = component.Points;
+				ImGuiUtils::RGBVec2("Offset", { "X", "Y" }, { &component.Offset.x, &component.Offset.y });
+
+				bool edited = false;
+				if (ImGui::TreeNode("Points"))
+				{
+					for (uint32_t i = 0; i < points.size(); i++)
+					{
+						std::stringstream ss;
+						ss << "Point " << i;
+						ImGuiUtils::RGBVec2(ss.str().c_str(), {"X", "Y"}, {&(points[i].x), &(points[i].y)});
+					}
+					component.Points = points;
+					ImGui::TreePop();
+				}
 
 				ImGui::Dummy({ 0.0f, 10.0f });
 				ImGui::Separator();

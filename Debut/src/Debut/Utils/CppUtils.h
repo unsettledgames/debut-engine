@@ -10,7 +10,7 @@ namespace Debut
 	{
 		namespace FileSystem
 		{
-			static std::string CorrectFileName(std::string name)
+			static inline std::string CorrectFileName(std::string name)
 			{
 				char forbidden[] = { ':', '\\', '/', '#', '£', '<', '>', '*', '$', '+', '%', '!', '`',
 					'&', '\'', '|', '{', '}', '?', '\"', '=', ' ', '@' };
@@ -20,7 +20,7 @@ namespace Debut
 				return name;
 			}
 
-			static bool RemoveFile(std::filesystem::path path)
+			static inline bool RemoveFile(std::filesystem::path path)
 			{
 				if (std::filesystem::exists(path))
 				{
@@ -66,12 +66,12 @@ namespace Debut
 
 		namespace String
 		{
-			static bool EndsWith(const std::string& str, const std::string& suffix)
+			static inline bool EndsWith(const std::string& str, const std::string& suffix)
 			{
 				return str.size() >= suffix.size() && 0 == str.compare(str.size() - suffix.size(), suffix.size(), suffix);
 			}
 
-			static bool StartsWith(const std::string& str, const std::string& prefix)
+			static inline bool StartsWith(const std::string& str, const std::string& prefix)
 			{
 				return str.size() >= prefix.size() && 0 == str.compare(0, prefix.size(), prefix);
 			}

@@ -1,13 +1,19 @@
 #include "Debut/dbtpch.h"
-#include "Math.h"
+#include "MathUtils.h"
+#include <earcut.hpp>
+#include <array>
+
+using Coord = float;
+using N = uint32_t;
+using Point = std::array<Coord, 2>;
 
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
 
-namespace Debut::Math {
-
-	bool DecomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale)
+namespace Debut
+{
+	bool MathUtils::DecomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale)
 	{
 		// From glm::decompose in matrix_decompose.inl
 
@@ -79,4 +85,17 @@ namespace Debut::Math {
 		return true;
 	}
 
+	std::vector<uint32_t> MathUtils::Triangulate(const std::vector<glm::vec2>& vertices)
+	{
+		std::vector<Point> input;
+		input.resize(vertices.size());
+
+		for (uint32_t i = 0; i < vertices.size(); i++)
+			input[i] = { vertices[i].x, vertices[i].y };
+
+		std::vector<std::vector<Point>> polygon;
+		polygon.push_back(input);
+		
+		return mapbox::earcut<N>(polygon);
+	}
 }

@@ -7,6 +7,7 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+#include <Debut/Utils/MathUtils.h>
 #include "Debut/Scene/SceneCamera.h"
 #include <Debut/Scene/ScriptableEntity.h>
 
@@ -307,6 +308,42 @@ namespace Debut
 
 		CircleCollider2DComponent() { Type = ColliderType::Circle2D; };
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
+	};
+
+	struct PolygonCollider2DComponent : Collider2DComponent
+	{
+		UUID Material = 0;
+		void* RuntimeFixture = nullptr;
+		
+		glm::vec2 Offset = glm::vec2(0.0f);
+		std::vector<glm::vec2> Points;
+		std::vector<uint32_t> Indices;
+
+		void SetPoint(int index, glm::vec2 value)
+		{
+			// Add point
+			// Keep anti-clockwise
+			// Triangulate
+		}
+
+		std::vector<std::vector<glm::vec2>> GetTriangles()
+		{
+			std::vector<std::vector<glm::vec2>> ret;
+			ret.resize(Indices.size() / 3);
+
+			for (uint32_t i = 0; i < Indices.size(); i += 3)
+				ret[i / 3] = { Points[i], Points[i + 1], Points[i + 2] };
+			
+			return ret;
+		}
+
+		PolygonCollider2DComponent() 
+		{ 
+			Type = ColliderType::Polygon;
+			Points = { {0.0f, 0.5f}, {-0.5f, -0.5f}, {0.5f, -0.5f} };
+			Indices = MathUtils::Triangulate(Points);
+		}
+		PolygonCollider2DComponent(const PolygonCollider2DComponent&) = default;
 	};
 
 	// SCRIPT
