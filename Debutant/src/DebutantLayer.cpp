@@ -23,8 +23,7 @@
 /*
 * 
 *   CURRENT:
-*       - - button to delete a polygon vertex
-*       - Sort anticlockwise before triangulating
+*       - Serialize / deserialize polygon component
 
     TODO:
     - 2 main things!
