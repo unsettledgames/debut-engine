@@ -170,7 +170,6 @@ namespace Debut
 		}
 
 		Renderer2D::EndScene();
-		
 	}
 	
 
@@ -293,6 +292,7 @@ namespace Debut
 		auto rigidbodyView = m_Registry.view<Rigidbody2DComponent>();
 		auto boxView = m_Registry.view<BoxCollider2DComponent>();
 		auto circleView = m_Registry.view<CircleCollider2DComponent>();
+		auto polygonView = m_Registry.view<PolygonCollider2DComponent>();
 
 		// Create Rigidbodies
 		for (auto e : rigidbodyView)
@@ -367,6 +367,45 @@ namespace Debut
 				}
 				
 				body->CreateFixture(&fixtureDef);
+			}
+
+			if (entity.HasComponent<PolygonCollider2DComponent>())
+			{
+				auto& pc2d = entity.GetComponent<PolygonCollider2DComponent>();
+				Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(pc2d.Material);
+				auto& triangles = pc2d.GetTriangles();
+
+				// Add a triangular shape to form a polygon
+				for (auto& triangle : triangles)
+				{
+					// Set the points
+					b2PolygonShape polygonShape;
+					b2Vec2 points[3];
+					for (uint32_t i = 0; i < 3; i++)
+						points[i] = { triangle[i].x + pc2d.Offset.x, triangle[i].y + pc2d.Offset.y };
+					polygonShape.Set(points, 3);
+
+					// Create the fixture
+					b2FixtureDef fixtureDef;
+					fixtureDef.shape = &polygonShape;
+
+					if (material != nullptr)
+					{
+						fixtureDef.density = material->GetDensity();
+						fixtureDef.friction = material->GetFriction();
+						fixtureDef.restitution = material->GetRestitution();
+						fixtureDef.restitutionThreshold = material->GetRestitutionThreshold();
+					}
+					else
+					{
+						fixtureDef.density = PhysicsMaterial2D::DefaultSettings.Density;
+						fixtureDef.friction = PhysicsMaterial2D::DefaultSettings.Friction;
+						fixtureDef.restitution = PhysicsMaterial2D::DefaultSettings.Restitution;
+						fixtureDef.restitutionThreshold = PhysicsMaterial2D::DefaultSettings.RestitutionThreshold;
+					}
+
+					body->CreateFixture(&fixtureDef);
+				}
 			}
 		}
 	}
@@ -477,6 +516,7 @@ namespace Debut
 		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<PolygonCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<MeshRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
