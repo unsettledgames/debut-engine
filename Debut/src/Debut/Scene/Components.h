@@ -323,9 +323,23 @@ namespace Debut
 		{
 			// Update point
 			Points[index] = value;
-			// Add point
-			// Keep anti-clockwise
-			// Triangulate
+		}
+
+		void AddPoint()
+		{
+			Points.push_back({ 0.2f, 0.2f });
+			Triangulate();
+		}
+
+		void RemovePoint(int index)
+		{
+			Points.erase(Points.begin() + index);
+			Triangulate();
+		}
+
+		void Triangulate()
+		{
+			Indices = MathUtils::Triangulate(Points);
 		}
 
 		std::vector<std::vector<glm::vec2>> GetTriangles()

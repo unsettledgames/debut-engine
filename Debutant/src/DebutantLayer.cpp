@@ -23,8 +23,8 @@
 /*
 * 
 *   CURRENT:
-*       - + button to add a polygon vertex
-*       - - button to delete a polygon vertex (make the treenode entries selectable)
+*       - - button to delete a polygon vertex
+*       - Sort anticlockwise before triangulating
 
     TODO:
     - 2 main things!
