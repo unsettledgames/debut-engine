@@ -6,9 +6,23 @@
 #include <Panels/SceneHierarchyPanel.h>
 #include <Panels/ContentBrowserPanel.h>
 #include <Camera/EditorCamera.h>
+#include <Debut/Scene/Components.h>
 
 namespace Debut
 {
+	struct PhysicsColliderSelection
+	{
+		ColliderType ColliderType = ColliderType::None;
+		
+		Entity SelectedEntity;
+		glm::vec3 SelectedPoint = {0,0,0};
+		glm::mat4 PointTransform = glm::mat4(1.0);
+		glm::mat4 PointRotation = glm::mat4(1.0);
+		std::string SelectedName = "";
+
+		bool Valid = false;
+	};
+
 	class DebutantLayer : public Layer
 	{
 	public:
@@ -38,13 +52,21 @@ namespace Debut
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
+	private:
+		glm::vec4 GetHoveredPixel(uint32_t attachmentIndex);
+		glm::vec2 GetFrameBufferCoords();
+
 		// UI panels
 		void DrawUIToolbar();
-		void DrawGizmos();
 		void DrawViewport();
 		void DrawTopBar();
 		void DrawSettingsWindow();
 		void DrawAssetMapWindow();
+
+		// Debug & Gizmos
+		void DrawTransformGizmos();
+		void DrawPhysicsGizmos();
+		void ManipulatePhysicsGizmos();
 
 		// Drag & droppable objects
 		void LoadModel(const std::filesystem::path path);
@@ -89,9 +111,6 @@ namespace Debut
 
 		// Gizmos
 		ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-
-		// DEBUG ONLY
-		Ref<Model> m_Model;
-		Ref<Model> m_Model2;
+		PhysicsColliderSelection m_PhysicsSelection;
 	};
 }

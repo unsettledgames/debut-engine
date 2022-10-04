@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.12)
 cmake_policy(SET CMP0079 NEW)
 
 OPTION(WINDOWS_BUILD "Enable to build for Windows" ON) # Enabled by default
+set(CMAKE_CXX_STANDARD 17)
 
-project(Debut VERSION 1.0.0)
+project(Debutant VERSION 1.0.0)
 
 # Source files
 file(GLOB_RECURSE Debutant_SRC
@@ -16,7 +17,6 @@ add_subdirectory(../Debut ../Debut/Build)
 
 add_executable(Debutant ${Debutant_SRC})
 
-set_property(TARGET Debutant PROPERTY CXX_STANDARD 17)
 set_property(TARGET Debutant PROPERTY MSVC_RUNTIME_LIBRARY MultiThreaded)
 
 # Link dependencies 

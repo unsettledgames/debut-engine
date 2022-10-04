@@ -383,6 +383,7 @@ namespace Debut
 			DrawAddComponentEntry<Rigidbody2DComponent>("Rigidbody2D");
 			DrawAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
 			DrawAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
+			DrawAddComponentEntry<PolygonCollider2DComponent>("Polygon Collider");
 			DrawAddComponentEntry<MeshRendererComponent>("Mesh Renderer");
 			DrawAddComponentEntry<DirectionalLightComponent>("Directional Light");
 			DrawAddComponentEntry<PointLightComponent>("Point Light");
@@ -589,6 +590,62 @@ namespace Debut
 			{
 				ImGuiUtils::RGBVec2("Offset", { "X", "Y" }, { &component.Offset.x, &component.Offset.y });
 				ImGuiUtils::DragFloat("Radius", &component.Radius, 1.0f);
+
+				ImGui::Dummy({ 0.0f, 10.0f });
+				ImGui::Separator();
+				ImGui::Dummy({ 0.0f, 10.0f });
+
+				UUID material = ImGuiUtils::DragDestination("Physics material", ".physmat2d", component.Material);
+				if (material != 0)
+					component.Material = material;
+			});
+
+		DrawComponent<PolygonCollider2DComponent>("Polygon Collider", entity, [](auto& component)
+			{
+				std::vector<glm::vec2>& points = component.Points;
+				ImGuiUtils::RGBVec2("Offset", { "X", "Y" }, { &component.Offset.x, &component.Offset.y });
+
+				bool edited = false;
+				static std::string selectedPoint = "";
+				static int selectedIdx = -1;
+
+				if (ImGui::TreeNode("Points"))
+				{
+					if (ImGui::Button("Add", { ImGui::GetContentRegionAvail().x / 2, ImGui::GetTextLineHeight() * 1.5f }))
+						component.AddPoint();
+					ImGui::SameLine();
+					if (ImGui::Button("Remove", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }) &&
+						selectedIdx != -1)
+					{
+						component.RemovePoint(selectedIdx);
+						selectedIdx = -1;
+						selectedPoint = "";
+					}
+
+					for (uint32_t i = 0; i < points.size(); i++)
+					{
+						bool selected = false;
+
+						std::stringstream ss;
+						ss << "Point " << i;
+						if (selectedPoint.compare(ss.str()) == 0)
+							selected = true;
+						
+						if (ImGui::Selectable(ss.str().c_str(), &selected, 0, { 100, ImGui::GetTextLineHeight() }))
+						{
+							selectedPoint = ss.str();
+							selectedIdx = i;
+						}
+
+						ImGui::SameLine();
+						ImGuiUtils::RGBVec2("", {"X", "Y"}, {&(points[i].x), &(points[i].y)});
+					}
+					component.Points = points;
+					ImGui::TreePop();
+				}
+
+				if (ImGui::Button("Retriangulate", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f}))
+					component.Triangulate();
 
 				ImGui::Dummy({ 0.0f, 10.0f });
 				ImGui::Separator();

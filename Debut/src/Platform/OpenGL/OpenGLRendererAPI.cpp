@@ -11,6 +11,7 @@ namespace Debut
 	{
 		glEnable(GL_DEPTH_TEST);
 		GLCall(glEnable(GL_LINE_SMOOTH));
+
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -19,6 +20,11 @@ namespace Debut
 	void OpenGLRendererAPI::Clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void OpenGLRendererAPI::ClearDepth()
+	{
+		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4 color)
@@ -43,6 +49,14 @@ namespace Debut
 		va->Unbind();
 	}
 
+	void OpenGLRendererAPI::DrawPoints(const Ref<VertexArray>& va, uint32_t vertexCount)
+	{
+		va->Bind();
+		GLCall(glDrawArrays(GL_POINTS, 0, vertexCount));
+		va->Unbind();
+	}
+
+
 	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
 		GLCall(glViewport(x, y, width, height));
@@ -51,5 +65,10 @@ namespace Debut
 	void OpenGLRendererAPI::SetLineWidth(float thickness)
 	{
 		GLCall(glLineWidth(thickness));
+	}
+
+	void OpenGLRendererAPI::SetPointSize(float thickness)
+	{
+		GLCall(glPointSize(thickness));
 	}
 }

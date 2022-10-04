@@ -11,11 +11,14 @@ namespace Debut
 
 		virtual void Invalidate() override;
 		virtual void Resize(uint32_t x, uint32_t y) override;
-		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
 		virtual void ClearAttachment(uint32_t index, int value) override;
 
-		virtual void Bind() const override;
-		virtual void Unbind() const override;
+		virtual int ReadRedPixel(uint32_t attachmentIndex, int x, int y) override;
+		virtual int ReadDepthPixel(uint32_t index, int x, int y) override { return 0; }
+		virtual glm::vec4 ReadPixel(uint32_t index, int x, int y) override;
+
+		virtual void Bind() override;
+		virtual void Unbind() override;
 
 		inline virtual uint32_t GetColorAttachment(int idx = 0) const override { DBT_ASSERT(idx < m_ColorAttachments.size()); return m_ColorAttachments[idx]; }
 		inline virtual uint32_t GetDepthAttachment() const override { return m_DepthAttachment; }
@@ -23,6 +26,7 @@ namespace Debut
 
 	private:
 		uint32_t m_RendererID = 0;
+		bool m_Bound = false;
 
 		FrameBufferSpecifications m_Specs;
 

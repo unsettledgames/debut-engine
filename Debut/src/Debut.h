@@ -5,7 +5,7 @@
 /************Core**************/
 #include "Debut/Core/Core.h"
 #include "Debut/Core/Time.h"
-#include "Debut/Math/Math.h"
+#include "Debut/Utils/MathUtils.h"
 #include "Debut/Core/Log.h"
 
 // Input

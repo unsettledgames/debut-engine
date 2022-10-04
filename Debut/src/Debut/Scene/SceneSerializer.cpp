@@ -118,6 +118,18 @@ namespace Debut
 		out << YAML::Key << "Material" << YAML::Value << c.Material;
 	}
 
+	static void SerializeComponent(const PolygonCollider2DComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
+		out << YAML::Key << "Points" << YAML::Value << YAML::BeginSeq;
+
+		for (auto& point : c.Points)
+			out << point;
+
+		out << YAML::EndSeq;
+		out << YAML::Key << "Material" << YAML::Value << c.Material;
+	}
+
 	static void SerializeComponent(const DirectionalLightComponent& c, YAML::Emitter& out)
 	{
 		out << YAML::Key << "Direction" << YAML::Value << c.Direction;
@@ -237,6 +249,29 @@ namespace Debut
 	}
 
 	template<>
+	static void DeserializeComponent<PolygonCollider2DComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		PolygonCollider2DComponent& pc2d = e.AddComponent<PolygonCollider2DComponent>();
+
+		pc2d.Offset = in["Offset"].as<glm::vec2>();
+		uint32_t i = 0;
+		// Remove default points
+		for (uint32_t j = 0; j < 4; j++)
+			pc2d.RemovePoint(0);
+
+		for (auto& vec : in["Points"])
+		{
+			pc2d.AddPoint();
+			pc2d.SetPoint(i, vec.as<glm::vec2>());
+			i++;
+		}
+		pc2d.Triangulate();
+		pc2d.Material = in["Material"].as<uint64_t>();
+	}
+
+	template<>
 	static void DeserializeComponent<DirectionalLightComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in)
@@ -275,6 +310,7 @@ namespace Debut
 		SerializeComponent<Rigidbody2DComponent>(entity, "Rigidbody2DComponent", out);
 		SerializeComponent<BoxCollider2DComponent>(entity, "BoxCollider2DComponent", out);
 		SerializeComponent<CircleCollider2DComponent>(entity, "CircleCollider2DComponent", out);
+		SerializeComponent<PolygonCollider2DComponent>(entity, "PolygonCollider2DComponent", out);
 		SerializeComponent<DirectionalLightComponent>(entity, "DirectionalLightComponent", out);
 		SerializeComponent<PointLightComponent>(entity, "PointLightComponent", out);
 
@@ -364,6 +400,7 @@ namespace Debut
 		DeserializeComponent<MeshRendererComponent>(entity, yamlEntity["MeshRendererComponent"]);
 		DeserializeComponent<Rigidbody2DComponent>(entity, yamlEntity["Rigidbody2DComponent"]);
 		DeserializeComponent<BoxCollider2DComponent>(entity, yamlEntity["BoxCollider2DComponent"]);
+		DeserializeComponent<PolygonCollider2DComponent>(entity, yamlEntity["PolygonCollider2DComponent"]);
 		DeserializeComponent<CircleCollider2DComponent>(entity, yamlEntity["CircleCollider2DComponent"]);
 		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
 		DeserializeComponent<DirectionalLightComponent>(entity, yamlEntity["DirectionalLightComponent"]);

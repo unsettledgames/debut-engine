@@ -7,6 +7,7 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+#include <Debut/Utils/MathUtils.h>
 #include "Debut/Scene/SceneCamera.h"
 #include <Debut/Scene/ScriptableEntity.h>
 
@@ -32,10 +33,10 @@
 
 namespace Debut
 {
+	enum class ColliderType { Circle2D = 0, Box2D, Polygon, None, Box, Sphere, Mesh };
 	struct Collider2DComponent
 	{
-		enum class Collider2DType { Circle = 0, Box, Polygon};
-		Collider2DType Type;
+		ColliderType Type;
 	};
 	
 	struct LightComponent
@@ -216,7 +217,47 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		BoxCollider2DComponent() { Type = Collider2DType::Box; };
+		void SetPoint(glm::vec2& point, std::string& type)
+		{
+			glm::vec2 diff;
+			if (type == "TopLeft")
+			{
+				// Get the current top left 
+				glm::vec2 current = glm::vec2(-Size.x / 2.0 + Offset.x, Size.y / 2.0 + Offset.y);
+				diff = point - current;
+				// Half the difference goes in offset
+				Offset += diff / 2.0f;
+				// The difference goes in size
+				Size.x += -diff.x;
+				Size.y += diff.y;
+			}
+			else if (type == "TopRight")
+			{
+				glm::vec2 current = glm::vec2(Size.x / 2.0 + Offset.x, Size.y / 2.0 + Offset.y);
+				diff = point - current;
+				Offset += diff / 2.0f;
+				Size.x += diff.x;
+				Size.y += diff.y;
+			}
+			else if (type == "BottomLeft")
+			{
+				glm::vec2 current = glm::vec2(-Size.x / 2.0 + Offset.x, -Size.y / 2.0 + Offset.y);
+				diff = point - current;
+				Offset += diff / 2.0f;
+				Size.x += -diff.x;
+				Size.y += -diff.y;
+			}
+			else if (type == "BottomRight")
+			{
+				glm::vec2 current = glm::vec2(Size.x / 2.0 + Offset.x, -Size.y / 2.0 + Offset.y);
+				diff = point - current;
+				Offset += diff / 2.0f;
+				Size.x += diff.x;
+				Size.y += -diff.y;
+			}
+		}
+
+		BoxCollider2DComponent() { Type = ColliderType::Box2D; };
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
 
@@ -229,8 +270,96 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		CircleCollider2DComponent() { Type = Collider2DType::Circle; };
+		void SetPoint(glm::vec2& point, std::string& type)
+		{
+			glm::vec2 diff;
+			if (type == "Left")
+			{
+				// Get the current left 
+				glm::vec2 current = glm::vec2(-Radius + Offset.x, 0.0f + Offset.y);
+				diff = point - current;
+				// Half the difference goes in offset
+				Offset.x += diff.x / 2.0f;
+				// The difference goes in size
+				Radius += -diff.x / 2.0f;
+			}
+			else if (type == "Top")
+			{
+				glm::vec2 current = glm::vec2(0.0f + Offset.x, Radius + Offset.y);
+				diff = point - current;
+				Offset.y += diff.y / 2.0f;
+				Radius += diff.y / 2.0f;
+			}
+			else if (type == "Right")
+			{
+				glm::vec2 current = glm::vec2(Radius + Offset.x, 0.0f + Offset.y);
+				diff = point - current;
+				Offset.x += diff.x / 2.0f;
+				Radius += diff.x / 2.0f;
+			}
+			else if (type == "Bottom")
+			{
+				glm::vec2 current = glm::vec2(0.0f, -Radius + Offset.y);
+				diff = point - current;
+				Offset.y += diff.y / 2.0f;
+				Radius += -diff.y / 2.0f;
+			}
+		}
+
+		CircleCollider2DComponent() { Type = ColliderType::Circle2D; };
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
+	};
+
+	struct PolygonCollider2DComponent : Collider2DComponent
+	{
+		UUID Material = 0;
+		void* RuntimeFixture = nullptr;
+		
+		glm::vec2 Offset = glm::vec2(0.0f);
+		std::vector<glm::vec2> Points;
+		std::vector<uint32_t> Indices;
+
+		void SetPoint(int index, glm::vec2 value)
+		{
+			// Update point
+			Points[index] = value;
+		}
+
+		void AddPoint()
+		{
+			Points.push_back({ 0.2f, 0.2f });
+			Triangulate();
+		}
+
+		void RemovePoint(int index)
+		{
+			Points.erase(Points.begin() + index);
+			Triangulate();
+		}
+
+		void Triangulate()
+		{
+			Indices = MathUtils::Triangulate(Points);
+		}
+
+		std::vector<std::vector<glm::vec2>> GetTriangles()
+		{
+			std::vector<std::vector<glm::vec2>> ret;
+			ret.resize(Indices.size() / 3);
+
+			for (uint32_t i = 0; i < Indices.size(); i += 3)
+				ret[i / 3] = { Points[Indices[i]], Points[Indices[i + 1]], Points[Indices[i + 2]]};
+			
+			return ret;
+		}
+
+		PolygonCollider2DComponent() 
+		{ 
+			Type = ColliderType::Polygon;
+			Points = { {-0.5f, 0.5f}, {0.5f, 0.5f}, {0.5f, -0.5f}, {-0.5f, -0.5f} };
+			Indices = MathUtils::Triangulate(Points);
+		}
+		PolygonCollider2DComponent(const PolygonCollider2DComponent&) = default;
 	};
 
 	// SCRIPT

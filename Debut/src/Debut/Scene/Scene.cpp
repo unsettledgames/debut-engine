@@ -4,6 +4,7 @@
 #include "Debut/Scene/Entity.h"
 #include "Debut/Scene/Components.h"
 #include "Debut/Rendering/Shader.h"
+#include <Debut/Rendering/Renderer/RendererDebug.h>
 #include "Debut/Rendering/Renderer/Renderer2D.h"
 #include "Debut/Rendering/Renderer/Renderer3D.h"
 #include "Debut/AssetManager/AssetManager.h"
@@ -57,6 +58,8 @@ namespace Debut
 	void Scene::OnComponentAdded(Rigidbody2DComponent& rb2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(BoxCollider2DComponent& bc2d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(PolygonCollider2DComponent& pc2d, Entity entity) {}
 	template<>
 	void Scene::OnComponentAdded(CircleCollider2DComponent& bc2d, Entity entity) { }
 	template<>
@@ -164,20 +167,9 @@ namespace Debut
 		{
 			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 			Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-
-			// Render debug info
-			// Test: visualize box colliders
-			auto boxView = m_Registry.view<BoxCollider2DComponent>();
-			for (auto e : boxView)
-			{
-				Entity entity = { e, this };
-				BoxCollider2DComponent component = m_Registry.get<BoxCollider2DComponent>(e);
-				Renderer2D::DrawRect(entity.Transform().GetTransform(), component.Size, component.Offset, glm::vec4(0.2f, 1.0f, 0.4f, 1.0f));
-			}
 		}
 
 		Renderer2D::EndScene();
-		
 	}
 	
 
@@ -300,6 +292,7 @@ namespace Debut
 		auto rigidbodyView = m_Registry.view<Rigidbody2DComponent>();
 		auto boxView = m_Registry.view<BoxCollider2DComponent>();
 		auto circleView = m_Registry.view<CircleCollider2DComponent>();
+		auto polygonView = m_Registry.view<PolygonCollider2DComponent>();
 
 		// Create Rigidbodies
 		for (auto e : rigidbodyView)
@@ -324,7 +317,7 @@ namespace Debut
 				Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(bc2d.Material);
 
 				b2PolygonShape boxShape;
-				boxShape.SetAsBox(transform.Scale.x * bc2d.Size.x / 2, transform.Scale.y * bc2d.Size.y / 2, b2Vec2(bc2d.Offset.x, bc2d.Offset.y), 0);
+				boxShape.SetAsBox(transform.Scale.x * bc2d.Size.x / 2, transform.Scale.y * bc2d.Size.y / 2, b2Vec2(transform.Scale.x * bc2d.Offset.x, transform.Scale.y * bc2d.Offset.y), 0);
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
@@ -375,6 +368,45 @@ namespace Debut
 				
 				body->CreateFixture(&fixtureDef);
 			}
+
+			if (entity.HasComponent<PolygonCollider2DComponent>())
+			{
+				auto& pc2d = entity.GetComponent<PolygonCollider2DComponent>();
+				Ref<PhysicsMaterial2D> material = AssetManager::Request<PhysicsMaterial2D>(pc2d.Material);
+				auto& triangles = pc2d.GetTriangles();
+
+				// Add a triangular shape to form a polygon
+				for (auto& triangle : triangles)
+				{
+					// Set the points
+					b2PolygonShape polygonShape;
+					b2Vec2 points[3];
+					for (uint32_t i = 0; i < 3; i++)
+						points[i] = { triangle[i].x + pc2d.Offset.x, triangle[i].y + pc2d.Offset.y };
+					polygonShape.Set(points, 3);
+
+					// Create the fixture
+					b2FixtureDef fixtureDef;
+					fixtureDef.shape = &polygonShape;
+
+					if (material != nullptr)
+					{
+						fixtureDef.density = material->GetDensity();
+						fixtureDef.friction = material->GetFriction();
+						fixtureDef.restitution = material->GetRestitution();
+						fixtureDef.restitutionThreshold = material->GetRestitutionThreshold();
+					}
+					else
+					{
+						fixtureDef.density = PhysicsMaterial2D::DefaultSettings.Density;
+						fixtureDef.friction = PhysicsMaterial2D::DefaultSettings.Friction;
+						fixtureDef.restitution = PhysicsMaterial2D::DefaultSettings.Restitution;
+						fixtureDef.restitutionThreshold = PhysicsMaterial2D::DefaultSettings.RestitutionThreshold;
+					}
+
+					body->CreateFixture(&fixtureDef);
+				}
+			}
 		}
 	}
 
@@ -396,6 +428,7 @@ namespace Debut
 		CopyComponentIfExists<Rigidbody2DComponent>(duplicate, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CircleCollider2DComponent>(duplicate, entity);
+		CopyComponentIfExists<PolygonCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CameraComponent>(duplicate, entity);
 		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
 		CopyComponentIfExists<MeshRendererComponent>(duplicate, entity);
@@ -483,6 +516,7 @@ namespace Debut
 		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<PolygonCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<MeshRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);

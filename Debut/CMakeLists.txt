@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 cmake_policy(SET CMP0079 NEW)
 
 OPTION(WINDOWS_BUILD "Enable to build for Windows" ON) # Enabled by default
+set(CMAKE_CXX_STANDARD 17)
 
 project(Debut VERSION 1.0.0)
 
@@ -15,6 +16,8 @@ file (GLOB Debut_EXT
 	"vendor/entt/include/entt.hpp"
 	"vendor/stb_image/*.cpp"
 	"vendor/stb_image/*.h"
+	"vendor/other/earcut.hpp"
+	"vendor/other/earcut.cpp"
 	"vendor/imguizmo/*.cpp"
 	"vendor/imguizmo/*.h"
 )
@@ -104,6 +107,7 @@ target_include_directories(Debut
 	PUBLIC vendor/entt/include
 	PUBLIC vendor/assimp/include
 	PRIVATE vendor/lz4/lib
+	PRIVATE vendor/other
 )
 
 # Keep the project structure

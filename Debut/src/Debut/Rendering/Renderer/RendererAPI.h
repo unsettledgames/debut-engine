@@ -18,9 +18,11 @@ namespace Debut
 		virtual void Init() = 0;
 
 		virtual void Clear() = 0;
+		virtual void ClearDepth() = 0;
 		virtual void SetClearColor(const glm::vec4 color) = 0;
 
 		virtual void DrawLines(const Ref<VertexArray>& va, uint32_t vertexCount) = 0;
+		virtual void DrawPoints(const Ref<VertexArray>& va, uint32_t vertexCount = 0) = 0;
 		virtual void DrawIndexed(const Ref<VertexArray>& va, uint32_t indexCount = 0) = 0;
 		
 		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
@@ -29,6 +31,7 @@ namespace Debut
 		inline static void SetAPI(API val) { s_API = val; }
 
 		virtual void SetLineWidth(float thickness) = 0;
+		virtual void SetPointSize(float thickness) = 0;
 
 	private:
 		static API s_API;
