@@ -4,7 +4,7 @@ Simple, work in progress, learning-oriented C++ graphics engine.
 
 ![image](https://user-images.githubusercontent.com/47360416/171034625-d7da8f08-74dc-4685-b8e9-a207f5f43b2b.png)
 
-Build instructions (Windows only atm, latest branch is `directional-point-lights`):
+Build instructions (Windows only atm, latest branch is `3d-physics`):
 - Visual Studio 2019 or above required, CMake required
 - Clone this repository
 - Run `git checkout --latest_branch_name--`, where --latest_branch_name-- is the name written above.
@@ -26,7 +26,12 @@ TODO List:
 - 2D
   - Tilemaps (editor too)
 - Physics
+  - 2D Physics
+    - Joints
   - 3D physics
+    - Box, Sphere, Mesh, Capsule colliders
+    - Joints
+    - The cool stuff that Jolt apparently supports
   - Triggers
 - Scripting
   - Lua
