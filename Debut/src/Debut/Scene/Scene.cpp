@@ -11,6 +11,8 @@
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/Rendering/Resources/Skybox.h>
 
+#include <Jolt/Jolt.h>
+
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_polygon_shape.h"
@@ -408,6 +410,9 @@ namespace Debut
 				}
 			}
 		}
+
+		// Create 3D rigidbodies
+
 	}
 
 	void Scene::OnRuntimeStop()
