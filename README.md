@@ -17,3 +17,48 @@ Build instructions (Windows only atm, latest branch is `directional-point-lights
 - If you want to open the default projects too, move the Lib and Debut folders there as well. 
 
 Yes, I should really add some CMake stuff to automatically copy things. I should also probably make a proper installer and put the Resources in a better place. 
+
+TODO List:
+- Architecture
+  - Multithreading
+  - Vulkan
+  - SPIR-V
+- 2D
+  - Tilemaps (editor too)
+- Physics
+  - 3D physics
+  - Triggers
+- Scripting
+  - Lua
+  - C#
+- VFX
+  - Particle systems
+- Rendering
+  - Culling
+  - PBR rendering
+  - Deferred rendering
+  - LODs
+    - Veeery ambitious but I'd like to have a look at Nanite
+  - Fog
+- Animation
+  - 2D Skeletal
+  - 2D Traditional
+  - 3D
+- AssetManager
+  - Release resources when not used
+  - Detect file system changes?
+- UI system
+  - Probably use an external library
+- Utility
+  - Prefabs
+  - Event system
+- Editor
+  - Camera preview
+  - Debug Console
+  - Shader / material graph
+  - Sprite slicing
+  - Move files (don't break the AssetManager while doing so)
+  - Terrain editor :O
+- Debugging
+  - Profiler
+  - Memory usage measuring (custom allocators, GC)
