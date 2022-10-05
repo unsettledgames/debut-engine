@@ -79,7 +79,7 @@ target_link_libraries(Debut
 	PUBLIC yaml-cpp
 	PUBLIC Dwmapi.dll
 	PUBLIC assimp
-	PUBLIC Joltd
+	PUBLIC Jolt
 	PRIVATE lz4_static
 )
 

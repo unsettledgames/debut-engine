@@ -12,6 +12,8 @@
 #include <Debut/Rendering/Resources/Skybox.h>
 
 #include <Jolt/Jolt.h>
+#include <Jolt/Core/Factory.h>
+#include <Jolt/Physics/PhysicsSystem.h>
 
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
@@ -58,6 +60,8 @@ namespace Debut
 	void Scene::OnComponentAdded(NativeScriptComponent& nsc, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(Rigidbody2DComponent& rb2d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(Rigidbody3DComponent& rb3d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(BoxCollider2DComponent& bc2d, Entity entity) { }
 	template<>
@@ -291,13 +295,17 @@ namespace Debut
 		// SETUP PHYSICS!
 		// TODO: physics settings
 		m_PhysicsWorld2D = new b2World({b2Vec2(0.0f, -9.8f)});
-		auto rigidbodyView = m_Registry.view<Rigidbody2DComponent>();
+		m_PhysicsWorld3D = new JPH::PhysicsSystem();
+		JPH::Factory::sInstance = new JPH::Factory();
+
+		auto rigidbodyView2D = m_Registry.view<Rigidbody2DComponent>();
+		auto rigidbodyView3D = m_Registry.view<Rigidbody3DComponent>();
 		auto boxView = m_Registry.view<BoxCollider2DComponent>();
 		auto circleView = m_Registry.view<CircleCollider2DComponent>();
 		auto polygonView = m_Registry.view<PolygonCollider2DComponent>();
 
 		// Create Rigidbodies
-		for (auto e : rigidbodyView)
+		for (auto e : rigidbodyView2D)
 		{
 			Entity entity = { e, this };
 			auto& transform = entity.Transform();
@@ -412,13 +420,32 @@ namespace Debut
 		}
 
 		// Create 3D rigidbodies
+		for (auto e : rigidbodyView3D)
+		{
 
+		}
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		delete m_PhysicsWorld2D;
 		m_PhysicsWorld2D = nullptr;
+
+		Shutdown3DPhysics();
+	}
+
+	void Scene::Init3DPhysics()
+	{
+
+	}
+
+	void Scene::Shutdown3DPhysics()
+	{
+		delete JPH::Factory::sInstance;
+		JPH::Factory::sInstance = nullptr;
+
+		delete m_PhysicsWorld3D;
+		m_PhysicsWorld3D = nullptr;
 	}
 
 	void Scene::DuplicateEntity(Entity& entity)

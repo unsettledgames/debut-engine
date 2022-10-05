@@ -378,15 +378,42 @@ namespace Debut
 
 		if (ImGui::BeginPopup("AddComponent"))
 		{
-			DrawAddComponentEntry<CameraComponent>("Camera");
-			DrawAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
-			DrawAddComponentEntry<Rigidbody2DComponent>("Rigidbody2D");
-			DrawAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
-			DrawAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
-			DrawAddComponentEntry<PolygonCollider2DComponent>("Polygon Collider");
-			DrawAddComponentEntry<MeshRendererComponent>("Mesh Renderer");
-			DrawAddComponentEntry<DirectionalLightComponent>("Directional Light");
-			DrawAddComponentEntry<PointLightComponent>("Point Light");
+			if (ImGui::BeginMenu("Rendering"))
+			{
+				DrawAddComponentEntry<CameraComponent>("Camera");
+				DrawAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
+				DrawAddComponentEntry<MeshRendererComponent>("Mesh Renderer");
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Physics and Colliders"))
+			{
+				// Rigidbodies
+				DrawAddComponentEntry<Rigidbody2DComponent>("Rigidbody2D");
+				DrawAddComponentEntry<Rigidbody3DComponent>("Rigidbody3D");
+
+				ImGuiUtils::Separator();
+
+				// 2D Colliders
+				DrawAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
+				DrawAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
+				DrawAddComponentEntry<PolygonCollider2DComponent>("Polygon Collider");
+
+				ImGuiUtils::Separator();
+
+				// 3D Colliders
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Lighting"))
+			{
+				DrawAddComponentEntry<DirectionalLightComponent>("Directional Light");
+				DrawAddComponentEntry<PointLightComponent>("Point Light");
+
+				ImGui::EndMenu();
+			}
 
 			ImGui::EndPopup();
 		}

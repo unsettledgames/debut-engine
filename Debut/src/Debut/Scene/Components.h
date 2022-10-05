@@ -33,8 +33,14 @@
 
 namespace Debut
 {
-	enum class ColliderType { Circle2D = 0, Box2D, Polygon, None, Box, Sphere, Mesh };
+	// TODO: split 2Dcollidertype and 3Dcollidertype
+	enum class ColliderType { Circle2D = 0, Box2D, Polygon, None, Box, Sphere, Terrain, Mesh };
 	struct Collider2DComponent
+	{
+		ColliderType Type;
+	};
+
+	struct Collider3DComponent
 	{
 		ColliderType Type;
 	};
@@ -126,8 +132,6 @@ namespace Debut
 		}
 	};
 
-	// GEOMETRY
-
 	struct CameraComponent
 	{
 		Debut::SceneCamera Camera;
@@ -137,6 +141,9 @@ namespace Debut
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
 	};
+
+
+	// GEOMETRY
 
 	struct SpriteRendererComponent
 	{
@@ -199,6 +206,25 @@ namespace Debut
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
 
 		static BodyType StrToRigidbody2DType(const std::string& type)
+		{
+			if (type == "Static") return BodyType::Static;
+			if (type == "Dynamic") return BodyType::Dynamic;
+			if (type == "Kinematic") return BodyType::Kinematic;
+
+			return BodyType::Dynamic;
+		}
+	};
+
+	struct Rigidbody3DComponent
+	{
+		enum class BodyType { Static = 0, Dynamic, Kinematic };
+
+		void* RuntimeBody = nullptr;
+
+		Rigidbody3DComponent() = default;
+		Rigidbody3DComponent(const Rigidbody3DComponent&) = default;
+
+		static BodyType StrToRigidbody3DType(const std::string& type)
 		{
 			if (type == "Static") return BodyType::Static;
 			if (type == "Dynamic") return BodyType::Dynamic;
