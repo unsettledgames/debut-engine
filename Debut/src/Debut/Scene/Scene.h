@@ -10,11 +10,6 @@
 
 class b2World;
 
-namespace JPH
-{
-	class PhysicsSystem;
-}
-
 namespace Debut
 {
 	struct EntitySceneNode;
@@ -22,6 +17,7 @@ namespace Debut
 
 	class Camera;
 	class Skybox;
+	class PhysicsSystem3D;
 
 	class Scene
 	{
@@ -62,9 +58,6 @@ namespace Debut
 	private:
 		template<typename T>
 		void OnComponentAdded(T& component, Entity entity);
-		
-		void Init3DPhysics();
-		void Shutdown3DPhysics();
 
 	private:
 		entt::registry m_Registry;
@@ -74,7 +67,7 @@ namespace Debut
 		
 		// Physics
 		b2World* m_PhysicsWorld2D = nullptr;		
-		JPH::PhysicsSystem* m_PhysicsWorld3D = nullptr;
+		PhysicsSystem3D* m_PhysicsSystem3D = nullptr;
 
 		// Lighting
 		Ref<Skybox> m_Skybox;

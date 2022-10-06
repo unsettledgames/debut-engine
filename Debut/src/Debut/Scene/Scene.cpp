@@ -9,11 +9,8 @@
 #include "Debut/Rendering/Renderer/Renderer3D.h"
 #include "Debut/AssetManager/AssetManager.h"
 #include <Debut/Physics/PhysicsMaterial2D.h>
+#include <Debut/Physics/PhysicsSystem3D.h>
 #include <Debut/Rendering/Resources/Skybox.h>
-
-#include <Jolt/Jolt.h>
-#include <Jolt/Core/Factory.h>
-#include <Jolt/Physics/PhysicsSystem.h>
 
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
@@ -42,6 +39,7 @@ namespace Debut
 
 	Scene::~Scene()
 	{
+		delete m_PhysicsSystem3D;
 	}
 
 	template<typename T>
@@ -293,16 +291,13 @@ namespace Debut
 	void Scene::OnRuntimeStart()
 	{
 		// SETUP PHYSICS!
+		Physics3DSettings defaultSettings;
 		// TODO: physics settings
 		m_PhysicsWorld2D = new b2World({b2Vec2(0.0f, -9.8f)});
-		m_PhysicsWorld3D = new JPH::PhysicsSystem();
-		JPH::Factory::sInstance = new JPH::Factory();
+		m_PhysicsSystem3D = new PhysicsSystem3D(defaultSettings);
 
 		auto rigidbodyView2D = m_Registry.view<Rigidbody2DComponent>();
 		auto rigidbodyView3D = m_Registry.view<Rigidbody3DComponent>();
-		auto boxView = m_Registry.view<BoxCollider2DComponent>();
-		auto circleView = m_Registry.view<CircleCollider2DComponent>();
-		auto polygonView = m_Registry.view<PolygonCollider2DComponent>();
 
 		// Create Rigidbodies
 		for (auto e : rigidbodyView2D)
@@ -424,6 +419,9 @@ namespace Debut
 		{
 
 		}
+
+		// Begin 3D physics simulation
+		m_PhysicsSystem3D->Begin();
 	}
 
 	void Scene::OnRuntimeStop()
@@ -431,21 +429,7 @@ namespace Debut
 		delete m_PhysicsWorld2D;
 		m_PhysicsWorld2D = nullptr;
 
-		Shutdown3DPhysics();
-	}
-
-	void Scene::Init3DPhysics()
-	{
-
-	}
-
-	void Scene::Shutdown3DPhysics()
-	{
-		delete JPH::Factory::sInstance;
-		JPH::Factory::sInstance = nullptr;
-
-		delete m_PhysicsWorld3D;
-		m_PhysicsWorld3D = nullptr;
+		m_PhysicsSystem3D->End();
 	}
 
 	void Scene::DuplicateEntity(Entity& entity)
