@@ -4,7 +4,19 @@
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
 
+/* NOTES
+* - Apparently, ShapeSettings and Shapes are managed by bodies, so no need to clear their memory
+
+*/
+
 using namespace JPH;
+
+namespace JPH
+{
+	class Shape;
+	class ShapeSettings;
+	class JobSystem;
+}
 
 namespace Debut
 {
@@ -120,6 +132,8 @@ namespace Debut
 		}
 	};
 
+	class Rigidbody3DComponent;
+
 	class PhysicsSystem3D
 	{
 	public:
@@ -127,11 +141,24 @@ namespace Debut
 		~PhysicsSystem3D();
 
 		void Begin();
+		void Step(float timestep);
 		void End();
+
+		Body* CreateBody();
+		Body* CreateBody(Shape* shape);
+		Body* CreateBody(ShapeSettings* settings);
+
+		void UpdateBody(Rigidbody3DComponent& body, BodyID bodyID);
+
+		void AttachShape(BodyID body, Shape* shape);
+		void AttachShape(BodyID body, ShapeSettings* settings);
+
+		void AddBody(BodyID body);
 
 	private:
 		PhysicsSystem* m_PhysicsSystem;
-		BPLayerInterfaceImpl m_BPLayerInterface;
+		JobSystem* m_JobSystem;
+		BPLayerInterfaceImpl* m_BPLayerInterface;
 
 		MyBodyActivationListener* m_BodyActivationListener;
 		MyContactListener* m_ContactListener;

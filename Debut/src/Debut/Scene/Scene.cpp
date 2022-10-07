@@ -218,6 +218,24 @@ namespace Debut
 			}
 		}
 
+		// Update 3D physics
+		{
+			DBT_PROFILE_SCOPE("Scene: Physics3D update");
+			// Get all the active rigidbodies (don't simulate the inactive ones)
+			// Step all the bodies
+			m_PhysicsSystem3D->Step(ts);
+
+			// Stuff moved, update the transforms to reflect that
+			auto view = m_Registry.view<Rigidbody3DComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				Rigidbody3DComponent& body = entity.GetComponent<Rigidbody3DComponent>();
+
+				m_PhysicsSystem3D->UpdateBody(body, ((Body*)body.RuntimeBody)->GetID());
+			}
+		}
+
 		// Render sprites
 
 		// Find the main camera of the scene
@@ -417,7 +435,14 @@ namespace Debut
 		// Create 3D rigidbodies
 		for (auto e : rigidbodyView3D)
 		{
-
+			Entity entity = { e, this };
+			Rigidbody3DComponent& component = entity.GetComponent<Rigidbody3DComponent>();
+			Body* body = m_PhysicsSystem3D->CreateBody();
+			m_PhysicsSystem3D->AddBody(body->GetID());
+			// Save the body pointer
+			component.RuntimeBody = (void*)body;
+			// CreateBody()
+			// AttachShapes()
 		}
 
 		// Begin 3D physics simulation
