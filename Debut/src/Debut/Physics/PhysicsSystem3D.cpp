@@ -1,5 +1,6 @@
 #include <Debut/dbtpch.h>
 
+#include <Debut/Scene/Components.h>
 #include <Debut/Physics/PhysicsSystem3D.h>
 
 #include <Jolt/RegisterTypes.h>
@@ -49,7 +50,8 @@ namespace Debut
 		va_list list;
 		va_start(list, inFMT);
 		char buffer[1024];
-		Log.CoreInfo(inFMT, list);
+		std::string format(inFMT);
+		Log.CoreInfo("{0}", list);
 	}
 
 	PhysicsSystem3D::PhysicsSystem3D(const Physics3DSettings& settings)
@@ -73,15 +75,6 @@ namespace Debut
 		m_PhysicsSystem->SetContactListener(m_ContactListener);
 	}
 
-	Body* PhysicsSystem3D::CreateBody()
-	{
-		BoxShapeSettings* boxSettings = new BoxShapeSettings(Vec3(0.0f, 0.0f, 0.0f));
-		BodyCreationSettings bodySettings(boxSettings, Vec3(0.0f, 0.0f, 0.0f), QuatArg::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-
-		auto& bi = m_PhysicsSystem->GetBodyInterface();
-		return bi.CreateBody(bodySettings);
-	}
-
 	void PhysicsSystem3D::AddBody(BodyID body)
 	{
 		auto& bi = m_PhysicsSystem->GetBodyInterface();
@@ -90,14 +83,6 @@ namespace Debut
 
 	void PhysicsSystem3D::Begin()
 	{
-		auto& bi = m_PhysicsSystem->GetBodyInterface();
-
-		BoxShapeSettings* boxSettings = new BoxShapeSettings(Vec3(1.0f, 1.0f, 1.0f));
-		BodyCreationSettings bodySettings(boxSettings, Vec3(0.0f, 0.0f, 0.0f), QuatArg::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-		
-		auto body = bi.CreateBody(bodySettings);
-		bi.AddBody(body->GetID(), EActivation::DontActivate);
-
 		m_PhysicsSystem->OptimizeBroadPhase();
 	}
 
@@ -108,10 +93,17 @@ namespace Debut
 
 	void PhysicsSystem3D::UpdateBody(Rigidbody3DComponent& body, BodyID bodyID)
 	{
+		BodyInterface& bi = m_PhysicsSystem->GetBodyInterface();
+		Vec3 pos = bi.GetPosition(bodyID);
+
+		body.Position = { pos.GetX(), pos.GetY(), pos.GetZ() };
 	}
 
 	void PhysicsSystem3D::End()
 	{
+		if (m_PhysicsSystem == nullptr)
+			return;
+
 		BodyInterface& bi = m_PhysicsSystem->GetBodyInterface();
 
 		// Remove and destroy bodies
@@ -122,8 +114,27 @@ namespace Debut
 		}
 	}
 
+	BodyID PhysicsSystem3D::CreateBoxColliderBody(const glm::vec3& size, const glm::vec3& offset)
+	{
+		glm::vec3 halfSize = (size / 2.0f);
+		BodyInterface& bi = m_PhysicsSystem->GetBodyInterface();
+		BoxShapeSettings* boxSettings = new BoxShapeSettings({ halfSize.x, halfSize.y, halfSize.z });
+		BodyCreationSettings bodySettings(boxSettings, { offset.x, offset.y, offset.z }, QuatArg::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+
+		auto result = bodySettings.ConvertShapeSettings();
+		if (result.HasError())
+		{
+			std::string error = bodySettings.ConvertShapeSettings().GetError();
+			Log.CoreInfo("Shape creation: {0}", error);
+		}
+		
+		return bi.CreateAndAddBody(bodySettings, EActivation::Activate);
+	}
+
 	PhysicsSystem3D::~PhysicsSystem3D()
 	{
+		if (m_PhysicsSystem == nullptr)
+			return;
 		End();
 
 		delete Factory::sInstance;

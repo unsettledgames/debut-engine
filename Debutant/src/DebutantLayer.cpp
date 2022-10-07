@@ -23,13 +23,13 @@
 /*
 * 
 *   CURRENT:
-*       - Serialize / deserialize polygon component
+*       - Think about how to store the runtime body without exposing Jolt to the components 
+*       
 
     TODO:
-    - 2 main things!
-        - Right click deletes a vertex, if appliable
-        - Polygon Collider
-            - Gizmos: drag center to move, drag vertices to edit
+        - Serialize / deserialize Rigidbody3D and 3D colliders
+*       - Finish the rigidbody3d / 3d colliders interface in inspector
+*       - Add rendering / manipulation of 3D colliders
 
     - Roughness maps (PBR)
     - Reflection maps (PBR)

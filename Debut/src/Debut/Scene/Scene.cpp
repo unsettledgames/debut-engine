@@ -67,6 +67,8 @@ namespace Debut
 	template<>
 	void Scene::OnComponentAdded(CircleCollider2DComponent& bc2d, Entity entity) { }
 	template<>
+	void Scene::OnComponentAdded(BoxCollider3DComponent& bc3d, Entity entity) { }
+	template<>
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(MeshRendererComponent& bc2d, Entity entity) { }
@@ -233,6 +235,8 @@ namespace Debut
 				Rigidbody3DComponent& body = entity.GetComponent<Rigidbody3DComponent>();
 
 				m_PhysicsSystem3D->UpdateBody(body, ((Body*)body.RuntimeBody)->GetID());
+
+				entity.Transform().Translation = body.Position;
 			}
 		}
 
@@ -437,10 +441,18 @@ namespace Debut
 		{
 			Entity entity = { e, this };
 			Rigidbody3DComponent& component = entity.GetComponent<Rigidbody3DComponent>();
-			Body* body = m_PhysicsSystem3D->CreateBody();
-			m_PhysicsSystem3D->AddBody(body->GetID());
-			// Save the body pointer
-			component.RuntimeBody = (void*)body;
+
+			// Create the actual body
+			if (entity.HasComponent<BoxCollider3DComponent>())
+			{
+				BoxCollider3DComponent collider = entity.GetComponent<BoxCollider3DComponent>();
+				BodyID body = m_PhysicsSystem3D->CreateBoxColliderBody(collider.Size, collider.Offset);
+				
+				// Save the body pointer
+				component.RuntimeBody = (void*)body;
+				m_PhysicsSystem3D->AttachBoxCollider<BoxCollider3DComponent>(collider.Offset, collider.Size);
+			}
+
 			// CreateBody()
 			// AttachShapes()
 		}
@@ -467,6 +479,7 @@ namespace Debut
 		CopyComponentIfExists<TransformComponent>(duplicate, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(duplicate, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(duplicate, entity);
+		CopyComponentIfExists<Rigidbody3DComponent>(duplicate, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CircleCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<PolygonCollider2DComponent>(duplicate, entity);
@@ -555,6 +568,7 @@ namespace Debut
 		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<Rigidbody3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<PolygonCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);

@@ -219,6 +219,9 @@ namespace Debut
 	{
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
 
+		glm::vec3 Position;
+		BodyType Type;
+
 		void* RuntimeBody = nullptr;
 
 		Rigidbody3DComponent() = default;
@@ -386,6 +389,16 @@ namespace Debut
 			Indices = MathUtils::Triangulate(Points);
 		}
 		PolygonCollider2DComponent(const PolygonCollider2DComponent&) = default;
+	};
+
+	struct BoxCollider3DComponent
+	{
+		glm::vec3 Size;
+		glm::vec3 Offset;
+
+		BoxCollider3DComponent() = default;
+		BoxCollider3DComponent(const BoxCollider3DComponent&) = default;
+
 	};
 
 	// SCRIPT

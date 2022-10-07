@@ -6,6 +6,7 @@
 
 /* NOTES
 * - Apparently, ShapeSettings and Shapes are managed by bodies, so no need to clear their memory
+* - INVESTIGATE: multiple colliders? Create body without shape is impossible
 
 */
 
@@ -132,7 +133,7 @@ namespace Debut
 		}
 	};
 
-	class Rigidbody3DComponent;
+	struct Rigidbody3DComponent;
 
 	class PhysicsSystem3D
 	{
@@ -144,14 +145,11 @@ namespace Debut
 		void Step(float timestep);
 		void End();
 
-		Body* CreateBody();
-		Body* CreateBody(Shape* shape);
-		Body* CreateBody(ShapeSettings* settings);
-
 		void UpdateBody(Rigidbody3DComponent& body, BodyID bodyID);
 
-		void AttachShape(BodyID body, Shape* shape);
-		void AttachShape(BodyID body, ShapeSettings* settings);
+		BodyID CreateBoxColliderBody(const glm::vec3& size, const glm::vec3& offset);
+		// Sphere
+		// Mesh
 
 		void AddBody(BodyID body);
 
