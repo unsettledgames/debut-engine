@@ -23,9 +23,26 @@
 /*
 * 
 *   CURRENT:
+*       - Rigidbody data:
+*           - Gravity amount (from 0 to 1)
+* 
+*           - Info:
+*               - Velocity
+*               - Angular velocity
+*       - Collider data (physics material)
+*           - Restitution
+*           - Friction
+* 
+*       - When adding a rigidbody add a default box collider
+* 
 *       - Adding gizmos
-*       - Update rotation: set right transform data at beginning of simulation
 *       - Edit all rigidbody data
+* 
+*   QOL update:
+*       - Select 3D objects
+*       - Delete objects with del
+*       - Replace component
+* 
     TODO:
         - Serialize / deserialize Rigidbody3D and 3D colliders
 *       - Finish the rigidbody3d / 3d colliders interface in inspector

@@ -134,6 +134,7 @@ namespace Debut
 	};
 
 	struct Rigidbody3DComponent;
+	struct TransformComponent;
 
 	class PhysicsSystem3D
 	{
@@ -145,10 +146,10 @@ namespace Debut
 		void Step(float timestep);
 		void End();
 
-		void UpdateBody(Rigidbody3DComponent& body, BodyID bodyID);
+		void UpdateBody(TransformComponent& transform, Rigidbody3DComponent& body, BodyID bodyID);
 
 		BodyID* CreateBoxColliderBody(const glm::vec3& size, const glm::vec3& offset, const glm::vec3& startPos,
-			const glm::vec3& startRot, bool isStatic);
+			const glm::vec3& startRot, const Rigidbody3DComponent& rb);
 		// Sphere
 		// Mesh
 

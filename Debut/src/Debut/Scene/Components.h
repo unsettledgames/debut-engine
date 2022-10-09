@@ -218,10 +218,10 @@ namespace Debut
 	struct Rigidbody3DComponent
 	{
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
-
-		glm::vec3 Position;
-		glm::vec3 Rotation;
 		BodyType Type;
+
+		float Mass = 1.0f;
+		float Gravity = 1.0f;
 
 		void* RuntimeBody = nullptr;
 

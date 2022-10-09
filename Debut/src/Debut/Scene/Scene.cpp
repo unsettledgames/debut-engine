@@ -233,10 +233,7 @@ namespace Debut
 				Entity entity = { e, this };
 				Rigidbody3DComponent& body = entity.GetComponent<Rigidbody3DComponent>();
 
-				m_PhysicsSystem3D->UpdateBody(body, *((BodyID*)body.RuntimeBody));
-
-				entity.Transform().Translation = body.Position;
-				entity.Transform().Rotation = body.Rotation;
+				m_PhysicsSystem3D->UpdateBody(entity.Transform(), body, *((BodyID*)body.RuntimeBody));
 			}
 		}
 
@@ -448,7 +445,7 @@ namespace Debut
 			{
 				BoxCollider3DComponent collider = entity.GetComponent<BoxCollider3DComponent>();
 				BodyID* body = m_PhysicsSystem3D->CreateBoxColliderBody(collider.Size * transform.Scale, collider.Offset, transform.Translation,
-					transform.Rotation, component.Type == Rigidbody3DComponent::BodyType::Static ? true : false);
+					transform.Rotation, component);
 				
 				// Save the body pointer
 				component.RuntimeBody = (void*)body;

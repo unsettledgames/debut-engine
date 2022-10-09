@@ -92,11 +92,10 @@ namespace Debut
 
 	void PhysicsSystem3D::Step(float timestep)
 	{
-		m_PhysicsSystem->GetBodyInterface().ActivateBodies(m_BodyIDs.data(), m_BodyIDs.size());
 		m_PhysicsSystem->Update(timestep, std::max((1.0f / timestep) / 60.0f, 1.0f), 1, m_TempAllocator, m_JobSystem);
 	}
 
-	void PhysicsSystem3D::UpdateBody(Rigidbody3DComponent& body, BodyID bodyID)
+	void PhysicsSystem3D::UpdateBody(TransformComponent& transform, Rigidbody3DComponent& body, BodyID bodyID)
 	{
 		if (std::find(m_BodyIDs.begin(), m_BodyIDs.end(), bodyID) == m_BodyIDs.end())
 			return;
@@ -104,8 +103,8 @@ namespace Debut
 		Vec3 pos = bi.GetPosition(bodyID);
 		Vec3 rotation = bi.GetRotation(bodyID).GetEulerAngles();
 
-		body.Position = { pos.GetX(), pos.GetY(), pos.GetZ() };
-		body.Rotation = { rotation.GetX(), rotation.GetY(), rotation.GetZ() };
+		transform.Translation = { pos.GetX(), pos.GetY(), pos.GetZ() };
+		transform.Rotation = { rotation.GetX(), rotation.GetY(), rotation.GetZ() };
 	}
 
 	void PhysicsSystem3D::End()
@@ -126,24 +125,26 @@ namespace Debut
 	}
 
 	BodyID* PhysicsSystem3D::CreateBoxColliderBody(const glm::vec3& size, const glm::vec3& offset, const glm::vec3& startPos,
-		const glm::vec3& startRot, bool isStatic)
+		const glm::vec3& startRot, const Rigidbody3DComponent& rb)
 	{
+		bool isStatic = rb.Type == Rigidbody3DComponent::BodyType::Static;
 		glm::vec3 halfSize = (size / 2.0f);
 		Vec3Arg pos = { startPos.x + offset.x, startPos.y + offset.y, startPos.z + offset.z };
+
 		BodyInterface& bi = m_PhysicsSystem->GetBodyInterface();
-		BoxShapeSettings* boxSettings = new BoxShapeSettings({ halfSize.x, halfSize.y, halfSize.z });
-		BodyCreationSettings bodySettings(boxSettings, pos, Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z }),
+		BodyCreationSettings bodySettings(new BoxShape({ halfSize.x, halfSize.y, halfSize.z }), pos, 
+			Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z }),
 			isStatic ? EMotionType::Static : EMotionType::Dynamic, isStatic ? Layers::NON_MOVING : Layers::MOVING);
+		
+		// Set mass
+		bodySettings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
+		bodySettings.mMassPropertiesOverride.mMass = rb.Mass;
 
-		auto result = bodySettings.ConvertShapeSettings();
-		if (result.HasError())
-		{
-			std::string error = bodySettings.ConvertShapeSettings().GetError();
-			Log.CoreInfo("Shape creation: {0}", error);
-		}
+		Body* body = bi.CreateBody(bodySettings);
+		bi.AddBody(body->GetID(), EActivation::Activate);
+		bi.SetGravityFactor(body->GetID(), rb.Gravity);
 
-		BodyID id = bi.CreateAndAddBody(bodySettings, EActivation::Activate);
-		m_BodyIDs[m_NumCurrBodies] = id;
+		m_BodyIDs[m_NumCurrBodies] = body->GetID();
 		m_NumCurrBodies++;
 
 		return &m_BodyIDs[m_NumCurrBodies - 1];
