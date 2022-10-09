@@ -147,7 +147,8 @@ namespace Debut
 
 		void UpdateBody(Rigidbody3DComponent& body, BodyID bodyID);
 
-		BodyID CreateBoxColliderBody(const glm::vec3& size, const glm::vec3& offset);
+		BodyID* CreateBoxColliderBody(const glm::vec3& size, const glm::vec3& offset, const glm::vec3& startPos,
+			const glm::vec3& startRot, bool isStatic);
 		// Sphere
 		// Mesh
 
@@ -155,12 +156,15 @@ namespace Debut
 
 	private:
 		PhysicsSystem* m_PhysicsSystem;
+		BPLayerInterfaceImpl* m_BPLayerInterface; 
 		JobSystem* m_JobSystem;
-		BPLayerInterfaceImpl* m_BPLayerInterface;
+		TempAllocatorImpl* m_TempAllocator;
 
 		MyBodyActivationListener* m_BodyActivationListener;
 		MyContactListener* m_ContactListener;
 
 		std::vector<BodyID> m_BodyIDs;
+		uint32_t m_NumCurrBodies = 0;
+		bool m_Simulating = false;
 	};
 }

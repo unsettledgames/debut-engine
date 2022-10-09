@@ -23,9 +23,9 @@
 /*
 * 
 *   CURRENT:
-*       - Think about how to store the runtime body without exposing Jolt to the components 
-*       
-
+*       - Adding gizmos
+*       - Update rotation: set right transform data at beginning of simulation
+*       - Edit all rigidbody data
     TODO:
         - Serialize / deserialize Rigidbody3D and 3D colliders
 *       - Finish the rigidbody3d / 3d colliders interface in inspector
@@ -573,6 +573,10 @@ namespace Debut
     {
         Entity currSelection = m_SceneHierarchy.GetSelectionContext();
         glm::vec4 viewport = glm::vec4(0.0f, 0.0f, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+        // Points
+        std::vector<glm::vec3> points;
+        // Labels
+        std::vector<std::string> labels;
 
         if (currSelection)
         {
@@ -588,6 +592,8 @@ namespace Debut
                 colliderType = ColliderType::Circle2D;
             else if (currSelection.HasComponent<PolygonCollider2DComponent>())
                 colliderType = ColliderType::Polygon;
+            else if (currSelection.HasComponent<BoxCollider3DComponent>())
+                colliderType = ColliderType::Box;
 
             RendererDebug::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
 
@@ -675,12 +681,57 @@ namespace Debut
 
                 break;
             }
+            case ColliderType::Box:
+            {
+                BoxCollider3DComponent& collider = currSelection.GetComponent<BoxCollider3DComponent>();
+                glm::vec3 center = collider.Offset;
+                glm::vec3 hSize = collider.Size / 2.0f;
+                std::vector<glm::vec3> transformedPoints;
+                transformedPoints.resize(8);
+
+                // Fill points
+                points = {
+                    glm::vec3( hSize.x, hSize.y, hSize.z),
+                    glm::vec3(-hSize.x, hSize.y, hSize.z),
+                    glm::vec3( hSize.x,-hSize.y, hSize.z),
+                    glm::vec3(-hSize.x,-hSize.y, hSize.z),
+                    glm::vec3( hSize.x, hSize.y,-hSize.z),
+                    glm::vec3(-hSize.x, hSize.y,-hSize.z),
+                    glm::vec3( hSize.x,-hSize.y,-hSize.z),
+                    glm::vec3(-hSize.x,-hSize.y,-hSize.z)
+                };
+                for (uint32_t i = 0; i < points.size(); i++)
+                    transformedPoints[i] = glm::vec3(transformMat * glm::vec4(points[i], 1.0f));
+                // Fill labels
+                for (uint32_t i = 0; i < points.size(); i++)
+                {
+                    std::stringstream ss;
+                    ss << i;
+                    labels.push_back(ss.str());
+                }
+
+                // Render lines
+                for (uint32_t i = 0; i < points.size(); i++)
+                {
+                    RendererDebug::DrawPoint(transformedPoints[i], glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+                    for (uint32_t j = i; j < points.size(); j++)
+                    {
+                        uint32_t same = 0;
+                        for (uint32_t k = 0; k < 3; k++)
+                            if (points[i][k] == points[j][k])
+                                same++;
+
+                        if (same == 2)
+                            RendererDebug::DrawLine(transformedPoints[i], transformedPoints[j], glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+                    }
+                }
+
+            }
             default:
                 break;
             }
 
             // Render points
-
             RendererDebug::EndScene();
 
             // IMPLEMENT LOGIC
@@ -704,12 +755,7 @@ namespace Debut
                     m_PhysicsSelection.Valid = false;
                     m_PhysicsSelection.SelectedName = "";
                     return;
-                }
-
-                // Points
-                std::vector<glm::vec3> points;
-                // Labels
-                std::vector<std::string> labels;
+                }                
 
                 switch (colliderType)
                 {
@@ -955,7 +1001,9 @@ namespace Debut
             OnSceneStop();
 
         m_RuntimeScene = nullptr;
+        Ref<Scene> oldScene = m_EditorScene;
         m_EditorScene = CreateRef<Scene>();
+        m_EditorScene->OnViewportResize(oldScene->GetViewportSize().x, oldScene->GetViewportSize().y);
 
         SceneSerializer ss(m_EditorScene);
         EntitySceneNode* sceneHierarchy = ss.DeserializeText(path.string());

@@ -5,6 +5,7 @@
 
 #include <Jolt/RegisterTypes.h>
 #include <Jolt/Core/Factory.h>
+#include <Jolt/Core/TempAllocator.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
@@ -57,10 +58,12 @@ namespace Debut
 	PhysicsSystem3D::PhysicsSystem3D(const Physics3DSettings& settings)
 	{
 		Trace = TraceImpl;
+		m_TempAllocator = new TempAllocatorImpl(settings.MaxAllocatedSpace);
 		Factory::sInstance = new Factory();
 		
 		RegisterTypes();
 
+		m_BodyIDs.resize(settings.MaxBodies);
 		m_JobSystem = new JobSystemThreadPool(settings.MaxJobs, settings.MaxPhysicsBarriers, thread::hardware_concurrency() - 1);
 		
 		m_BPLayerInterface = new BPLayerInterfaceImpl();
@@ -84,19 +87,25 @@ namespace Debut
 	void PhysicsSystem3D::Begin()
 	{
 		m_PhysicsSystem->OptimizeBroadPhase();
+		m_Simulating = true;
 	}
 
 	void PhysicsSystem3D::Step(float timestep)
 	{
-		m_PhysicsSystem->Update(timestep, (1.0f / timestep) / 60.0, 1, nullptr, m_JobSystem);
+		m_PhysicsSystem->GetBodyInterface().ActivateBodies(m_BodyIDs.data(), m_BodyIDs.size());
+		m_PhysicsSystem->Update(timestep, std::max((1.0f / timestep) / 60.0f, 1.0f), 1, m_TempAllocator, m_JobSystem);
 	}
 
 	void PhysicsSystem3D::UpdateBody(Rigidbody3DComponent& body, BodyID bodyID)
 	{
+		if (std::find(m_BodyIDs.begin(), m_BodyIDs.end(), bodyID) == m_BodyIDs.end())
+			return;
 		BodyInterface& bi = m_PhysicsSystem->GetBodyInterface();
 		Vec3 pos = bi.GetPosition(bodyID);
+		Vec3 rotation = bi.GetRotation(bodyID).GetEulerAngles();
 
 		body.Position = { pos.GetX(), pos.GetY(), pos.GetZ() };
+		body.Rotation = { rotation.GetX(), rotation.GetY(), rotation.GetZ() };
 	}
 
 	void PhysicsSystem3D::End()
@@ -107,19 +116,24 @@ namespace Debut
 		BodyInterface& bi = m_PhysicsSystem->GetBodyInterface();
 
 		// Remove and destroy bodies
-		for (uint32_t i = 0; i < m_BodyIDs.size(); i++)
+		for (uint32_t i = 0; i < m_NumCurrBodies; i++)
 		{
 			bi.RemoveBody(m_BodyIDs[i]);
 			bi.DestroyBody(m_BodyIDs[i]);
 		}
+
+		m_Simulating = false;
 	}
 
-	BodyID PhysicsSystem3D::CreateBoxColliderBody(const glm::vec3& size, const glm::vec3& offset)
+	BodyID* PhysicsSystem3D::CreateBoxColliderBody(const glm::vec3& size, const glm::vec3& offset, const glm::vec3& startPos,
+		const glm::vec3& startRot, bool isStatic)
 	{
 		glm::vec3 halfSize = (size / 2.0f);
+		Vec3Arg pos = { startPos.x + offset.x, startPos.y + offset.y, startPos.z + offset.z };
 		BodyInterface& bi = m_PhysicsSystem->GetBodyInterface();
 		BoxShapeSettings* boxSettings = new BoxShapeSettings({ halfSize.x, halfSize.y, halfSize.z });
-		BodyCreationSettings bodySettings(boxSettings, { offset.x, offset.y, offset.z }, QuatArg::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+		BodyCreationSettings bodySettings(boxSettings, pos, Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z }),
+			isStatic ? EMotionType::Static : EMotionType::Dynamic, isStatic ? Layers::NON_MOVING : Layers::MOVING);
 
 		auto result = bodySettings.ConvertShapeSettings();
 		if (result.HasError())
@@ -127,15 +141,20 @@ namespace Debut
 			std::string error = bodySettings.ConvertShapeSettings().GetError();
 			Log.CoreInfo("Shape creation: {0}", error);
 		}
-		
-		return bi.CreateAndAddBody(bodySettings, EActivation::Activate);
+
+		BodyID id = bi.CreateAndAddBody(bodySettings, EActivation::Activate);
+		m_BodyIDs[m_NumCurrBodies] = id;
+		m_NumCurrBodies++;
+
+		return &m_BodyIDs[m_NumCurrBodies - 1];
 	}
 
 	PhysicsSystem3D::~PhysicsSystem3D()
 	{
 		if (m_PhysicsSystem == nullptr)
 			return;
-		End();
+		if (m_Simulating)
+			End();
 
 		delete Factory::sInstance;
 		Factory::sInstance = nullptr;
@@ -144,5 +163,6 @@ namespace Debut
 		delete m_ContactListener;
 		delete m_BPLayerInterface;
 		delete m_JobSystem;
+		delete m_TempAllocator;
 	}
 }

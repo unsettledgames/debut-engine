@@ -223,8 +223,7 @@ namespace Debut
 		// Update 3D physics
 		{
 			DBT_PROFILE_SCOPE("Scene: Physics3D update");
-			// Get all the active rigidbodies (don't simulate the inactive ones)
-			// Step all the bodies
+			// Step the world
 			m_PhysicsSystem3D->Step(ts);
 
 			// Stuff moved, update the transforms to reflect that
@@ -234,9 +233,10 @@ namespace Debut
 				Entity entity = { e, this };
 				Rigidbody3DComponent& body = entity.GetComponent<Rigidbody3DComponent>();
 
-				m_PhysicsSystem3D->UpdateBody(body, ((Body*)body.RuntimeBody)->GetID());
+				m_PhysicsSystem3D->UpdateBody(body, *((BodyID*)body.RuntimeBody));
 
 				entity.Transform().Translation = body.Position;
+				entity.Transform().Rotation = body.Rotation;
 			}
 		}
 
@@ -440,17 +440,18 @@ namespace Debut
 		for (auto e : rigidbodyView3D)
 		{
 			Entity entity = { e, this };
+			auto& transform = entity.Transform();
 			Rigidbody3DComponent& component = entity.GetComponent<Rigidbody3DComponent>();
 
 			// Create the actual body
 			if (entity.HasComponent<BoxCollider3DComponent>())
 			{
 				BoxCollider3DComponent collider = entity.GetComponent<BoxCollider3DComponent>();
-				BodyID body = m_PhysicsSystem3D->CreateBoxColliderBody(collider.Size, collider.Offset);
+				BodyID* body = m_PhysicsSystem3D->CreateBoxColliderBody(collider.Size * transform.Scale, collider.Offset, transform.Translation,
+					transform.Rotation, component.Type == Rigidbody3DComponent::BodyType::Static ? true : false);
 				
 				// Save the body pointer
 				component.RuntimeBody = (void*)body;
-				m_PhysicsSystem3D->AttachBoxCollider<BoxCollider3DComponent>(collider.Offset, collider.Size);
 			}
 
 			// CreateBody()
@@ -483,6 +484,7 @@ namespace Debut
 		CopyComponentIfExists<BoxCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CircleCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<PolygonCollider2DComponent>(duplicate, entity);
+		CopyComponentIfExists<BoxCollider3DComponent>(duplicate, entity);
 		CopyComponentIfExists<CameraComponent>(duplicate, entity);
 		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
 		CopyComponentIfExists<MeshRendererComponent>(duplicate, entity);
@@ -571,6 +573,7 @@ namespace Debut
 		CopyComponent<Rigidbody3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<BoxCollider3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<PolygonCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);

@@ -220,6 +220,7 @@ namespace Debut
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
 
 		glm::vec3 Position;
+		glm::vec3 Rotation;
 		BodyType Type;
 
 		void* RuntimeBody = nullptr;
@@ -391,12 +392,12 @@ namespace Debut
 		PolygonCollider2DComponent(const PolygonCollider2DComponent&) = default;
 	};
 
-	struct BoxCollider3DComponent
+	struct BoxCollider3DComponent : Collider3DComponent
 	{
-		glm::vec3 Size;
-		glm::vec3 Offset;
+		glm::vec3 Size = glm::vec3(1.0f);
+		glm::vec3 Offset = glm::vec3(0.0f);
 
-		BoxCollider3DComponent() = default;
+		BoxCollider3DComponent() { Type = ColliderType::Box; }
 		BoxCollider3DComponent(const BoxCollider3DComponent&) = default;
 
 	};
