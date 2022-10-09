@@ -41,6 +41,15 @@ TODO List:
 - Rendering
   - Culling
   - PBR rendering
+  - Post processing
+    - Anti aliasing
+    - Bloom
+    - Blur / depth of field
+    - Motion blur
+    - Cromatic aberration
+    - HDR
+    - Color curves
+    - Ambient occlusion
   - Deferred rendering
   - LODs
     - Veeery ambitious but I'd like to have a look at Nanite
