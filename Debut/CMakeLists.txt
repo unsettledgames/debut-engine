@@ -61,7 +61,6 @@ target_compile_definitions(Debut PUBLIC
 	YAML_CPP_STATIC_DEFINE
 	NOMINMAX
 	JPH_DISABLE_CUSTOM_ALLOCATOR
-	JPH_DISABLE_TEMP_ALLOCATOR
 )
 
 target_compile_definitions(Debut PUBLIC
@@ -83,7 +82,6 @@ add_subdirectory(vendor/lz4/build/cmake)
 add_subdirectory(vendor/jolt-physics/Build)
 
 target_compile_definitions(Jolt PRIVATE JPH_DISABLE_CUSTOM_ALLOCATOR=1)
-target_compile_definitions(Jolt PRIVATE JPH_DISABLE_TEMP_ALLOCATOR=1)
 
 
 # Link dependencies 
