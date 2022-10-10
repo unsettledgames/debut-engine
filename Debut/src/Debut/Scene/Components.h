@@ -400,7 +400,16 @@ namespace Debut
 
 		BoxCollider3DComponent() { Type = ColliderType::Box; }
 		BoxCollider3DComponent(const BoxCollider3DComponent&) = default;
+	};
 
+	struct SphereCollider3DComponent : Collider3DComponent
+	{
+		float Radius = 1.0f;
+		glm::vec3 Offset = glm::vec3(0.0f);
+		UUID Material = 0;
+
+		SphereCollider3DComponent() { Type = ColliderType::Sphere; }
+		SphereCollider3DComponent(const SphereCollider3DComponent&) = default;
 	};
 
 	// SCRIPT

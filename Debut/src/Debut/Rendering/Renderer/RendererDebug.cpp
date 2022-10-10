@@ -1,6 +1,8 @@
 #include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Rendering/Renderer/RenderCommand.h>
 
+#include <Debut/Scene/Components.h>
+
 #include <Debut/Rendering/Structures/VertexArray.h>
 #include <Debut/Rendering/Structures/Buffer.h>
 
@@ -151,6 +153,45 @@ namespace Debut
 		DrawLine(bottomLeft, bottomRight, color);
 	}
 
+	void RendererDebug::DrawCircle(float radius, const glm::vec3 center, TransformComponent& transform, float iterations)
+	{
+		glm::mat4 transformMat = transform.GetTransform();
+
+		float angleIncrease = glm::radians(360.0f) / iterations;
+		float currentAngle = 0;
+
+		// Use lines to approximate a circle
+		for (uint32_t i = 0; i < iterations; i++)
+		{
+			RendererDebug::DrawLine(
+				glm::vec3(transformMat * glm::vec4(center + radius *
+					glm::vec3(glm::cos(currentAngle), glm::sin(currentAngle), 0.0f), 1.0f)) / transform.Scale,
+				glm::vec3(transformMat * glm::vec4(center + radius *
+					glm::vec3(glm::cos(currentAngle + angleIncrease), glm::sin(currentAngle + angleIncrease), 0.0f), 1.0f)) / transform.Scale,
+				glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+			currentAngle += angleIncrease;
+		}
+	}
+
+	void RendererDebug::DrawSphere(float radius, const glm::vec3 center, const glm::mat4 transformMat)
+	{
+		float nIterations = 40;
+		float angleIncrease = glm::radians(360.0f) / nIterations;
+		float currentAngle = 0;
+
+		// Use lines to approximate a circle
+		for (uint32_t i = 0; i < nIterations; i++)
+		{
+			RendererDebug::DrawLine(
+				glm::vec3(glm::mat4(glm::mat3(transformMat)) * glm::vec4(center + radius *
+					glm::vec3(glm::cos(currentAngle), glm::sin(currentAngle), center.z), 1.0f)),
+				glm::vec3(glm::mat4(glm::mat3(transformMat)) * glm::vec4(center + radius *
+					glm::vec3(glm::cos(currentAngle + angleIncrease), glm::sin(currentAngle + angleIncrease), center.z), 1.0f)),
+				glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+			currentAngle += angleIncrease;
+		}
+	}
+	
 	void RendererDebug::FlushLines()
 	{
 		// Render on top 

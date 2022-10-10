@@ -404,6 +404,7 @@ namespace Debut
 
 				// 3D Colliders
 				DrawAddComponentEntry<BoxCollider3DComponent>("Box Collider 3D");
+				DrawAddComponentEntry<SphereCollider3DComponent>("Sphere Collider 3D");
 
 				ImGui::EndMenu();
 			}
@@ -702,8 +703,23 @@ namespace Debut
 			{
 				ImGui::Dummy({ 0.0f, 5.0f });
 
-				ImGuiUtils::RGBVec3("Offset", { "X", "Y", "Z"}, {&component.Offset.x, &component.Offset.y, &component.Offset.z});
-				ImGuiUtils::RGBVec3("Size", { "X", "Y", "Z"}, {&component.Size.x, &component.Size.y, &component.Size.z});
+				ImGuiUtils::RGBVec3("Offset", { "X", "Y", "Z" }, { &component.Offset.x, &component.Offset.y, &component.Offset.z });
+				ImGuiUtils::RGBVec3("Size", { "X", "Y", "Z" }, { &component.Size.x, &component.Size.y, &component.Size.z });
+
+				ImGui::Dummy({ 0.0f, 10.0f });
+				ImGui::Separator();
+				ImGui::Dummy({ 0.0f, 10.0f });
+				UUID material = ImGuiUtils::DragDestination("Material", ".physmat3d", component.Material);
+				if (material != 0)
+					component.Material = material;
+			});
+
+		DrawComponent<SphereCollider3DComponent>("Sphere Collider 3D", entity, [](auto& component)
+			{
+				ImGui::Dummy({ 0.0f, 5.0f });
+
+				ImGuiUtils::DragFloat("Radius", &component.Radius, 0.01f);
+				ImGuiUtils::RGBVec3("Offset", { "X", "Y", "Z" }, { &component.Offset.x, &component.Offset.y, &component.Offset.z });
 
 				ImGui::Dummy({ 0.0f, 10.0f });
 				ImGui::Separator();

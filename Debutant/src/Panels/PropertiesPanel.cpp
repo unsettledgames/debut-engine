@@ -219,7 +219,7 @@ namespace Debut
 		ImGuiUtils::ResetColumns();
 
 		// Update settings
-		if (ImGui::Button("Save settings"))
+		if (ImGui::Button("Save settings", {ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f}))
 		{
 			PhysicsMaterial2D::SaveSettings(m_AssetPath.string(), config);
 			material->SetConfig(config);
@@ -246,7 +246,7 @@ namespace Debut
 		ImGuiUtils::ResetColumns();
 
 		// Update settings
-		if (ImGui::Button("Save settings"))
+		if (ImGui::Button("Save settings", {ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f}))
 		{
 			PhysicsMaterial3D::SaveSettings(m_AssetPath.string(), config);
 			material->SetConfig(config);
@@ -302,7 +302,7 @@ namespace Debut
 		}
 
 		// Update settings
-		if (ImGui::Button("Save settings"))
+		if (ImGui::Button("Save settings", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
 		{
 			Texture2D::SaveSettings(texParams, texture->GetPath());
 			texture->Reload();
@@ -561,7 +561,7 @@ namespace Debut
 			ImGui::TreePop();
 		}
 
-		if (ImGui::Button("Save settings"))
+		if (ImGui::Button("Save settings", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
 		{
 			Material::SaveSettings(material->GetPath(), config);
 			material->Reload();

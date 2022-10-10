@@ -136,6 +136,8 @@ namespace Debut
 	struct Rigidbody3DComponent;
 	struct TransformComponent;
 
+	class PhysicsMaterial3D;
+
 	class PhysicsSystem3D
 	{
 	public:
@@ -150,6 +152,11 @@ namespace Debut
 
 		BodyID* CreateBoxColliderBody(const BoxCollider3DComponent& collider, const Rigidbody3DComponent& rb,
 			const TransformComponent& transform);
+		BodyID* CreateSphereColliderBody(const SphereCollider3DComponent& collider, const Rigidbody3DComponent& rb,
+			const TransformComponent& transform);
+
+		BodyID* CreateBody(Shape* shape, Ref<PhysicsMaterial3D> physicsMaterial, const Rigidbody3DComponent& rb,
+			const Vec3& pos, const Quat& rot, EMotionType motionType, ObjectLayer layer);
 		// Sphere
 		// Mesh
 

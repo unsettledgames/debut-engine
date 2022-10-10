@@ -11,6 +11,7 @@
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
+#include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
 using namespace JPH;
@@ -126,27 +127,12 @@ namespace Debut
 		m_Simulating = false;
 	}
 
-	BodyID* PhysicsSystem3D::CreateBoxColliderBody(const BoxCollider3DComponent& collider, const Rigidbody3DComponent& rb, 
-		const TransformComponent& transform)
+	BodyID* PhysicsSystem3D::CreateBody(Shape* shape, Ref<PhysicsMaterial3D> physicsMaterial, const Rigidbody3DComponent& rb,
+		const Vec3& pos, const Quat& rot, EMotionType motionType, ObjectLayer layer)
 	{
-		// Necessary data
-		bool isStatic = rb.Type == Rigidbody3DComponent::BodyType::Static;
-		glm::vec3 halfSize = (collider.Size / 2.0f) * transform.Scale;
-		glm::vec3 offset = collider.Offset;
-		glm::vec3 startPos = transform.Translation;
-		glm::vec3 startRot = transform.Rotation;
-
-		Ref<PhysicsMaterial3D> physicsMaterial = AssetManager::Request<PhysicsMaterial3D>(collider.Material);
-
-		// Compute initial transform
-		Vec3Arg pos = { startPos.x + offset.x, startPos.y + offset.y, startPos.z + offset.z };
-		QuatArg rot = Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z });
-
-		// Body settings
 		BodyInterface& bi = m_PhysicsSystem->GetBodyInterface();
-		BoxShape* shape = new BoxShape({ halfSize.x, halfSize.y, halfSize.z });
-		BodyCreationSettings bodySettings(shape, pos, rot, isStatic ? EMotionType::Static : EMotionType::Dynamic, isStatic ? Layers::NON_MOVING : Layers::MOVING);
-		
+		BodyCreationSettings bodySettings(shape, pos, rot, motionType, layer);
+
 		// Set mass
 		bodySettings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
 		bodySettings.mMassPropertiesOverride.mMass = rb.Mass;
@@ -165,6 +151,51 @@ namespace Debut
 		m_NumCurrBodies++;
 
 		return &m_BodyIDs[m_NumCurrBodies - 1];
+	}
+
+	BodyID* PhysicsSystem3D::CreateSphereColliderBody(const SphereCollider3DComponent& collider, const Rigidbody3DComponent& rb,
+		const TransformComponent& transform)
+	{
+		// Necessary data
+		bool isStatic = rb.Type == Rigidbody3DComponent::BodyType::Static;
+		glm::vec3 offset = collider.Offset;
+		glm::vec3 startPos = transform.Translation;
+		glm::vec3 startRot = transform.Rotation;
+
+		Ref<PhysicsMaterial3D> physicsMaterial = AssetManager::Request<PhysicsMaterial3D>(collider.Material);
+
+		// Compute initial transform
+		Vec3Arg pos = { startPos.x + offset.x, startPos.y + offset.y, startPos.z + offset.z };
+		QuatArg rot = Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z });
+
+		// Shape
+		SphereShape* shape = new SphereShape(collider.Radius * transform.Scale.length());
+
+		return CreateBody(shape, physicsMaterial, rb, pos, rot, isStatic ? EMotionType::Static : EMotionType::Dynamic,
+			isStatic ? Layers::NON_MOVING : Layers::MOVING);
+	}
+
+	BodyID* PhysicsSystem3D::CreateBoxColliderBody(const BoxCollider3DComponent& collider, const Rigidbody3DComponent& rb, 
+		const TransformComponent& transform)
+	{
+		// Necessary data
+		bool isStatic = rb.Type == Rigidbody3DComponent::BodyType::Static;
+		glm::vec3 halfSize = (collider.Size / 2.0f) * transform.Scale;
+		glm::vec3 offset = collider.Offset;
+		glm::vec3 startPos = transform.Translation;
+		glm::vec3 startRot = transform.Rotation;
+
+		Ref<PhysicsMaterial3D> physicsMaterial = AssetManager::Request<PhysicsMaterial3D>(collider.Material);
+
+		// Compute initial transform
+		Vec3Arg pos = { startPos.x + offset.x, startPos.y + offset.y, startPos.z + offset.z };
+		QuatArg rot = Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z });
+
+		// Shape
+		BoxShape* shape = new BoxShape({ halfSize.x, halfSize.y, halfSize.z });
+
+		return CreateBody(shape, physicsMaterial, rb, pos, rot, isStatic ? EMotionType::Static : EMotionType::Dynamic,
+			isStatic ? Layers::NON_MOVING : Layers::MOVING);
 	}
 
 	PhysicsSystem3D::~PhysicsSystem3D()

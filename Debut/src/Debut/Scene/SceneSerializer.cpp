@@ -148,6 +148,13 @@ namespace Debut
 		out << YAML::Key << "Material" << YAML::Value << c.Material;
 	}
 
+	static void SerializeComponent(const SphereCollider3DComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Radius" << YAML::Value << c.Radius;
+		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
+		out << YAML::Key << "Material" << YAML::Value << c.Material;
+	}
+
 	static void SerializeComponent(const DirectionalLightComponent& c, YAML::Emitter& out)
 	{
 		out << YAML::Key << "Direction" << YAML::Value << c.Direction;
@@ -314,6 +321,18 @@ namespace Debut
 	}
 
 	template<>
+	static void DeserializeComponent<SphereCollider3DComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		SphereCollider3DComponent& bc3d = e.AddComponent<SphereCollider3DComponent>();
+
+		bc3d.Offset = in["Offset"].as<glm::vec3>();
+		bc3d.Radius = in["Radius"].as<float>();
+		bc3d.Material = in["Material"] ? in["Material"].as<uint64_t>() : 0;
+	}
+
+	template<>
 	static void DeserializeComponent<DirectionalLightComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in)
@@ -358,6 +377,7 @@ namespace Debut
 		SerializeComponent<PolygonCollider2DComponent>(entity, "PolygonCollider2DComponent", out);
 
 		SerializeComponent<BoxCollider3DComponent>(entity, "BoxCollider3DComponent", out);
+		SerializeComponent<SphereCollider3DComponent>(entity, "SphereCollider3DComponent", out);
 
 		SerializeComponent<DirectionalLightComponent>(entity, "DirectionalLightComponent", out);
 		SerializeComponent<PointLightComponent>(entity, "PointLightComponent", out);
@@ -455,6 +475,7 @@ namespace Debut
 		DeserializeComponent<CircleCollider2DComponent>(entity, yamlEntity["CircleCollider2DComponent"]);
 
 		DeserializeComponent<BoxCollider3DComponent>(entity, yamlEntity["BoxCollider3DComponent"]);
+		DeserializeComponent<SphereCollider3DComponent>(entity, yamlEntity["SphereCollider3DComponent"]);
 
 		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
 		DeserializeComponent<DirectionalLightComponent>(entity, yamlEntity["DirectionalLightComponent"]);

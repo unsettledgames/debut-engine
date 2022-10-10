@@ -23,25 +23,22 @@
 /*
 * 
 *   CURRENT:
+*       - Sphere collider
 *       - Rigidbody data:
-*           - Gravity amount (from 0 to 1)
-* 
 *           - Info:
 *               - Velocity
 *               - Angular velocity
-*       - Collider data (physics material)
-*           - Restitution
-*           - Friction
 * 
 *       - When adding a rigidbody add a default box collider
 * 
 *       - Adding gizmos
-*       - Edit all rigidbody data
 * 
 *   QOL update:
 *       - Select 3D objects
 *       - Delete objects with del
 *       - Replace component
+*       - Split hierarchy and inspector
+*       - Save scene camera position in scene
 * 
     TODO:
         - Serialize / deserialize Rigidbody3D and 3D colliders
@@ -51,7 +48,7 @@
     - Roughness maps (PBR)
     - Reflection maps (PBR)
     
-    - Find out why some models are huge or super small sometimes
+    - Find out why some models are huge or super small sometimes->Don't use model imported transform?
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
@@ -611,6 +608,8 @@ namespace Debut
                 colliderType = ColliderType::Polygon;
             else if (currSelection.HasComponent<BoxCollider3DComponent>())
                 colliderType = ColliderType::Box;
+            else if (currSelection.HasComponent<SphereCollider3DComponent>())
+                colliderType = ColliderType::Sphere;
 
             RendererDebug::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
 
@@ -641,21 +640,8 @@ namespace Debut
             {
                 CircleCollider2DComponent& cc = currSelection.GetComponent<CircleCollider2DComponent>();
                 glm::vec3 center = glm::vec3(cc.Offset, 0.0f);
-                float nIterations = 40;
-                float angleIncrease = glm::radians(360.0f) / nIterations;
-                float currentAngle = 0;
-
-                // Use lines to approximate a circle
-                for (uint32_t i = 0; i < nIterations; i++)
-                {
-                    RendererDebug::DrawLine(
-                        glm::vec3(transformMat * glm::vec4(center + cc.Radius * 
-                            glm::vec3(glm::cos(currentAngle), glm::sin(currentAngle), 0.0f), 1.0f)) / transform.Scale,
-                        glm::vec3(transformMat * glm::vec4(center + cc.Radius * 
-                            glm::vec3(glm::cos(currentAngle + angleIncrease), glm::sin(currentAngle + angleIncrease), 0.0f), 1.0f)) / transform.Scale,
-                        glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                    currentAngle += angleIncrease;
-                }
+                
+                RendererDebug::DrawCircle(cc.Radius, center, transform, 40);
 
                 // Draw editing points
                 // Left
@@ -742,7 +728,18 @@ namespace Debut
                             RendererDebug::DrawLine(transformedPoints[i], transformedPoints[j], glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
                     }
                 }
+                break;
+            }
+            case ColliderType::Sphere:
+            {
+                SphereCollider3DComponent& collider = currSelection.GetComponent<SphereCollider3DComponent>();
+                glm::mat4 quat = glm::toMat4(m_EditorCamera.GetOrientation());
+                glm::vec3 trans, rot, scale;
+                MathUtils::DecomposeTransform(quat, trans, rot, scale);
+                RendererDebug::DrawSphere(collider.Radius, collider.Offset + transform.Translation,
+                    glm::toMat4(glm::quat(rot)));
 
+                break;
             }
             default:
                 break;

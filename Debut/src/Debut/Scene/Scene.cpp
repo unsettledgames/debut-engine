@@ -69,6 +69,8 @@ namespace Debut
 	template<>
 	void Scene::OnComponentAdded(BoxCollider3DComponent& bc3d, Entity entity) { }
 	template<>
+	void Scene::OnComponentAdded(SphereCollider3DComponent& sc3d, Entity entity) { }
+	template<>
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(MeshRendererComponent& bc2d, Entity entity) { }
@@ -443,15 +445,18 @@ namespace Debut
 			// Create the actual body
 			if (entity.HasComponent<BoxCollider3DComponent>())
 			{
-				BoxCollider3DComponent collider = entity.GetComponent<BoxCollider3DComponent>();
+				BoxCollider3DComponent& collider = entity.GetComponent<BoxCollider3DComponent>();
 				BodyID* body = m_PhysicsSystem3D->CreateBoxColliderBody(collider, component, transform);
 				
 				// Save the body pointer
 				component.RuntimeBody = (void*)body;
 			}
-
-			// CreateBody()
-			// AttachShapes()
+			else if (entity.HasComponent<SphereCollider3DComponent>())
+			{
+				SphereCollider3DComponent& collider = entity.GetComponent<SphereCollider3DComponent>();
+				BodyID* body = m_PhysicsSystem3D->CreateSphereColliderBody(collider, component, transform);
+				component.RuntimeBody = (void*)body;
+			}
 		}
 
 		// Begin 3D physics simulation
@@ -481,6 +486,7 @@ namespace Debut
 		CopyComponentIfExists<CircleCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<PolygonCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<BoxCollider3DComponent>(duplicate, entity);
+		CopyComponentIfExists<SphereCollider3DComponent>(duplicate, entity);
 		CopyComponentIfExists<CameraComponent>(duplicate, entity);
 		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
 		CopyComponentIfExists<MeshRendererComponent>(duplicate, entity);
@@ -570,6 +576,7 @@ namespace Debut
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<SphereCollider3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<PolygonCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
