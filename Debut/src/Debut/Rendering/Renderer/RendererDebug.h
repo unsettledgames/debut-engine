@@ -61,9 +61,9 @@ namespace Debut
 		static void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, bool highlightVertices = false);
 		static void DrawPoint(const glm::vec3& p0, const glm::vec4& color);
 		static void DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec2& offset, const glm::vec4& color, bool highlightVertices = false);
-		static void DrawCircle(float radius, const glm::vec3 center, TransformComponent& transform, float iterations);
+		static void DrawCircle(float radius, const glm::vec3 center,  glm::mat4& transform, float iterations);
 
-		static void DrawSphere(float radius, const glm::vec3 center, const glm::mat4 cameraView);
+		static void DrawSphere(float radius, const glm::vec3& center, const glm::vec3& translation, const glm::mat4 cameraView);
 
 	private:
 		static void FlushLines();

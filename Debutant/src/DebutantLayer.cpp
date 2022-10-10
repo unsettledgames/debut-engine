@@ -23,7 +23,8 @@
 /*
 * 
 *   CURRENT:
-*       - Sphere collider
+*       - Sphere collider  
+*       - RendererDebug::DrawCircle: take in matrix and not transformcomponent
 *       - Rigidbody data:
 *           - Info:
 *               - Velocity
@@ -641,7 +642,7 @@ namespace Debut
                 CircleCollider2DComponent& cc = currSelection.GetComponent<CircleCollider2DComponent>();
                 glm::vec3 center = glm::vec3(cc.Offset, 0.0f);
                 
-                RendererDebug::DrawCircle(cc.Radius, center, transform, 40);
+                RendererDebug::DrawCircle(cc.Radius, center, transform.GetTransform(), 40);
 
                 // Draw editing points
                 // Left
@@ -733,11 +734,9 @@ namespace Debut
             case ColliderType::Sphere:
             {
                 SphereCollider3DComponent& collider = currSelection.GetComponent<SphereCollider3DComponent>();
-                glm::mat4 quat = glm::toMat4(m_EditorCamera.GetOrientation());
-                glm::vec3 trans, rot, scale;
-                MathUtils::DecomposeTransform(quat, trans, rot, scale);
-                RendererDebug::DrawSphere(collider.Radius, collider.Offset + transform.Translation,
-                    glm::toMat4(glm::quat(rot)));
+                // Use it to draw
+                RendererDebug::DrawSphere(collider.Radius* transform.Scale.length(), collider.Offset, 
+                    transform.Translation, m_EditorCamera.GetView());
 
                 break;
             }
