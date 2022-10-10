@@ -14,6 +14,7 @@ namespace Debut
 	class Texture;
 	class Texture2D;
 	class PhysicsMaterial2D;
+	class PhysicsMaterial3D;
 	class Mesh;
 	class Shader;
 	class Material;
@@ -108,6 +109,7 @@ namespace Debut
 		static AssetCache<std::string, Ref<Model>> s_ModelCache;
 		static AssetCache<std::string, Ref<Skybox>> s_SkyboxCache;
 		static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
+		static AssetCache<std::string, Ref<PhysicsMaterial3D>> s_PhysicsMaterial3DCache;
 		
 	};
 }

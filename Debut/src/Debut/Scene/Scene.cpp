@@ -444,8 +444,7 @@ namespace Debut
 			if (entity.HasComponent<BoxCollider3DComponent>())
 			{
 				BoxCollider3DComponent collider = entity.GetComponent<BoxCollider3DComponent>();
-				BodyID* body = m_PhysicsSystem3D->CreateBoxColliderBody(collider.Size * transform.Scale, collider.Offset, transform.Translation,
-					transform.Rotation, component);
+				BodyID* body = m_PhysicsSystem3D->CreateBoxColliderBody(collider, component, transform);
 				
 				// Save the body pointer
 				component.RuntimeBody = (void*)body;

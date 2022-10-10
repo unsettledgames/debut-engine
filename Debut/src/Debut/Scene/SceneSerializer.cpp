@@ -109,6 +109,8 @@ namespace Debut
 	static void SerializeComponent(const Rigidbody3DComponent& c, YAML::Emitter& out)
 	{
 		out << YAML::Key << "Type" << YAML::Value << Rb3DTypeToString(c.Type);
+		out << YAML::Key << "GravityFactor" << YAML::Value << c.GravityFactor;
+		out << YAML::Key << "Mass" << YAML::Value << c.Mass;
 	}
 
 	static void SerializeComponent(const BoxCollider2DComponent& c, YAML::Emitter& out)
@@ -143,6 +145,7 @@ namespace Debut
 	{
 		out << YAML::Key << "Size" << YAML::Value << c.Size;
 		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
+		out << YAML::Key << "Material" << YAML::Value << c.Material;
 	}
 
 	static void SerializeComponent(const DirectionalLightComponent& c, YAML::Emitter& out)
@@ -247,6 +250,8 @@ namespace Debut
 			return;
 		Rigidbody3DComponent& rb3d = e.AddComponent<Rigidbody3DComponent>();
 		rb3d.Type = Rigidbody3DComponent::StrToRigidbody3DType(in["Type"].as<std::string>());
+		rb3d.GravityFactor = in["GravityFactor"] ? in["GravityFactor"].as<float>() : 1.0f;
+		rb3d.Mass = in["Mass"] ? in["Mass"].as<float>() : 1.0f;
 	}
 
 	template<>
@@ -305,6 +310,7 @@ namespace Debut
 
 		bc3d.Offset = in["Offset"].as<glm::vec3>();
 		bc3d.Size = in["Size"].as<glm::vec3>();
+		bc3d.Material = in["Material"] ? in["Material"].as<uint64_t>() : 0;
 	}
 
 	template<>

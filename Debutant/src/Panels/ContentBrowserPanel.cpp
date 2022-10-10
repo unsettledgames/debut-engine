@@ -4,6 +4,7 @@
 #include <Debut/Rendering/Material.h>
 #include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
+#include <Debut/Physics/PhysicsMaterial3D.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include "Utils/EditorCache.h"
 #include <Debut/Utils/CppUtils.h>
@@ -93,6 +94,11 @@ namespace Debut
 					assetType = "PhysicsMaterial2D";
 					defaultName = "New Physics Material 2D";
 				}
+				if (ImGui::MenuItem("Phyiscs Material 3D"))
+				{
+					assetType = "PhysicsMaterial3D";
+					defaultName = "New Physics Material 3D";
+				}
 				if (ImGui::MenuItem("Material"))
 				{
 					assetType = "Material";
@@ -130,6 +136,8 @@ namespace Debut
 
 			if (assetType.compare("PhysicsMaterial2D") == 0)
 				AssetManager::CreateAsset<PhysicsMaterial2D>(m_SelectedDir + "\\" + assetName + ".physmat2d");
+			if (assetType.compare("PhysicsMaterial3D") == 0)
+				AssetManager::CreateAsset<PhysicsMaterial3D>(m_SelectedDir + "\\" + assetName + ".physmat3d");
 			else if (assetType.compare("Material") == 0)
 				AssetManager::CreateAsset<Material>(m_SelectedDir + "\\" + assetName + ".mat");
 			else if (assetType.compare("Skybox") == 0)

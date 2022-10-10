@@ -1,6 +1,8 @@
 #include <Debut/dbtpch.h>
 
 #include <Debut/Scene/Components.h>
+#include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Physics/PhysicsMaterial3D.h>
 #include <Debut/Physics/PhysicsSystem3D.h>
 
 #include <Jolt/RegisterTypes.h>
@@ -124,25 +126,40 @@ namespace Debut
 		m_Simulating = false;
 	}
 
-	BodyID* PhysicsSystem3D::CreateBoxColliderBody(const glm::vec3& size, const glm::vec3& offset, const glm::vec3& startPos,
-		const glm::vec3& startRot, const Rigidbody3DComponent& rb)
+	BodyID* PhysicsSystem3D::CreateBoxColliderBody(const BoxCollider3DComponent& collider, const Rigidbody3DComponent& rb, 
+		const TransformComponent& transform)
 	{
+		// Necessary data
 		bool isStatic = rb.Type == Rigidbody3DComponent::BodyType::Static;
-		glm::vec3 halfSize = (size / 2.0f);
-		Vec3Arg pos = { startPos.x + offset.x, startPos.y + offset.y, startPos.z + offset.z };
+		glm::vec3 halfSize = (collider.Size / 2.0f) * transform.Scale;
+		glm::vec3 offset = collider.Offset;
+		glm::vec3 startPos = transform.Translation;
+		glm::vec3 startRot = transform.Rotation;
 
+		Ref<PhysicsMaterial3D> physicsMaterial = AssetManager::Request<PhysicsMaterial3D>(collider.Material);
+
+		// Compute initial transform
+		Vec3Arg pos = { startPos.x + offset.x, startPos.y + offset.y, startPos.z + offset.z };
+		QuatArg rot = Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z });
+
+		// Body settings
 		BodyInterface& bi = m_PhysicsSystem->GetBodyInterface();
-		BodyCreationSettings bodySettings(new BoxShape({ halfSize.x, halfSize.y, halfSize.z }), pos, 
-			Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z }),
-			isStatic ? EMotionType::Static : EMotionType::Dynamic, isStatic ? Layers::NON_MOVING : Layers::MOVING);
+		BoxShape* shape = new BoxShape({ halfSize.x, halfSize.y, halfSize.z });
+		BodyCreationSettings bodySettings(shape, pos, rot, isStatic ? EMotionType::Static : EMotionType::Dynamic, isStatic ? Layers::NON_MOVING : Layers::MOVING);
 		
 		// Set mass
 		bodySettings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
 		bodySettings.mMassPropertiesOverride.mMass = rb.Mass;
 
+		// Create body, set other properties
 		Body* body = bi.CreateBody(bodySettings);
 		bi.AddBody(body->GetID(), EActivation::Activate);
-		bi.SetGravityFactor(body->GetID(), rb.Gravity);
+		bi.SetGravityFactor(body->GetID(), rb.GravityFactor);
+		if (physicsMaterial != nullptr)
+		{
+			bi.SetFriction(body->GetID(), physicsMaterial->GetFriction());
+			bi.SetRestitution(body->GetID(), physicsMaterial->GetRestitution());
+		}
 
 		m_BodyIDs[m_NumCurrBodies] = body->GetID();
 		m_NumCurrBodies++;

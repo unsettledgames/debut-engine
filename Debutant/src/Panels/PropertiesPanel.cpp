@@ -13,6 +13,7 @@
 #include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Rendering/Material.h>
 #include <Debut/Rendering/Shader.h>
+#include <Debut/Physics/PhysicsMaterial3D.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/Rendering/Texture.h>
 
@@ -23,7 +24,7 @@
 
 namespace Debut
 {
-	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d", ".glsl", ".mat" };
+	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d", ".physmat3d", ".glsl", ".mat", ".model"};
 	static std::vector<std::string> s_ModelExtensions = { ".obj", ".fbx", ".dae", ".gltf", ".glb", ".blend", ".3ds", ".ase",
 		".ifc", ".xgl", ".zgl", ".ply", ".dxf", ".lwo", ".lws", ".lxo", ".stl", ".x", ".ac", ".ms3d", ".cob", ".scn" };
 
@@ -57,6 +58,10 @@ namespace Debut
 			else if (m_AssetType == AssetType::PhysicsMaterial2D)
 			{
 				DrawPhysicsMaterial2DProperties();
+			}
+			else if (m_AssetType == AssetType::PhysicsMaterial3D)
+			{
+				DrawPhysicsMaterial3DProperties();
 			}
 			else if (m_AssetType == AssetType::Shader)
 			{
@@ -217,6 +222,33 @@ namespace Debut
 		if (ImGui::Button("Save settings"))
 		{
 			PhysicsMaterial2D::SaveSettings(m_AssetPath.string(), config);
+			material->SetConfig(config);
+			material->Reload();
+		}
+	}
+
+	void PropertiesPanel::DrawPhysicsMaterial3DProperties()
+	{
+		Ref<PhysicsMaterial3D> material = AssetManager::Request<PhysicsMaterial3D>(m_AssetPath.string());
+		static PhysicsMaterial3DConfig config;
+		if (m_AssetPath.compare(m_PrevAssetPath) != 0)
+		{
+			config.Friction = material->GetFriction();
+			config.Restitution = material->GetRestitution();
+		}
+		std::ifstream metaFile(material->GetPath());
+		std::stringstream strStream;
+
+		// PhysMat2D parameters
+		ImGuiUtils::StartColumns(2, { 150, 200 });
+		ImGuiUtils::DragFloat("Friction", &config.Friction, 0.1f, 0.0f, 1.0f);
+		ImGuiUtils::DragFloat("Restitution", &config.Restitution, 0.3f, 0.0f, 100000.0f);
+		ImGuiUtils::ResetColumns();
+
+		// Update settings
+		if (ImGui::Button("Save settings"))
+		{
+			PhysicsMaterial3D::SaveSettings(m_AssetPath.string(), config);
 			material->SetConfig(config);
 			material->Reload();
 		}
@@ -611,6 +643,8 @@ namespace Debut
 			m_AssetType = AssetType::Texture2D;
 		else if (path.extension() == ".physmat2d")
 			m_AssetType = AssetType::PhysicsMaterial2D;
+		else if (path.extension() == ".physmat3d")
+			m_AssetType = AssetType::PhysicsMaterial3D;
 		else if (path.extension() == ".glsl")
 			m_AssetType = AssetType::Shader;
 		else if (path.extension() == ".mat")

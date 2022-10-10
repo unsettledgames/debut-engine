@@ -221,7 +221,7 @@ namespace Debut
 		BodyType Type;
 
 		float Mass = 1.0f;
-		float Gravity = 1.0f;
+		float GravityFactor = 1.0f;
 
 		void* RuntimeBody = nullptr;
 
@@ -396,6 +396,7 @@ namespace Debut
 	{
 		glm::vec3 Size = glm::vec3(1.0f);
 		glm::vec3 Offset = glm::vec3(0.0f);
+		UUID Material = 0;
 
 		BoxCollider3DComponent() { Type = ColliderType::Box; }
 		BoxCollider3DComponent(const BoxCollider3DComponent&) = default;

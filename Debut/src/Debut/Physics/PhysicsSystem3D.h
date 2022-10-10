@@ -148,8 +148,8 @@ namespace Debut
 
 		void UpdateBody(TransformComponent& transform, Rigidbody3DComponent& body, BodyID bodyID);
 
-		BodyID* CreateBoxColliderBody(const glm::vec3& size, const glm::vec3& offset, const glm::vec3& startPos,
-			const glm::vec3& startRot, const Rigidbody3DComponent& rb);
+		BodyID* CreateBoxColliderBody(const BoxCollider3DComponent& collider, const Rigidbody3DComponent& rb,
+			const TransformComponent& transform);
 		// Sphere
 		// Mesh
 

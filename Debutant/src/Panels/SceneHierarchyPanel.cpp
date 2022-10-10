@@ -608,6 +608,9 @@ namespace Debut
 
 				if (ImGuiUtils::Combo("Body type", bodyTypeStrings, 3, &currBodyType, &finalBodyType))
 					component.Type = Rigidbody3DComponent::StrToRigidbody3DType(finalBodyType);
+
+				ImGuiUtils::DragFloat("Gravity factor", &component.GravityFactor, 0.01f);
+				ImGuiUtils::DragFloat("Mass", &component.Mass, 0.01f);
 			});
 		
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
@@ -701,6 +704,13 @@ namespace Debut
 
 				ImGuiUtils::RGBVec3("Offset", { "X", "Y", "Z"}, {&component.Offset.x, &component.Offset.y, &component.Offset.z});
 				ImGuiUtils::RGBVec3("Size", { "X", "Y", "Z"}, {&component.Size.x, &component.Size.y, &component.Size.z});
+
+				ImGui::Dummy({ 0.0f, 10.0f });
+				ImGui::Separator();
+				ImGui::Dummy({ 0.0f, 10.0f });
+				UUID material = ImGuiUtils::DragDestination("Material", ".physmat3d", component.Material);
+				if (material != 0)
+					component.Material = material;
 			});
 
 		DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component)
