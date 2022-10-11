@@ -622,17 +622,21 @@ namespace Debut
                 glm::vec2 size = boxCollider.Size;
                 glm::vec2 offset = boxCollider.Offset;
 
-                glm::vec3 topLeft = transformMat * glm::vec4(-size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f, 1.0f);
-                glm::vec3 bottomLeft = transformMat * glm::vec4(-size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f);
-                glm::vec3 topRight = transformMat * glm::vec4(size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f, 1.0f);
-                glm::vec3 bottomRight = transformMat * glm::vec4(size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f, 1.0f); 
+                points = {
+                        glm::vec3(-size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f), glm::vec3(-size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f),
+                        glm::vec3(size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f), glm::vec3(size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f)
+                };
+                labels = { "TopLeft", "BottomLeft", "TopRight", "BottomRight" };
+
+                glm::vec3 topLeft = transformMat * glm::vec4(points[0], 1.0f);
+                glm::vec3 bottomLeft = transformMat * glm::vec4(points[1], 1.0f);
+                glm::vec3 topRight = transformMat * glm::vec4(points[2], 1.0f);
+                glm::vec3 bottomRight = transformMat * glm::vec4(points[3], 1.0f);
                 
                 RendererDebug::DrawRect(transformMat, boxCollider.Size, boxCollider.Offset, { 0.0, 1.0, 0.0, 1.0 }, false);
 
-                RendererDebug::DrawPoint(topRight, (m_PhysicsSelection.SelectedName != "TopRight" ? glm::vec4(0, 1, 0, 1) : glm::vec4(0.2, 0.5, 1, 1)));
-                RendererDebug::DrawPoint(bottomRight, (m_PhysicsSelection.SelectedName != "BottomRight" ? glm::vec4(0, 1, 0, 1) : glm::vec4(0.2, 0.5, 1, 1)));
-                RendererDebug::DrawPoint(topLeft, (m_PhysicsSelection.SelectedName != "TopLeft" ? glm::vec4(0, 1, 0, 1) : glm::vec4(0.2, 0.5, 1, 1)));
-                RendererDebug::DrawPoint(bottomLeft, (m_PhysicsSelection.SelectedName != "BottomLeft" ? glm::vec4(0, 1, 0, 1) : glm::vec4(0.2, 0.5, 1, 1)));
+                for (uint32_t i = 0; i < 4; i++)
+                    RendererDebug::DrawPoint(transformMat * glm::vec4(points[i], 1.0f), glm::vec4(0, 1, 0, 1));
                 
                 break;
             }
@@ -641,18 +645,16 @@ namespace Debut
             {
                 CircleCollider2DComponent& cc = currSelection.GetComponent<CircleCollider2DComponent>();
                 glm::vec3 center = glm::vec3(cc.Offset, 0.0f);
+                points = {
+                        glm::vec3(-cc.Radius + cc.Offset.x, cc.Offset.y, 0.0f), glm::vec3(cc.Offset.x, cc.Radius + cc.Offset.y, 0.0f),
+                        glm::vec3(cc.Radius + cc.Offset.x, cc.Offset.y, 0.0f), glm::vec3(cc.Offset.x, -cc.Radius + cc.Offset.y, 0.0f)
+                };
+                labels = { "Left", "Top", "Right", "Bottom" };
                 
                 RendererDebug::DrawCircle(cc.Radius, center, transform.GetTransform(), 40);
+                for (uint32_t i=0; i<4; i++)
+                    RendererDebug::DrawPoint(glm::vec3(transformMat * glm::vec4(points[i], 1.0f)) / transform.Scale, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
-                // Draw editing points
-                // Left
-                RendererDebug::DrawPoint(glm::vec3(transformMat * glm::vec4(center + glm::vec3(-cc.Radius, 0.0f, 0.0f), 1.0f)) / transform.Scale, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                // Top
-                RendererDebug::DrawPoint(glm::vec3(transformMat * glm::vec4(center + glm::vec3(0.0f, cc.Radius, 0.0f), 1.0f)) / transform.Scale, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                // Right
-                RendererDebug::DrawPoint(glm::vec3(transformMat * glm::vec4(center + glm::vec3(cc.Radius, 0.0f, 0.0f), 1.0f)) / transform.Scale, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                // Bottom
-                RendererDebug::DrawPoint(glm::vec3(transformMat * glm::vec4(center + glm::vec3(0.0f, -cc.Radius, 0.0f), 1.0f)) / transform.Scale, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
                 break;
             }
             case ColliderType::Polygon:
@@ -664,6 +666,11 @@ namespace Debut
                 for (uint32_t i = 0; i < polygon.Points.size(); i++)
                 {
                     glm::vec2 currPoint = polygon.Points[i];
+                    std::stringstream ss;
+                    ss << i;
+                    points.push_back(glm::vec3(currPoint, 0.0f));
+                    labels.push_back(ss.str());
+
                     RendererDebug::DrawPoint(glm::vec3(transformMat * glm::vec4(center + glm::vec3(currPoint, 0.0f), 1.0f)), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
                 }
 
@@ -733,10 +740,31 @@ namespace Debut
             }
             case ColliderType::Sphere:
             {
+                glm::vec3 trans, rot, scale;
+                MathUtils::DecomposeTransform(transform.GetTransform(), trans, rot, scale);
                 SphereCollider3DComponent& collider = currSelection.GetComponent<SphereCollider3DComponent>();
+                float radius = collider.Radius * transform.Scale.length();
+                glm::vec3 pos = trans + collider.Offset;
                 // Use it to draw
-                RendererDebug::DrawSphere(collider.Radius* transform.Scale.length(), collider.Offset, 
+                RendererDebug::DrawSphere(radius, collider.Offset,
                     transform.Translation, m_EditorCamera.GetView());
+                
+                // Add 3 circles
+                RendererDebug::DrawCircle(radius, pos, glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(scale)),
+                    glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), 40);
+                RendererDebug::DrawCircle(radius, pos, glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(scale)),
+                    glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), 40);
+                RendererDebug::DrawCircle(radius, pos, glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(scale)),
+                    glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)), 40);
+
+                points = {
+                    glm::vec3(radius, 0.0f, 0.0f), glm::vec3(-radius, 0.0f, 0.0f), glm::vec3(0.0f, radius, 0.0f),
+                    glm::vec3(0.0f, -radius, 0.0f), glm::vec3(0.0f, 0.0f, radius), glm::vec3(0.0f, 0.0f,- radius)
+                };
+                labels = { "Right", "Left", "Top", "Bottom", "Front", "Bottom" };
+
+                for (uint32_t i = 0; i < points.size(); i++)
+                    RendererDebug::DrawPoint(points[i] + pos, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
                 break;
             }
@@ -768,51 +796,7 @@ namespace Debut
                     m_PhysicsSelection.Valid = false;
                     m_PhysicsSelection.SelectedName = "";
                     return;
-                }                
-
-                switch (colliderType)
-                {
-                case ColliderType::Box2D:
-                {
-                    BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
-                    
-                    glm::vec2 size = boxCollider.Size;
-                    glm::vec2 offset = boxCollider.Offset;
-
-                    points = {
-                        glm::vec3(-size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f), glm::vec3(-size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f),
-                        glm::vec3(size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f), glm::vec3(size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f)
-                    };
-                    labels = { "TopLeft", "BottomLeft", "TopRight", "BottomRight" };
-
-                    break;
-                }
-                case ColliderType::Circle2D:
-                {
-                    CircleCollider2DComponent& cc = currSelection.GetComponent<CircleCollider2DComponent>();
-
-                    points = {
-                        glm::vec3(-cc.Radius + cc.Offset.x, cc.Offset.y, 0.0f), glm::vec3(cc.Offset.x, cc.Radius + cc.Offset.y, 0.0f),
-                        glm::vec3(cc.Radius + cc.Offset.x, cc.Offset.y, 0.0f), glm::vec3(cc.Offset.x, -cc.Radius + cc.Offset.y, 0.0f)
-                    };
-                    labels = { "Left", "Top", "Right", "Bottom" };
-                    break;
-                }
-                case ColliderType::Polygon:
-                {
-                    PolygonCollider2DComponent& pc = currSelection.GetComponent<PolygonCollider2DComponent>();
-                    for (uint32_t i = 0; i < pc.Points.size(); i++)
-                    {
-                        std::stringstream ss;
-                        ss << i;
-                        points.push_back(glm::vec3(pc.Points[i], 0.0f));
-                        labels.push_back(ss.str());
-                    }
-                    break;
-                }
-                default:
-                    break;
-                }
+                }        
 
                 for (uint32_t i = 0; i < points.size(); i++)
                 {

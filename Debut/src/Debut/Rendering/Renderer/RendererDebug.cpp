@@ -15,7 +15,7 @@ namespace Debut
 
 	void RendererDebug::Init()
 	{
-		RenderCommand::SetLineWidth(2.0f);
+		RenderCommand::SetLineWidth(1.0f);
 		RenderCommand::SetPointSize(12.0f);
 
 		BufferLayout layout = {
@@ -163,10 +163,10 @@ namespace Debut
 		for (uint32_t i = 0; i < iterations; i++)
 		{
 			RendererDebug::DrawLine(
-				glm::vec3(transform * glm::vec4(center + radius *
-					glm::vec3(glm::cos(currentAngle), glm::sin(currentAngle), 0.0f), 1.0f)) / scale,
-				glm::vec3(transform * glm::vec4(center + radius *
-					glm::vec3(glm::cos(currentAngle + angleIncrease), glm::sin(currentAngle + angleIncrease), 0.0f), 1.0f)) / scale,
+				glm::vec3(transform * glm::vec4(radius * glm::vec3(glm::cos(currentAngle), 
+					glm::sin(currentAngle), 0.0f), 1.0f)) + center,
+				glm::vec3(transform * glm::vec4( radius * glm::vec3(glm::cos(currentAngle + angleIncrease), 
+					glm::sin(currentAngle + angleIncrease), 0.0f), 1.0f)) + center,
 				glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 			currentAngle += angleIncrease;
 		}
