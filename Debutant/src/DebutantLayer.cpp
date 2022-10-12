@@ -23,8 +23,8 @@
 /*
 * 
 *   CURRENT:
-*       - Sphere collider  
-*       - RendererDebug::DrawCircle: take in matrix and not transformcomponent
+*       - Sphere collider
+*           - Can't select sphere collider points: either store transformed points or use a custom transform matrix
 *       - Rigidbody data:
 *           - Info:
 *               - Velocity
@@ -637,7 +637,7 @@ namespace Debut
 
                 for (uint32_t i = 0; i < 4; i++)
                     RendererDebug::DrawPoint(transformMat * glm::vec4(points[i], 1.0f), glm::vec4(0, 1, 0, 1));
-                
+                m_PhysicsSelection.PointTransform = transformMat;
                 break;
             }
 
@@ -654,7 +654,7 @@ namespace Debut
                 RendererDebug::DrawCircle(cc.Radius, center, transform.GetTransform(), 40);
                 for (uint32_t i=0; i<4; i++)
                     RendererDebug::DrawPoint(glm::vec3(transformMat * glm::vec4(points[i], 1.0f)) / transform.Scale, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-
+                m_PhysicsSelection.PointTransform = transformMat;
                 break;
             }
             case ColliderType::Polygon:
@@ -689,7 +689,7 @@ namespace Debut
                         );
                     }
                 }
-
+                m_PhysicsSelection.PointTransform = transformMat;
                 break;
             }
             case ColliderType::Box:
@@ -702,15 +702,17 @@ namespace Debut
 
                 // Fill points
                 points = {
-                    glm::vec3( hSize.x, hSize.y, hSize.z),
-                    glm::vec3(-hSize.x, hSize.y, hSize.z),
-                    glm::vec3( hSize.x,-hSize.y, hSize.z),
-                    glm::vec3(-hSize.x,-hSize.y, hSize.z),
-                    glm::vec3( hSize.x, hSize.y,-hSize.z),
-                    glm::vec3(-hSize.x, hSize.y,-hSize.z),
-                    glm::vec3( hSize.x,-hSize.y,-hSize.z),
-                    glm::vec3(-hSize.x,-hSize.y,-hSize.z)
+                    glm::vec3( hSize.x, hSize.y, hSize.z) + center,
+                    glm::vec3(-hSize.x, hSize.y, hSize.z) + center,
+                    glm::vec3( hSize.x,-hSize.y, hSize.z) + center,
+                    glm::vec3(-hSize.x,-hSize.y, hSize.z) + center,
+                    glm::vec3( hSize.x, hSize.y,-hSize.z) + center,
+                    glm::vec3(-hSize.x, hSize.y,-hSize.z) + center,
+                    glm::vec3( hSize.x,-hSize.y,-hSize.z) + center,
+                    glm::vec3(-hSize.x,-hSize.y,-hSize.z) + center
                 };
+
+                labels = { "0", "1", "2", "3", "4", "5", "6", "7" };
                 for (uint32_t i = 0; i < points.size(); i++)
                     transformedPoints[i] = glm::vec3(transformMat * glm::vec4(points[i], 1.0f));
                 // Fill labels
@@ -736,6 +738,7 @@ namespace Debut
                             RendererDebug::DrawLine(transformedPoints[i], transformedPoints[j], glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
                     }
                 }
+                m_PhysicsSelection.PointTransform = transformMat;
                 break;
             }
             case ColliderType::Sphere:
@@ -743,7 +746,7 @@ namespace Debut
                 glm::vec3 trans, rot, scale;
                 MathUtils::DecomposeTransform(transform.GetTransform(), trans, rot, scale);
                 SphereCollider3DComponent& collider = currSelection.GetComponent<SphereCollider3DComponent>();
-                float radius = collider.Radius * transform.Scale.length();
+                float radius = collider.Radius;
                 glm::vec3 pos = trans + collider.Offset;
                 // Use it to draw
                 RendererDebug::DrawSphere(radius, collider.Offset,
@@ -758,14 +761,15 @@ namespace Debut
                     glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)), 40);
 
                 points = {
-                    glm::vec3(radius, 0.0f, 0.0f), glm::vec3(-radius, 0.0f, 0.0f), glm::vec3(0.0f, radius, 0.0f),
-                    glm::vec3(0.0f, -radius, 0.0f), glm::vec3(0.0f, 0.0f, radius), glm::vec3(0.0f, 0.0f,- radius)
+                    glm::vec3(radius, 0.0f, 0.0f) + collider.Offset, glm::vec3(-radius, 0.0f, 0.0f) + collider.Offset, 
+                    glm::vec3(0.0f, radius, 0.0f) + collider.Offset, glm::vec3(0.0f, -radius, 0.0f) + collider.Offset,
+                    glm::vec3(0.0f, 0.0f, radius) + collider.Offset, glm::vec3(0.0f, 0.0f, -radius) + collider.Offset
                 };
-                labels = { "Right", "Left", "Top", "Bottom", "Front", "Bottom" };
+                labels = { "Right", "Left", "Top", "Down", "Front", "Bottom" };
 
                 for (uint32_t i = 0; i < points.size(); i++)
                     RendererDebug::DrawPoint(points[i] + pos, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-
+                m_PhysicsSelection.PointTransform = glm::translate(glm::mat4(1.0f), transform.Translation);
                 break;
             }
             default:
@@ -790,7 +794,7 @@ namespace Debut
                 // Check that the distance is far from the selected point before disabling TODO
                 if (!(pixel.r == 0.0 && pixel.g == 255.0 && pixel.b == 0.0 && pixel.a == 255) && 
                     glm::distance(TransformationUtils::WorldToScreenPos(m_PhysicsSelection.SelectedPoint,
-                        m_EditorCamera.GetViewProjection(), transform.GetTransform(), viewport), 
+                        m_EditorCamera.GetViewProjection(), m_PhysicsSelection.PointTransform, viewport), 
                         glm::vec3(coords, m_PhysicsSelection.SelectedPoint.z)) > 6.0f)
                 {
                     m_PhysicsSelection.Valid = false;
@@ -800,7 +804,7 @@ namespace Debut
 
                 for (uint32_t i = 0; i < points.size(); i++)
                 {
-                    glm::vec3 screenPoint = TransformationUtils::WorldToScreenPos(points[i], viewProj, transformMat, viewport);
+                    glm::vec3 screenPoint = TransformationUtils::WorldToScreenPos(points[i], viewProj, m_PhysicsSelection.PointTransform, viewport);
                     if (glm::distance(screenPoint, glm::vec3(coords, screenPoint.z)) < 6.0f)
                     {
                         glm::vec3 trans, rot, scale;
@@ -810,7 +814,6 @@ namespace Debut
                         m_PhysicsSelection.SelectedName = labels[i];
                         m_PhysicsSelection.SelectedPoint = points[i];
                         m_PhysicsSelection.SelectedEntity = currSelection;
-                        m_PhysicsSelection.PointTransform = transformMat;
                         m_PhysicsSelection.PointRotation = glm::eulerAngleXYZ(rot.x, rot.y, rot.z);
                     }
                 }
@@ -866,6 +869,19 @@ namespace Debut
                     {
                         PolygonCollider2DComponent& polygonCollider = currSelection.GetComponent<PolygonCollider2DComponent>();
                         polygonCollider.SetPoint(std::stoi(m_PhysicsSelection.SelectedName), glm::vec2(newPoint));
+                        break;
+                    }
+                    case ColliderType::Box:
+                    {
+                        BoxCollider3DComponent& boxCollider = currSelection.GetComponent<BoxCollider3DComponent>();
+                        boxCollider.SetPoint(m_PhysicsSelection.SelectedName, newPoint);
+                        break;
+                    }
+                    case ColliderType::Sphere:
+                    {
+                        SphereCollider3DComponent& sphereCollider = currSelection.GetComponent<SphereCollider3DComponent>();
+                        sphereCollider.SetPoint(m_PhysicsSelection.SelectedName, newPoint);
+                        break;
                     }
                     }
                 }
