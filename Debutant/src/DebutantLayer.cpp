@@ -24,7 +24,7 @@
 * 
 *   CURRENT:
 *       - Sphere collider
-*           - Can't select sphere collider points: either store transformed points or use a custom transform matrix
+*           - Radius isn't accurate probably, plus the collider isn't rotated correctly
 *       - Rigidbody data:
 *           - Info:
 *               - Velocity
@@ -40,6 +40,8 @@
 *       - Replace component
 *       - Split hierarchy and inspector
 *       - Save scene camera position in scene
+*       - Visualize all collider button, both in game and editor mode
+*       - Add buttons for gizmo mode, add button for global / local gizmo
 * 
     TODO:
         - Serialize / deserialize Rigidbody3D and 3D colliders
@@ -749,27 +751,26 @@ namespace Debut
                 float radius = collider.Radius;
                 glm::vec3 pos = trans + collider.Offset;
                 // Use it to draw
-                RendererDebug::DrawSphere(radius, collider.Offset,
-                    transform.Translation, m_EditorCamera.GetView());
+                RendererDebug::DrawSphere(radius, collider.Offset, trans, rot, glm::mat4(glm::mat3(m_EditorCamera.GetView())));
                 
                 // Add 3 circles
-                RendererDebug::DrawCircle(radius, pos, glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(scale)),
-                    glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), 40);
-                RendererDebug::DrawCircle(radius, pos, glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(scale)),
-                    glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), 40);
-                RendererDebug::DrawCircle(radius, pos, glm::rotate(glm::scale(glm::mat4(1.0f), glm::vec3(scale)),
-                    glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)), 40);
+                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), transformMat * glm::rotate(glm::translate(
+                    glm::mat4(1.0f), collider.Offset), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), 40);
+                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), transformMat* glm::rotate(glm::translate(
+                    glm::mat4(1.0f), collider.Offset), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), 40);
+                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), transformMat * glm::rotate(glm::translate(
+                    glm::mat4(1.0f), collider.Offset), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)), 40);
 
                 points = {
-                    glm::vec3(radius, 0.0f, 0.0f) + collider.Offset, glm::vec3(-radius, 0.0f, 0.0f) + collider.Offset, 
+                    glm::vec3(radius, 0.0f, 0.0f) + collider.Offset, glm::vec3(-radius, 0.0f, 0.0f) + collider.Offset,
                     glm::vec3(0.0f, radius, 0.0f) + collider.Offset, glm::vec3(0.0f, -radius, 0.0f) + collider.Offset,
                     glm::vec3(0.0f, 0.0f, radius) + collider.Offset, glm::vec3(0.0f, 0.0f, -radius) + collider.Offset
                 };
                 labels = { "Right", "Left", "Top", "Down", "Front", "Bottom" };
 
                 for (uint32_t i = 0; i < points.size(); i++)
-                    RendererDebug::DrawPoint(points[i] + pos, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                m_PhysicsSelection.PointTransform = glm::translate(glm::mat4(1.0f), transform.Translation);
+                    RendererDebug::DrawPoint(transformMat * glm::vec4(points[i], 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+                m_PhysicsSelection.PointTransform = transformMat;
                 break;
             }
             default:

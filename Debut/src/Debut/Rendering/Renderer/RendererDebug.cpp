@@ -163,36 +163,38 @@ namespace Debut
 		for (uint32_t i = 0; i < iterations; i++)
 		{
 			RendererDebug::DrawLine(
-				glm::vec3(transform * glm::vec4(radius * glm::vec3(glm::cos(currentAngle), 
-					glm::sin(currentAngle), 0.0f), 1.0f)) + center,
-				glm::vec3(transform * glm::vec4( radius * glm::vec3(glm::cos(currentAngle + angleIncrease), 
-					glm::sin(currentAngle + angleIncrease), 0.0f), 1.0f)) + center,
+				glm::vec3(transform * glm::vec4(center + radius * glm::vec3(glm::cos(currentAngle), 
+					glm::sin(currentAngle), 0.0f), 1.0f)),
+				glm::vec3(transform * glm::vec4(center + radius * glm::vec3(glm::cos(currentAngle + angleIncrease),
+					glm::sin(currentAngle + angleIncrease), 0.0f), 1.0f)),
 				glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 			currentAngle += angleIncrease;
 		}
 	}
 
-	void RendererDebug::DrawSphere(float radius, const glm::vec3& center, const glm::vec3& translation, const glm::mat4 transformMat)
+	void RendererDebug::DrawSphere(float radius, const glm::vec3& center, const glm::vec3& trans, const glm::vec3& rot,
+		const glm::mat4 cameraView)
 	{
 		float nIterations = 40;
 		float angleIncrease = glm::radians(360.0f) / nIterations;
 		float currentAngle = 0;
-		glm::mat4 inverseView = glm::inverse(transformMat);
+		glm::mat4 inverseView = glm::inverse(cameraView);
 
 		// Create camera space
 		glm::vec3 normal = glm::normalize(glm::vec3(inverseView * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
 		glm::vec3 tangent = glm::normalize(glm::vec3(inverseView * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
 		glm::vec3 bitangent = glm::normalize(glm::vec3(inverseView * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
-		glm::mat4 cameraTangent = glm::mat4(glm::vec4(bitangent, 0.0f), glm::vec4(tangent, 0.0f), glm::vec4(normal, 0.0f), glm::vec4(translation, 1.0f));
-
+		glm::mat4 cameraTangent = glm::mat4(glm::vec4(bitangent, 0.0f), glm::vec4(tangent, 0.0f), glm::vec4(normal, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		cameraTangent = glm::mat4(glm::mat3(cameraTangent));
+		glm::vec3 rotatedCenter = glm::mat4(glm::quat(rot)) * glm::vec4(center, 1.0f);
 		// Use lines to approximate a circle
 		for (uint32_t i = 0; i < nIterations; i++)
 		{
 			RendererDebug::DrawLine(
-				glm::vec3(glm::mat4(cameraTangent) * glm::vec4(radius *
-					glm::vec3(glm::cos(currentAngle), glm::sin(currentAngle), center.z), 1.0f)) + center,
-				glm::vec3(glm::mat4(cameraTangent) * glm::vec4(radius *
-					glm::vec3(glm::cos(currentAngle + angleIncrease), glm::sin(currentAngle + angleIncrease), center.z), 1.0f)) + center,
+				trans + rotatedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius *
+					glm::vec3(glm::cos(currentAngle), glm::sin(currentAngle), 0.0f), 1.0f))),
+				trans + rotatedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius *
+					glm::vec3(glm::cos(currentAngle + angleIncrease), glm::sin(currentAngle + angleIncrease), 0.0f), 1.0f))),
 				glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 			currentAngle += angleIncrease;
 		}
