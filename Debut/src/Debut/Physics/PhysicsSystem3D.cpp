@@ -169,7 +169,8 @@ namespace Debut
 		QuatArg rot = Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z });
 
 		// Shape
-		SphereShape* shape = new SphereShape(collider.Radius * transform.Scale.length());
+		Log.CoreInfo("Scale length: {0}", glm::compMax(transform.Scale));
+		SphereShape* shape = new SphereShape(collider.Radius * glm::compMax(transform.Scale));
 
 		return CreateBody(shape, physicsMaterial, rb, pos, rot, isStatic ? EMotionType::Static : EMotionType::Dynamic,
 			isStatic ? Layers::NON_MOVING : Layers::MOVING);

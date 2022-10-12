@@ -236,6 +236,10 @@ namespace Debut
 				Rigidbody3DComponent& body = entity.GetComponent<Rigidbody3DComponent>();
 
 				m_PhysicsSystem3D->UpdateBody(entity.Transform(), body, *((BodyID*)body.RuntimeBody));
+				Log.CoreInfo("Vec {0},{1},{2}", entity.Transform().Translation.x, entity.Transform().Translation.y, entity.Transform().Translation.z);
+				entity.Transform().Translation -= glm::vec3(glm::mat4(glm::quat(entity.Transform().Rotation)) * glm::vec4(body.ShapeOffset, 1.0f));
+				Log.CoreInfo("Vec {0},{1},{2}", entity.Transform().Translation.x, entity.Transform().Translation.y, entity.Transform().Translation.z);
+
 			}
 		}
 
@@ -450,12 +454,15 @@ namespace Debut
 				
 				// Save the body pointer
 				component.RuntimeBody = (void*)body;
+				component.ShapeOffset = collider.Offset;
 			}
 			else if (entity.HasComponent<SphereCollider3DComponent>())
 			{
 				SphereCollider3DComponent& collider = entity.GetComponent<SphereCollider3DComponent>();
 				BodyID* body = m_PhysicsSystem3D->CreateSphereColliderBody(collider, component, transform);
+				
 				component.RuntimeBody = (void*)body;
+				component.ShapeOffset = collider.Offset;
 			}
 		}
 

@@ -23,8 +23,6 @@
 /*
 * 
 *   CURRENT:
-*       - Sphere collider
-*           - Radius isn't accurate probably, plus the collider isn't rotated correctly
 *       - Rigidbody data:
 *           - Info:
 *               - Velocity
@@ -35,6 +33,9 @@
 *       - Adding gizmos
 * 
 *   QOL update:
+*   BUGS:
+*       - Creating a new material and then selecting it crashes the editor. The first shader isn't set the first time probably
+*   QOL:
 *       - Select 3D objects
 *       - Delete objects with del
 *       - Replace component

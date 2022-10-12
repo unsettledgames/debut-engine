@@ -222,6 +222,7 @@ namespace Debut
 
 		float Mass = 1.0f;
 		float GravityFactor = 1.0f;
+		glm::vec3 ShapeOffset;
 
 		void* RuntimeBody = nullptr;
 
