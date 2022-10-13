@@ -98,4 +98,12 @@ namespace Debut
 		
 		return mapbox::earcut<N>(polygon);
 	}
+
+	glm::mat4 MathUtils::CreateTransform(const glm::vec3& trans, const glm::vec3& rot, const glm::vec3& scale)
+	{
+		return glm::translate(glm::mat4(1.0f), trans)
+			* (glm::mat4(glm::quat(rot))
+			* glm::scale(glm::mat4(1.0f), scale));
+	}
+
 }

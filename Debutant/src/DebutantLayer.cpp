@@ -29,7 +29,6 @@
 *               - Angular velocity
 * 
 *       - When adding a rigidbody add a default box collider
-* 
 *       - Adding gizmos
 * 
 *   QOL update:
@@ -44,10 +43,10 @@
 *       - Visualize all collider button, both in game and editor mode
 *       - Add buttons for gizmo mode, add button for global / local gizmo
 * 
-    TODO:
-        - Serialize / deserialize Rigidbody3D and 3D colliders
-*       - Finish the rigidbody3d / 3d colliders interface in inspector
-*       - Add rendering / manipulation of 3D colliders
+    OPTIMIZATION:
+        - Remove as many DecomposeTransform as possible
+        - Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile
+        - Optimize transformation in physics
 
     - Roughness maps (PBR)
     - Reflection maps (PBR)
@@ -750,16 +749,17 @@ namespace Debut
                 MathUtils::DecomposeTransform(transform.GetTransform(), trans, rot, scale);
                 SphereCollider3DComponent& collider = currSelection.GetComponent<SphereCollider3DComponent>();
                 float radius = collider.Radius;
-                glm::vec3 pos = trans + collider.Offset;
+                glm::vec3 transformedOffset = transformMat * glm::vec4(collider.Offset, 1.0f);
+                glm::mat4 circleTransform = MathUtils::CreateTransform(trans, rot, glm::vec3(glm::compMin(scale)));
                 // Use it to draw
-                RendererDebug::DrawSphere(radius, collider.Offset, trans, rot, glm::mat4(glm::mat3(m_EditorCamera.GetView())));
+                RendererDebug::DrawSphere(radius, transformedOffset, glm::vec3(0.0f), rot, scale, glm::mat4(glm::mat3(m_EditorCamera.GetView())));
                 
                 // Add 3 circles
-                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), transformMat * glm::rotate(glm::translate(
+                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), circleTransform* glm::rotate(glm::translate(
                     glm::mat4(1.0f), collider.Offset), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), 40);
-                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), transformMat* glm::rotate(glm::translate(
+                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), circleTransform* glm::rotate(glm::translate(
                     glm::mat4(1.0f), collider.Offset), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), 40);
-                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), transformMat * glm::rotate(glm::translate(
+                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), circleTransform * glm::rotate(glm::translate(
                     glm::mat4(1.0f), collider.Offset), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)), 40);
 
                 points = {
@@ -770,8 +770,8 @@ namespace Debut
                 labels = { "Right", "Left", "Top", "Down", "Front", "Bottom" };
 
                 for (uint32_t i = 0; i < points.size(); i++)
-                    RendererDebug::DrawPoint(transformMat * glm::vec4(points[i], 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                m_PhysicsSelection.PointTransform = transformMat;
+                    RendererDebug::DrawPoint(circleTransform * glm::vec4(points[i], 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+                m_PhysicsSelection.PointTransform = circleTransform;
                 break;
             }
             default:

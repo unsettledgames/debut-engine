@@ -64,7 +64,7 @@ namespace Debut
 		static void DrawCircle(float radius, const glm::vec3 center,  glm::mat4& transform, float iterations);
 
 		static void DrawSphere(float radius, const glm::vec3& center, const glm::vec3& trans, const glm::vec3& rot,
-			const glm::mat4 cameraView);
+			const glm::vec3& scale, const glm::mat4 cameraView);
 
 	private:
 		static void FlushLines();

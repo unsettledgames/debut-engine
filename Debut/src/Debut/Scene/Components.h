@@ -497,6 +497,11 @@ namespace Debut
 		SphereCollider3DComponent(const SphereCollider3DComponent&) = default;
 	};
 
+	struct MeshColliderComponent : Collider3DComponent
+	{
+
+	};
+
 	// SCRIPT
 	struct NativeScriptComponent
 	{

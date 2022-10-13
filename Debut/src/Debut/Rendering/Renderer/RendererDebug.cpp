@@ -157,7 +157,7 @@ namespace Debut
 	{
 		float angleIncrease = glm::radians(360.0f) / iterations;
 		float currentAngle = 0;
-		glm::vec3 scale = glm::vec3(transform[0][0], transform[1][1], transform[2][2]);
+		glm::vec3 scale = glm::vec3(glm::compMin(glm::vec3(transform[0][0], transform[1][1], transform[2][2])));
 
 		// Use lines to approximate a circle
 		for (uint32_t i = 0; i < iterations; i++)
@@ -173,7 +173,7 @@ namespace Debut
 	}
 
 	void RendererDebug::DrawSphere(float radius, const glm::vec3& center, const glm::vec3& trans, const glm::vec3& rot,
-		const glm::mat4 cameraView)
+		const glm::vec3& scale, const glm::mat4 cameraView)
 	{
 		float nIterations = 40;
 		float angleIncrease = glm::radians(360.0f) / nIterations;
@@ -191,9 +191,9 @@ namespace Debut
 		for (uint32_t i = 0; i < nIterations; i++)
 		{
 			RendererDebug::DrawLine(
-				trans + rotatedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius *
+				trans + rotatedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius * glm::compMin(scale) * 
 					glm::vec3(glm::cos(currentAngle), glm::sin(currentAngle), 0.0f), 1.0f))),
-				trans + rotatedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius *
+				trans + rotatedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius * glm::compMin(scale) *
 					glm::vec3(glm::cos(currentAngle + angleIncrease), glm::sin(currentAngle + angleIncrease), 0.0f), 1.0f))),
 				glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 			currentAngle += angleIncrease;

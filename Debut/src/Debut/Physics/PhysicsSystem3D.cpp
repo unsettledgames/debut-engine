@@ -182,7 +182,7 @@ namespace Debut
 		// Necessary data
 		bool isStatic = rb.Type == Rigidbody3DComponent::BodyType::Static;
 		glm::vec3 halfSize = (collider.Size / 2.0f) * transform.Scale;
-		glm::vec3 offset = collider.Offset;
+		glm::vec3 offset = glm::mat4(glm::quat(transform.Rotation)) * glm::vec4(transform.Scale * collider.Offset, 1.0f);
 		glm::vec3 startPos = transform.Translation;
 		glm::vec3 startRot = transform.Rotation;
 

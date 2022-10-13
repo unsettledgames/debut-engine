@@ -234,12 +234,11 @@ namespace Debut
 			{
 				Entity entity = { e, this };
 				Rigidbody3DComponent& body = entity.GetComponent<Rigidbody3DComponent>();
+				TransformComponent& transform = entity.Transform();
 
 				m_PhysicsSystem3D->UpdateBody(entity.Transform(), body, *((BodyID*)body.RuntimeBody));
-				Log.CoreInfo("Vec {0},{1},{2}", entity.Transform().Translation.x, entity.Transform().Translation.y, entity.Transform().Translation.z);
-				entity.Transform().Translation -= glm::vec3(glm::mat4(glm::quat(entity.Transform().Rotation)) * glm::vec4(body.ShapeOffset, 1.0f));
-				Log.CoreInfo("Vec {0},{1},{2}", entity.Transform().Translation.x, entity.Transform().Translation.y, entity.Transform().Translation.z);
-
+				transform.Translation -= glm::vec3(glm::mat4(glm::quat(transform.Rotation)) *
+					glm::vec4(transform.Scale * body.ShapeOffset, 1.0f));
 			}
 		}
 
