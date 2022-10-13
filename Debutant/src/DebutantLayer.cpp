@@ -47,6 +47,10 @@
         - Remove as many DecomposeTransform as possible
         - Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile
         - Optimize transformation in physics
+        - Maybe remove indices from PolygonCollider? The concept is similar to creating a transform matrix every time it's 
+          required. Profile both approaches
+        - Components that require data that is stored in the Lib folder: display the name instead of the ID in the drag
+            destination in components
 
     - Roughness maps (PBR)
     - Reflection maps (PBR)

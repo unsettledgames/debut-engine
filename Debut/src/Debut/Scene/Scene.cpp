@@ -71,6 +71,19 @@ namespace Debut
 	template<>
 	void Scene::OnComponentAdded(SphereCollider3DComponent& sc3d, Entity entity) { }
 	template<>
+	void Scene::OnComponentAdded(MeshCollider3DComponent& sc3d, Entity entity)
+	{
+		// Automatically add the mesh if the object has a mesh renderer
+		if (entity.HasComponent<MeshRendererComponent>())
+		{
+			MeshRendererComponent& meshRenderer = entity.GetComponent<MeshRendererComponent>();
+			Ref<Mesh> mesh = AssetManager::Request<Mesh>(meshRenderer.Mesh);
+
+			sc3d.SetPoints(mesh->GetPositions());
+			sc3d.Mesh = mesh->GetID();
+		}
+	}
+	template<>
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(MeshRendererComponent& bc2d, Entity entity) { }
@@ -493,6 +506,7 @@ namespace Debut
 		CopyComponentIfExists<PolygonCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<BoxCollider3DComponent>(duplicate, entity);
 		CopyComponentIfExists<SphereCollider3DComponent>(duplicate, entity);
+		CopyComponentIfExists<MeshCollider3DComponent>(duplicate, entity);
 		CopyComponentIfExists<CameraComponent>(duplicate, entity);
 		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
 		CopyComponentIfExists<MeshRendererComponent>(duplicate, entity);
@@ -581,9 +595,10 @@ namespace Debut
 		CopyComponent<Rigidbody3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<PolygonCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<SphereCollider3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<PolygonCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<MeshCollider3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<MeshRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);

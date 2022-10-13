@@ -4,6 +4,7 @@
 #include "Debut/Utils/CppUtils.h"
 #include <Debut/Utils/YamlUtils.h>
 #include <Debut/Scene/Scene.h>
+#include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Rendering/Resources/Skybox.h>
 #include <yaml-cpp/yaml.h>
 
@@ -146,6 +147,12 @@ namespace Debut
 		out << YAML::Key << "Size" << YAML::Value << c.Size;
 		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
 		out << YAML::Key << "Material" << YAML::Value << c.Material;
+	}
+
+	static void SerializeComponent(const MeshCollider3DComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
+		out << YAML::Key << "Mesh" << YAML::Value << c.Mesh;
 	}
 
 	static void SerializeComponent(const SphereCollider3DComponent& c, YAML::Emitter& out)
@@ -333,6 +340,21 @@ namespace Debut
 	}
 
 	template<>
+	static void DeserializeComponent<MeshCollider3DComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		MeshCollider3DComponent& mesh = e.AddComponent<MeshCollider3DComponent>();
+		
+		mesh.Offset = in["Offset"].as<glm::vec3>();
+		mesh.Mesh = in["Mesh"].as<uint64_t>();
+
+		Ref<Mesh> meshAsset = AssetManager::Request<Mesh>(mesh.Mesh);
+		if (meshAsset != nullptr)
+			mesh.SetPoints(meshAsset->GetPositions());
+	}
+
+	template<>
 	static void DeserializeComponent<DirectionalLightComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in)
@@ -378,6 +400,7 @@ namespace Debut
 
 		SerializeComponent<BoxCollider3DComponent>(entity, "BoxCollider3DComponent", out);
 		SerializeComponent<SphereCollider3DComponent>(entity, "SphereCollider3DComponent", out);
+		SerializeComponent<MeshCollider3DComponent>(entity, "MeshCollider3DComponent", out);
 
 		SerializeComponent<DirectionalLightComponent>(entity, "DirectionalLightComponent", out);
 		SerializeComponent<PointLightComponent>(entity, "PointLightComponent", out);
@@ -476,6 +499,7 @@ namespace Debut
 
 		DeserializeComponent<BoxCollider3DComponent>(entity, yamlEntity["BoxCollider3DComponent"]);
 		DeserializeComponent<SphereCollider3DComponent>(entity, yamlEntity["SphereCollider3DComponent"]);
+		DeserializeComponent<MeshCollider3DComponent>(entity, yamlEntity["MeshCollider3DComponent"]);
 
 		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
 		DeserializeComponent<DirectionalLightComponent>(entity, yamlEntity["DirectionalLightComponent"]);

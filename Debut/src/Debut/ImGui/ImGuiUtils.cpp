@@ -418,6 +418,19 @@ namespace Debut
 
 						ret = metaData["ID"].as<uint64_t>();
 					}
+					else
+					{
+						meta.close();
+						meta.open(AssetManager::s_MetadataDir + pathStr.stem().string() + ".meta");
+
+						if (meta.good())
+						{
+							std::stringstream ss;
+							ss << meta.rdbuf();
+							YAML::Node metaData = YAML::Load(ss.str());
+							ret = metaData["ID"].as<uint64_t>();
+						}
+					}
 				}
 			}
 

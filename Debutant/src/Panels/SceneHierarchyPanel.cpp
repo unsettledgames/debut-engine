@@ -405,6 +405,7 @@ namespace Debut
 				// 3D Colliders
 				DrawAddComponentEntry<BoxCollider3DComponent>("Box Collider 3D");
 				DrawAddComponentEntry<SphereCollider3DComponent>("Sphere Collider 3D");
+				DrawAddComponentEntry<MeshCollider3DComponent>("Mesh Collider 3D");
 
 				ImGui::EndMenu();
 			}
@@ -633,9 +634,7 @@ namespace Debut
 				ImGuiUtils::RGBVec2("Offset", { "X", "Y" }, { &component.Offset.x, &component.Offset.y });
 				ImGuiUtils::DragFloat("Radius", &component.Radius, 1.0f);
 
-				ImGui::Dummy({ 0.0f, 10.0f });
-				ImGui::Separator();
-				ImGui::Dummy({ 0.0f, 10.0f });
+				ImGuiUtils::Separator();
 
 				UUID material = ImGuiUtils::DragDestination("Physics material", ".physmat2d", component.Material);
 				if (material != 0)
@@ -689,9 +688,7 @@ namespace Debut
 				if (ImGui::Button("Retriangulate", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f}))
 					component.Triangulate();
 
-				ImGui::Dummy({ 0.0f, 10.0f });
-				ImGui::Separator();
-				ImGui::Dummy({ 0.0f, 10.0f });
+				ImGuiUtils::Separator();
 
 				UUID material = ImGuiUtils::DragDestination("Physics material", ".physmat2d", component.Material);
 				if (material != 0)
@@ -706,9 +703,8 @@ namespace Debut
 				ImGuiUtils::RGBVec3("Offset", { "X", "Y", "Z" }, { &component.Offset.x, &component.Offset.y, &component.Offset.z });
 				ImGuiUtils::RGBVec3("Size", { "X", "Y", "Z" }, { &component.Size.x, &component.Size.y, &component.Size.z });
 
-				ImGui::Dummy({ 0.0f, 10.0f });
-				ImGui::Separator();
-				ImGui::Dummy({ 0.0f, 10.0f });
+				ImGuiUtils::Separator();
+
 				UUID material = ImGuiUtils::DragDestination("Material", ".physmat3d", component.Material);
 				if (material != 0)
 					component.Material = material;
@@ -721,12 +717,22 @@ namespace Debut
 				ImGuiUtils::DragFloat("Radius", &component.Radius, 0.01f);
 				ImGuiUtils::RGBVec3("Offset", { "X", "Y", "Z" }, { &component.Offset.x, &component.Offset.y, &component.Offset.z });
 
-				ImGui::Dummy({ 0.0f, 10.0f });
-				ImGui::Separator();
-				ImGui::Dummy({ 0.0f, 10.0f });
+				ImGuiUtils::Separator();
+
 				UUID material = ImGuiUtils::DragDestination("Material", ".physmat3d", component.Material);
 				if (material != 0)
 					component.Material = material;
+			});
+
+		DrawComponent<MeshCollider3DComponent>("Mesh Collider 3D", entity, [](auto& component)
+			{
+				ImGuiUtils::RGBVec3("Offset", { "X", "Y", "Z" }, { &component.Offset.x, &component.Offset.y, &component.Offset.z });
+				UUID mesh = ImGuiUtils::DragDestination("Mesh", ".mesh", component.Mesh);
+				if (mesh != 0)
+				{
+					component.SetPoints(AssetManager::Request<Mesh>(mesh)->GetPositions());
+					component.Mesh = mesh;
+				}
 			});
 
 		DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component)
