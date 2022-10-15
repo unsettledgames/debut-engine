@@ -77,10 +77,7 @@ namespace Debut
 		if (entity.HasComponent<MeshRendererComponent>())
 		{
 			MeshRendererComponent& meshRenderer = entity.GetComponent<MeshRendererComponent>();
-			Ref<Mesh> mesh = AssetManager::Request<Mesh>(meshRenderer.Mesh);
-
-			sc3d.SetPoints(mesh->GetPositions());
-			sc3d.Mesh = mesh->GetID();
+			sc3d.Mesh = meshRenderer.Mesh;
 		}
 	}
 	template<>
@@ -473,6 +470,14 @@ namespace Debut
 				SphereCollider3DComponent& collider = entity.GetComponent<SphereCollider3DComponent>();
 				BodyID* body = m_PhysicsSystem3D->CreateSphereColliderBody(collider, component, transform);
 				
+				component.RuntimeBody = (void*)body;
+				component.ShapeOffset = collider.Offset;
+			}
+			else if (entity.HasComponent<MeshCollider3DComponent>())
+			{
+				MeshCollider3DComponent& collider = entity.GetComponent<MeshCollider3DComponent>();
+				BodyID* body = m_PhysicsSystem3D->CreateMeshColliderBody(collider, component, transform);
+
 				component.RuntimeBody = (void*)body;
 				component.ShapeOffset = collider.Offset;
 			}

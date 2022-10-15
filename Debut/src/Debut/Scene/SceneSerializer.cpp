@@ -153,6 +153,7 @@ namespace Debut
 	{
 		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
 		out << YAML::Key << "Mesh" << YAML::Value << c.Mesh;
+		out << YAML::Key << "Material" << YAML::Value << c.Material;
 	}
 
 	static void SerializeComponent(const SphereCollider3DComponent& c, YAML::Emitter& out)
@@ -348,10 +349,7 @@ namespace Debut
 		
 		mesh.Offset = in["Offset"].as<glm::vec3>();
 		mesh.Mesh = in["Mesh"].as<uint64_t>();
-
-		Ref<Mesh> meshAsset = AssetManager::Request<Mesh>(mesh.Mesh);
-		if (meshAsset != nullptr)
-			mesh.SetPoints(meshAsset->GetPositions());
+		mesh.Material = in["Material"].as<uint64_t>();
 	}
 
 	template<>

@@ -3,6 +3,7 @@
 
 #include <Debut/Scene/Components.h>
 
+#include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Rendering/Structures/VertexArray.h>
 #include <Debut/Rendering/Structures/Buffer.h>
 
@@ -198,6 +199,28 @@ namespace Debut
 				glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 			currentAngle += angleIncrease;
 		}
+	}
+
+	void RendererDebug::DrawMesh(UUID& mesh, const glm::vec3& offset, glm::mat4& transform)
+	{
+		Ref<Mesh> meshAsset = AssetManager::Request<Mesh>(mesh);
+		if (meshAsset == nullptr)
+			return;
+		std::vector<float>& vertices = meshAsset->GetPositions();
+		std::vector<int>& indices = meshAsset->GetIndices();
+
+		std::vector<glm::vec3> transformedVertices;
+		glm::vec3 transformedOffset = glm::mat4(glm::mat3(transform)) * glm::vec4(offset, 1.0f);
+		transformedVertices.resize(vertices.size() / 3);
+
+		for (uint32_t i = 0; i < vertices.size(); i+=3)
+			transformedVertices[i / 3] = transform * glm::vec4(vertices[i], vertices[i + 1], vertices[i + 2], 1.0f);
+
+		for (uint32_t i = 0; i < indices.size(); i += 3)
+			for (uint32_t j = 0; j < 3; j++)
+				DrawLine(transformedVertices[indices[i + j]] + transformedOffset, 
+					transformedVertices[indices[i + (j + 1)%3]] + transformedOffset,
+					glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), false);
 	}
 	
 	void RendererDebug::FlushLines()

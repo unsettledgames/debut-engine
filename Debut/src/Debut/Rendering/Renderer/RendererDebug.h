@@ -10,6 +10,7 @@ namespace Debut
 	class VertexBuffer;
 
 	class Shader;
+	class UUID;
 	class Camera;
 
 	struct LineVertex
@@ -62,6 +63,7 @@ namespace Debut
 		static void DrawPoint(const glm::vec3& p0, const glm::vec4& color);
 		static void DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec2& offset, const glm::vec4& color, bool highlightVertices = false);
 		static void DrawCircle(float radius, const glm::vec3 center,  glm::mat4& transform, float iterations);
+		static void DrawMesh(UUID& mesh, const glm::vec3& offset, glm::mat4& transform);
 
 		static void DrawSphere(float radius, const glm::vec3& center, const glm::vec3& trans, const glm::vec3& rot,
 			const glm::vec3& scale, const glm::mat4 cameraView);

@@ -500,10 +500,9 @@ namespace Debut
 	struct MeshCollider3DComponent : Collider3DComponent
 	{
 		UUID Mesh = 0;
-		glm::vec3 Offset = glm::vec3(0.0f);
-		std::vector<float> Vertices;
+		UUID Material = 0;
 
-		void SetPoints(const std::vector<float>& positions) { Vertices = positions; }
+		glm::vec3 Offset = glm::vec3(0.0f);
 
 		MeshCollider3DComponent() { Type = ColliderType::Mesh; }
 		MeshCollider3DComponent(const MeshCollider3DComponent&) = default;

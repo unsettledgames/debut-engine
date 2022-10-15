@@ -729,10 +729,11 @@ namespace Debut
 				ImGuiUtils::RGBVec3("Offset", { "X", "Y", "Z" }, { &component.Offset.x, &component.Offset.y, &component.Offset.z });
 				UUID mesh = ImGuiUtils::DragDestination("Mesh", ".mesh", component.Mesh);
 				if (mesh != 0)
-				{
-					component.SetPoints(AssetManager::Request<Mesh>(mesh)->GetPositions());
 					component.Mesh = mesh;
-				}
+				UUID material = ImGuiUtils::DragDestination("Material", ".physmat3d", component.Material);
+				if (material != 0)
+					component.Material = material;
+				
 			});
 
 		DrawComponent<DirectionalLightComponent>("Directional Light", entity, [](auto& component)

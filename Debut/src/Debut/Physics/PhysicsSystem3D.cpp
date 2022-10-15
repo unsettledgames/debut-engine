@@ -2,6 +2,7 @@
 
 #include <Debut/Scene/Components.h>
 #include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Physics/PhysicsMaterial3D.h>
 #include <Debut/Physics/PhysicsSystem3D.h>
 
@@ -12,6 +13,7 @@
 #include <Jolt/Physics/PhysicsSettings.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
+#include <Jolt/Physics/Collision/Shape/MeshShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
 using namespace JPH;
@@ -197,6 +199,47 @@ namespace Debut
 
 		return CreateBody(shape, physicsMaterial, rb, pos, rot, isStatic ? EMotionType::Static : EMotionType::Dynamic,
 			isStatic ? Layers::NON_MOVING : Layers::MOVING);
+	}
+
+	BodyID* PhysicsSystem3D::CreateMeshColliderBody(const MeshCollider3DComponent& collider, const Rigidbody3DComponent& rb,
+		const TransformComponent& transform)
+	{
+		Ref<PhysicsMaterial3D> physicsMaterial = AssetManager::Request<PhysicsMaterial3D>(collider.Material);
+		Ref<Mesh> mesh = AssetManager::Request<Mesh>(collider.Mesh);
+
+		glm::vec3 offset = glm::mat4(glm::quat(transform.Rotation)) * glm::vec4(transform.Scale * collider.Offset, 1.0f);
+		glm::vec3 startPos = transform.Translation;
+		glm::vec3 startRot = transform.Rotation;
+
+		Vec3Arg pos = { startPos.x + offset.x, startPos.y + offset.y, startPos.z + offset.z };
+		QuatArg rot = Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z });
+
+		VertexList vertices;
+		IndexedTriangleList triangles;
+
+		auto& meshVerts = mesh->GetPositions();
+		auto& meshIndices = mesh->GetIndices();
+
+		if (mesh != nullptr)
+		{
+			vertices.resize(meshVerts.size() / 3);
+			// SPAGHETTI
+			memcpy(vertices.data(), meshVerts.data(), meshVerts.size() * sizeof(float));
+
+			triangles.resize(meshIndices.size() / 3);
+			for (uint32_t i = 0; i < meshIndices.size(); i += 3)
+			{
+				triangles[i / 3].mIdx[0] = meshIndices[i];
+				triangles[i / 3].mIdx[1] = meshIndices[i+1];
+				triangles[i / 3].mIdx[2] = meshIndices[i+2];
+			}
+		}
+
+		MeshShapeSettings settings(vertices, triangles);
+		Shape::ShapeResult out;
+		MeshShape* shape = new MeshShape(settings, out);
+
+		return CreateBody(shape, physicsMaterial, rb, pos, rot, EMotionType::Static, Layers::NON_MOVING);
 	}
 
 	PhysicsSystem3D::~PhysicsSystem3D()
