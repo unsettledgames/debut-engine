@@ -4,6 +4,7 @@
 #include "Debut/Utils/CppUtils.h"
 #include <Debut/Utils/YamlUtils.h>
 #include <Debut/Scene/Scene.h>
+#include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Rendering/Resources/Skybox.h>
 #include <yaml-cpp/yaml.h>
 
@@ -21,14 +22,18 @@ namespace Debut
 			return "";
 		}
 	}
-	static Rigidbody2DComponent::BodyType StringToRb2DType(const std::string& type)
+
+	static std::string Rb3DTypeToString(Rigidbody3DComponent::BodyType type)
 	{
-		if (type == "Static") return Rigidbody2DComponent::BodyType::Static;
-		if (type == "Dynamic") return Rigidbody2DComponent::BodyType::Dynamic;
-		if (type == "Kinematic") return Rigidbody2DComponent::BodyType::Kinematic;
-		
-		DBT_CORE_ASSERT(false, "Unknown body type {0}", type);
-		return Rigidbody2DComponent::BodyType::Static;
+		switch (type)
+		{
+		case Rigidbody3DComponent::BodyType::Static: return "Static";
+		case Rigidbody3DComponent::BodyType::Dynamic: return "Dynamic";
+		case Rigidbody3DComponent::BodyType::Kinematic: return "Kinematic";
+		default:
+			DBT_CORE_ASSERT(false, "Unknown body type {0}", (int)type);
+			return "";
+		}
 	}
 	
 
@@ -102,12 +107,19 @@ namespace Debut
 		out << YAML::Key << "FixedRotation" << YAML::Value << c.FixedRotation;
 	}
 
+	static void SerializeComponent(const Rigidbody3DComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Type" << YAML::Value << Rb3DTypeToString(c.Type);
+		out << YAML::Key << "GravityFactor" << YAML::Value << c.GravityFactor;
+		out << YAML::Key << "Mass" << YAML::Value << c.Mass;
+	}
+
 	static void SerializeComponent(const BoxCollider2DComponent& c, YAML::Emitter& out)
 	{
 		out << YAML::Key << "Size" << YAML::Value << c.Size;
 		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
 
-		out << YAML::Key << "Material"  << YAML::Value << c.Material;
+		out << YAML::Key << "Material" << YAML::Value << c.Material;
 	}
 
 	static void SerializeComponent(const CircleCollider2DComponent& c, YAML::Emitter& out)
@@ -127,6 +139,27 @@ namespace Debut
 			out << point;
 
 		out << YAML::EndSeq;
+		out << YAML::Key << "Material" << YAML::Value << c.Material;
+	}
+
+	static void SerializeComponent(const BoxCollider3DComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Size" << YAML::Value << c.Size;
+		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
+		out << YAML::Key << "Material" << YAML::Value << c.Material;
+	}
+
+	static void SerializeComponent(const MeshCollider3DComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
+		out << YAML::Key << "Mesh" << YAML::Value << c.Mesh;
+		out << YAML::Key << "Material" << YAML::Value << c.Material;
+	}
+
+	static void SerializeComponent(const SphereCollider3DComponent& c, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Radius" << YAML::Value << c.Radius;
+		out << YAML::Key << "Offset" << YAML::Value << c.Offset;
 		out << YAML::Key << "Material" << YAML::Value << c.Material;
 	}
 
@@ -188,6 +221,7 @@ namespace Debut
 		cc.Camera.SetPerspFOV(in["CameraData"]["PerspFOV"].as<float>());
 		cc.Camera.SetNearPlane(in["CameraData"]["PerspNear"].as<float>());
 		cc.Camera.SetFarPlane(in["CameraData"]["PerspFar"].as<float>());
+		cc.Camera.SetViewportSize(scene->GetViewportSize().x, scene->GetViewportSize().y);
 
 		cc.Camera.SetProjectionType((SceneCamera::ProjectionType)in["CameraData"]["ProjectionType"].as<int>());
 	}
@@ -221,7 +255,18 @@ namespace Debut
 			return;
 		Rigidbody2DComponent& rb2d = e.AddComponent<Rigidbody2DComponent>();
 		rb2d.FixedRotation = in["FixedRotation"].as<bool>();
-		rb2d.Type = StringToRb2DType(in["Type"].as<std::string>());
+		rb2d.Type = Rigidbody2DComponent::StrToRigidbody2DType(in["Type"].as<std::string>());
+	}
+
+	template<>
+	static void DeserializeComponent<Rigidbody3DComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		Rigidbody3DComponent& rb3d = e.AddComponent<Rigidbody3DComponent>();
+		rb3d.Type = Rigidbody3DComponent::StrToRigidbody3DType(in["Type"].as<std::string>());
+		rb3d.GravityFactor = in["GravityFactor"] ? in["GravityFactor"].as<float>() : 1.0f;
+		rb3d.Mass = in["Mass"] ? in["Mass"].as<float>() : 1.0f;
 	}
 
 	template<>
@@ -272,6 +317,42 @@ namespace Debut
 	}
 
 	template<>
+	static void DeserializeComponent<BoxCollider3DComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		BoxCollider3DComponent& bc3d = e.AddComponent<BoxCollider3DComponent>();
+
+		bc3d.Offset = in["Offset"].as<glm::vec3>();
+		bc3d.Size = in["Size"].as<glm::vec3>();
+		bc3d.Material = in["Material"] ? in["Material"].as<uint64_t>() : 0;
+	}
+
+	template<>
+	static void DeserializeComponent<SphereCollider3DComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		SphereCollider3DComponent& bc3d = e.AddComponent<SphereCollider3DComponent>();
+
+		bc3d.Offset = in["Offset"].as<glm::vec3>();
+		bc3d.Radius = in["Radius"].as<float>();
+		bc3d.Material = in["Material"] ? in["Material"].as<uint64_t>() : 0;
+	}
+
+	template<>
+	static void DeserializeComponent<MeshCollider3DComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		MeshCollider3DComponent& mesh = e.AddComponent<MeshCollider3DComponent>();
+		
+		mesh.Offset = in["Offset"].as<glm::vec3>();
+		mesh.Mesh = in["Mesh"].as<uint64_t>();
+		mesh.Material = in["Material"].as<uint64_t>();
+	}
+
+	template<>
 	static void DeserializeComponent<DirectionalLightComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in)
@@ -307,10 +388,18 @@ namespace Debut
 		SerializeComponent<CameraComponent>(entity, "CameraComponent", out);
 		SerializeComponent<SpriteRendererComponent>(entity, "SpriteRendererComponent", out);
 		SerializeComponent<MeshRendererComponent>(entity, "MeshRendererComponent", out);
+
 		SerializeComponent<Rigidbody2DComponent>(entity, "Rigidbody2DComponent", out);
+		SerializeComponent<Rigidbody3DComponent>(entity, "Rigidbody3DComponent", out);
+
 		SerializeComponent<BoxCollider2DComponent>(entity, "BoxCollider2DComponent", out);
 		SerializeComponent<CircleCollider2DComponent>(entity, "CircleCollider2DComponent", out);
 		SerializeComponent<PolygonCollider2DComponent>(entity, "PolygonCollider2DComponent", out);
+
+		SerializeComponent<BoxCollider3DComponent>(entity, "BoxCollider3DComponent", out);
+		SerializeComponent<SphereCollider3DComponent>(entity, "SphereCollider3DComponent", out);
+		SerializeComponent<MeshCollider3DComponent>(entity, "MeshCollider3DComponent", out);
+
 		SerializeComponent<DirectionalLightComponent>(entity, "DirectionalLightComponent", out);
 		SerializeComponent<PointLightComponent>(entity, "PointLightComponent", out);
 
@@ -395,13 +484,21 @@ namespace Debut
 
 		// Deserialize the other components
 		DeserializeComponent<TransformComponent>(entity, yamlEntity["TransformComponent"], m_Scene);
-		DeserializeComponent<CameraComponent>(entity, yamlEntity["CameraComponent"]);
+		DeserializeComponent<CameraComponent>(entity, yamlEntity["CameraComponent"], m_Scene);
 		DeserializeComponent<SpriteRendererComponent>(entity, yamlEntity["SpriteRendererComponent"]);
 		DeserializeComponent<MeshRendererComponent>(entity, yamlEntity["MeshRendererComponent"]);
+
 		DeserializeComponent<Rigidbody2DComponent>(entity, yamlEntity["Rigidbody2DComponent"]);
+		DeserializeComponent<Rigidbody3DComponent>(entity, yamlEntity["Rigidbody3DComponent"]);
+		
 		DeserializeComponent<BoxCollider2DComponent>(entity, yamlEntity["BoxCollider2DComponent"]);
 		DeserializeComponent<PolygonCollider2DComponent>(entity, yamlEntity["PolygonCollider2DComponent"]);
 		DeserializeComponent<CircleCollider2DComponent>(entity, yamlEntity["CircleCollider2DComponent"]);
+
+		DeserializeComponent<BoxCollider3DComponent>(entity, yamlEntity["BoxCollider3DComponent"]);
+		DeserializeComponent<SphereCollider3DComponent>(entity, yamlEntity["SphereCollider3DComponent"]);
+		DeserializeComponent<MeshCollider3DComponent>(entity, yamlEntity["MeshCollider3DComponent"]);
+
 		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
 		DeserializeComponent<DirectionalLightComponent>(entity, yamlEntity["DirectionalLightComponent"]);
 		DeserializeComponent<PointLightComponent>(entity, yamlEntity["PointLightComponent"]);

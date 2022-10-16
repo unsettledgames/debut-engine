@@ -12,8 +12,6 @@ namespace Debut
 {
 	struct PhysicsColliderSelection
 	{
-		ColliderType ColliderType = ColliderType::None;
-		
 		Entity SelectedEntity;
 		glm::vec3 SelectedPoint = {0,0,0};
 		glm::mat4 PointTransform = glm::mat4(1.0);

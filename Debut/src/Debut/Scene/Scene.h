@@ -17,6 +17,7 @@ namespace Debut
 
 	class Camera;
 	class Skybox;
+	class PhysicsSystem3D;
 
 	class Scene
 	{
@@ -46,6 +47,7 @@ namespace Debut
 		inline Ref<Skybox> GetSkybox() { return m_Skybox; }
 		inline glm::vec3 GetAmbientLight() { return m_AmbientLight; }
 		inline float GetAmbientLightIntensity() { return m_AmbientLightIntensity; }
+		inline glm::vec2 GetViewportSize() { return { m_ViewportWidth, m_ViewportHeight }; }
 
 		void SetSkybox(UUID path);
 		inline void SetAmbientLight(glm::vec3 light) { m_AmbientLight = light; }
@@ -66,6 +68,7 @@ namespace Debut
 		
 		// Physics
 		b2World* m_PhysicsWorld2D = nullptr;		
+		PhysicsSystem3D* m_PhysicsSystem3D = nullptr;
 
 		// Lighting
 		Ref<Skybox> m_Skybox;

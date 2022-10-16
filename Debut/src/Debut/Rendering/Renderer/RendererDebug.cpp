@@ -1,6 +1,9 @@
 #include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Rendering/Renderer/RenderCommand.h>
 
+#include <Debut/Scene/Components.h>
+
+#include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Rendering/Structures/VertexArray.h>
 #include <Debut/Rendering/Structures/Buffer.h>
 
@@ -13,7 +16,7 @@ namespace Debut
 
 	void RendererDebug::Init()
 	{
-		RenderCommand::SetLineWidth(2.0f);
+		RenderCommand::SetLineWidth(1.0f);
 		RenderCommand::SetPointSize(12.0f);
 
 		BufferLayout layout = {
@@ -151,6 +154,75 @@ namespace Debut
 		DrawLine(bottomLeft, bottomRight, color);
 	}
 
+	void RendererDebug::DrawCircle(float radius, const glm::vec3 center, glm::mat4& transform, float iterations)
+	{
+		float angleIncrease = glm::radians(360.0f) / iterations;
+		float currentAngle = 0;
+		glm::vec3 scale = glm::vec3(glm::compMin(glm::vec3(transform[0][0], transform[1][1], transform[2][2])));
+
+		// Use lines to approximate a circle
+		for (uint32_t i = 0; i < iterations; i++)
+		{
+			RendererDebug::DrawLine(
+				glm::vec3(transform * glm::vec4(center + radius * glm::vec3(glm::cos(currentAngle), 
+					glm::sin(currentAngle), 0.0f), 1.0f)),
+				glm::vec3(transform * glm::vec4(center + radius * glm::vec3(glm::cos(currentAngle + angleIncrease),
+					glm::sin(currentAngle + angleIncrease), 0.0f), 1.0f)),
+				glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+			currentAngle += angleIncrease;
+		}
+	}
+
+	void RendererDebug::DrawSphere(float radius, const glm::vec3& center, const glm::vec3& trans, const glm::vec3& rot,
+		const glm::vec3& scale, const glm::mat4 cameraView)
+	{
+		float nIterations = 40;
+		float angleIncrease = glm::radians(360.0f) / nIterations;
+		float currentAngle = 0;
+		glm::mat4 inverseView = glm::inverse(cameraView);
+
+		// Create camera space
+		glm::vec3 normal = glm::normalize(glm::vec3(inverseView * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
+		glm::vec3 tangent = glm::normalize(glm::vec3(inverseView * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f)));
+		glm::vec3 bitangent = glm::normalize(glm::vec3(inverseView * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+		glm::mat4 cameraTangent = glm::mat4(glm::vec4(bitangent, 0.0f), glm::vec4(tangent, 0.0f), glm::vec4(normal, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		cameraTangent = glm::mat4(glm::mat3(cameraTangent));
+		glm::vec3 rotatedCenter = glm::mat4(glm::quat(rot)) * glm::vec4(center, 1.0f);
+		// Use lines to approximate a circle
+		for (uint32_t i = 0; i < nIterations; i++)
+		{
+			RendererDebug::DrawLine(
+				trans + rotatedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius * glm::compMin(scale) * 
+					glm::vec3(glm::cos(currentAngle), glm::sin(currentAngle), 0.0f), 1.0f))),
+				trans + rotatedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius * glm::compMin(scale) *
+					glm::vec3(glm::cos(currentAngle + angleIncrease), glm::sin(currentAngle + angleIncrease), 0.0f), 1.0f))),
+				glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+			currentAngle += angleIncrease;
+		}
+	}
+
+	void RendererDebug::DrawMesh(UUID& mesh, const glm::vec3& offset, glm::mat4& transform)
+	{
+		Ref<Mesh> meshAsset = AssetManager::Request<Mesh>(mesh);
+		if (meshAsset == nullptr)
+			return;
+		std::vector<float>& vertices = meshAsset->GetPositions();
+		std::vector<int>& indices = meshAsset->GetIndices();
+
+		std::vector<glm::vec3> transformedVertices;
+		glm::vec3 transformedOffset = glm::mat4(glm::mat3(transform)) * glm::vec4(offset, 1.0f);
+		transformedVertices.resize(vertices.size() / 3);
+
+		for (uint32_t i = 0; i < vertices.size(); i+=3)
+			transformedVertices[i / 3] = transform * glm::vec4(vertices[i], vertices[i + 1], vertices[i + 2], 1.0f);
+
+		for (uint32_t i = 0; i < indices.size(); i += 3)
+			for (uint32_t j = 0; j < 3; j++)
+				DrawLine(transformedVertices[indices[i + j]] + transformedOffset, 
+					transformedVertices[indices[i + (j + 1)%3]] + transformedOffset,
+					glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), false);
+	}
+	
 	void RendererDebug::FlushLines()
 	{
 		// Render on top 

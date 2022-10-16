@@ -25,3 +25,6 @@
 [submodule "Debut/vendor/imgui"]
 	path = Debut/vendor/imgui
 	url = https://github.com/unsettledgames/imgui
+[submodule "Debut/vendor/jolt-physics"]
+	path = Debut/vendor/jolt-physics
+	url = https://github.com/unsettledgames/JoltPhysics

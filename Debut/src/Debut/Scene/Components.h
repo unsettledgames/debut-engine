@@ -33,8 +33,14 @@
 
 namespace Debut
 {
-	enum class ColliderType { Circle2D = 0, Box2D, Polygon, None, Box, Sphere, Mesh };
+	// TODO: split 2Dcollidertype and 3Dcollidertype
+	enum class ColliderType { Circle2D = 0, Box2D, Polygon, None, Box, Sphere, Terrain, Mesh };
 	struct Collider2DComponent
+	{
+		ColliderType Type;
+	};
+
+	struct Collider3DComponent
 	{
 		ColliderType Type;
 	};
@@ -126,8 +132,6 @@ namespace Debut
 		}
 	};
 
-	// GEOMETRY
-
 	struct CameraComponent
 	{
 		Debut::SceneCamera Camera;
@@ -137,6 +141,9 @@ namespace Debut
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
 	};
+
+
+	// GEOMETRY
 
 	struct SpriteRendererComponent
 	{
@@ -199,6 +206,30 @@ namespace Debut
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
 
 		static BodyType StrToRigidbody2DType(const std::string& type)
+		{
+			if (type == "Static") return BodyType::Static;
+			if (type == "Dynamic") return BodyType::Dynamic;
+			if (type == "Kinematic") return BodyType::Kinematic;
+
+			return BodyType::Dynamic;
+		}
+	};
+
+	struct Rigidbody3DComponent
+	{
+		enum class BodyType { Static = 0, Dynamic, Kinematic };
+		BodyType Type;
+
+		float Mass = 1.0f;
+		float GravityFactor = 1.0f;
+		glm::vec3 ShapeOffset;
+
+		void* RuntimeBody = nullptr;
+
+		Rigidbody3DComponent() = default;
+		Rigidbody3DComponent(const Rigidbody3DComponent&) = default;
+
+		static BodyType StrToRigidbody3DType(const std::string& type)
 		{
 			if (type == "Static") return BodyType::Static;
 			if (type == "Dynamic") return BodyType::Dynamic;
@@ -360,6 +391,121 @@ namespace Debut
 			Indices = MathUtils::Triangulate(Points);
 		}
 		PolygonCollider2DComponent(const PolygonCollider2DComponent&) = default;
+	};
+
+	struct BoxCollider3DComponent : Collider3DComponent
+	{
+		glm::vec3 Size = glm::vec3(1.0f);
+		glm::vec3 Offset = glm::vec3(0.0f);
+		UUID Material = 0;
+
+		void SetPoint(const std::string& label, const glm::vec3 newPoint)
+		{
+			glm::vec3 hSize = Size / 2.0f;
+			glm::vec3 mults;
+
+			// + + +
+			if (label == "0")
+				mults = { 1.0f, 1.0f, 1.0f };
+			// - + +
+			else if (label == "1")
+				mults = { -1.0f, 1.0f, 1.0f };
+			// + - +
+			else if (label == "2")
+				mults = { 1.0f, -1.0f, 1.0f };
+			// - - +
+			else if (label == "3")
+				mults = { -1.0f, -1.0f, 1.0f };
+			// + + -
+			else if (label == "4")
+				mults = { 1.0f, 1.0f, -1.0f };
+			// - + -
+			else if (label == "5")
+				mults = { -1.0f, 1.0f, -1.0f };
+			// + - -
+			else if (label == "6")
+				mults = { 1.0f, -1.0f, -1.0f };
+			// - - -
+			else if (label == "7")
+				mults = { -1.0f, -1.0f, -1.0f };
+
+			glm::vec3 current = Offset + hSize * mults;
+			glm::vec3 diff = newPoint - current;
+			glm::vec3 sizeDiff = diff * mults;
+
+			Size += sizeDiff;
+			Offset += diff / 2.0f;
+		}
+
+		BoxCollider3DComponent() { Type = ColliderType::Box; }
+		BoxCollider3DComponent(const BoxCollider3DComponent&) = default;
+	};
+
+	struct SphereCollider3DComponent : Collider3DComponent
+	{
+		float Radius = 1.0f;
+		glm::vec3 Offset = glm::vec3(0.0f);
+		UUID Material = 0;
+
+		void SetPoint(const std::string& label, const glm::vec3 newPoint)
+		{
+			if (label == "Top")
+			{
+				glm::vec3 current = Offset + glm::vec3(0.0f, Radius, 0.0f);
+				glm::vec3 diff = (newPoint - current) / 2.0f;
+				Radius += diff.y;
+				Offset += glm::vec3(0.0f, diff.y, 0.0f);
+			}
+			else if (label == "Down")
+			{
+				glm::vec3 current = Offset + glm::vec3(0.0f, -Radius, 0.0f);
+				glm::vec3 diff = (newPoint - current) / 2.0f;
+				Radius += -diff.y;
+				Offset += glm::vec3(0.0f, diff.y, 0.0f);
+			}
+			else if (label == "Left")
+			{
+				glm::vec3 current = Offset + glm::vec3(-Radius, 0.0f, 0.0f);
+				glm::vec3 diff = (newPoint - current) / 2.0f;
+				Radius += -diff.x;
+				Offset += glm::vec3(diff.x, 0.0f, 0.0f);
+			}
+			else if (label == "Right")
+			{
+				glm::vec3 current = Offset + glm::vec3(Radius, 0.0f, 0.0f);
+				glm::vec3 diff = (newPoint - current) / 2.0f;
+				Radius += diff.x;
+				Offset += glm::vec3(diff.x, 0.0f, 0.0f);
+			}
+			else if (label == "Front")
+			{
+				glm::vec3 current = Offset + glm::vec3(0.0f, 0.0f, Radius);
+				glm::vec3 diff = (newPoint - current) / 2.0f;
+				Radius += diff.z;
+				Offset += glm::vec3(0.0f, 0.0f, diff.z);
+			}
+			else if (label == "Bottom")
+			{
+				glm::vec3 current = Offset + glm::vec3(0.0f, 0.0f, -Radius);
+				glm::vec3 diff = (newPoint - current) / 2.0f;
+				Radius += -diff.z;
+				Offset += glm::vec3(0.0f, 0.0f, diff.z);
+			}
+		}
+
+		SphereCollider3DComponent() { Type = ColliderType::Sphere; }
+		SphereCollider3DComponent(const SphereCollider3DComponent&) = default;
+	};
+
+	struct MeshCollider3DComponent : Collider3DComponent
+	{
+		UUID Mesh = 0;
+		UUID Material = 0;
+
+		glm::vec3 Offset = glm::vec3(0.0f);
+
+		MeshCollider3DComponent() { Type = ColliderType::Mesh; }
+		MeshCollider3DComponent(const MeshCollider3DComponent&) = default;
 	};
 
 	// SCRIPT

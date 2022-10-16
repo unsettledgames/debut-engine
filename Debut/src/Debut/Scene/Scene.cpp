@@ -9,6 +9,7 @@
 #include "Debut/Rendering/Renderer/Renderer3D.h"
 #include "Debut/AssetManager/AssetManager.h"
 #include <Debut/Physics/PhysicsMaterial2D.h>
+#include <Debut/Physics/PhysicsSystem3D.h>
 #include <Debut/Rendering/Resources/Skybox.h>
 
 #include "box2d/b2_world.h"
@@ -38,6 +39,7 @@ namespace Debut
 
 	Scene::~Scene()
 	{
+		delete m_PhysicsSystem3D;
 	}
 
 	template<typename T>
@@ -57,11 +59,27 @@ namespace Debut
 	template<>
 	void Scene::OnComponentAdded(Rigidbody2DComponent& rb2d, Entity entity) { }
 	template<>
+	void Scene::OnComponentAdded(Rigidbody3DComponent& rb3d, Entity entity) { }
+	template<>
 	void Scene::OnComponentAdded(BoxCollider2DComponent& bc2d, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(PolygonCollider2DComponent& pc2d, Entity entity) {}
 	template<>
 	void Scene::OnComponentAdded(CircleCollider2DComponent& bc2d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(BoxCollider3DComponent& bc3d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(SphereCollider3DComponent& sc3d, Entity entity) { }
+	template<>
+	void Scene::OnComponentAdded(MeshCollider3DComponent& sc3d, Entity entity)
+	{
+		// Automatically add the mesh if the object has a mesh renderer
+		if (entity.HasComponent<MeshRendererComponent>())
+		{
+			MeshRendererComponent& meshRenderer = entity.GetComponent<MeshRendererComponent>();
+			sc3d.Mesh = meshRenderer.Mesh;
+		}
+	}
 	template<>
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
 	template<>
@@ -214,6 +232,26 @@ namespace Debut
 			}
 		}
 
+		// Update 3D physics
+		{
+			DBT_PROFILE_SCOPE("Scene: Physics3D update");
+			// Step the world
+			m_PhysicsSystem3D->Step(ts);
+
+			// Stuff moved, update the transforms to reflect that
+			auto view = m_Registry.view<Rigidbody3DComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				Rigidbody3DComponent& body = entity.GetComponent<Rigidbody3DComponent>();
+				TransformComponent& transform = entity.Transform();
+
+				m_PhysicsSystem3D->UpdateBody(entity.Transform(), body, *((BodyID*)body.RuntimeBody));
+				transform.Translation -= glm::vec3(glm::mat4(glm::quat(transform.Rotation)) *
+					glm::vec4(transform.Scale * body.ShapeOffset, 1.0f));
+			}
+		}
+
 		// Render sprites
 
 		// Find the main camera of the scene
@@ -287,15 +325,16 @@ namespace Debut
 	void Scene::OnRuntimeStart()
 	{
 		// SETUP PHYSICS!
+		Physics3DSettings defaultSettings;
 		// TODO: physics settings
 		m_PhysicsWorld2D = new b2World({b2Vec2(0.0f, -9.8f)});
-		auto rigidbodyView = m_Registry.view<Rigidbody2DComponent>();
-		auto boxView = m_Registry.view<BoxCollider2DComponent>();
-		auto circleView = m_Registry.view<CircleCollider2DComponent>();
-		auto polygonView = m_Registry.view<PolygonCollider2DComponent>();
+		m_PhysicsSystem3D = new PhysicsSystem3D(defaultSettings);
+
+		auto rigidbodyView2D = m_Registry.view<Rigidbody2DComponent>();
+		auto rigidbodyView3D = m_Registry.view<Rigidbody3DComponent>();
 
 		// Create Rigidbodies
-		for (auto e : rigidbodyView)
+		for (auto e : rigidbodyView2D)
 		{
 			Entity entity = { e, this };
 			auto& transform = entity.Transform();
@@ -408,12 +447,52 @@ namespace Debut
 				}
 			}
 		}
+
+		// Create 3D rigidbodies
+		for (auto e : rigidbodyView3D)
+		{
+			Entity entity = { e, this };
+			auto& transform = entity.Transform();
+			Rigidbody3DComponent& component = entity.GetComponent<Rigidbody3DComponent>();
+
+			// Create the actual body
+			if (entity.HasComponent<BoxCollider3DComponent>())
+			{
+				BoxCollider3DComponent& collider = entity.GetComponent<BoxCollider3DComponent>();
+				BodyID* body = m_PhysicsSystem3D->CreateBoxColliderBody(collider, component, transform);
+				
+				// Save the body pointer
+				component.RuntimeBody = (void*)body;
+				component.ShapeOffset = collider.Offset;
+			}
+			else if (entity.HasComponent<SphereCollider3DComponent>())
+			{
+				SphereCollider3DComponent& collider = entity.GetComponent<SphereCollider3DComponent>();
+				BodyID* body = m_PhysicsSystem3D->CreateSphereColliderBody(collider, component, transform);
+				
+				component.RuntimeBody = (void*)body;
+				component.ShapeOffset = collider.Offset;
+			}
+			else if (entity.HasComponent<MeshCollider3DComponent>())
+			{
+				MeshCollider3DComponent& collider = entity.GetComponent<MeshCollider3DComponent>();
+				BodyID* body = m_PhysicsSystem3D->CreateMeshColliderBody(collider, component, transform);
+
+				component.RuntimeBody = (void*)body;
+				component.ShapeOffset = collider.Offset;
+			}
+		}
+
+		// Begin 3D physics simulation
+		m_PhysicsSystem3D->Begin();
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		delete m_PhysicsWorld2D;
 		m_PhysicsWorld2D = nullptr;
+
+		m_PhysicsSystem3D->End();
 	}
 
 	void Scene::DuplicateEntity(Entity& entity)
@@ -426,9 +505,13 @@ namespace Debut
 		CopyComponentIfExists<TransformComponent>(duplicate, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(duplicate, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(duplicate, entity);
+		CopyComponentIfExists<Rigidbody3DComponent>(duplicate, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<CircleCollider2DComponent>(duplicate, entity);
 		CopyComponentIfExists<PolygonCollider2DComponent>(duplicate, entity);
+		CopyComponentIfExists<BoxCollider3DComponent>(duplicate, entity);
+		CopyComponentIfExists<SphereCollider3DComponent>(duplicate, entity);
+		CopyComponentIfExists<MeshCollider3DComponent>(duplicate, entity);
 		CopyComponentIfExists<CameraComponent>(duplicate, entity);
 		CopyComponentIfExists<NativeScriptComponent>(duplicate, entity);
 		CopyComponentIfExists<MeshRendererComponent>(duplicate, entity);
@@ -514,9 +597,13 @@ namespace Debut
 		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<Rigidbody3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<PolygonCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<BoxCollider3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<SphereCollider3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<MeshCollider3DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<MeshRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);

@@ -41,10 +41,32 @@ set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE INTERNAL "" FORCE)
 configure_file("${PROJECT_SOURCE_DIR}/vendor/assimp/include/assimp/config.h.in" "${PROJECT_SOURCE_DIR}/vendor/assimp/include/assimp/config.h")
 configure_file("${PROJECT_SOURCE_DIR}/vendor/assimp/contrib/zlib/zconf.h.cmakein" "vendor/assimp/contrib/zlib/zconf.h")
 
+# Jolt Physics
+set(TARGET_UNIT_TESTS OFF CACHE INTERNAL "" FORCE)
+set(TARGET_HELLO_WORLD OFF CACHE INTERNAL "" FORCE)
+set(TARGET_PERFORMANCE_TEST OFF CACHE INTERNAL "" FORCE)
+set(TARGET_SAMPLES OFF CACHE INTERNAL "" FORCE)
+set(TARGET_VIEWER OFF CACHE INTERNAL "" FORCE)
+
 add_library(Debut STATIC ${Debut_SRC} ${Debut_EXT})
 
 set_property(TARGET Debut PROPERTY MSVC_RUNTIME_LIBRARY MultiThreaded)
 set_property(TARGET Debut PROPERTY CXX_STANDARD 17)
+
+
+# Define variables
+target_compile_definitions(Debut PUBLIC
+	GLFW_INCLUDE_NONE
+	_CRT_SECURE_NO_WARNINGS
+	YAML_CPP_STATIC_DEFINE
+	NOMINMAX
+	JPH_DISABLE_CUSTOM_ALLOCATOR
+)
+
+target_compile_definitions(Debut PUBLIC
+	$<$<CONFIG:Debug>:DBT_DEBUG=1>
+	$<$<CONFIG:Release>:DBT_RELEASE=1>
+)
 
 # Include dependencies
 add_subdirectory(vendor/glad)
@@ -57,6 +79,9 @@ add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/yaml-cpp)
 add_subdirectory(vendor/assimp)
 add_subdirectory(vendor/lz4/build/cmake)
+add_subdirectory(vendor/jolt-physics/Build)
+
+target_compile_definitions(Jolt PRIVATE JPH_DISABLE_CUSTOM_ALLOCATOR=1)
 
 
 # Link dependencies 
@@ -71,23 +96,9 @@ target_link_libraries(Debut
 	PUBLIC yaml-cpp
 	PUBLIC Dwmapi.dll
 	PUBLIC assimp
+	PUBLIC Jolt
 	PRIVATE lz4_static
 )
-
-# Define variables
-
-target_compile_definitions(Debut PUBLIC
-	GLFW_INCLUDE_NONE
-	_CRT_SECURE_NO_WARNINGS
-	YAML_CPP_STATIC_DEFINE
-	NOMINMAX
-)
-
-target_compile_definitions(Debut PUBLIC
-	$<$<CONFIG:Debug>:DBT_DEBUG=1>
-	$<$<CONFIG:Release>:DBT_RELEASE=1>
-)
-
 
 IF(WINDOWS_BUILD)
     ADD_DEFINITIONS(-DDBT_PLATFORM_WINDOWS)
@@ -106,6 +117,7 @@ target_include_directories(Debut
 	PUBLIC vendor/glm
 	PUBLIC vendor/entt/include
 	PUBLIC vendor/assimp/include
+	PUBLIC vendor/jolt-physics/Jolt/
 	PRIVATE vendor/lz4/lib
 	PRIVATE vendor/other
 )

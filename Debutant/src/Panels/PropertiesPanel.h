@@ -7,7 +7,7 @@ namespace Debut
 {
 	enum class AssetType
 	{
-		None, Mesh, Material, Texture2D, Skybox, Shader, PhysicsMaterial2D, Model
+		None, Mesh, Material, Texture2D, Skybox, Shader, PhysicsMaterial2D, PhysicsMaterial3D, Model
 	};
 
 	class PropertiesPanel
@@ -31,6 +31,7 @@ namespace Debut
 		void DrawSkyboxProperties();
 
 		void DrawPhysicsMaterial2DProperties();
+		void DrawPhysicsMaterial3DProperties();
 
 	private:
 		std::filesystem::path m_AssetPath = "";
