@@ -20,11 +20,11 @@ namespace Debut
 		SceneSerializer(Ref<Scene> scene) : m_Scene(scene){}
 		~SceneSerializer() {}
 
-		void SerializeText(const std::string& fileName, EntitySceneNode& sceneGraph);
+		void SerializeText(const std::string& fileName, EntitySceneNode& sceneGraph, YAML::Node& additionalData);
 		void SerializeBin(const std::string& name) {};
 		void SerializeEntity(EntitySceneNode& entity, YAML::Emitter& out);
 
-		EntitySceneNode* DeserializeText(const std::string& name);
+		EntitySceneNode* DeserializeText(const std::string& name, YAML::Node& additionalData);
 		bool DeserializeBin(const std::string& name) { return false; };
 		EntitySceneNode* DeserializeEntity(YAML::Node& node);
 

@@ -411,7 +411,7 @@ namespace Debut
 		out << YAML::EndMap;
 	}
 
-	void SceneSerializer::SerializeText(const std::string& fileName, EntitySceneNode& sceneGraph)
+	void SceneSerializer::SerializeText(const std::string& fileName, EntitySceneNode& sceneGraph, YAML::Node& additionalData)
 	{
 		YAML::Emitter out;
 		std::ofstream outFile(fileName);
@@ -419,6 +419,7 @@ namespace Debut
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled scene";
 		
+		out << YAML::Key << "AdditionalData" << YAML::Value << additionalData;
 		out << YAML::Key << "Lighting" << YAML::Value << YAML::BeginMap;
 		out << YAML::Key << "AmbientLightColor" << YAML::Value << m_Scene->GetAmbientLight();
 		out << YAML::Key << "AmbientLightIntensity" << YAML::Value << m_Scene->GetAmbientLightIntensity();
@@ -439,7 +440,7 @@ namespace Debut
 		outFile << out.c_str();
 	}
 
-	EntitySceneNode* SceneSerializer::DeserializeText(const std::string& fileName)
+	EntitySceneNode* SceneSerializer::DeserializeText(const std::string& fileName, YAML::Node& additionalData)
 	{
 		if (!CppUtils::String::EndsWith(fileName, ".debut"))
 			return nullptr;
@@ -453,6 +454,12 @@ namespace Debut
 
 		if (!in["Scene"])
 			return nullptr;
+
+		if (in["AdditionalData"])
+		{
+			additionalData = in["AdditionalData"];
+			additionalData["Valid"] = true;
+		}
 
 		auto entities = in["Entities"];
 		EntitySceneNode* sceneTree = new EntitySceneNode();

@@ -14,6 +14,8 @@
 #include <chrono>
 #include "Debut/ImGui/ImGuiUtils.h"
 #include <imgui_internal.h>
+#include <yaml-cpp/yaml.h>
+#include <Debut/Utils/YamlUtils.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -35,8 +37,6 @@
 *       - Creating a new material and then selecting it crashes the editor. The first shader isn't set the first time probably
 *       - Creating a new scene messes up the PhysicsSystem3D
 *   QOL:
-*       - Split hierarchy and inspector
-*       - Save scene camera position in scene
 *       - Visualize all collider button, both in game and editor mode
 *       - Add buttons for gizmo mode, add button for global / local gizmo
 *       - When adding a rigidbody add a default box collider and viceversa
@@ -987,6 +987,9 @@ namespace Debut
 
     void DebutantLayer::OpenScene(std::filesystem::path path)
     {
+        YAML::Node additionalData;
+        additionalData["Valid"] = false;
+
         if (m_SceneState != SceneState::Edit)
             OnSceneStop();
 
@@ -996,7 +999,7 @@ namespace Debut
         m_EditorScene->OnViewportResize(oldScene->GetViewportSize().x, oldScene->GetViewportSize().y);
 
         SceneSerializer ss(m_EditorScene);
-        EntitySceneNode* sceneHierarchy = ss.DeserializeText(path.string());
+        EntitySceneNode* sceneHierarchy = ss.DeserializeText(path.string(), additionalData);
 
         m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
         m_ScenePath = path.string();
@@ -1005,17 +1008,30 @@ namespace Debut
         m_SceneHierarchy.SetContext(m_ActiveScene);
         m_SceneHierarchy.LoadTree(sceneHierarchy);
         m_SceneHierarchy.RebuildSceneGraph();
+
+        if (additionalData["Valid"].as<bool>())
+        {
+            if (additionalData["EditorCameraPitch"])
+                m_EditorCamera.SetPitch(additionalData["EditorCameraPitch"].as<float>());
+            if (additionalData["EditorCameraYaw"])
+                m_EditorCamera.SetYaw(additionalData["EditorCameraYaw"].as<float>());
+            if (additionalData["EditorCameraFocalPoint"])
+                m_EditorCamera.SetFocalPoint(additionalData["EditorCameraFocalPoint"].as<glm::vec3>());
+            if (additionalData["EditorCameraDistance"])
+                m_EditorCamera.SetDistance(additionalData["EditorCameraDistance"].as<float>());
+        }
     }
 
     void DebutantLayer::SaveScene()
     {
-        if (m_ScenePath == "")
-        {
-            SaveSceneAs();
-            return;
-        }
+        YAML::Node additionalData;
+        additionalData["EditorCameraPitch"] = m_EditorCamera.GetPitch();
+        additionalData["EditorCameraYaw"] = m_EditorCamera.GetYaw();
+        additionalData["EditorCameraFocalPoint"] = m_EditorCamera.GetFocalPoint();
+        additionalData["EditorCameraDistance"] = m_EditorCamera.GetDistance();
+
         SceneSerializer ss(m_ActiveScene);
-        ss.SerializeText(m_ScenePath, *m_SceneHierarchy.GetSceneGraph());
+        ss.SerializeText(m_ScenePath, *m_SceneHierarchy.GetSceneGraph(), additionalData);
     }
 
     void DebutantLayer::SaveSceneAs()
@@ -1025,10 +1041,8 @@ namespace Debut
         {
             if (!CppUtils::String::EndsWith(path, ".debut"))
                 path += ".debut";
-            SceneSerializer ss(m_ActiveScene);
-            ss.SerializeText(path, *m_SceneHierarchy.GetSceneGraph());
-
             m_ScenePath = path;
+            SaveScene();
         }
     }
 }

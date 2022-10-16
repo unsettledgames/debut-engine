@@ -2,6 +2,7 @@
 
 #include <yaml-cpp/yaml.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace YAML
 {
@@ -87,6 +88,36 @@ namespace YAML
 
 			return true;
 		}
+	}; 
+	
+	template<>
+	struct convert<glm::quat>
+	{
+		static Node encode(const glm::quat& rhs)
+		{
+			Node node;
+
+			node.push_back((double)rhs.x);
+			node.push_back((double)rhs.y);
+			node.push_back((double)rhs.z);
+			node.push_back((double)rhs.w);
+
+			node.SetStyle(EmitterStyle::Flow);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::quat& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 4)
+				return false;
+
+			rhs.x = node[0].as<double>();
+			rhs.y = node[1].as<double>();
+			rhs.z = node[2].as<double>();
+			rhs.w = node[3].as<double>();
+
+			return true;
+		}
 	};
 
 	template<>
@@ -142,6 +173,13 @@ namespace Debut
 	}
 
 	inline YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v[0] << v[1] << v[2] << v[3] << YAML::EndSeq;
+		return out;
+	}
+
+	inline YAML::Emitter& operator<<(YAML::Emitter& out, const glm::quat& v)
 	{
 		out << YAML::Flow;
 		out << YAML::BeginSeq << v[0] << v[1] << v[2] << v[3] << YAML::EndSeq;

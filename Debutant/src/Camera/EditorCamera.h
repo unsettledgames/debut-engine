@@ -14,8 +14,11 @@ namespace Debut
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event & e);
 
-		inline float GetDistance() const { return m_Distance; }
-		inline void SetDistance(float distance) { m_Distance = distance; }
+		inline void SetDistance(float distance) { m_Distance = distance; UpdateView();}
+		inline void SetFocalPoint(const glm::vec3& focalPoint) { m_FocalPoint = focalPoint; UpdateView(); }
+		inline void SetPosition(const glm::vec3& position) { m_Position = position; UpdateView(); }
+		inline void SetPitch(const float pitch) { m_Pitch = pitch; UpdateView(); }
+		inline void SetYaw(const float yaw) { m_Yaw = yaw; UpdateView(); }
 
 		inline void SetViewportSize(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; UpdateProjection(); }
 
@@ -30,6 +33,9 @@ namespace Debut
 
 		float GetPitch() const { return m_Pitch; }
 		float GetYaw() const { return m_Yaw; }
+
+		inline float GetDistance() const { return m_Distance; }
+		inline glm::vec3 GetFocalPoint() const { return m_FocalPoint; }
 	private:
 		void UpdateProjection();
 		void UpdateView();
