@@ -23,15 +23,12 @@
 /*
 * 
 *   CURRENT:
-*       - MeshCollider
-*           - implement: remove points from component, get them from the mesh by using the asset manager
-*           - Draw gizmos
 *       - Rigidbody data:
 *           - Info:
 *               - Velocity
 *               - Angular velocity
 * 
-*       - When adding a rigidbody add a default box collider and viceversa
+*       
 * 
 *   QOL update:
 *   BUGS:
@@ -45,6 +42,7 @@
 *       - Save scene camera position in scene
 *       - Visualize all collider button, both in game and editor mode
 *       - Add buttons for gizmo mode, add button for global / local gizmo
+*       - When adding a rigidbody add a default box collider and viceversa
 * 
     OPTIMIZATION:
         - Remove as many DecomposeTransform as possible

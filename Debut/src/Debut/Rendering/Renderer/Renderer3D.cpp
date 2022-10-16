@@ -32,9 +32,10 @@ namespace Debut
 		s_Data.IndexBuffer = IndexBuffer::Create();
 
 		// Attach buffers to VertexArray
-		ShaderDataType types[] = { ShaderDataType::Float3, ShaderDataType::Float4, ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2 };
-		std::string attribNames[] = { "a_Position", "a_Color", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0" };
-		std::string names[] = { "Positions", "Colors", "Normals", "Tangents", "Bitangents", "TexCoords0" };
+		ShaderDataType types[] = { ShaderDataType::Float3, ShaderDataType::Float4, ShaderDataType::Float3, 
+			ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2, ShaderDataType::Int};
+		std::string attribNames[] = { "a_Position", "a_Color", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0", "a_EntityID"};
+		std::string names[] = { "Positions", "Colors", "Normals", "Tangents", "Bitangents", "TexCoords0", "EntityID"};
 		
 		for (uint32_t i = 0; i < sizeof(types); i++)
 		{
@@ -82,7 +83,7 @@ namespace Debut
 		}
 	}
 
-	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform)
+	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform, int entityID)
 	{
 		DBT_PROFILE_FUNCTION();
 
@@ -110,10 +111,10 @@ namespace Debut
 			return;
 		}
 
-		DrawModel(*mesh.get(), *material.get(), transform, meshComponent.Instanced);
+		DrawModel(*mesh.get(), *material.get(), transform, entityID, meshComponent.Instanced);
 	}
 
-	void Renderer3D::DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, bool instanced /* = false*/)
+	void Renderer3D::DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, int entityID, bool instanced /* = false*/)
 	{
 		DBT_PROFILE_FUNCTION();
 
@@ -151,6 +152,12 @@ namespace Debut
 				DBT_PROFILE_SCOPE("DrawModel::SendGeometry");
 				std::vector<float>& positions = mesh.GetPositions();
 				std::vector<int>& indices = mesh.GetIndices();
+				std::vector<int> entityIDs;
+
+				// Fill the entity IDs vector
+				entityIDs.resize(positions.size() / 3);
+				std::fill_n(entityIDs.data(), entityIDs.size(), entityID);
+
 				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
 				s_Data.IndexBuffer->SetData(mesh.GetIndices().data(), mesh.GetIndices().size());
 
@@ -183,6 +190,8 @@ namespace Debut
 					std::vector<float>& texCoords = mesh.GetTexCoords(0);
 					s_Data.VertexBuffers["TexCoords0"]->SetData(texCoords.data(), texCoords.size() * sizeof(float));
 				}
+
+				s_Data.VertexBuffers["EntityID"]->SetData(entityIDs.data(), entityIDs.size() * sizeof(int));
 			}
 
 			{

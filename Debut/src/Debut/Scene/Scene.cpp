@@ -172,7 +172,7 @@ namespace Debut
 		for (auto entity : group3D)
 		{
 			auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
-			Renderer3D::DrawModel(mesh, transform.GetTransform());
+			Renderer3D::DrawModel(mesh, transform.GetTransform(), (int)entity);
 		}
 
 		Renderer3D::EndScene();
@@ -299,7 +299,7 @@ namespace Debut
 				for (auto entity : group)
 				{
 					auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
-					Renderer3D::DrawModel(mesh, transform.GetTransform());
+					Renderer3D::DrawModel(mesh, transform.GetTransform(), (int)entity);
 				}
 
 				Renderer3D::EndScene();
