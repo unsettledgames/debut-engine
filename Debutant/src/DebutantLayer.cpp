@@ -227,6 +227,7 @@ namespace Debut
             DrawTopBar();
 
             m_SceneHierarchy.OnImGuiRender();
+            m_Inspector.OnImGuiRender();
             m_ContentBrowser.OnImGuiRender();
             m_PropertiesPanel.OnImGuiRender();
 
@@ -496,7 +497,6 @@ namespace Debut
     {
         Ref<Model> model = AssetManager::Request<Model>(path.string());
         Entity modelEntity = m_ActiveScene->CreateEntity({}, path.filename().string());
-        m_SceneHierarchy.RegisterEntity(modelEntity);
 
         modelEntity.Transform().Parent = {};
         LoadModelNode(model, modelEntity);
@@ -519,7 +519,6 @@ namespace Debut
         // Create entity
         Entity modelEntity = m_ActiveScene->CreateEntity({}, name);
         // Register the entity in the hierarchy
-        m_SceneHierarchy.RegisterEntity(modelEntity);
 
         // Parent it
         modelEntity.Transform().Parent = parent;
@@ -533,7 +532,6 @@ namespace Debut
                 Entity additional = m_ActiveScene->CreateEntity({}, name + " i");
                 additional.Transform().Parent = modelEntity;
                 additional.AddComponent<MeshRendererComponent>(model->GetMeshes()[i], model->GetMaterials()[i]);
-                m_SceneHierarchy.RegisterEntity(additional);
             }
 
         // Add submodels as children
@@ -945,6 +943,7 @@ namespace Debut
                     m_HoveredEntity = {};
 
                 m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
+                m_Inspector.SetSelectedEntity(m_HoveredEntity);
             }
         }
 

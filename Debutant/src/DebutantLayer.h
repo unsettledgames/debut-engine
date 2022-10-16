@@ -5,6 +5,7 @@
 
 #include <Panels/SceneHierarchyPanel.h>
 #include <Panels/ContentBrowserPanel.h>
+#include <Panels/InspectorPanel.h>
 #include <Camera/EditorCamera.h>
 #include <Debut/Scene/Components.h>
 
@@ -90,6 +91,7 @@ namespace Debut
 		SceneHierarchyPanel m_SceneHierarchy;
 		ContentBrowserPanel m_ContentBrowser;
 		PropertiesPanel m_PropertiesPanel;
+		InspectorPanel m_Inspector;
 
 		// Editor state
 		std::string m_ScenePath = "";
