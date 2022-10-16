@@ -85,7 +85,7 @@ namespace Debut
 		bool m_Valid;
 
 		UUID m_Shader;
-		static UUID s_PrevShader;
+		Ref<Shader> m_RuntimeShader;
 		std::unordered_map<std::string, ShaderUniform> m_Uniforms;
 
 		std::string m_Path;

@@ -101,6 +101,9 @@ namespace Debut
 			decompressedSize = LZ4_decompress_safe((const char*)buffer.data(), dst, compressedSize, sizeof(T) * nElements);
 			memcpy(buffer.data(), dst, sizeof(T) * nElements);
 			free(dst);
+
+			if (decompressedSize < 0)
+				Log.CoreError("Decompression error");
 		}
 	}
 

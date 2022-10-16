@@ -23,7 +23,6 @@
 
 namespace Debut
 {
-	UUID Material::s_PrevShader;
 	std::vector<std::string> Material::s_DefaultUniforms = {
 		"u_ViewProjection", "u_ViewMatrix", "u_ProjectionMatrix", "u_PointLights", "u_AmbientLightColor", "u_DirectionalLightDir",
 		"u_AmbientLightIntensity", "u_CameraPosition", "u_DirectionalLightCol", "u_DirectionalLightIntensity"
@@ -144,6 +143,7 @@ namespace Debut
 			}
 		}
 
+		m_RuntimeShader = AssetManager::Request<Shader>(m_Shader);
 		m_Valid = true;
 	}
 
@@ -228,9 +228,7 @@ namespace Debut
 	void Material::Use()
 	{
 		// OPTIMIZABLE: Cache this?
-		Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
-		if (shader->GetID() != s_PrevShader)
-			shader->Bind();
+		m_RuntimeShader->Bind();
 		uint32_t currSlot = 0;
 		
 		for (auto& uniform : m_Uniforms)
@@ -238,25 +236,25 @@ namespace Debut
 			switch (uniform.second.Type)
 			{
 			case ShaderDataType::Int:
-				shader->SetInt(uniform.second.Name, uniform.second.Data.Int);
+				m_RuntimeShader->SetInt(uniform.second.Name, uniform.second.Data.Int);
 				break;
 			case ShaderDataType::Bool:
-				shader->SetBool(uniform.second.Name, uniform.second.Data.Bool);
+				m_RuntimeShader->SetBool(uniform.second.Name, uniform.second.Data.Bool);
 				break;
 			case ShaderDataType::Float:
-				shader->SetFloat(uniform.second.Name, uniform.second.Data.Float);
+				m_RuntimeShader->SetFloat(uniform.second.Name, uniform.second.Data.Float);
 				break;
 			case ShaderDataType::Float2:
-				shader->SetFloat2(uniform.second.Name, uniform.second.Data.Vec2);
+				m_RuntimeShader->SetFloat2(uniform.second.Name, uniform.second.Data.Vec2);
 				break;
 			case ShaderDataType::Float3:
-				shader->SetFloat3(uniform.second.Name, uniform.second.Data.Vec3);
+				m_RuntimeShader->SetFloat3(uniform.second.Name, uniform.second.Data.Vec3);
 				break;
 			case ShaderDataType::Float4:
-				shader->SetFloat4(uniform.second.Name, uniform.second.Data.Vec4);
+				m_RuntimeShader->SetFloat4(uniform.second.Name, uniform.second.Data.Vec4);
 				break;
 			case ShaderDataType::Mat4:
-				shader->SetMat4(uniform.second.Name, uniform.second.Data.Mat4);
+				m_RuntimeShader->SetMat4(uniform.second.Name, uniform.second.Data.Mat4);
 				break;
 			case ShaderDataType::Sampler2D:
 			{
@@ -265,13 +263,13 @@ namespace Debut
 					texture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
 				else
 					texture = AssetManager::Request<Texture2D>(DBT_WHITE_TEXTURE_UUID);
-				shader->SetInt(uniform.second.Name, currSlot);
+				m_RuntimeShader->SetInt(uniform.second.Name, currSlot);
 				texture->Bind(currSlot);
 				currSlot++;
 				break;
 			}
 			case ShaderDataType::SamplerCube:
-				shader->SetInt(uniform.second.Name, uniform.second.Data.Cubemap);
+				m_RuntimeShader->SetInt(uniform.second.Name, uniform.second.Data.Cubemap);
 				break;
 			case ShaderDataType::None:
 				break;
@@ -284,8 +282,6 @@ namespace Debut
 
 	void Material::Unuse()
 	{
-		Ref<Shader> shader = AssetManager::Request<Shader>(m_Shader);
-		shader->Unbind();
 	}
 
 	void Material::SetShader(Ref<Shader> shader)
@@ -293,6 +289,7 @@ namespace Debut
 		// Set the shader and the new uniforms
 		auto uniforms = shader->GetUniforms();
 		m_Shader = shader->GetID();
+		m_RuntimeShader = AssetManager::Request<Shader>(m_Shader);
 		
 		m_Uniforms.clear();
 		for (auto uniform : uniforms)

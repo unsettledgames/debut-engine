@@ -16,7 +16,6 @@ namespace Debut
 		Entity SelectedEntity;
 		glm::vec3 SelectedPoint = {0,0,0};
 		glm::mat4 PointTransform = glm::mat4(1.0);
-		glm::mat4 PointRotation = glm::mat4(1.0);
 		std::string SelectedName = "";
 
 		bool Valid = false;

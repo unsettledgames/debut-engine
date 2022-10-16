@@ -25,11 +25,23 @@
 /*
 * 
 *   CURRENT:
-*       - Rigidbody data:
-*           - Info:
-*               - Velocity
-*               - Angular velocity
-* 
+*       PROFILING:
+*           - UseMaterial: ~0.4ms
+*               The sus thing is that Shader.Bind takes a very little amount of time, which means I have some room for
+*               improvement. Most of the time is taken after the shader is bound (sending uniform data?), but the first
+*               part is probably improveable too. UseMaterial is also the biggest bottleneck in DrawModel atm.
+*           - SetData: ~0.1ms
+*               SetData is probably just a memset but it is quite expensive. Another sus thing is that something happens
+*               between each SetData that causes some delay
+*           - ContentBrowser::OnImGuiRender: ~1.0ms
+*               That's a lot. Main bottleneck of Debutant atm.
+*           - DrawPhysicsGizmos (mesh): ~10ms
+*               DEFINITELY a lot. Could be fault of the RendererDebug or something stupid I do to convert points. I'm starting
+*               to think that it might be better to render debug data in a shader and have another attachment in the framebuffer
+*               SetData takes a lot in this case. Or just render the model with a specific shader (https://stackoverflow.com/questions/137629/how-do-you-render-primitives-as-wireframes-in-opengl)
+*           - InspectorUpdate (with mesh collider selected): ~15ms
+*               I probably get the mesh and do something stupid with it.
+*               
 *       
 * 
 *   QOL update:
@@ -67,6 +79,7 @@ namespace Debut
 {
     void DebutantLayer::OnAttach()
     {
+        DBT_PROFILE_SCOPE("DebutantSetup");
         FrameBufferSpecifications fbSpecs;
         fbSpecs.Attachments = { 
             FrameBufferTextureFormat::Color, FrameBufferTextureFormat::Depth,
@@ -110,7 +123,7 @@ namespace Debut
 
     void DebutantLayer::OnUpdate(Timestep& ts)
     {
-        DBT_PROFILE_FUNCTION();
+        DBT_PROFILE_SCOPE("EgineUpdate");
         //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
         if (m_ViewportFocused)
@@ -226,10 +239,23 @@ namespace Debut
 
             DrawTopBar();
 
-            m_SceneHierarchy.OnImGuiRender();
-            m_Inspector.OnImGuiRender();
-            m_ContentBrowser.OnImGuiRender();
-            m_PropertiesPanel.OnImGuiRender();
+            {
+                DBT_PROFILE_SCOPE("Debutant::HierarchyUpdate");
+                m_SceneHierarchy.OnImGuiRender();
+            }
+            {
+                DBT_PROFILE_SCOPE("Debutant::InspectorUpdate");
+                m_Inspector.OnImGuiRender();
+            }
+            {
+                DBT_PROFILE_SCOPE("Debutant::ContentBrowserUpdate");
+                m_ContentBrowser.OnImGuiRender();
+            }
+            {
+                DBT_PROFILE_SCOPE("Debutant::PropertiesPanelUpdate");
+                m_PropertiesPanel.OnImGuiRender();
+            }
+            
 
 #ifdef DBT_DEBUG
             if (m_AssetMapOpen)
@@ -541,6 +567,7 @@ namespace Debut
 
     void DebutantLayer::DrawTransformGizmos()
     {
+        DBT_PROFILE_FUNCTION();
         // Draw gizmos
         Entity currSelection = m_SceneHierarchy.GetSelectionContext();
 
@@ -590,6 +617,7 @@ namespace Debut
 
     void DebutantLayer::DrawPhysicsGizmos()
     {
+        DBT_PROFILE_FUNCTION();
         Entity currSelection = m_SceneHierarchy.GetSelectionContext();
         glm::vec4 viewport = glm::vec4(0.0f, 0.0f, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
         // Points
@@ -607,6 +635,8 @@ namespace Debut
 
             if (currSelection.HasComponent<BoxCollider2DComponent>())
             {
+                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::BoxCollider2D");
+
                 BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
                 glm::vec2 size = boxCollider.Size;
                 glm::vec2 offset = boxCollider.Offset;
@@ -630,6 +660,8 @@ namespace Debut
             }
             else if (currSelection.HasComponent<CircleCollider2DComponent>())
             {
+                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::CircleCollider2D");
+
                 CircleCollider2DComponent& cc = currSelection.GetComponent<CircleCollider2DComponent>();
                 glm::vec3 center = glm::vec3(cc.Offset, 0.0f);
                 points = {
@@ -645,6 +677,8 @@ namespace Debut
             }
             else if (currSelection.HasComponent<PolygonCollider2DComponent>())
             {
+                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::PolygonCollider2D");
+
                 PolygonCollider2DComponent& polygon = currSelection.GetComponent<PolygonCollider2DComponent>();
                 glm::vec3 center = glm::vec3(polygon.Offset, 0.0f);
 
@@ -679,6 +713,8 @@ namespace Debut
             }
             else if (currSelection.HasComponent<BoxCollider3DComponent>())
             {
+                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::BoxCollider3D");
+
                 BoxCollider3DComponent& collider = currSelection.GetComponent<BoxCollider3DComponent>();
                 glm::vec3 center = collider.Offset;
                 glm::vec3 hSize = collider.Size / 2.0f;
@@ -727,6 +763,8 @@ namespace Debut
             }
             else if (currSelection.HasComponent<SphereCollider3DComponent>())
             {
+                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::SphereCollider3D");
+
                 glm::vec3 trans, rot, scale;
                 MathUtils::DecomposeTransform(transform.GetTransform(), trans, rot, scale);
                 SphereCollider3DComponent& collider = currSelection.GetComponent<SphereCollider3DComponent>();
@@ -757,6 +795,8 @@ namespace Debut
             }
             else if (currSelection.HasComponent<MeshCollider3DComponent>())
             {
+                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::MeshCollider3D");
+
                 MeshCollider3DComponent& collider = currSelection.GetComponent<MeshCollider3DComponent>();
                 RendererDebug::DrawMesh(collider.Mesh, collider.Offset, transformMat);
             }
@@ -792,13 +832,10 @@ namespace Debut
                     glm::vec3 screenPoint = TransformationUtils::WorldToScreenPos(points[i], viewProj, m_PhysicsSelection.PointTransform, viewport);
                     if (glm::distance(screenPoint, glm::vec3(coords, screenPoint.z)) < 6.0f)
                     {
-                        glm::vec3 trans, rot, scale;
-                        MathUtils::DecomposeTransform(transformMat, trans, rot, scale);
                         m_PhysicsSelection.Valid = true;
                         m_PhysicsSelection.SelectedName = labels[i];
                         m_PhysicsSelection.SelectedPoint = points[i];
                         m_PhysicsSelection.SelectedEntity = currSelection;
-                        m_PhysicsSelection.PointRotation = glm::eulerAngleXYZ(rot.x, rot.y, rot.z);
                     }
                 }
             }
@@ -807,6 +844,7 @@ namespace Debut
 
     void DebutantLayer::ManipulatePhysicsGizmos()
     {
+        DBT_PROFILE_FUNCTION();
         Entity currSelection = m_SceneHierarchy.GetSelectionContext();
 
         if (currSelection)
@@ -832,11 +870,15 @@ namespace Debut
                 {
                     if (currSelection.HasComponent<BoxCollider2DComponent>())
                     {
+                        DBT_PROFILE_SCOPE("Debutant::ManipulatePhysicsGizmos::UpdateBoxCollider2D");
+
                         BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
                         boxCollider.SetPoint(glm::vec2(newPoint), m_PhysicsSelection.SelectedName);
                     }
                     else if (currSelection.HasComponent<CircleCollider2DComponent>())
                     {
+                        DBT_PROFILE_SCOPE("Debutant::ManipulatePhysicsGizmos::UpdateCircleCollider2D");
+
                         CircleCollider2DComponent& circleCollider = currSelection.GetComponent<CircleCollider2DComponent>();
                         if (m_PhysicsSelection.SelectedName == "Top" || m_PhysicsSelection.SelectedName == "Bottom")
                             newPoint.x = circleCollider.Offset.x;
@@ -847,16 +889,22 @@ namespace Debut
                     }
                     else if (currSelection.HasComponent<PolygonCollider2DComponent>())
                     {
+                        DBT_PROFILE_SCOPE("Debutant::ManipulatePhysicsGizmos::UpdatePolygonCollider2D");
+
                         PolygonCollider2DComponent& polygonCollider = currSelection.GetComponent<PolygonCollider2DComponent>();
                         polygonCollider.SetPoint(std::stoi(m_PhysicsSelection.SelectedName), glm::vec2(newPoint));
                     }
                     else if (currSelection.HasComponent<BoxCollider3DComponent>())
                     {
+                        DBT_PROFILE_SCOPE("Debutant::ManipulatePhysicsGizmos::UpdateBoxCollider3D");
+
                         BoxCollider3DComponent& boxCollider = currSelection.GetComponent<BoxCollider3DComponent>();
                         boxCollider.SetPoint(m_PhysicsSelection.SelectedName, newPoint);
                     }
                     else if (currSelection.HasComponent<SphereCollider3DComponent>())
                     {
+                        DBT_PROFILE_SCOPE("Debutant::ManipulatePhysicsGizmos::UpdateSphereCollider3D");
+
                         SphereCollider3DComponent& sphereCollider = currSelection.GetComponent<SphereCollider3DComponent>();
                         sphereCollider.SetPoint(m_PhysicsSelection.SelectedName, newPoint);
                     }
