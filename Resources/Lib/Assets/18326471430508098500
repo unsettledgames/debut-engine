@@ -2,90 +2,90 @@
 Name: Material
 Shader: 16775874381677145436
 Parameters:
-  u_AmbientLightColor: [0, 0, 0]
-  u_PointLights[11].Radius: 0
-  u_AmbientLightIntensity: 0
-  u_PointLights[2].Position: [0, 0, 0]
-  u_CameraPosition: [0, 0, 0]
-  u_HeightMap.Use: false
-  u_DiffuseTexture.Offset: [0, 0]
+  u_AmbientLightColor: [0.215328455, 0.215328455, 0.215328455]
   u_DiffuseTexture.Sampler:
     ID: 3378632771608757897
-  u_DiffuseTexture.Tiling: [1, 1]
+  u_AmbientLightIntensity: 1
+  u_PointLights[11].Radius: 0
+  u_PointLights[1].Radius: 5
   u_DiffuseTexture.Use: true
-  u_DirectionalLightCol: [0, 0, 0]
-  u_DirectionalLightDir: [0, 0, 0]
-  u_DirectionalLightIntensity: 0
-  u_EmissionMap.Intensity: 0
+  u_PointLights[4].Intensity: 0
+  u_HeightMap.Use: true
+  u_DiffuseTexture.Offset: [0, 0]
+  u_EmissionMap.Tiling: [0, 0]
+  u_PointLights[2].Position: [-1.89828753, 4.0398159, 2.77844834]
+  u_CameraPosition: [-11.8821898, 6.95745754, 11.2979097]
+  u_PointLights[0].Intensity: 1
   u_EmissionMap.Offset: [0, 0]
+  u_DirectionalLightCol: [1, 1, 1]
+  u_DiffuseTexture.Tiling: [1, 1]
+  u_DirectionalLightDir: [-0.649999976, 1, 1]
+  u_PointLights[7].Intensity: 0
+  u_PointLights[15].Radius: 0
+  u_DirectionalLightIntensity: 0
+  u_PointLights[3].Radius: 0
+  u_EmissionMap.Intensity: 0
   u_EmissionMap.Sampler:
     ID: 0
-  u_EmissionMap.Tiling: [0, 0]
   u_PointLights[6].Position: [0, 0, 0]
   u_EmissionMap.Use: false
+  u_OcclusionMap.Tiling: [1, 1]
+  u_PointLights[0].Position: [1.6678952, 2.88186169, -2.15941954]
   u_HeightMap.Intensity: 0.00999999978
-  u_PointLights[8].Radius: 0
   u_HeightMap.Sampler:
     ID: 14864718705249494902
-  u_NPointLights: 0
+  u_PointLights[8].Radius: 0
+  u_PointLights[2].Radius: 7.94999981
+  u_NPointLights: 3
+  u_PointLights[4].Color: [0, 0, 0]
   u_NormalMap.Intensity: 1
+  u_PointLights[2].Color: [1, 1, 1]
+  u_OcclusionMap.Use: true
   u_NormalMap.Offset: [0, 0]
   u_NormalMap.Sampler:
     ID: 1078724111513845762
   u_NormalMap.Tiling: [1, 1]
-  u_PointLights[10].Radius: 0
   u_OcclusionMap.Offset: [0, 0]
   u_NormalMap.Use: true
+  u_PointLights[10].Radius: 0
   u_OcclusionMap.Intensity: 1
+  u_PointLights[1].Color: [0, 0.496350527, 1]
   u_OcclusionMap.Sampler:
     ID: 14864718705249494902
-  u_OcclusionMap.Tiling: [1, 1]
-  u_OcclusionMap.Use: true
-  u_PointLights[0].Color: [0, 0, 0]
-  u_PointLights[0].Intensity: 0
-  u_PointLights[0].Position: [0, 0, 0]
-  u_PointLights[0].Radius: 0
-  u_PointLights[1].Color: [0, 0, 0]
-  u_PointLights[1].Intensity: 0
-  u_PointLights[1].Position: [0, 0, 0]
-  u_PointLights[1].Radius: 0
-  u_PointLights[2].Color: [0, 0, 0]
-  u_PointLights[2].Intensity: 0
-  u_PointLights[2].Radius: 0
+  u_PointLights[0].Color: [1, 0.306569338, 0]
+  u_PointLights[3].Position: [0, 0, 0]
+  u_PointLights[0].Radius: 5
+  u_PointLights[1].Intensity: 2.5999999
+  u_PointLights[1].Position: [-4.13816547, 0.266618967, -2.49265099]
+  u_PointLights[7].Radius: 0
+  u_PointLights[2].Intensity: 1.08000004
   u_PointLights[3].Color: [0, 0, 0]
   u_PointLights[3].Intensity: 0
-  u_PointLights[3].Position: [0, 0, 0]
-  u_PointLights[3].Radius: 0
-  u_PointLights[4].Color: [0, 0, 0]
-  u_PointLights[4].Intensity: 0
   u_PointLights[4].Position: [0, 0, 0]
   u_PointLights[4].Radius: 0
   u_PointLights[5].Color: [0, 0, 0]
   u_PointLights[5].Intensity: 0
   u_PointLights[5].Position: [0, 0, 0]
-  u_PointLights[5].Radius: 0
   u_PointLights[6].Color: [0, 0, 0]
-  u_SpecularMap.Offset: [0, 0]
+  u_PointLights[5].Radius: 0
   u_PointLights[6].Intensity: 0
+  u_SpecularMap.Offset: [0, 0]
   u_PointLights[6].Radius: 0
   u_PointLights[7].Color: [0, 0, 0]
-  u_PointLights[15].Radius: 0
-  u_PointLights[7].Intensity: 0
   u_PointLights[7].Position: [0, 0, 0]
-  u_PointLights[7].Radius: 0
   u_PointLights[8].Color: [0, 0, 0]
   u_PointLights[8].Intensity: 0
   u_PointLights[8].Position: [0, 0, 0]
   u_PointLights[9].Color: [0, 0, 0]
-  u_PointLights[12].Color: [0, 0, 0]
   u_PointLights[9].Intensity: 0
+  u_PointLights[12].Color: [0, 0, 0]
   u_PointLights[9].Position: [0, 0, 0]
   u_PointLights[9].Radius: 0
   u_PointLights[10].Color: [0, 0, 0]
   u_PointLights[10].Intensity: 0
   u_PointLights[10].Position: [0, 0, 0]
-  u_Transform: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
   u_PointLights[11].Color: [0, 0, 0]
+  u_Transform: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
   u_PointLights[11].Intensity: 0
   u_PointLights[11].Position: [0, 0, 0]
   u_PointLights[12].Intensity: 0
@@ -94,8 +94,8 @@ Parameters:
   u_PointLights[13].Color: [0, 0, 0]
   u_PointLights[13].Intensity: 0
   u_PointLights[13].Position: [0, 0, 0]
-  u_SpecularShininess: 8
   u_PointLights[13].Radius: 0
+  u_SpecularShininess: 8
   u_PointLights[14].Color: [0, 0, 0]
   u_PointLights[14].Intensity: 0
   u_PointLights[14].Position: [0, 0, 0]
@@ -103,11 +103,11 @@ Parameters:
   u_PointLights[15].Color: [0, 0, 0]
   u_PointLights[15].Intensity: 0
   u_PointLights[15].Position: [0, 0, 0]
-  u_ProjectionMatrix: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+  u_ProjectionMatrix: [3.2164824, 0, 0, 0, 0, 3.7320509, 0, 0, 0, 0, -1.00019991, -1, 0, 0, -0.20002, 0]
   u_SpecularMap.Intensity: 0
   u_SpecularMap.Sampler:
     ID: 0
   u_SpecularMap.Tiling: [0, 0]
   u_SpecularMap.Use: false
   u_SpecularStrength: 1
-  u_ViewMatrix: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+  u_ViewMatrix: [0.686896324, 0.169361249, -0.706746221, -0, -0, 0.972467721, 0.233037472, 0, 0.72675544, -0.160072595, 0.667984545, 0, -0.0489851832, -2.9450345, -17.5658703, 1]

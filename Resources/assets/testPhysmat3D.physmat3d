@@ -1,0 +1,5 @@
+---
+Asset: PhysicsMaterial3D
+Friction: 5
+Restitution: 0.5
+...

@@ -7,6 +7,7 @@ layout(location = 2) in vec3 a_Normal;
 layout(location = 3) in vec3 a_Tangent;
 layout(location = 4) in vec3 a_Bitangent;
 layout(location = 5) in vec2 a_TexCoords0;
+layout(location = 6) in int a_EntityID;
 
 struct Texture2D
 {
@@ -35,6 +36,8 @@ out vec3 v_FragPos;
 out mat3 v_TangentSpace;
 out vec3 v_CameraPosTangent;
 out vec3 v_FragPosTangent;
+
+flat out int v_EntityID;
 
 void main()
 {
@@ -66,6 +69,7 @@ void main()
 	v_FragPos = vec3(u_Transform * vec4(a_Position, 1.0));
 	v_CameraPosTangent = inverseTangentSpace * u_CameraPosition;
 	v_FragPosTangent = inverseTangentSpace * v_FragPos;
+	v_EntityID = a_EntityID;
 	
 	gl_Position = position;
 }
@@ -99,12 +103,14 @@ in vec4 v_Color;
 in vec3 v_Normal;
 in vec2 v_TexCoords;
 in vec3 v_FragPos;
+flat in int v_EntityID;
 
 in mat3 v_TangentSpace;
 in vec3 v_CameraPosTangent;
 in vec3 v_FragPosTangent;
 
 layout(location = 0) out vec4 color;
+layout(location = 1) out int id;
 
 uniform vec3 u_CameraPosition;
 
@@ -140,7 +146,13 @@ vec3 DirectionalPhong(vec3 normal, vec3 lightDir, vec3 viewDir, vec2 texCoords)
     float diff = max(dot(normal, lightDir), 0.0);
 	
 	vec3 reflectDir = reflect(-normalize(lightDir), normal);  
-	float spec = pow(max(dot(normalize(viewDir), reflectDir), 0.0), u_SpecularShininess) * u_SpecularStrength;
+	
+	float specStrength;
+	if (u_SpecularMap.Use)
+		specStrength = texture(u_SpecularMap.Sampler, v_TexCoords * u_SpecularMap.Tiling + u_SpecularMap.Offset).r * u_SpecularMap.Intensity;
+	else
+		specStrength = u_SpecularStrength;
+	float spec = pow(max(dot(normalize(viewDir), reflectDir), 0.0), u_SpecularShininess) * specStrength;
 	
     return (diff + spec) * u_DirectionalLightCol * u_DirectionalLightIntensity;
 }
@@ -259,4 +271,6 @@ void main()
 			return;
 		}
 	}
+	
+	id = v_EntityID;
 }

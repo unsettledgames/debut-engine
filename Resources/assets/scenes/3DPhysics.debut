@@ -1,0 +1,127 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+  Skybox: 0
+Entities:
+  - "Entity: ": 11379766260874307799
+    HierarchyOrder: 1
+    IDComponent:
+      ID: 11379766260874307799
+    TagComponent:
+      Name: BlankCube.obj.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 79.6155319, 0]
+      Rotation: [0, 0, 0]
+      Scale: [2, 2, 2]
+      Parent: 0
+    Rigidbody3DComponent:
+      Type: Dynamic
+      GravityFactor: 4
+      Mass: 1
+    SphereCollider3DComponent:
+      Radius: 4.00158882
+      Offset: [0, -7.78399992, 0]
+      Material: 11216845012748853521
+    Children:
+      - "Entity: ": 3516145210079889126
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 3516145210079889126
+        TagComponent:
+          Name: BlankCube.obj.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 11379766260874307799
+        MeshRendererComponent:
+          Mesh: 15138046311618176639
+          Material: 1028703064176906114
+          Instanced: false
+        Children:
+          []
+  - "Entity: ": 12098703985603561704
+    HierarchyOrder: 2
+    IDComponent:
+      ID: 12098703985603561704
+    TagComponent:
+      Name: Camera
+      Tag: Untagged
+    TransformComponent:
+      Translation: [-127.568878, 3.64384747, -0.163058266]
+      Rotation: [0, -1.57079637, 0]
+      Scale: [0.999992847, 1, 0.999992847]
+      Parent: 0
+    CameraComponent:
+      FixedAspectRatio: false
+      Primary: true
+      CameraData:
+        ProjectionType: 0
+        OrthoNear: 0.100000001
+        OrthoFar: 1000
+        PerspNear: 0.100000001
+        PerspFar: 1000
+        OrthoSize: 10
+        PerspFOV: 0.785398185
+    Children:
+      []
+  - "Entity: ": 5478711277423310014
+    HierarchyOrder: 2
+    IDComponent:
+      ID: 5478711277423310014
+    TagComponent:
+      Name: Lighting
+      Tag: Untagged
+    TransformComponent:
+      Translation: [19.7039566, 25.8419991, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    DirectionalLightComponent:
+      Direction: [-0.649999976, 0.400000006, 0.25]
+      Color: [1, 1, 1]
+      Intensity: 1
+    Children:
+      []
+  - "Entity: ": 2307401206098191584
+    HierarchyOrder: 3
+    IDComponent:
+      ID: 2307401206098191584
+    TagComponent:
+      Name: BlankCube.obj.model
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [15.25, 1, 15.5500002]
+      Parent: 0
+    Rigidbody3DComponent:
+      Type: Static
+      GravityFactor: 1
+      Mass: 1
+    BoxCollider3DComponent:
+      Size: [8.00017834, 8.16709042, 7.99635887]
+      Offset: [4.42266464e-05, 0.041772604, -0.000910282135]
+      Material: 0
+    Children:
+      - "Entity: ": 476752366051299027
+        HierarchyOrder: 0
+        IDComponent:
+          ID: 476752366051299027
+        TagComponent:
+          Name: BlankCube.obj.
+          Tag: Untagged
+        TransformComponent:
+          Translation: [0, 0, 0]
+          Rotation: [0, 0, 0]
+          Scale: [1, 1, 1]
+          Parent: 2307401206098191584
+        MeshRendererComponent:
+          Mesh: 15138046311618176639
+          Material: 1028703064176906114
+          Instanced: false
+        Children:
+          []

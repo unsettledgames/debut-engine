@@ -1,0 +1,113 @@
+---
+Name: map_3_terrain1
+Shader: 16775874381677145436
+Parameters:
+  u_PointLights[13].Position: [0, 0, 0]
+  u_ProjectionMatrix: [3.05534172, 0, 0, 0, 0, 3.7320509, 0, 0, 0, 0, -1.00019991, -1, 0, 0, -0.20002, 0]
+  u_PointLights[13].Color: [0, 0, 0]
+  u_PointLights[10].Radius: 0
+  u_NormalMap.Use: false
+  u_OcclusionMap.Offset: [0, 0]
+  u_PointLights[2].Color: [0, 0, 0]
+  u_OcclusionMap.Use: false
+  u_ViewMatrix: [0.883639336, -0.37961325, 0.273998737, -0, -1.49011612e-08, 0.585256994, 0.810847878, 0, -0.468168259, -0.716497064, 0.517156124, -0, 0.0469889939, -1.11433756, -113.723007, 1]
+  u_NormalMap.Offset: [0, 0]
+  u_CameraPosition: [30.695425, 92.8642349, 58.036129]
+  u_PointLights[2].Position: [0, 0, 0]
+  u_NormalMap.Tiling: [0, 0]
+  u_PointLights[4].Color: [0, 0, 0]
+  u_NormalMap.Intensity: 0
+  u_NormalMap.Sampler:
+    ID: 0
+  u_Transform: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+  u_PointLights[11].Color: [0, 0, 0]
+  u_AmbientLightColor: [0, 0, 0]
+  u_PointLights[12].Position: [0, 0, 0]
+  u_PointLights[11].Radius: 0
+  u_AmbientLightIntensity: 1
+  u_DiffuseTexture.Tiling: [1, 1]
+  u_DiffuseTexture.Offset: [0, 0]
+  u_HeightMap.Use: false
+  u_EmissionMap.Tiling: [0, 0]
+  u_DiffuseTexture.Use: true
+  u_DiffuseTexture.Sampler:
+    ID: 8171618379381436572
+  u_EmissionMap.Offset: [0, 0]
+  u_DirectionalLightCol: [1, 1, 1]
+  u_DirectionalLightDir: [1, 1, 1]
+  u_DirectionalLightIntensity: 1
+  u_EmissionMap.Intensity: 0
+  u_EmissionMap.Use: false
+  u_PointLights[6].Position: [0, 0, 0]
+  u_OcclusionMap.Tiling: [0, 0]
+  u_EmissionMap.Sampler:
+    ID: 0
+  u_PointLights[0].Position: [0, 0, 0]
+  u_HeightMap.Intensity: 0
+  u_PointLights[10].Color: [0, 0, 0]
+  u_PointLights[8].Radius: 0
+  u_HeightMap.Sampler:
+    ID: 0
+  u_NPointLights: 0
+  u_OcclusionMap.Intensity: 0
+  u_PointLights[1].Color: [0, 0, 0]
+  u_OcclusionMap.Sampler:
+    ID: 0
+  u_PointLights[1].Position: [0, 0, 0]
+  u_PointLights[3].Position: [0, 0, 0]
+  u_PointLights[4].Position: [0, 0, 0]
+  u_PointLights[5].Position: [0, 0, 0]
+  u_PointLights[7].Position: [0, 0, 0]
+  u_PointLights[8].Position: [0, 0, 0]
+  u_PointLights[3].Color: [0, 0, 0]
+  u_PointLights[9].Position: [0, 0, 0]
+  u_PointLights[10].Position: [0, 0, 0]
+  u_PointLights[15].Color: [0, 0, 0]
+  u_PointLights[11].Position: [0, 0, 0]
+  u_PointLights[14].Position: [0, 0, 0]
+  u_PointLights[15].Position: [0, 0, 0]
+  u_PointLights[0].Color: [0, 0, 0]
+  u_PointLights[5].Color: [0, 0, 0]
+  u_PointLights[6].Color: [0, 0, 0]
+  u_PointLights[7].Color: [0, 0, 0]
+  u_PointLights[8].Color: [0, 0, 0]
+  u_PointLights[9].Color: [0, 0, 0]
+  u_PointLights[9].Intensity: 0
+  u_PointLights[12].Color: [0, 0, 0]
+  u_PointLights[14].Color: [0, 0, 0]
+  u_PointLights[0].Intensity: 0
+  u_PointLights[1].Intensity: 0
+  u_PointLights[2].Intensity: 0
+  u_PointLights[3].Intensity: 0
+  u_PointLights[4].Intensity: 0
+  u_PointLights[5].Intensity: 0
+  u_SpecularMap.Offset: [0, 0]
+  u_PointLights[6].Intensity: 0
+  u_PointLights[15].Radius: 0
+  u_PointLights[7].Intensity: 0
+  u_PointLights[8].Intensity: 0
+  u_PointLights[10].Intensity: 0
+  u_PointLights[11].Intensity: 0
+  u_PointLights[12].Intensity: 0
+  u_PointLights[13].Intensity: 0
+  u_PointLights[14].Intensity: 0
+  u_PointLights[15].Intensity: 0
+  u_PointLights[0].Radius: 0
+  u_PointLights[1].Radius: 0
+  u_PointLights[2].Radius: 0
+  u_PointLights[3].Radius: 0
+  u_PointLights[4].Radius: 0
+  u_PointLights[5].Radius: 0
+  u_PointLights[6].Radius: 0
+  u_PointLights[7].Radius: 0
+  u_PointLights[9].Radius: 0
+  u_PointLights[12].Radius: 0
+  u_SpecularShininess: 1
+  u_PointLights[13].Radius: 0
+  u_PointLights[14].Radius: 0
+  u_SpecularMap.Tiling: [0, 0]
+  u_SpecularMap.Intensity: 0
+  u_SpecularMap.Use: false
+  u_SpecularMap.Sampler:
+    ID: 0
+  u_SpecularStrength: 1

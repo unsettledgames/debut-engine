@@ -75,7 +75,7 @@ namespace Debut
 			DrawEntityNode(*m_CachedSceneGraph->Children[i]);
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			m_SelectionContext = {};
+			m_SelectionContext = {};		
 
 		// Right click menu
 		if (ImGui::BeginPopupContextWindow(0, 1, false))
@@ -291,6 +291,10 @@ namespace Debut
 
 			ImGui::EndPopup();
 		}
+
+		// Keys
+		if (ImGui::IsKeyPressed(ImGuiKey_Delete, false) && m_SelectionContext == node.EntityData)
+			entityDeleted = true;
 
 		if (entityDeleted)
 		{
