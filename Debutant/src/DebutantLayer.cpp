@@ -35,7 +35,6 @@
 *       - Creating a new material and then selecting it crashes the editor. The first shader isn't set the first time probably
 *       - Creating a new scene messes up the PhysicsSystem3D
 *   QOL:
-*       - Replace component
 *       - Split hierarchy and inspector
 *       - Save scene camera position in scene
 *       - Visualize all collider button, both in game and editor mode

@@ -319,46 +319,6 @@ namespace Debut
 		m_RebuiltGraph = false;
 	}
 
-	template<typename T, typename UIFunction>
-	void DrawComponent(const std::string& name, Entity& entity, UIFunction uiFunction)
-	{
-		if (!entity.HasComponent<T>())
-			return;
-		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap 
-			| ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-
-		bool remove = false;			
-		ImVec2 availRegion = ImGui::GetContentRegionAvail();
-
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4,4 });
-		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2;
-		ImGui::Separator();
-		bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
-		ImGui::PopStyleVar();
-
-		ImGui::SameLine(availRegion.x - lineHeight * 0.5f);
-		if (ImGui::Button("...", ImVec2{ lineHeight, lineHeight }))
-			ImGui::OpenPopup("ComponentSettings");
-
-		if (ImGui::BeginPopup("ComponentSettings"))
-		{
-			if (ImGui::MenuItem("Remove component"))
-				remove = true;
-
-			ImGui::EndPopup();
-		}
-
-		if (open)
-		{
-			auto& component = entity.GetComponent<T>();
-			uiFunction(component);
-			ImGui::TreePop();
-		}
-
-		if (remove)
-			entity.RemoveComponent<T>();
-	}
-
 	void SceneHierarchyPanel::DrawComponents(Entity& entity)
 	{
 		if (entity.HasComponent<TagComponent>())
@@ -376,54 +336,11 @@ namespace Debut
 		}
 
 		ImGui::SameLine();
+
 		ImGui::PushItemWidth(-1);
 		if (ImGui::Button("Add Component"))
-			ImGui::OpenPopup("AddComponent");
-
-		if (ImGui::BeginPopup("AddComponent"))
-		{
-			if (ImGui::BeginMenu("Rendering"))
-			{
-				DrawAddComponentEntry<CameraComponent>("Camera");
-				DrawAddComponentEntry<SpriteRendererComponent>("Sprite Renderer");
-				DrawAddComponentEntry<MeshRendererComponent>("Mesh Renderer");
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Physics and Colliders"))
-			{
-				// Rigidbodies
-				DrawAddComponentEntry<Rigidbody2DComponent>("Rigidbody2D");
-				DrawAddComponentEntry<Rigidbody3DComponent>("Rigidbody3D");
-
-				ImGuiUtils::Separator();
-
-				// 2D Colliders
-				DrawAddComponentEntry<BoxCollider2DComponent>("Box Collider 2D");
-				DrawAddComponentEntry<CircleCollider2DComponent>("Circle Collider 2D");
-				DrawAddComponentEntry<PolygonCollider2DComponent>("Polygon Collider");
-
-				ImGuiUtils::Separator();
-
-				// 3D Colliders
-				DrawAddComponentEntry<BoxCollider3DComponent>("Box Collider 3D");
-				DrawAddComponentEntry<SphereCollider3DComponent>("Sphere Collider 3D");
-				DrawAddComponentEntry<MeshCollider3DComponent>("Mesh Collider 3D");
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Lighting"))
-			{
-				DrawAddComponentEntry<DirectionalLightComponent>("Directional Light");
-				DrawAddComponentEntry<PointLightComponent>("Point Light");
-
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndPopup();
-		}
+			ImGui::OpenPopup("AddReplaceComponent");
+		DrawAddReplaceComponentMenu<TagComponent>();
 		ImGui::PopItemWidth();
 
 		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
