@@ -28,12 +28,9 @@
 *       PROFILING:
 *           - GetMaterial: ~60.0ms
                 Probably time to get rid of YAML and use a binary, compressed format instead
-* 
 *   QOL update:
 *   BUGS:
-*       - Creating a new material and then selecting it crashes the editor. The first shader isn't set the first time probably
-*       - Creating a new scene messes up the PhysicsSystem3D
-*       - Can't delete 3D models
+*       - Duplicate children of entity, not just the entity itself.
 *   QOL:
 *       - Visualize all collider button, both in game and editor mode
 *       - Add buttons for gizmo mode, add button for global / local gizmo
@@ -83,6 +80,8 @@ namespace Debut
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
         m_SceneHierarchy.RebuildSceneGraph();
+
+        m_SceneHierarchy.SetInspectorPanel(&m_Inspector);
         m_ContentBrowser.SetPropertiesPanel(&m_PropertiesPanel);
 
         m_IconPlay = Texture2D::Create("assets\\icons\\play.png");
@@ -999,7 +998,8 @@ namespace Debut
 
     void DebutantLayer::NewScene()
     {
-        OnSceneStop();
+        if (m_SceneState == SceneState::Play)
+            OnSceneStop();
 
         m_EditorScene = CreateRef<Scene>();
         m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);

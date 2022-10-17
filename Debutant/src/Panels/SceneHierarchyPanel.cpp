@@ -9,6 +9,7 @@
 #include <Debut/Rendering/Texture.h>
 #include <Debut/Rendering/Material.h>
 #include <Debut/ImGui/ImGuiUtils.h>
+#include <Panels/InspectorPanel.h>
 #include <entt.hpp>
 #include <yaml-cpp/yaml.h>
 #include <filesystem>
@@ -67,7 +68,7 @@ namespace Debut
 			DrawEntityNode(*m_CachedSceneGraph->Children[i]);
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			m_SelectionContext = {};		
+			m_SelectionContext = {};
 
 		// Right click menu
 		if (ImGui::BeginPopupContextWindow(0, 1, false))
@@ -137,6 +138,7 @@ namespace Debut
 			}
 		}
 
+		m_Inspector->SetSelectedEntity(m_SelectionContext);
 		ImGui::End();		
 	}
 

@@ -318,6 +318,8 @@ namespace Debut
 
 	void Material::SetShader(Ref<Shader> shader)
 	{
+		if (shader == nullptr)
+			return;
 		// Set the shader and the new uniforms
 		auto uniforms = shader->GetUniforms();
 		m_Shader = shader->GetID();

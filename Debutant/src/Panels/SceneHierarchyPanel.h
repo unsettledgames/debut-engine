@@ -8,6 +8,7 @@
 namespace Debut
 {
 	class Scene;
+	class InspectorPanel;
 
 	struct TransformComponent;
 
@@ -19,6 +20,7 @@ namespace Debut
 		~SceneHierarchyPanel();
 
 		void SetContext(const Ref<Scene>& scene);
+		void SetInspectorPanel(InspectorPanel* panel) { m_Inspector = panel; }
 		inline void SetSelectedEntity(const Entity& entity)
 		{
 			if ((int)(entt::entity)entity != -1)
@@ -45,6 +47,7 @@ namespace Debut
 	private:
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
+		InspectorPanel* m_Inspector;
 
 		// Scene graph management
 		bool m_RebuiltGraph = false;

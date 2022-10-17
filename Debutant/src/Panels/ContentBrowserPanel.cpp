@@ -248,15 +248,15 @@ namespace Debut
 			m_PropertiesPanel->SetAsset(model->GetPath());
 			std::stringstream ss;
 			ss << model->GetPath() << model->GetID();
-			m_SelectedAsset = ss.str();
 
-			m_RightClicked = model->GetPath();
+			m_SelectedAsset = ss.str();
+			m_RightClicked = AssetManager::GetPath(model->GetID());
 		}
 
 		if (ImGui::IsItemClicked(1))
 		{
-			m_RightClicked = path;
-			m_SelectedAsset = path;
+			m_RightClicked = AssetManager::GetPath(model->GetID());
+			m_SelectedAsset = m_RightClicked;
 		}
 
 		AddDragSource(model->GetPath());
