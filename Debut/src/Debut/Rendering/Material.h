@@ -81,16 +81,19 @@ namespace Debut
 		void Load(std::ifstream& file);
 
 	private:
+		static UUID s_PrevShader;
 		UUID m_ID;
 		bool m_Valid;
 
 		UUID m_Shader;
-		Ref<Shader> m_RuntimeShader;
 		std::unordered_map<std::string, ShaderUniform> m_Uniforms;
 
 		std::string m_Path;
 		std::string m_MetaPath;
 		std::string m_Name;
+
+		Ref<Shader> m_RuntimeShader;
+		std::unordered_map<UUID, Ref<Texture2D>> m_RuntimeTextures;
 
 		static std::vector<std::string> s_DefaultUniforms;
 	};

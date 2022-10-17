@@ -46,6 +46,8 @@ namespace Debut
 		static ContentBrowserSettings s_Settings;
 		bool m_LayoutMenuOpen = false;
 
+		std::vector<std::filesystem::path> m_Dirs;
+		std::vector<std::filesystem::path> m_Files;
 		std::unordered_set<std::string> m_OpenDirs;
 		std::unordered_map<std::string, std::string> m_Icons;
 
@@ -56,6 +58,7 @@ namespace Debut
 		char m_RenameBuffer[MAX_NAME_LENGTH];
 		bool m_IsRenaming = false;
 
+		// should probably be a Ref
 		PropertiesPanel* m_PropertiesPanel;
 	};
 }

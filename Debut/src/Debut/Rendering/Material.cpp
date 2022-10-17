@@ -23,6 +23,8 @@
 
 namespace Debut
 {
+	UUID Material::s_PrevShader = 0;
+
 	std::vector<std::string> Material::s_DefaultUniforms = {
 		"u_ViewProjection", "u_ViewMatrix", "u_ProjectionMatrix", "u_PointLights", "u_AmbientLightColor", "u_DirectionalLightDir",
 		"u_AmbientLightIntensity", "u_CameraPosition", "u_DirectionalLightCol", "u_DirectionalLightIntensity"
@@ -227,7 +229,14 @@ namespace Debut
 
 	void Material::Use()
 	{
-		// OPTIMIZABLE: Cache this?
+		/* This could work, but the bound shader should be in some kind of OpenGLState class: the shader can be
+		*  changed by other renderers
+		if (s_PrevShader != m_RuntimeShader->GetID())
+		{
+			m_RuntimeShader->Bind();
+			s_PrevShader = m_RuntimeShader->GetID();
+		}
+		*/
 		m_RuntimeShader->Bind();
 		uint32_t currSlot = 0;
 		
@@ -239,30 +248,53 @@ namespace Debut
 				m_RuntimeShader->SetInt(uniform.second.Name, uniform.second.Data.Int);
 				break;
 			case ShaderDataType::Bool:
+			{
+				//DBT_PROFILE_SCOPE("Material::SetBool");
 				m_RuntimeShader->SetBool(uniform.second.Name, uniform.second.Data.Bool);
 				break;
+			}
 			case ShaderDataType::Float:
+			{
+				//DBT_PROFILE_SCOPE("Material::SetFloat");
 				m_RuntimeShader->SetFloat(uniform.second.Name, uniform.second.Data.Float);
 				break;
+			}
 			case ShaderDataType::Float2:
+			{
+				//DBT_PROFILE_SCOPE("Material::SetFloat2");
 				m_RuntimeShader->SetFloat2(uniform.second.Name, uniform.second.Data.Vec2);
 				break;
+			}
 			case ShaderDataType::Float3:
+			{
+				//DBT_PROFILE_SCOPE("Material::SetFloat3");
 				m_RuntimeShader->SetFloat3(uniform.second.Name, uniform.second.Data.Vec3);
 				break;
+			}
 			case ShaderDataType::Float4:
+			{
+				//DBT_PROFILE_SCOPE("Material::SetFloat4");
 				m_RuntimeShader->SetFloat4(uniform.second.Name, uniform.second.Data.Vec4);
 				break;
+			}
 			case ShaderDataType::Mat4:
+			{
+				//DBT_PROFILE_SCOPE("Material::SetMat4");
 				m_RuntimeShader->SetMat4(uniform.second.Name, uniform.second.Data.Mat4);
 				break;
+			}
 			case ShaderDataType::Sampler2D:
 			{
+				//DBT_PROFILE_SCOPE("Material::SetTexture");
 				Ref<Texture2D> texture;
-				if (uniform.second.Data.Texture != 0)
-					texture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
-				else
-					texture = AssetManager::Request<Texture2D>(DBT_WHITE_TEXTURE_UUID);
+				if (m_RuntimeTextures.find(uniform.second.Data.Texture) == m_RuntimeTextures.end())
+					if (uniform.second.Data.Texture != 0)
+						m_RuntimeTextures[uniform.second.Data.Texture] = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
+					else
+						m_RuntimeTextures[uniform.second.Data.Texture] = AssetManager::Request<Texture2D>(DBT_WHITE_TEXTURE_UUID);
+
+				texture = m_RuntimeTextures[uniform.second.Data.Texture];
+
 				m_RuntimeShader->SetInt(uniform.second.Name, currSlot);
 				texture->Bind(currSlot);
 				currSlot++;

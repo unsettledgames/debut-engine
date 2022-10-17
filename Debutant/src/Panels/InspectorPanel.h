@@ -181,5 +181,6 @@ namespace Debut
 
 		private:
 			Entity m_SelectionContext;
+			Entity m_PrevSelectionContext;
 	};
 }

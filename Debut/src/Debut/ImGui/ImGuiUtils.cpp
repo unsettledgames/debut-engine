@@ -204,7 +204,6 @@ namespace Debut
 		ImGui::NextColumn();
 
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-		
 
 		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 		ImVec2 buttonSize = { lineHeight, lineHeight };

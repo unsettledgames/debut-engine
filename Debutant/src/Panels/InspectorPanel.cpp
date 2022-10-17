@@ -1,5 +1,6 @@
 #include <Panels/InspectorPanel.h>
 #include <Utils/EditorCache.h>
+#include <Debut/Core/Instrumentor.h>
 
 #include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Rendering/Material.h>
@@ -25,6 +26,8 @@ namespace Debut
 			DrawComponents(m_SelectionContext);
 
 		ImGui::End();
+
+		m_PrevSelectionContext = m_SelectionContext;
 	}
 
 	void InspectorPanel::DrawComponents(Entity& entity)
@@ -105,11 +108,17 @@ namespace Debut
 			});
 
 
-		DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [](auto& component)
+		DrawComponent<MeshRendererComponent>("Mesh Renderer", entity, [&](auto& component)
 			{
 				ImGuiUtils::StartColumns(2, { 100, (uint32_t)ImGui::GetContentRegionAvail().x - 100 });
-				MeshMetadata meshData = Mesh::GetMetadata(component.Mesh);
-				MaterialMetadata materialData = Material::GetMetadata(component.Material);
+				static MeshMetadata meshData; 
+				static MaterialMetadata materialData;
+
+				if ((entt::entity)m_PrevSelectionContext != (entt::entity)m_SelectionContext)
+				{
+					meshData = Mesh::GetMetadata(component.Mesh);
+					materialData = Material::GetMetadata(component.Material);
+				}
 
 				// Mesh reference
 				ImGui::LabelText("##meshlabel", "Mesh");

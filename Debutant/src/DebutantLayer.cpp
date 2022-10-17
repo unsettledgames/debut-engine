@@ -26,28 +26,14 @@
 * 
 *   CURRENT:
 *       PROFILING:
-*           - UseMaterial: ~0.4ms
-*               The sus thing is that Shader.Bind takes a very little amount of time, which means I have some room for
-*               improvement. Most of the time is taken after the shader is bound (sending uniform data?), but the first
-*               part is probably improveable too. UseMaterial is also the biggest bottleneck in DrawModel atm.
-*           - SetData: ~0.1ms
-*               SetData is probably just a memset but it is quite expensive. Another sus thing is that something happens
-*               between each SetData that causes some delay
-*           - ContentBrowser::OnImGuiRender: ~1.0ms
-*               That's a lot. Main bottleneck of Debutant atm.
-*           - DrawPhysicsGizmos (mesh): ~10ms
-*               DEFINITELY a lot. Could be fault of the RendererDebug or something stupid I do to convert points. I'm starting
-*               to think that it might be better to render debug data in a shader and have another attachment in the framebuffer
-*               SetData takes a lot in this case. Or just render the model with a specific shader (https://stackoverflow.com/questions/137629/how-do-you-render-primitives-as-wireframes-in-opengl)
-*           - InspectorUpdate (with mesh collider selected): ~15ms
-*               I probably get the mesh and do something stupid with it.
-*               
-*       
+*           - GetMaterial: ~60.0ms
+                Probably time to get rid of YAML and use a binary, compressed format instead
 * 
 *   QOL update:
 *   BUGS:
 *       - Creating a new material and then selecting it crashes the editor. The first shader isn't set the first time probably
 *       - Creating a new scene messes up the PhysicsSystem3D
+*       - Can't delete 3D models
 *   QOL:
 *       - Visualize all collider button, both in game and editor mode
 *       - Add buttons for gizmo mode, add button for global / local gizmo
