@@ -30,7 +30,13 @@
                 Probably time to get rid of YAML and use a binary, compressed format instead
 *   QOL update:
 *   BUGS:
-*       - Duplicate children of entity, not just the entity itself.
+*       - Duplicate children of entity, not just the entity itself. To do so:
+*           - Store children in transformcomponent
+*           - When parenting, pass the original entity too. So SetParent(child, parent), so you can add the child to the
+*             parent. Either that or do that after calling SetParent. OR, since the process should be kinda automatic,
+*             I'm starting to think that each component should have a reference to the entity they belong to (searching
+*             for it is quite slow in entt iirc)
+*           - There's a chance this might work without having to edit the EntitySceneNode* tree
 *   QOL:
 *       - Visualize all collider button, both in game and editor mode
 *       - Add buttons for gizmo mode, add button for global / local gizmo
@@ -38,7 +44,6 @@
 * 
     OPTIMIZATION:
         - Remove as many DecomposeTransform as possible
-        - Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile,Profile
         - Optimize transformation in physics
         - Maybe remove indices from PolygonCollider? The concept is similar to creating a transform matrix every time it's 
           required. Profile both approaches

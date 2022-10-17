@@ -42,10 +42,12 @@ namespace Debut
 	{
 		if (!e.HasComponent<T>())
 			return;
+		T& component = e.GetComponent<T>();
 
 		out << YAML::Key << name << YAML::Value;
 		out << YAML::BeginMap;
-		SerializeComponent(e.GetComponent<T>(), out);
+		out << YAML::Key << "Owner" << YAML::Value << component.Owner;
+		SerializeComponent(component, out);
 		out << YAML::EndMap;
 	}
 
@@ -189,6 +191,7 @@ namespace Debut
 		if (!in) return;
 		IDComponent& id = e.GetComponent<IDComponent>();
 		id.ID = in["ID"].as<uint64_t>();
+		id.Owner = in["Owner"] ? in["Owner"].as<uint64_t>() : id.ID;
 	}
 
 	template <>
@@ -198,6 +201,7 @@ namespace Debut
 			return;
 		TransformComponent& transform = e.GetComponent<TransformComponent>();
 
+		transform.Owner = e.GetComponent<IDComponent>().ID;
 		transform.Translation = in["Translation"].as<glm::vec3>();
 		transform.Rotation = in["Rotation"].as<glm::vec3>();
 		transform.Scale = in["Scale"].as<glm::vec3>();
@@ -210,7 +214,6 @@ namespace Debut
 		if (!in)
 			return;
 		CameraComponent& cc = e.AddComponent<CameraComponent>();
-
 		cc.FixedAspectRatio = in["FixedAspectRatio"].as<bool>();
 		cc.Primary = in["Primary"].as<bool>();
 
@@ -275,7 +278,6 @@ namespace Debut
 		if (!in)
 			return;
 		BoxCollider2DComponent& bc2d = e.AddComponent<BoxCollider2DComponent>();
-
 		bc2d.Offset = in["Offset"].as<glm::vec2>();
 		bc2d.Size = in["Size"].as<glm::vec2>();
 		bc2d.Material = in["Material"] ? in["Material"].as<uint64_t>() : 0;
@@ -286,11 +288,10 @@ namespace Debut
 	{
 		if (!in)
 			return;
-		CircleCollider2DComponent& bc2d = e.AddComponent<CircleCollider2DComponent>();
-
-		bc2d.Offset = in["Offset"].as<glm::vec2>();
-		bc2d.Radius = in["Radius"].as<float>();
-		bc2d.Material = in["Material"].as<uint64_t>();
+		CircleCollider2DComponent& cc2d = e.AddComponent<CircleCollider2DComponent>();
+		cc2d.Offset = in["Offset"].as<glm::vec2>();
+		cc2d.Radius = in["Radius"].as<float>();
+		cc2d.Material = in["Material"].as<uint64_t>();
 	}
 
 	template<>
@@ -299,7 +300,6 @@ namespace Debut
 		if (!in)
 			return;
 		PolygonCollider2DComponent& pc2d = e.AddComponent<PolygonCollider2DComponent>();
-
 		pc2d.Offset = in["Offset"].as<glm::vec2>();
 		uint32_t i = 0;
 		// Remove default points
@@ -322,7 +322,6 @@ namespace Debut
 		if (!in)
 			return;
 		BoxCollider3DComponent& bc3d = e.AddComponent<BoxCollider3DComponent>();
-
 		bc3d.Offset = in["Offset"].as<glm::vec3>();
 		bc3d.Size = in["Size"].as<glm::vec3>();
 		bc3d.Material = in["Material"] ? in["Material"].as<uint64_t>() : 0;
@@ -334,7 +333,6 @@ namespace Debut
 		if (!in)
 			return;
 		SphereCollider3DComponent& bc3d = e.AddComponent<SphereCollider3DComponent>();
-
 		bc3d.Offset = in["Offset"].as<glm::vec3>();
 		bc3d.Radius = in["Radius"].as<float>();
 		bc3d.Material = in["Material"] ? in["Material"].as<uint64_t>() : 0;
@@ -346,7 +344,6 @@ namespace Debut
 		if (!in)
 			return;
 		MeshCollider3DComponent& mesh = e.AddComponent<MeshCollider3DComponent>();
-		
 		mesh.Offset = in["Offset"].as<glm::vec3>();
 		mesh.Mesh = in["Mesh"].as<uint64_t>();
 		mesh.Material = in["Material"].as<uint64_t>();
@@ -358,7 +355,6 @@ namespace Debut
 		if (!in)
 			return;
 		DirectionalLightComponent& dl = e.AddComponent<DirectionalLightComponent>();
-
 		dl.Direction = in["Direction"].as<glm::vec3>();
 		dl.Color = in["Color"].as<glm::vec3>();
 		dl.Intensity = in["Intensity"].as<float>();
@@ -370,7 +366,6 @@ namespace Debut
 		if (!in)
 			return;
 		PointLightComponent& dl = e.AddComponent<PointLightComponent>();
-
 		dl.Color = in["Color"].as<glm::vec3>();
 		dl.Intensity = in["Intensity"].as<float>();
 		dl.Radius = in["Radius"].as<float>();
@@ -488,8 +483,11 @@ namespace Debut
 		EntitySceneNode* node = new EntitySceneNode(false, entity);
 		node->IndexInNode = yamlEntity["HierarchyOrder"].as<uint32_t>();
 		entity.GetComponent<TagComponent>().Tag = tc["Tag"].as<std::string>();
-
+		
 		// Deserialize the other components
+		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
+		entity.GetComponent<TagComponent>().Owner = entity.GetComponent<IDComponent>().ID;
+
 		DeserializeComponent<TransformComponent>(entity, yamlEntity["TransformComponent"], m_Scene);
 		DeserializeComponent<CameraComponent>(entity, yamlEntity["CameraComponent"], m_Scene);
 		DeserializeComponent<SpriteRendererComponent>(entity, yamlEntity["SpriteRendererComponent"]);
@@ -506,7 +504,6 @@ namespace Debut
 		DeserializeComponent<SphereCollider3DComponent>(entity, yamlEntity["SphereCollider3DComponent"]);
 		DeserializeComponent<MeshCollider3DComponent>(entity, yamlEntity["MeshCollider3DComponent"]);
 
-		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
 		DeserializeComponent<DirectionalLightComponent>(entity, yamlEntity["DirectionalLightComponent"]);
 		DeserializeComponent<PointLightComponent>(entity, yamlEntity["PointLightComponent"]);
 

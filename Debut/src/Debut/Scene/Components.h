@@ -55,6 +55,7 @@ namespace Debut
 	struct IDComponent
 	{
 		UUID ID;
+		UUID Owner;
 
 		IDComponent() = default;
 		IDComponent(const IDComponent&) = default;
@@ -62,6 +63,8 @@ namespace Debut
 
 	struct TagComponent
 	{
+		UUID Owner;
+
 		std::string Tag;
 		std::string Name;
 
@@ -72,11 +75,14 @@ namespace Debut
 
 	struct TransformComponent
 	{
+		UUID Owner;
+
 		glm::vec3 Translation = glm::vec3(0.0f);
 		glm::vec3 Rotation = glm::vec3(0.0f);
 		glm::vec3 Scale = glm::vec3(1.0f);
 
 		Entity Parent = {};
+		std::vector<Entity> Children;
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent& other) = default;
@@ -128,12 +134,14 @@ namespace Debut
 			glm::decompose(finalTransform, Scale, rotation, Translation, skew, persp);
 			Rotation = glm::eulerAngles(rotation);
 
-			Parent = parent; 
+			Parent = parent;
 		}
 	};
 
 	struct CameraComponent
 	{
+		UUID Owner;
+
 		Debut::SceneCamera Camera;
 		bool Primary = true;
 		bool FixedAspectRatio = false;
@@ -147,6 +155,8 @@ namespace Debut
 
 	struct SpriteRendererComponent
 	{
+		UUID Owner;
+
 		glm::vec4 Color = glm::vec4(1.0f);
 		UUID Texture = 0;
 		float TilingFactor = 1.0f;
@@ -158,6 +168,8 @@ namespace Debut
 
 	struct MeshRendererComponent
 	{
+		UUID Owner;
+
 		UUID Material = 0;
 		UUID Mesh = 0;
 
@@ -171,6 +183,8 @@ namespace Debut
 	// LIGHTING
 	struct DirectionalLightComponent : LightComponent
 	{
+		UUID Owner;
+
 		glm::vec3 Direction = glm::vec3(1.0f);
 		glm::vec3 Color = glm::vec3(1.0f);
 		float Intensity = 1.0f;
@@ -181,6 +195,8 @@ namespace Debut
 
 	struct PointLightComponent : LightComponent
 	{
+		UUID Owner;
+
 		glm::vec3 Color = glm::vec3(1.0f);
 		glm::vec3 Position = glm::vec3(0.0f);
 
@@ -194,6 +210,8 @@ namespace Debut
 	// PHYSICS AND COLLIDERS
 	struct Rigidbody2DComponent
 	{
+		UUID Owner;
+
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
 
 		BodyType Type = BodyType::Static;
@@ -217,6 +235,8 @@ namespace Debut
 
 	struct Rigidbody3DComponent
 	{
+		UUID Owner;
+
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
 		BodyType Type;
 
@@ -241,6 +261,8 @@ namespace Debut
 
 	struct BoxCollider2DComponent : Collider2DComponent
 	{
+		UUID Owner;
+
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		glm::vec2 Size = { 1.0f, 1.0f };
 
@@ -294,6 +316,8 @@ namespace Debut
 
 	struct CircleCollider2DComponent : Collider2DComponent
 	{
+		UUID Owner;
+
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		float Radius = 1.0f;
 
@@ -343,6 +367,8 @@ namespace Debut
 
 	struct PolygonCollider2DComponent : Collider2DComponent
 	{
+		UUID Owner;
+
 		UUID Material = 0;
 		void* RuntimeFixture = nullptr;
 		
@@ -395,6 +421,8 @@ namespace Debut
 
 	struct BoxCollider3DComponent : Collider3DComponent
 	{
+		UUID Owner;
+
 		glm::vec3 Size = glm::vec3(1.0f);
 		glm::vec3 Offset = glm::vec3(0.0f);
 		UUID Material = 0;
@@ -443,6 +471,8 @@ namespace Debut
 
 	struct SphereCollider3DComponent : Collider3DComponent
 	{
+		UUID Owner;
+
 		float Radius = 1.0f;
 		glm::vec3 Offset = glm::vec3(0.0f);
 		UUID Material = 0;
@@ -499,6 +529,8 @@ namespace Debut
 
 	struct MeshCollider3DComponent : Collider3DComponent
 	{
+		UUID Owner;
+
 		UUID Mesh = 0;
 		UUID Material = 0;
 
@@ -511,6 +543,7 @@ namespace Debut
 	// SCRIPT
 	struct NativeScriptComponent
 	{
+		UUID Owner;
 		ScriptableEntity* Instance = nullptr;
 
 		ScriptableEntity*(*InstantiateScript)();

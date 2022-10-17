@@ -30,6 +30,8 @@ namespace Debut
 			DBT_ASSERT(!HasComponent<T>(), "This entity already has the component you want to attach");
 			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
 			m_Scene->OnComponentAdded<T>(component, *this);
+			if (HasComponent<IDComponent>())
+				component.Owner = GetComponent<IDComponent>().ID;
 			return component;
 		}
 
