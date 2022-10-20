@@ -167,7 +167,7 @@ namespace Debut
 				ImGui::EndPopup();
 			}
 
-			if (draw)
+			if (draw && open)
 			{
 				auto& component = entity.GetComponent<T>();
 				uiFunction(component);

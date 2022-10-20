@@ -265,7 +265,7 @@ namespace Debut
 			}
 			if (ImGui::MenuItem("Duplicate"))
 			{
-				m_Context->DuplicateEntity(node.EntityData);
+				m_Context->DuplicateEntity(node.EntityData, node.EntityData.Transform().Parent);
 				RebuildSceneGraph();
 
 				ImGui::EndPopup();

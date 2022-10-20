@@ -68,6 +68,7 @@ namespace Debut
 		std::string Tag;
 		std::string Name;
 
+		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string& name) : Tag("Untagged"), Name(name) {}
 		TagComponent(const std::string& name, const std::string& tag) : Tag(tag), Name(name) {}
@@ -82,7 +83,7 @@ namespace Debut
 		glm::vec3 Scale = glm::vec3(1.0f);
 
 		Entity Parent = {};
-		std::vector<Entity> Children;
+		std::vector<UUID> Children;
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent& other) = default;
@@ -119,7 +120,7 @@ namespace Debut
 				* glm::scale(glm::mat4(1.0f), Scale));
 		}
 
-		void SetParent(Entity parent) 
+		void SetParent(Entity newParent) 
 		{ 
 			glm::mat4 finalTransform = GetLocalTransform();
 			glm::quat rotation;
@@ -127,14 +128,25 @@ namespace Debut
 			glm::vec4 persp;
 
 			if (Parent)
-				finalTransform = Parent.Transform().GetTransform() * finalTransform;
-			if (parent)
-				finalTransform = glm::inverse(parent.Transform().GetTransform()) * finalTransform;
+			{
+				auto& parentTransform = Parent.Transform();
+				finalTransform = parentTransform.GetTransform() * finalTransform;
+				// Remove this entity from the parent's children
+				parentTransform.Children.erase(std::remove(parentTransform.Children.begin(), parentTransform.Children.end(), 
+					Owner), parentTransform.Children.end());
+			}
+			if (newParent)
+			{
+				auto& parentTransform = newParent.Transform();
+				finalTransform = glm::inverse(parentTransform.GetTransform()) * finalTransform;
+				// Add this entity to the parent's children
+				parentTransform.Children.push_back(Owner);
+			}
 
 			glm::decompose(finalTransform, Scale, rotation, Translation, skew, persp);
 			Rotation = glm::eulerAngles(rotation);
 
-			Parent = parent;
+			Parent = newParent;
 		}
 	};
 
@@ -168,12 +180,11 @@ namespace Debut
 
 	struct MeshRendererComponent
 	{
-		UUID Owner;
-
 		UUID Material = 0;
 		UUID Mesh = 0;
 
 		bool Instanced = false;
+		UUID Owner;
 
 		MeshRendererComponent()  {}
 		MeshRendererComponent(const MeshRendererComponent&) = default;

@@ -37,9 +37,10 @@ namespace Debut
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
+		Entity CreateEmptyEntity();
 		Entity CreateEntity(Entity parent, const std::string& name = "New Entity");
 		Entity CreateEntity(Entity parent, const UUID& id, const std::string& name = "New Entity");
-		void DuplicateEntity(Entity& entity);
+		Entity DuplicateEntity(Entity& entity, Entity& parent);
 		void DestroyEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();

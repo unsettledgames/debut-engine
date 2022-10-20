@@ -68,6 +68,12 @@ namespace Debut
 		out << YAML::Key << "Rotation" << YAML::Value << t.Rotation;
 		out << YAML::Key << "Scale" << YAML::Value << t.Scale;
 		out << YAML::Key << "Parent" << YAML::Value << (!t.Parent ? 0 : (uint64_t)t.Parent.GetComponent<IDComponent>().ID);
+		out << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
+		
+		for (uint64_t child : t.Children)
+			out << child;
+
+		out << YAML::EndSeq;
 	}
 
 	static void SerializeComponent(const CameraComponent& c, YAML::Emitter& out)
@@ -190,8 +196,22 @@ namespace Debut
 	{
 		if (!in) return;
 		IDComponent& id = e.GetComponent<IDComponent>();
+		if (Entity::s_ExistingEntities.find(id.ID) != Entity::s_ExistingEntities.end())
+			Entity::s_ExistingEntities.erase(id.ID);
+
 		id.ID = in["ID"].as<uint64_t>();
 		id.Owner = in["Owner"] ? in["Owner"].as<uint64_t>() : id.ID;
+		Entity::s_ExistingEntities[id.ID] = e;
+	}
+
+	template <>
+	static void DeserializeComponent<TagComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in) return;
+		TagComponent& tag = e.AddComponent<TagComponent>();
+		tag.Name = in["Name"].as<std::string>();
+		tag.Tag = in["Tag"].as<std::string>();
+		tag.Owner = in["Owner"].as<uint64_t>();
 	}
 
 	template <>
@@ -199,13 +219,13 @@ namespace Debut
 	{
 		if (!in)
 			return;
-		TransformComponent& transform = e.GetComponent<TransformComponent>();
+		TransformComponent& transform = e.AddComponent<TransformComponent>();
 
 		transform.Owner = e.GetComponent<IDComponent>().ID;
 		transform.Translation = in["Translation"].as<glm::vec3>();
 		transform.Rotation = in["Rotation"].as<glm::vec3>();
 		transform.Scale = in["Scale"].as<glm::vec3>();
-		transform.Parent = in["Parent"] ? scene->GetEntityByID(in["Parent"].as<uint64_t>()) : Entity(entt::null, nullptr);
+		transform.SetParent(in["Parent"] ? scene->GetEntityByID(in["Parent"].as<uint64_t>()) : Entity(entt::null, nullptr));
 	}
 
 	template <>
@@ -479,16 +499,15 @@ namespace Debut
 	{
 		// Create a new entity, set the tag and name
 		auto tc = yamlEntity["TagComponent"];
-		Entity entity = m_Scene->CreateEntity({}, tc["Name"].as<std::string>());
+		Entity entity = m_Scene->CreateEmptyEntity();
 		EntitySceneNode* node = new EntitySceneNode(false, entity);
 		node->IndexInNode = yamlEntity["HierarchyOrder"].as<uint32_t>();
-		entity.GetComponent<TagComponent>().Tag = tc["Tag"].as<std::string>();
-		
+
 		// Deserialize the other components
 		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
-		entity.GetComponent<TagComponent>().Owner = entity.GetComponent<IDComponent>().ID;
-
+		DeserializeComponent<TagComponent>(entity, yamlEntity["TagComponent"]);
 		DeserializeComponent<TransformComponent>(entity, yamlEntity["TransformComponent"], m_Scene);
+
 		DeserializeComponent<CameraComponent>(entity, yamlEntity["CameraComponent"], m_Scene);
 		DeserializeComponent<SpriteRendererComponent>(entity, yamlEntity["SpriteRendererComponent"]);
 		DeserializeComponent<MeshRendererComponent>(entity, yamlEntity["MeshRendererComponent"]);

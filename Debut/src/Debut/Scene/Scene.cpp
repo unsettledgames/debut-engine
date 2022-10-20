@@ -109,7 +109,12 @@ namespace Debut
 	static void CopyComponentIfExists(Entity& dst, Entity& src)
 	{
 		if (src.HasComponent<Component>())
-			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+		{
+			Component& c = dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+			if (dst.HasComponent<IDComponent>())
+				c.Owner = dst.GetComponent<IDComponent>().ID;
+		}
+
 	}
 
 	//TODO: OnComponentRemove, delete bodies
@@ -495,13 +500,16 @@ namespace Debut
 		m_PhysicsSystem3D->End();
 	}
 
-	void Scene::DuplicateEntity(Entity& entity)
+	Entity Scene::DuplicateEntity(Entity& entity, Entity& parent)
 	{
 		if (!entity)
-			return;
-
-		Entity duplicate = CreateEntity({}, entity.GetComponent<TagComponent>().Name + " Copy");
+			return {};
+		Entity duplicate = CreateEmptyEntity();
 		
+		//Log.CoreInfo("Entity ID: {0}", entity.ID());
+
+		CopyComponentIfExists<TagComponent>(duplicate, entity);
+		duplicate.GetComponent<TagComponent>().Name += " Copy";
 		CopyComponentIfExists<TransformComponent>(duplicate, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(duplicate, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(duplicate, entity);
@@ -518,18 +526,43 @@ namespace Debut
 		CopyComponentIfExists<DirectionalLightComponent>(duplicate, entity);
 		CopyComponentIfExists<PointLightComponent>(duplicate, entity);
 		
-		duplicate.Transform().Parent = duplicate.Transform().Parent;
+		auto& transform = entity.Transform();
+		/*Log.CoreInfo("Duplicate ID: {0}", duplicate.ID());
+		if (parent)
+			Log.CoreInfo("Parent ID: {0}", parent.ID());
+		Log.CoreInfo("---------------");*/
+		duplicate.Transform().SetParent(parent);
+
+		// Refill children
+		for (uint32_t i = 0; i < transform.Children.size(); i++)
+		{
+			Log.CoreInfo("Children size {0}", transform.Children.size());
+			Entity childDup = DuplicateEntity(Entity::s_ExistingEntities[transform.Children[i]], duplicate);
+		}
+
+		return duplicate;
+	}
+
+	Entity Scene::CreateEmptyEntity()
+	{
+		Entity ret = { m_Registry.create(), this };
+
+		IDComponent id = ret.AddComponent<IDComponent>();
+		Entity::s_ExistingEntities[id.ID] = ret;
+
+		return ret;
 	}
 
 	Entity Scene::CreateEntity(Entity parent, const std::string& name)
 	{
 		Entity ret = { m_Registry.create(), this };
 
+		IDComponent id = ret.AddComponent<IDComponent>();
 		ret.AddComponent<TransformComponent>();
 		ret.AddComponent<TagComponent>(name);
-		ret.AddComponent<IDComponent>();
+		ret.Transform().SetParent(parent);
 
-		ret.Transform().Parent = parent;
+		Entity::s_ExistingEntities[id.ID] = ret;
 
 		return ret;
 	}
@@ -542,8 +575,9 @@ namespace Debut
 		idC.ID = id;
 		ret.AddComponent<TransformComponent>();
 		ret.AddComponent<TagComponent>(name);
+		ret.Transform().SetParent(parent);
 
-		ret.Transform().Parent = parent;
+		Entity::s_ExistingEntities[id] = ret;
 
 		return ret;
 	}
@@ -563,6 +597,8 @@ namespace Debut
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		entity.Transform().SetParent({});
+		Entity::s_ExistingEntities.erase(entity.ID());
 		m_Registry.destroy(entity);
 	}
 

@@ -67,6 +67,9 @@ namespace Debut
 		operator entt::entity() const { return m_EntityHandle; }
 		bool operator== (const Entity& other) const { return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene; };
 		bool operator!= (const Entity& other) const { return m_EntityHandle != other.m_EntityHandle || m_Scene == other.m_Scene; };
+	
+	public:
+		static std::unordered_map<UUID, Entity> s_ExistingEntities;
 
 	private:
 		entt::entity m_EntityHandle{ entt::null };

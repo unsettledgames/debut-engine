@@ -30,13 +30,9 @@
                 Probably time to get rid of YAML and use a binary, compressed format instead
 *   QOL update:
 *   BUGS:
-*       - Duplicate children of entity, not just the entity itself. To do so:
-*           - Store children in transformcomponent
-*           - When parenting, pass the original entity too. So SetParent(child, parent), so you can add the child to the
-*             parent. Either that or do that after calling SetParent. OR, since the process should be kinda automatic,
-*             I'm starting to think that each component should have a reference to the entity they belong to (searching
-*             for it is quite slow in entt iirc)
-*           - There's a chance this might work without having to edit the EntitySceneNode* tree
+*       - Saving scene for the first time doesn't ask for path
+*       - Duplicate children of entity, not just the entity itself.
+*           - Not working with models
 *   QOL:
 *       - Visualize all collider button, both in game and editor mode
 *       - Add buttons for gizmo mode, add button for global / local gizmo
@@ -514,7 +510,7 @@ namespace Debut
         Ref<Model> model = AssetManager::Request<Model>(path.string());
         Entity modelEntity = m_ActiveScene->CreateEntity({}, path.filename().string());
 
-        modelEntity.Transform().Parent = {};
+        modelEntity.Transform().SetParent({});
         LoadModelNode(model, modelEntity);
 
         m_SceneHierarchy.RebuildSceneGraph();
@@ -537,7 +533,7 @@ namespace Debut
         // Register the entity in the hierarchy
 
         // Parent it
-        modelEntity.Transform().Parent = parent;
+        modelEntity.Transform().SetParent(parent);
 
         // Add MeshRendererComponent: if there are more than 1 mesh, add children
         if (model->GetMeshes().size() == 1)
@@ -546,7 +542,7 @@ namespace Debut
             for (uint32_t i = 0; i < model->GetMeshes().size(); i++)
             {
                 Entity additional = m_ActiveScene->CreateEntity({}, name + " i");
-                additional.Transform().Parent = modelEntity;
+                additional.Transform().SetParent(modelEntity);
                 additional.AddComponent<MeshRendererComponent>(model->GetMeshes()[i], model->GetMaterials()[i]);
             }
 
@@ -924,7 +920,7 @@ namespace Debut
         {
         // Hierarchy shortcuts
         case DBT_KEY_D:
-            m_ActiveScene->DuplicateEntity(m_SceneHierarchy.GetSelectionContext());
+            m_ActiveScene->DuplicateEntity(m_SceneHierarchy.GetSelectionContext(), m_SceneHierarchy.GetSelectionContext().Transform().Parent);
             break;
         // File Menu
         case DBT_KEY_N:
