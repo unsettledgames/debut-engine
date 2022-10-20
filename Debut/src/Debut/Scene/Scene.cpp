@@ -506,8 +506,6 @@ namespace Debut
 			return {};
 		Entity duplicate = CreateEmptyEntity();
 		
-		//Log.CoreInfo("Entity ID: {0}", entity.ID());
-
 		CopyComponentIfExists<TagComponent>(duplicate, entity);
 		duplicate.GetComponent<TagComponent>().Name += " Copy";
 		CopyComponentIfExists<TransformComponent>(duplicate, entity);
@@ -527,18 +525,11 @@ namespace Debut
 		CopyComponentIfExists<PointLightComponent>(duplicate, entity);
 		
 		auto& transform = entity.Transform();
-		/*Log.CoreInfo("Duplicate ID: {0}", duplicate.ID());
-		if (parent)
-			Log.CoreInfo("Parent ID: {0}", parent.ID());
-		Log.CoreInfo("---------------");*/
 		duplicate.Transform().SetParent(parent);
 
 		// Refill children
 		for (uint32_t i = 0; i < transform.Children.size(); i++)
-		{
-			Log.CoreInfo("Children size {0}", transform.Children.size());
 			Entity childDup = DuplicateEntity(Entity::s_ExistingEntities[transform.Children[i]], duplicate);
-		}
 
 		return duplicate;
 	}

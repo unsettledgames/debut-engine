@@ -29,10 +29,6 @@
 *           - GetMaterial: ~60.0ms
                 Probably time to get rid of YAML and use a binary, compressed format instead
 *   QOL update:
-*   BUGS:
-*       - Saving scene for the first time doesn't ask for path
-*       - Duplicate children of entity, not just the entity itself.
-*           - Not working with models
 *   QOL:
 *       - Visualize all collider button, both in game and editor mode
 *       - Add buttons for gizmo mode, add button for global / local gizmo
@@ -251,7 +247,6 @@ namespace Debut
                 DrawSettingsWindow();
 
             DrawViewport();
-            DrawUIToolbar();
 
         ImGui::End();
     }
@@ -322,11 +317,10 @@ namespace Debut
     }
 
     // TODO: move this to the top bar
-    void DebutantLayer::DrawUIToolbar()
+    void DebutantLayer::DrawUIToolbar(ImVec2& viewportSize, ImVec2& menuSize)
     {
-        ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
         Ref<Texture2D> icon;
-        float buttonSize = ImGui::GetWindowHeight() - 20.0f;
+        float buttonSize = ImGui::GetTextLineHeight() * 2;
 
         switch (m_SceneState)
         {
@@ -340,7 +334,8 @@ namespace Debut
             break;
         }
 
-        ImGui::SameLine((ImGui::GetWindowContentRegionMax().x * 0.5f) - (buttonSize * 0.5f));
+        ImGui::SetCursorPos({ (viewportSize.x * 0.5f) - (buttonSize * 0.5f), (menuSize.y - buttonSize) * 0.5f });
+
         if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(buttonSize, buttonSize)))
         {
             // TODO: pause scene...
@@ -349,8 +344,6 @@ namespace Debut
             else if (m_SceneState == SceneState::Play)
                 OnSceneStop();
         }
-
-        ImGui::End();
     }
 
     void DebutantLayer::DrawAssetMapWindow()
@@ -417,7 +410,12 @@ namespace Debut
                     OpenScene();
 
                 if (ImGui::MenuItem("Save scene", "Ctrl+S"))
-                    SaveScene();
+                {
+                    if (m_ScenePath != "")
+                        SaveScene();
+                    else
+                        SaveSceneAs();
+                }
 
                 if (ImGui::MenuItem("Save scene as...", "Ctrl+Shift+S"))
                     SaveSceneAs();
@@ -450,9 +448,22 @@ namespace Debut
 
     void DebutantLayer::DrawViewport()
     {
+        /*"GizmoChanging"{ 50, 100 }, false, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_ChildWindow)*/
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-        ImGui::Begin("Viewport");
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, ImGui::GetTextLineHeight()});
+        ImGui::Begin("Viewport", 0, ImGuiWindowFlags_MenuBar);
         {
+            ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+            ImVec2 menuSize = { viewportSize.x, ImGui::GetTextLineHeight() * 3 };
+
+            if (ImGui::BeginMenuBar())
+            {
+                ImGui::PopStyleVar();
+                DrawUIToolbar(viewportSize, menuSize);
+            }
+            ImGui::EndMenuBar();
+            
             // Window resizing
             auto viewportOffset = ImGui::GetCursorPos();
 
@@ -460,7 +471,6 @@ namespace Debut
             m_ViewportHovered = ImGui::IsWindowHovered();
             Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
 
-            ImVec2 viewportSize = ImGui::GetContentRegionAvail();
             if (m_ViewportSize.x != viewportSize.x || m_ViewportSize.y != viewportSize.y)
             {
                 m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
