@@ -12,6 +12,17 @@
 #define IMGUI_ICON_UNIMPORTED_MODEL	u8"\ue006"
 #define IMGUI_ICON_ENTITY			u8"\ue007"
 
+#define IMGUI_ICON_GIZMO_GLOBAL		u8"\ue008"
+#define IMGUI_ICON_GIZMO_LOCAL		u8"\ue009"
+
+#define IMGUI_ICON_TRANSLATE		u8"\ue00a"
+#define IMGUI_ICON_ROTATE			u8"\ue00b"
+#define IMGUI_ICON_SCALE			u8"\ue00c"
+
+#define IMGUI_ICON_PLAY				u8"\ue00d"
+#define IMGUI_ICON_STOP				u8"\ue00e"
+
+
 namespace Debut
 {
 	class Texture2D;

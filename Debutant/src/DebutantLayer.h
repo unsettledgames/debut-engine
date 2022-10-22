@@ -105,11 +105,10 @@ namespace Debut
 
 		// Textures
 		AssetCache<std::string, Ref<Texture2D>> m_TextureCache;
-		Ref<Texture2D> m_IconPlay;
-		Ref<Texture2D> m_IconStop;
 
 		// Gizmos
 		ImGuizmo::OPERATION m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+		ImGuizmo::MODE m_GizmoMode = ImGuizmo::MODE::WORLD;
 		PhysicsColliderSelection m_PhysicsSelection;
 	};
 }

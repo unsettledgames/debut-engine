@@ -28,11 +28,14 @@
 *       PROFILING:
 *           - GetMaterial: ~60.0ms
                 Probably time to get rid of YAML and use a binary, compressed format instead
+    BUGS:
+        - The more you're distant from an object, the more the gizmos are screwed up
+        - Scaling models breaks mesh colliders
 *   QOL update:
 *   QOL:
 *       - Visualize all collider button, both in game and editor mode
-*       - Add buttons for gizmo mode, add button for global / local gizmo
 *       - When adding a rigidbody add a default box collider and viceversa
+
 * 
     OPTIMIZATION:
         - Remove as many DecomposeTransform as possible
@@ -81,13 +84,15 @@ namespace Debut
         m_SceneHierarchy.SetInspectorPanel(&m_Inspector);
         m_ContentBrowser.SetPropertiesPanel(&m_PropertiesPanel);
 
-        m_IconPlay = Texture2D::Create("assets\\icons\\play.png");
-        m_IconStop = Texture2D::Create("assets\\icons\\stop.png");
-
         AssetManager::Init(".");
 
-        EditorCache::Textures().Put("assets\\icons\\play.png", m_IconPlay);
-        EditorCache::Textures().Put("assets\\icons\\stop.png", m_IconStop);
+        EditorCache::Textures().Put("PlayIcon", Texture2D::Create("assets\\icons\\play.png"));
+        EditorCache::Textures().Put("StopIcon", Texture2D::Create("assets\\icons\\stop.png"));
+        EditorCache::Textures().Put("GizmoLocalIcon", Texture2D::Create("assets\\icons\\GizmoLocal.png"));
+        EditorCache::Textures().Put("GizmoGlobalIcon", Texture2D::Create("assets\\icons\\GizmoGlobal.png"));
+        EditorCache::Textures().Put("TranslateIcon", Texture2D::Create("assets\\icons\\move.png"));
+        EditorCache::Textures().Put("RotateIcon", Texture2D::Create("assets\\icons\\rotate.png"));
+        EditorCache::Textures().Put("ScaleIcon", Texture2D::Create("assets\\icons\\scale.png"));
 
         // TEST AREA
         std::vector<std::string> filenames = { "assets\\textures\\Skybox\\front.png" ,
@@ -319,24 +324,20 @@ namespace Debut
     // TODO: move this to the top bar
     void DebutantLayer::DrawUIToolbar(ImVec2& viewportSize, ImVec2& menuSize)
     {
-        Ref<Texture2D> icon;
-        float buttonSize = ImGui::GetTextLineHeight() * 2;
+        float buttonSize = ImGui::GetTextLineHeight() * 2.0f;
+        float smallButtonSize = buttonSize;
 
-        switch (m_SceneState)
-        {
-        case SceneState::Edit:
-            icon = EditorCache::Textures().Get("assets\\icons\\play.png");
-            break;
-        case SceneState::Play:
-            icon = EditorCache::Textures().Get("assets\\icons\\stop.png");
-            break;
-        default:
-            break;
-        }
+        /*
+        // Gizmo mode icon
+        ImGui::SetCursorPosY((menuSize.y - smallButtonSize) * 0.5f);
+        if (ImGuiUtils::ImageButton(gizmoIcon, { smallButtonSize, smallButtonSize }, ImGui::GetStyle().Colors[ImGuiCol_Button]))
+            m_GizmoMode = m_GizmoMode == ImGuizmo::LOCAL ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
+        */
+        ImGui::SetCursorPos({ (viewportSize.x * 0.5f) - (buttonSize * 0.5f), (menuSize.y - buttonSize * 0.5f) * 0.5f });
 
-        ImGui::SetCursorPos({ (viewportSize.x * 0.5f) - (buttonSize * 0.5f), (menuSize.y - buttonSize) * 0.5f });
-
-        if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(buttonSize, buttonSize)))
+        // Play icon
+        if (ImGui::Button(m_SceneState == SceneState::Edit ? IMGUI_ICON_PLAY : IMGUI_ICON_STOP, 
+            ImVec2(buttonSize, buttonSize)))
         {
             // TODO: pause scene...
             if (m_SceneState == SceneState::Edit)
@@ -344,6 +345,30 @@ namespace Debut
             else if (m_SceneState == SceneState::Play)
                 OnSceneStop();
         }
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 3, 3 });
+
+        ImGui::SetCursorPosX(5);
+        ImGui::SetCursorPosY((menuSize.y - buttonSize * 0.5f) * 0.5f);
+
+        // Gizmo
+        if (ImGui::Button(m_GizmoMode == ImGuizmo::LOCAL ? IMGUI_ICON_GIZMO_GLOBAL : IMGUI_ICON_GIZMO_LOCAL, { buttonSize, buttonSize }))
+            m_GizmoMode = m_GizmoMode == ImGuizmo::LOCAL ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
+
+        // Translation rotation scale
+        ImGui::BeginGroup();
+        ImGui::SetCursorPosY((menuSize.y - buttonSize * 0.5f) * 0.5f);
+        if (ImGui::Button(IMGUI_ICON_TRANSLATE, { smallButtonSize, smallButtonSize }))
+            m_GizmoType = ImGuizmo::TRANSLATE;
+        ImGui::SetCursorPosY((menuSize.y - buttonSize * 0.5f) * 0.5f);
+        if (ImGui::Button(IMGUI_ICON_ROTATE, { smallButtonSize, smallButtonSize }))
+            m_GizmoType = ImGuizmo::ROTATE;
+        ImGui::SetCursorPosY((menuSize.y - buttonSize * 0.5f) * 0.5f);
+        if (ImGui::Button(IMGUI_ICON_SCALE, { smallButtonSize, smallButtonSize }))
+            m_GizmoType = ImGuizmo::SCALE;
+        ImGui::EndGroup();
+
+        ImGui::PopStyleVar();
     }
 
     void DebutantLayer::DrawAssetMapWindow()
@@ -452,18 +477,19 @@ namespace Debut
             ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_ChildWindow)*/
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, ImGui::GetTextLineHeight()});
-        ImGui::Begin("Viewport", 0, ImGuiWindowFlags_MenuBar);
+        ImGui::Begin("Viewport", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar);
         {
             ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-            ImVec2 menuSize = { viewportSize.x, ImGui::GetTextLineHeight() * 3 };
+            ImVec2 menuSize = { viewportSize.x, ImGui::GetTextLineHeight() * 2 };
 
+            // Overlay menu bar
             if (ImGui::BeginMenuBar())
             {
                 ImGui::PopStyleVar();
                 DrawUIToolbar(viewportSize, menuSize);
             }
             ImGui::EndMenuBar();
-            
+
             // Window resizing
             auto viewportOffset = ImGui::GetCursorPos();
 
@@ -498,8 +524,7 @@ namespace Debut
                         LoadModel(path);
                     ImGui::EndDragDropTarget();
                 }
-
-            }
+            }            
 
             // Save bounds for mouse picking
             ImVec2 minBound = ImGui::GetItemRectMin();
@@ -591,7 +616,7 @@ namespace Debut
                 float snapValues[] = { snapAmount, snapAmount, snapAmount };
 
                 if (ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
-                    m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr))
+                    m_GizmoType, m_GizmoMode, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr))
                 {
                     glm::vec3 finalTrans, finalRot, finalScale;
                     transform = (tc.Parent ? glm::inverse(tc.Parent.Transform().GetTransform()) : glm::mat4(1.0)) * transform;
@@ -851,7 +876,7 @@ namespace Debut
             // Manipulate the selected point
             if (ImGuizmo::Manipulate(glm::value_ptr(m_EditorCamera.GetView()),
                 glm::value_ptr(m_EditorCamera.GetProjection()), ImGuizmo::TRANSLATE,
-                ImGuizmo::MODE::LOCAL, glm::value_ptr(pointTransform)))
+                m_GizmoMode, glm::value_ptr(pointTransform)))
             {
                 // Apply the changes
                 glm::vec3 newPoint = m_PhysicsSelection.SelectedPoint;
