@@ -29,6 +29,23 @@ namespace Debut
 	class PhysicsMaterial2D;
 	class AssetManager;
 
+	class ScopedStyleVar
+	{
+	public:
+		ScopedStyleVar(ImGuiStyleVar var, float val)			{ ImGui::PushStyleVar(var, val); }
+		ScopedStyleVar(ImGuiStyleVar var, const ImVec2& val)	{ ImGui::PushStyleVar(var, val); }
+
+		~ScopedStyleVar() { ImGui::PopStyleVar(); }
+	};
+
+	class ScopedStyleColor
+	{
+	public:
+		ScopedStyleColor(ImGuiCol col, const ImVec4& val) { ImGui::PushStyleColor(col, val); }
+
+		~ScopedStyleColor() { ImGui::PopStyleColor(); }
+	};
+
 	class ImGuiUtils
 	{
 	public:

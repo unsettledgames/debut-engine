@@ -325,21 +325,13 @@ namespace Debut
     void DebutantLayer::DrawUIToolbar(ImVec2& viewportSize, ImVec2& menuSize)
     {
         float buttonSize = ImGui::GetTextLineHeight() * 2.0f;
-        float smallButtonSize = buttonSize;
 
-        /*
-        // Gizmo mode icon
-        ImGui::SetCursorPosY((menuSize.y - smallButtonSize) * 0.5f);
-        if (ImGuiUtils::ImageButton(gizmoIcon, { smallButtonSize, smallButtonSize }, ImGui::GetStyle().Colors[ImGuiCol_Button]))
-            m_GizmoMode = m_GizmoMode == ImGuizmo::LOCAL ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
-        */
-        ImGui::SetCursorPos({ (viewportSize.x * 0.5f) - (buttonSize * 0.5f), (menuSize.y - buttonSize * 0.5f) * 0.5f });
-
+        ImGui::SetCursorPos({ (viewportSize.x * 0.5f) - (buttonSize ), (menuSize.y - buttonSize) * 0.5f });
         // Play icon
         if (ImGui::Button(m_SceneState == SceneState::Edit ? IMGUI_ICON_PLAY : IMGUI_ICON_STOP, 
-            ImVec2(buttonSize, buttonSize)))
+            ImVec2(buttonSize * 1.5f, buttonSize * 1.5f)))
         {
-            // TODO: pause scene...
+            // TODO: pause scene
             if (m_SceneState == SceneState::Edit)
                 OnScenePlay();
             else if (m_SceneState == SceneState::Play)
@@ -347,27 +339,28 @@ namespace Debut
         }
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 3, 3 });
+        ImGui::SetCursorPos({ 10, (menuSize.y - buttonSize * 0.5f) * 0.5f });
 
-        ImGui::SetCursorPosX(5);
-        ImGui::SetCursorPosY((menuSize.y - buttonSize * 0.5f) * 0.5f);
-
-        // Gizmo
+        // Gizmo mode
         if (ImGui::Button(m_GizmoMode == ImGuizmo::LOCAL ? IMGUI_ICON_GIZMO_GLOBAL : IMGUI_ICON_GIZMO_LOCAL, { buttonSize, buttonSize }))
             m_GizmoMode = m_GizmoMode == ImGuizmo::LOCAL ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
 
-        // Translation rotation scale
-        ImGui::BeginGroup();
-        ImGui::SetCursorPosY((menuSize.y - buttonSize * 0.5f) * 0.5f);
-        if (ImGui::Button(IMGUI_ICON_TRANSLATE, { smallButtonSize, smallButtonSize }))
-            m_GizmoType = ImGuizmo::TRANSLATE;
-        ImGui::SetCursorPosY((menuSize.y - buttonSize * 0.5f) * 0.5f);
-        if (ImGui::Button(IMGUI_ICON_ROTATE, { smallButtonSize, smallButtonSize }))
-            m_GizmoType = ImGuizmo::ROTATE;
-        ImGui::SetCursorPosY((menuSize.y - buttonSize * 0.5f) * 0.5f);
-        if (ImGui::Button(IMGUI_ICON_SCALE, { smallButtonSize, smallButtonSize }))
-            m_GizmoType = ImGuizmo::SCALE;
-        ImGui::EndGroup();
+        // Translation rotation scale buttons
+        ImGuizmo::OPERATION operations[3] = {ImGuizmo::TRANSLATE, ImGuizmo::ROTATE, ImGuizmo::SCALE};
+        const char* icons[3] = { IMGUI_ICON_TRANSLATE, IMGUI_ICON_ROTATE, IMGUI_ICON_SCALE };
 
+        for (uint32_t i = 0; i < 3; i++)
+        {
+            ImGui::SetCursorPosY((menuSize.y - buttonSize * 0.5f) * 0.5f);
+            if (m_GizmoType == operations[i])
+            {
+                ScopedStyleColor col(ImGuiCol_Button, ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered]);
+                if (ImGui::Button(icons[i], { buttonSize, buttonSize }))
+                    m_GizmoType = operations[i];
+            }
+            else if(ImGui::Button(icons[i], { buttonSize, buttonSize }))
+                m_GizmoType = operations[i];
+        }
         ImGui::PopStyleVar();
     }
 
@@ -473,8 +466,6 @@ namespace Debut
 
     void DebutantLayer::DrawViewport()
     {
-        /*"GizmoChanging"{ 50, 100 }, false, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize |
-            ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_ChildWindow)*/
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, ImGui::GetTextLineHeight()});
         ImGui::Begin("Viewport", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar);
