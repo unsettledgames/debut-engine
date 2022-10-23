@@ -10,6 +10,7 @@
 #include <Camera/EditorCamera.h>
 #include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Rendering/Resources/Skybox.h>
+#include <Debut/Scene/Components.h>
 
 #include <chrono>
 #include "Debut/ImGui/ImGuiUtils.h"
@@ -30,8 +31,23 @@
                 Probably time to get rid of YAML and use a binary, compressed format instead
 *   QOL update:
 *   QOL:
-*       - Visualize all collider button, both in game and editor mode
+*       - Shading buttons:
+*           - Render wireframe
+*           - Render colliders
+*
+*           - Flat shading
+*           - Normal shading
+*           - Z buffer
+*       
+        - Lighting settings:
+*           - Use scene lighting
+*           - Editor light: intensity, direction, color
+*       
+*       - Scene camera settings
+* 
+*       - Visualize a collider only if the entry in the inspector is open
 *       - When adding a rigidbody add a default box collider and viceversa
+*       - New scene: automatically add a directional light and a camera
 *   INVESTIGATE:
 *       - Create a parent. Scale it 2x. Create a child, add a mesh collider and see if the simulation is ok.
 * 
@@ -40,8 +56,6 @@
         - Optimize transformation in physics
         - Maybe remove indices from PolygonCollider? The concept is similar to creating a transform matrix every time it's 
           required. Profile both approaches
-        - Components that require data that is stored in the Lib folder: display the name instead of the ID in the drag
-            destination in components
         - MeshColliders load a whole mesh when only vertices and triangles are needed. Specify flags to know what parts
             to load
 
@@ -322,8 +336,13 @@ namespace Debut
     void DebutantLayer::DrawViewportToolbar(ImVec2& menuSize)
     {
         float buttonSize = ImGui::GetTextLineHeight() * 2.0f;
+        float bigButtonSize = buttonSize * 1.5f;
+        float verticalCenter = (menuSize.y - buttonSize) + buttonSize * 0.5f;
+        float bigVerticalCenter = (menuSize.y - bigButtonSize) + bigButtonSize * 0.5f;
 
-        ImGui::SetCursorPos({ (menuSize.x * 0.5f) - (buttonSize ), (menuSize.y - buttonSize) * 0.5f });
+        SceneConfig currSceneConfig = m_ActiveScene->GetSceneConfig();
+
+        ImGui::SetCursorPos({ (menuSize.x - buttonSize * 1.5f) * 0.5f, bigVerticalCenter });
         // Play icon
         if (ImGui::Button(m_SceneState == SceneState::Edit ? IMGUI_ICON_PLAY : IMGUI_ICON_STOP, 
             ImVec2(buttonSize * 1.5f, buttonSize * 1.5f)))
@@ -336,7 +355,7 @@ namespace Debut
         }
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 3, 3 });
-        ImGui::SetCursorPos({ 10, (menuSize.y - buttonSize * 0.5f) * 0.5f });
+        ImGui::SetCursorPos({ 10, verticalCenter });
 
         // Gizmo mode
         if (ImGui::Button(m_GizmoMode == ImGuizmo::LOCAL ? IMGUI_ICON_GIZMO_GLOBAL : IMGUI_ICON_GIZMO_LOCAL, { buttonSize, buttonSize }))
@@ -348,7 +367,7 @@ namespace Debut
 
         for (uint32_t i = 0; i < 3; i++)
         {
-            ImGui::SetCursorPosY((menuSize.y - buttonSize * 0.5f) * 0.5f);
+            ImGui::SetCursorPosY(verticalCenter);
             if (m_GizmoType == operations[i])
             {
                 ScopedStyleColor col(ImGuiCol_Button, ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered]);
@@ -358,6 +377,38 @@ namespace Debut
             else if(ImGui::Button(icons[i], { buttonSize, buttonSize }))
                 m_GizmoType = operations[i];
         }
+
+        // Rendering modes
+        ImVec2 padding(5.0f, 5.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, padding);
+
+        ImGui::SetCursorPos({ menuSize.x - 190.0f - padding.x, -padding.y + verticalCenter + ImGui::GetTextLineHeight() / 2.0f});
+        ImGui::SetNextItemWidth(170.0f);
+
+        if (ImGui::BeginCombo("##renderingmode", "Rendering options", ImGuiComboFlags_HeightLargest))
+        {
+            if (ImGui::Selectable("Standard", currSceneConfig.RenderingMode == SceneConfig::RenderingMode::Standard))
+                currSceneConfig.RenderingMode = SceneConfig::RenderingMode::Standard;
+            if (ImGui::Selectable("Untextured", currSceneConfig.RenderingMode == SceneConfig::RenderingMode::Untextured))
+                currSceneConfig.RenderingMode = SceneConfig::RenderingMode::Untextured;
+            if (ImGui::Selectable("Depth buffer", currSceneConfig.RenderingMode == SceneConfig::RenderingMode::Depth))
+                currSceneConfig.RenderingMode = SceneConfig::RenderingMode::Depth;
+
+            ImGuiUtils::Separator();
+            {
+                ScopedStyleVar var(ImGuiStyleVar_FramePadding, { 0.0f, 0.0f });
+                ImGui::Checkbox("Render wireframe", &currSceneConfig.RenderWireframe);
+            }
+            {
+                ScopedStyleVar var(ImGuiStyleVar_FramePadding, { 0.0f, 0.0f });
+                ImGui::Checkbox("Render colliders", &currSceneConfig.RenderColliders);
+            }
+
+            ImGui::Dummy({ 0.0f, 3.0f });
+            
+            ImGui::EndCombo();
+        }
+        ImGui::PopStyleVar();
         ImGui::PopStyleVar();
     }
 
@@ -474,7 +525,7 @@ namespace Debut
             // Overlay menu bar
             if (ImGui::BeginMenuBar())
             {
-                ImVec2 desiredSize = { viewportSize.x, ImGui::GetTextLineHeight() * 2.0f };
+                ImVec2 desiredSize = { viewportSize.x, ImGui::GetTextLineHeight() * 1.5f };
                 ImGui::PopStyleVar();
 
                 DrawViewportToolbar(desiredSize);

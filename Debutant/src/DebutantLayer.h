@@ -7,7 +7,6 @@
 #include <Panels/ContentBrowserPanel.h>
 #include <Panels/InspectorPanel.h>
 #include <Camera/EditorCamera.h>
-#include <Debut/Scene/Components.h>
 
 namespace Debut
 {

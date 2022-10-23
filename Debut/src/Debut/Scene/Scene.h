@@ -19,6 +19,18 @@ namespace Debut
 	class Skybox;
 	class PhysicsSystem3D;
 
+	struct SceneConfig
+	{
+		bool RenderWireframe;
+		bool RenderColliders;
+
+		enum class RenderingMode
+		{
+			Standard = 0, Untextured = 1, Depth = 2
+		};
+		RenderingMode RenderingMode;
+	};
+
 	class Scene
 	{
 	friend class Entity;
@@ -49,10 +61,12 @@ namespace Debut
 		inline glm::vec3 GetAmbientLight() { return m_AmbientLight; }
 		inline float GetAmbientLightIntensity() { return m_AmbientLightIntensity; }
 		inline glm::vec2 GetViewportSize() { return { m_ViewportWidth, m_ViewportHeight }; }
+		inline SceneConfig GetSceneConfig() { return m_SceneConfig; }
 
 		void SetSkybox(UUID path);
 		inline void SetAmbientLight(glm::vec3 light) { m_AmbientLight = light; }
 		inline void SetAmbientLightIntensity(float light) { m_AmbientLightIntensity = light; }
+		inline void SetSceneConfig(const SceneConfig& config) { m_SceneConfig = config; }
 
 		static Ref<Scene> Copy(Ref<Scene> other);
 		std::vector<ShaderUniform> GetGlobalUniforms(glm::vec3 cameraPos);
@@ -66,6 +80,9 @@ namespace Debut
 
 		uint32_t m_ViewportWidth = 0;
 		uint32_t m_ViewportHeight = 0;
+
+		// Config
+		SceneConfig m_SceneConfig;
 		
 		// Physics
 		b2World* m_PhysicsWorld2D = nullptr;		
