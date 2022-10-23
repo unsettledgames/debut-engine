@@ -29,7 +29,6 @@
 *           - GetMaterial: ~60.0ms
                 Probably time to get rid of YAML and use a binary, compressed format instead
     BUGS:
-        - The more you're distant from an object, the more the gizmos are screwed up
         - Scaling models breaks mesh colliders
 *   QOL update:
 *   QOL:
@@ -321,12 +320,11 @@ namespace Debut
         ImGui::End();
     }
 
-    // TODO: move this to the top bar
-    void DebutantLayer::DrawUIToolbar(ImVec2& viewportSize, ImVec2& menuSize)
+    void DebutantLayer::DrawViewportToolbar(ImVec2& menuSize)
     {
         float buttonSize = ImGui::GetTextLineHeight() * 2.0f;
 
-        ImGui::SetCursorPos({ (viewportSize.x * 0.5f) - (buttonSize ), (menuSize.y - buttonSize) * 0.5f });
+        ImGui::SetCursorPos({ (menuSize.x * 0.5f) - (buttonSize ), (menuSize.y - buttonSize) * 0.5f });
         // Play icon
         if (ImGui::Button(m_SceneState == SceneState::Edit ? IMGUI_ICON_PLAY : IMGUI_ICON_STOP, 
             ImVec2(buttonSize * 1.5f, buttonSize * 1.5f)))
@@ -471,36 +469,27 @@ namespace Debut
         ImGui::Begin("Viewport", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar);
         {
             ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-            ImVec2 menuSize = { viewportSize.x, ImGui::GetTextLineHeight() * 2 };
+            ImVec2 menuSize;
+            m_TopMenuSize = { viewportSize.x, ImGui::GetTextLineHeight() * 2 };
 
             // Overlay menu bar
             if (ImGui::BeginMenuBar())
             {
+                ImVec2 desiredSize = { viewportSize.x, ImGui::GetTextLineHeight() * 2.0f };
                 ImGui::PopStyleVar();
-                DrawUIToolbar(viewportSize, menuSize);
+
+                DrawViewportToolbar(desiredSize);
             }
             ImGui::EndMenuBar();
 
-            // Window resizing
-            auto viewportOffset = ImGui::GetCursorPos();
-
-            m_ViewportFocused = ImGui::IsWindowFocused();
-            m_ViewportHovered = ImGui::IsWindowHovered();
-            Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
-
-            if (m_ViewportSize.x != viewportSize.x || m_ViewportSize.y != viewportSize.y)
-            {
-                m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
-
-                m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
-
-                m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-                m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            }
+            // Don't account for menu when drawing viewport
+            m_TopMenuSize = { ImGui::GetItemRectSize().x, ImGui::GetItemRectSize().y };
+            m_TopMenuSize.y += ImGui::GetTextLineHeight();
+            viewportSize.y -= m_TopMenuSize.y;
 
             // Draw scene
             uint32_t texId = m_FrameBuffer->GetColorAttachment();
-            ImGui::Image((void*)texId, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
+            ImGui::Image((void*)texId, ImVec2(viewportSize.x, viewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
 
             // Accept scene loading
             if (ImGui::BeginDragDropTarget())
@@ -515,13 +504,29 @@ namespace Debut
                         LoadModel(path);
                     ImGui::EndDragDropTarget();
                 }
-            }            
+            }
+
+            // Window resizing
+            auto viewportOffset = ImGui::GetCursorPos();            
+
+            m_ViewportFocused = ImGui::IsWindowFocused();
+            m_ViewportHovered = ImGui::IsWindowHovered();
+            Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
+
+            if (m_ViewportSize.x != viewportSize.x || m_ViewportSize.y != viewportSize.y)
+            {
+                m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
+
+                m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+                m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
+                m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            }
 
             // Save bounds for mouse picking
             ImVec2 minBound = ImGui::GetItemRectMin();
             ImVec2 maxBound = ImGui::GetItemRectMax();
             m_ViewportBounds[0] = { minBound.x, minBound.y };
-            m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+            m_ViewportBounds[1] = { maxBound.x, maxBound.y - menuSize.y };
 
             if (m_SceneState == SceneState::Edit)
                 DrawTransformGizmos();
@@ -590,7 +595,7 @@ namespace Debut
 
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
-            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, winWidth, winHeight);
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + m_TopMenuSize.y, m_ViewportSize.x, m_ViewportSize.y);
 
             if (!m_PhysicsSelection.Valid)
             {

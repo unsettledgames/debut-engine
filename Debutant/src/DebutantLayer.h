@@ -55,8 +55,8 @@ namespace Debut
 		glm::vec2 GetFrameBufferCoords();
 
 		// UI panels
-		void DrawUIToolbar(ImVec2& viewportSize, ImVec2& menuSize);
 		void DrawViewport();
+		void DrawViewportToolbar(ImVec2& menuSize);
 		void DrawTopBar();
 		void DrawSettingsWindow();
 		void DrawAssetMapWindow();
@@ -73,6 +73,7 @@ namespace Debut
 	private:
 
 		// Viewport data
+		glm::vec2 m_TopMenuSize;
 		glm::vec2 m_ViewportSize;
 		glm::vec2 m_ViewportBounds[2];
 		bool m_ViewportFocused;
