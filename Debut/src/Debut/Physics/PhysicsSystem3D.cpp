@@ -225,6 +225,12 @@ namespace Debut
 			vertices.resize(meshVerts.size() / 3);
 			// SPAGHETTI
 			memcpy(vertices.data(), meshVerts.data(), meshVerts.size() * sizeof(float));
+			for (uint32_t i = 0; i < vertices.size(); i++)
+			{
+				vertices[i].x *= transform.Scale.x;
+				vertices[i].y *= transform.Scale.y;
+				vertices[i].z *= transform.Scale.z;
+			}
 
 			triangles.resize(meshIndices.size() / 3);
 			for (uint32_t i = 0; i < meshIndices.size(); i += 3)

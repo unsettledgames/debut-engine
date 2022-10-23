@@ -28,13 +28,12 @@
 *       PROFILING:
 *           - GetMaterial: ~60.0ms
                 Probably time to get rid of YAML and use a binary, compressed format instead
-    BUGS:
-        - Scaling models breaks mesh colliders
 *   QOL update:
 *   QOL:
 *       - Visualize all collider button, both in game and editor mode
 *       - When adding a rigidbody add a default box collider and viceversa
-
+*   INVESTIGATE:
+*       - Create a parent. Scale it 2x. Create a child, add a mesh collider and see if the simulation is ok.
 * 
     OPTIMIZATION:
         - Remove as many DecomposeTransform as possible
