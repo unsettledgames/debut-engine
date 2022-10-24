@@ -3,6 +3,8 @@
 #include <Debut/Core/Core.h>
 #include <glm/glm.hpp>
 
+#include <vector>
+
 namespace Debut
 {
 	class VertexArray;
@@ -56,17 +58,20 @@ namespace Debut
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(Camera& camera, glm::mat4& transform);
+		static void BeginScene(Camera& camera, const glm::mat4& transform);
 		static void EndScene();
 		
 		static void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, bool highlightVertices = false);
 		static void DrawPoint(const glm::vec3& p0, const glm::vec4& color);
 		static void DrawRect(const glm::mat4& transform, const glm::vec2& size, const glm::vec2& offset, const glm::vec4& color, bool highlightVertices = false);
 		static void DrawCircle(float radius, const glm::vec3 center,  glm::mat4& transform, float iterations);
-		static void DrawMesh(UUID& mesh, const glm::vec3& offset, glm::mat4& transform);
-
-		static void DrawSphere(float radius, const glm::vec3& center, const glm::vec3& trans, const glm::vec3& rot,
-			const glm::vec3& scale, const glm::mat4 cameraView);
+		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
+		static void DrawPolygon(const std::vector<std::vector<glm::vec2>>& triangles,
+								const glm::vec3& offset, const glm::mat4& transform, const glm::vec4& color);
+		static void DrawBox(const glm::vec3& size, const glm::vec3& offset, const glm::mat4& transform, const glm::vec4& color);
+		static void DrawMesh(UUID& mesh, const glm::vec3& offset, const glm::mat4& transform, const glm::vec4& color);
+		static void DrawSphere(float radius, const glm::vec3& center, const glm::vec3& rot,
+			const glm::vec3& scale, const glm::mat4 cameraView, const glm::mat4& transform);
 
 	private:
 		static void FlushLines();

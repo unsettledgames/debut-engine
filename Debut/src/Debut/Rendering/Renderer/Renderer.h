@@ -11,6 +11,9 @@ namespace Debut
 
 		static void OnWindowResized(uint32_t width, uint32_t height);
 
+		static void ToggleWireframe(bool val);
+		static void ToggleTextures(bool val);
+
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		inline static void SetApi(RendererAPI::API val) { RendererAPI::SetAPI(val); }
 	private:

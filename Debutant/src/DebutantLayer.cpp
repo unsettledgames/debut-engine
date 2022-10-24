@@ -10,6 +10,7 @@
 #include <Camera/EditorCamera.h>
 #include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Rendering/Resources/Skybox.h>
+#include <Debut/Scene/Scene.h>
 #include <Debut/Scene/Components.h>
 
 #include <chrono>
@@ -30,13 +31,20 @@
 *           - GetMaterial: ~60.0ms
                 Probably time to get rid of YAML and use a binary, compressed format instead
 *   QOL update:
+*   CODE REFACTORING:
+*       - Group attributes, make them classes or structs. Remove some clutter from DebutantLayer (eg gizmos, viewport data...)
+* 
+*   BUGS:
+*       - Gizmos are broken for 2D objects
+*       - Saving stuff is fucked up apparently?
+*       - Ambient lighting is not used at runtime
 *   QOL:
+*       - Send the flags to the renderers
+* 
 *       - Shading buttons:
-*           - Render wireframe
 *           - Render colliders
 *
 *           - Flat shading
-*           - Normal shading
 *           - Z buffer
 *       
         - Lighting settings:
@@ -97,22 +105,6 @@ namespace Debut
         m_ContentBrowser.SetPropertiesPanel(&m_PropertiesPanel);
 
         AssetManager::Init(".");
-
-        EditorCache::Textures().Put("PlayIcon", Texture2D::Create("assets\\icons\\play.png"));
-        EditorCache::Textures().Put("StopIcon", Texture2D::Create("assets\\icons\\stop.png"));
-        EditorCache::Textures().Put("GizmoLocalIcon", Texture2D::Create("assets\\icons\\GizmoLocal.png"));
-        EditorCache::Textures().Put("GizmoGlobalIcon", Texture2D::Create("assets\\icons\\GizmoGlobal.png"));
-        EditorCache::Textures().Put("TranslateIcon", Texture2D::Create("assets\\icons\\move.png"));
-        EditorCache::Textures().Put("RotateIcon", Texture2D::Create("assets\\icons\\rotate.png"));
-        EditorCache::Textures().Put("ScaleIcon", Texture2D::Create("assets\\icons\\scale.png"));
-
-        // TEST AREA
-        std::vector<std::string> filenames = { "assets\\textures\\Skybox\\front.png" ,
-        "assets\\textures\\Skybox\\bottom.png","assets\\textures\\Skybox\\left.png",
-        "assets\\textures\\Skybox\\right.png","assets\\textures\\Skybox\\up.png",
-        "assets\\textures\\Skybox\\down.png" };
-
-        //m_ActiveScene->SetSkybox(12755579250371982529);
     }
 
     void DebutantLayer::OnDetach()
@@ -408,6 +400,8 @@ namespace Debut
             
             ImGui::EndCombo();
         }
+
+        m_ActiveScene->SetSceneConfig(currSceneConfig);
         ImGui::PopStyleVar();
         ImGui::PopStyleVar();
     }
@@ -760,22 +754,8 @@ namespace Debut
 
                     RendererDebug::DrawPoint(glm::vec3(transformMat * glm::vec4(center + glm::vec3(currPoint, 0.0f), 1.0f)), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
                 }
-
-                // Render triangle lines
-                std::vector<std::vector<glm::vec2>>& triangles = polygon.GetTriangles();
-                for (uint32_t i = 0; i < triangles.size(); i++)
-                {
-                    for (uint32_t j = 0; j < 3; j++)
-                    {
-                        glm::vec2 curr = triangles[i][j];
-                        glm::vec2 next = triangles[i][(j + 1) % 3];
-                        RendererDebug::DrawLine(
-                            glm::vec3(transformMat * glm::vec4(center + glm::vec3(curr, 0.0f), 1.0f)),
-                            glm::vec3(transformMat * glm::vec4(center + glm::vec3(next, 0.0f), 1.0f)),
-                            glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)
-                        );
-                    }
-                }
+                RendererDebug::DrawPolygon(polygon.GetTriangles(), glm::vec3(polygon.Offset, transform.Translation.z), 
+                    transformMat, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
                 m_PhysicsSelection.PointTransform = transformMat;
             }
             else if (currSelection.HasComponent<BoxCollider3DComponent>())
@@ -785,8 +765,6 @@ namespace Debut
                 BoxCollider3DComponent& collider = currSelection.GetComponent<BoxCollider3DComponent>();
                 glm::vec3 center = collider.Offset;
                 glm::vec3 hSize = collider.Size / 2.0f;
-                std::vector<glm::vec3> transformedPoints;
-                transformedPoints.resize(8);
 
                 // Fill points
                 points = {
@@ -801,8 +779,6 @@ namespace Debut
                 };
 
                 labels = { "0", "1", "2", "3", "4", "5", "6", "7" };
-                for (uint32_t i = 0; i < points.size(); i++)
-                    transformedPoints[i] = glm::vec3(transformMat * glm::vec4(points[i], 1.0f));
                 // Fill labels
                 for (uint32_t i = 0; i < points.size(); i++)
                 {
@@ -811,21 +787,7 @@ namespace Debut
                     labels.push_back(ss.str());
                 }
 
-                // Render lines
-                for (uint32_t i = 0; i < points.size(); i++)
-                {
-                    RendererDebug::DrawPoint(transformedPoints[i], glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                    for (uint32_t j = i; j < points.size(); j++)
-                    {
-                        uint32_t same = 0;
-                        for (uint32_t k = 0; k < 3; k++)
-                            if (points[i][k] == points[j][k])
-                                same++;
-
-                        if (same == 2)
-                            RendererDebug::DrawLine(transformedPoints[i], transformedPoints[j], glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                    }
-                }
+                RendererDebug::DrawBox(collider.Size, collider.Offset, transformMat, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
                 m_PhysicsSelection.PointTransform = transformMat;
             }
             else if (currSelection.HasComponent<SphereCollider3DComponent>())
@@ -836,18 +798,11 @@ namespace Debut
                 MathUtils::DecomposeTransform(transform.GetTransform(), trans, rot, scale);
                 SphereCollider3DComponent& collider = currSelection.GetComponent<SphereCollider3DComponent>();
                 float radius = collider.Radius;
-                glm::vec3 transformedOffset = transformMat * glm::vec4(collider.Offset, 1.0f);
                 glm::mat4 circleTransform = MathUtils::CreateTransform(trans, rot, glm::vec3(glm::compMin(scale)));
+                
                 // Use it to draw
-                RendererDebug::DrawSphere(radius, transformedOffset, glm::vec3(0.0f), rot, scale, glm::mat4(glm::mat3(m_EditorCamera.GetView())));
-
-                // Add 3 circles
-                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), circleTransform* glm::rotate(glm::translate(
-                    glm::mat4(1.0f), collider.Offset), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), 40);
-                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), circleTransform* glm::rotate(glm::translate(
-                    glm::mat4(1.0f), collider.Offset), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), 40);
-                RendererDebug::DrawCircle(radius, glm::vec3(0.0f), circleTransform* glm::rotate(glm::translate(
-                    glm::mat4(1.0f), collider.Offset), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)), 40);
+                RendererDebug::DrawSphere(radius, collider.Offset, rot, scale, glm::mat4(glm::mat3(m_EditorCamera.GetView())),
+                    circleTransform);
 
                 points = {
                     glm::vec3(radius, 0.0f, 0.0f) + collider.Offset, glm::vec3(-radius, 0.0f, 0.0f) + collider.Offset,
@@ -865,7 +820,7 @@ namespace Debut
                 DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::MeshCollider3D");
 
                 MeshCollider3DComponent& collider = currSelection.GetComponent<MeshCollider3DComponent>();
-                RendererDebug::DrawMesh(collider.Mesh, collider.Offset, transformMat);
+                RendererDebug::DrawMesh(collider.Mesh, collider.Offset, transformMat, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
             }
 
             // Render points

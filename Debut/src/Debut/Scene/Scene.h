@@ -21,14 +21,30 @@ namespace Debut
 
 	struct SceneConfig
 	{
-		bool RenderWireframe;
-		bool RenderColliders;
+		bool RenderSurfaces = true;
+		bool RenderWireframe = false;
+		bool RenderColliders = false;
 
 		enum class RenderingMode
 		{
 			Standard = 0, Untextured = 1, Depth = 2
 		};
 		RenderingMode RenderingMode;
+
+		bool operator==(const SceneConfig& a) const
+		{
+			return a.RenderSurfaces == RenderSurfaces && a.RenderWireframe == RenderWireframe &&
+				a.RenderColliders == RenderColliders && a.RenderingMode == RenderingMode;
+		}
+
+		bool operator!=(const SceneConfig& a) const
+		{
+			return !(a.RenderSurfaces == RenderSurfaces && a.RenderWireframe == RenderWireframe &&
+				a.RenderColliders == RenderColliders && a.RenderingMode == RenderingMode);
+		}
+
+		SceneConfig() = default;
+		SceneConfig(const SceneConfig& config) = default;
 	};
 
 	class Scene
@@ -66,7 +82,7 @@ namespace Debut
 		void SetSkybox(UUID path);
 		inline void SetAmbientLight(glm::vec3 light) { m_AmbientLight = light; }
 		inline void SetAmbientLightIntensity(float light) { m_AmbientLightIntensity = light; }
-		inline void SetSceneConfig(const SceneConfig& config) { m_SceneConfig = config; }
+		void SetSceneConfig(const SceneConfig& config);
 
 		static Ref<Scene> Copy(Ref<Scene> other);
 		std::vector<ShaderUniform> GetGlobalUniforms(glm::vec3 cameraPos);

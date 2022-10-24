@@ -49,6 +49,9 @@ namespace Debut
 
 		std::vector<LightComponent*> Lights;
 		std::vector<ShaderUniform> GlobalUniforms;
+
+		bool RenderWireframe = false;
+		bool UseTextures = false;
 	};
 
 	class Renderer3D
@@ -67,6 +70,9 @@ namespace Debut
 
 		static void SendLights(Material& material);
 		static void SendGlobals(Material& material);
+
+		static void ToggleWireframe(bool val) { s_Data.RenderWireframe = val; }
+		static void ToggleTextures(bool val) { s_Data.UseTextures = val; }
 
 	private:
 		static void AddBatch(const UUID& material);

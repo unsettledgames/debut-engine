@@ -13,6 +13,7 @@
 
 #include <Debut/AssetManager/AssetManager.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
+#include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Core/Instrumentor.h>
 #include <Debut/Rendering/Renderer/RenderCommand.h>
 
@@ -81,6 +82,10 @@ namespace Debut
 			skybox->Unbind();
 			skyboxMaterial->Unuse();
 		}
+
+		if (s_Data.RenderWireframe)
+			RendererDebug::BeginScene(camera, cameraTransform);
+
 	}
 
 	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform, int entityID)
@@ -210,11 +215,17 @@ namespace Debut
 				RenderCommand::DrawIndexed(s_Data.VertexArray, mesh.GetIndices().size());
 			}
 		}
+
+		if (s_Data.RenderWireframe)
+			RendererDebug::DrawMesh(mesh.GetID(), glm::vec3(0.0f), transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	void Renderer3D::EndScene()
 	{
 		Flush();
+
+		if (s_Data.RenderWireframe)
+			RendererDebug::EndScene();
 	}
 
 	void Renderer3D::Flush()

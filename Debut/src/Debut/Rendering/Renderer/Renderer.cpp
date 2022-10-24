@@ -21,4 +21,16 @@ namespace Debut
 	{
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
+
+	void Renderer::ToggleTextures(bool val)
+	{
+		Renderer2D::ToggleTextures(val);
+		Renderer3D::ToggleWireframe(val);
+	}
+
+	void Renderer::ToggleWireframe(bool val)
+	{
+		Renderer2D::ToggleWireframe(val);
+		Renderer3D::ToggleWireframe(val);
+	}
 }

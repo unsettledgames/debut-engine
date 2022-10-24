@@ -211,7 +211,7 @@ namespace Debut
 		TagComponent& tag = e.AddComponent<TagComponent>();
 		tag.Name = in["Name"].as<std::string>();
 		tag.Tag = in["Tag"].as<std::string>();
-		tag.Owner = in["Owner"].as<uint64_t>();
+		tag.Owner = in["Owner"] ? in["Owner"].as<uint64_t>() : 0;
 	}
 
 	template <>

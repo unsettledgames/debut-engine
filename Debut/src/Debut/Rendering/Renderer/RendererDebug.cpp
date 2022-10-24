@@ -48,7 +48,7 @@ namespace Debut
 		delete[] s_Storage.PointVertexBase;
 	}
 
-	void RendererDebug::BeginScene(Camera& camera, glm::mat4& transform)
+	void RendererDebug::BeginScene(Camera& camera, const glm::mat4& transform)
 	{
 		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
 
@@ -173,13 +173,14 @@ namespace Debut
 		}
 	}
 
-	void RendererDebug::DrawSphere(float radius, const glm::vec3& center, const glm::vec3& trans, const glm::vec3& rot,
-		const glm::vec3& scale, const glm::mat4 cameraView)
+	void RendererDebug::DrawSphere(float radius, const glm::vec3& center, const glm::vec3& rot,
+		const glm::vec3& scale, const glm::mat4 cameraView, const glm::mat4& transform)
 	{
 		float nIterations = 40;
 		float angleIncrease = glm::radians(360.0f) / nIterations;
 		float currentAngle = 0;
 		glm::mat4 inverseView = glm::inverse(cameraView);
+		glm::vec3 transformedCenter = transform * glm::vec4(center, 1.0f);
 
 		// Create camera space
 		glm::vec3 normal = glm::normalize(glm::vec3(inverseView * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
@@ -187,21 +188,100 @@ namespace Debut
 		glm::vec3 bitangent = glm::normalize(glm::vec3(inverseView * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
 		glm::mat4 cameraTangent = glm::mat4(glm::vec4(bitangent, 0.0f), glm::vec4(tangent, 0.0f), glm::vec4(normal, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		cameraTangent = glm::mat4(glm::mat3(cameraTangent));
-		glm::vec3 rotatedCenter = glm::mat4(glm::quat(rot)) * glm::vec4(center, 1.0f);
 		// Use lines to approximate a circle
 		for (uint32_t i = 0; i < nIterations; i++)
 		{
 			RendererDebug::DrawLine(
-				trans + rotatedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius * glm::compMin(scale) * 
+				transformedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius * glm::compMin(scale) *
 					glm::vec3(glm::cos(currentAngle), glm::sin(currentAngle), 0.0f), 1.0f))),
-				trans + rotatedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius * glm::compMin(scale) *
+				transformedCenter + glm::vec3(glm::mat4(cameraTangent) * (glm::vec4(radius * glm::compMin(scale) *
 					glm::vec3(glm::cos(currentAngle + angleIncrease), glm::sin(currentAngle + angleIncrease), 0.0f), 1.0f))),
 				glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 			currentAngle += angleIncrease;
 		}
+
+		// Draw the circles
+		RendererDebug::DrawCircle(radius, glm::vec3(0.0f), transform * glm::rotate(glm::translate(
+			glm::mat4(1.0f), center), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), 40);
+		RendererDebug::DrawCircle(radius, glm::vec3(0.0f), transform * glm::rotate(glm::translate(
+			glm::mat4(1.0f), center), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), 40);
+		RendererDebug::DrawCircle(radius, glm::vec3(0.0f), transform * glm::rotate(glm::translate(
+			glm::mat4(1.0f), center), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)), 40);
+
 	}
 
-	void RendererDebug::DrawMesh(UUID& mesh, const glm::vec3& offset, glm::mat4& transform)
+	void RendererDebug::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+	{
+		glm::vec4 points[4] = { {-0.5f, -0.5f, 0.0f, 1.0f}, {0.5f, -0.5f, 0.0f, 1.0f}, 
+			{0.5f, 0.5f, 0.0f, 1.0f}, {-0.5f, 0.5f, 0.0f, 1.0f} };
+
+		glm::vec4 transformedPoints[4];
+		for (uint32_t i = 0; i < 4; i++)
+			transformedPoints[i] = transform * points[i];
+
+		// 4 lines and the diagonal
+		for (uint32_t i=0; i<4; i++)
+			DrawLine(transformedPoints[i], transformedPoints[(i + 1) % 4], color);
+		DrawLine(transformedPoints[0], transformedPoints[2], color);
+	}
+
+	void RendererDebug::DrawBox(const glm::vec3& size, const glm::vec3& offset, const glm::mat4& transform, const glm::vec4& color)
+	{
+		glm::vec3 hSize = size / 2.0f;
+		std::vector<glm::vec3> points = {
+			glm::vec3(hSize.x, hSize.y, hSize.z) + offset,
+			glm::vec3(-hSize.x, hSize.y, hSize.z) + offset,
+			glm::vec3(hSize.x,-hSize.y, hSize.z) + offset,
+			glm::vec3(-hSize.x,-hSize.y, hSize.z) + offset,
+			glm::vec3(hSize.x, hSize.y,-hSize.z) + offset,
+			glm::vec3(-hSize.x, hSize.y,-hSize.z) + offset,
+			glm::vec3(hSize.x,-hSize.y,-hSize.z) + offset,
+			glm::vec3(-hSize.x,-hSize.y,-hSize.z) + offset
+		};
+		std::vector<glm::vec3> transformedPoints;
+		transformedPoints.resize(8);
+
+		for (uint32_t i = 0; i < points.size(); i++)
+			transformedPoints[i] = glm::vec3(transform * glm::vec4(points[i], 1.0f));
+
+		// Render lines
+		for (uint32_t i = 0; i < points.size(); i++)
+		{
+			RendererDebug::DrawPoint(transformedPoints[i], glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+			for (uint32_t j = i; j < points.size(); j++)
+			{
+				uint32_t same = 0;
+				for (uint32_t k = 0; k < 3; k++)
+					if (points[i][k] == points[j][k])
+						same++;
+
+				if (same == 2)
+					RendererDebug::DrawLine(transformedPoints[i], transformedPoints[j], glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+			}
+		}
+	}
+
+	void RendererDebug::DrawPolygon(const std::vector<std::vector<glm::vec2>>& triangles,
+		const glm::vec3& offset, const glm::mat4& transform, const glm::vec4& color)
+	{
+		// Render triangle lines
+		for (uint32_t i = 0; i < triangles.size(); i++)
+		{
+			for (uint32_t j = 0; j < 3; j++)
+			{
+				glm::vec2 curr = triangles[i][j];
+				glm::vec2 next = triangles[i][(j + 1) % 3];
+				RendererDebug::DrawLine(
+					glm::vec3(transform * glm::vec4(offset + glm::vec3(curr, 0.0f), 1.0f)),
+					glm::vec3(transform * glm::vec4(offset + glm::vec3(next, 0.0f), 1.0f)),
+					glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)
+				);
+			}
+		}
+	}
+	
+
+	void RendererDebug::DrawMesh(UUID& mesh, const glm::vec3& offset, const glm::mat4& transform, const glm::vec4& color)
 	{
 		Ref<Mesh> meshAsset = AssetManager::Request<Mesh>(mesh);
 		if (meshAsset == nullptr)
@@ -219,8 +299,7 @@ namespace Debut
 		for (uint32_t i = 0; i < indices.size(); i += 3)
 			for (uint32_t j = 0; j < 3; j++)
 				DrawLine(transformedVertices[indices[i + j]] + transformedOffset, 
-					transformedVertices[indices[i + (j + 1)%3]] + transformedOffset,
-					glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), false);
+					transformedVertices[indices[i + (j + 1)%3]] + transformedOffset, color, false);
 	}
 	
 	void RendererDebug::FlushLines()

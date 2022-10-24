@@ -42,7 +42,6 @@ namespace Debut
 		static const uint32_t MaxQuads = 20000;
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
-		// TODO: RenderCapabilities
 		static const uint32_t MaxTextureSlots = 32;
 
 		Ref<VertexArray> QuadVertexArray;
@@ -59,6 +58,9 @@ namespace Debut
 
 		glm::vec4 QuadVertexPositions[4];
 		Render2DStats Stats;
+
+		bool RenderWireframe = false;
+		bool UseTextures = false;
 	};
 
 	class Renderer2D
@@ -67,16 +69,17 @@ namespace Debut
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(Camera& camera, const glm::mat4 transform);
+		static void BeginScene(Camera& camera, const glm::mat4& transform);
 		static void EndScene();
 
 		// Primitives
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const glm::vec4 color);
 		static void DrawQuad(const glm::mat4& transform, const glm::vec4 color);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<Texture>& texture, float tilingFactor = 1);
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<SubTexture2D>& texture, float tilingFactor = 1);
-
 		static void DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& src, int entityID);
+
+		static void ToggleWireframe(bool val) { s_Data.RenderWireframe = val; }
+		static void ToggleTextures(bool val) { s_Data.UseTextures = val; }
+
 		static void ResetStats();
 		static Render2DStats GetStats() { return s_Data.Stats; }
 	
