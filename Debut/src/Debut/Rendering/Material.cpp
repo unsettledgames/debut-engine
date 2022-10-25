@@ -314,6 +314,7 @@ namespace Debut
 
 	void Material::Unuse()
 	{
+		m_RuntimeShader->Unbind();
 	}
 
 	void Material::SetShader(Ref<Shader> shader)

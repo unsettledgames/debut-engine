@@ -12,6 +12,7 @@
 #include <Debut/Scene/Components.h>
 
 #include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Rendering/Renderer/Renderer.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
 #include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Core/Instrumentor.h>
@@ -83,7 +84,7 @@ namespace Debut
 			skyboxMaterial->Unuse();
 		}
 
-		if (s_Data.RenderWireframe)
+		if (Renderer::GetConfig().RenderWireframe)
 			RendererDebug::BeginScene(camera, cameraTransform);
 
 	}
@@ -203,11 +204,17 @@ namespace Debut
 				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
 				SendLights(material);
 				SendGlobals(material);
-				material.SetMat4("u_Transform", transform * mesh.GetTransform());
-				material.SetMat4("u_ViewMatrix", s_Data.CameraView);
-				material.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
-				material.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
-				material.Use();
+
+				if (Renderer::GetConfig().RenderingMode != RendererConfig::RenderingMode::None)
+				{
+					material.SetMat4("u_Transform", transform * mesh.GetTransform());
+					material.SetMat4("u_ViewMatrix", s_Data.CameraView);
+					material.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
+					material.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+
+					// If untextured, use a certain material instead of changing the shader
+					material.Use();
+				}
 			}
 
 			{
@@ -216,7 +223,7 @@ namespace Debut
 			}
 		}
 
-		if (s_Data.RenderWireframe)
+		if (Renderer::GetConfig().RenderWireframe)
 			RendererDebug::DrawMesh(mesh.GetID(), glm::vec3(0.0f), transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
@@ -224,7 +231,7 @@ namespace Debut
 	{
 		Flush();
 
-		if (s_Data.RenderWireframe)
+		if (Renderer::GetConfig().RenderWireframe)
 			RendererDebug::EndScene();
 	}
 

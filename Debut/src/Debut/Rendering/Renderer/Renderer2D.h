@@ -58,9 +58,6 @@ namespace Debut
 
 		glm::vec4 QuadVertexPositions[4];
 		Render2DStats Stats;
-
-		bool RenderWireframe = false;
-		bool UseTextures = false;
 	};
 
 	class Renderer2D
@@ -76,9 +73,6 @@ namespace Debut
 		static void DrawQuad(const glm::mat4& transform, const glm::vec4 color);
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<Texture>& texture, float tilingFactor = 1);
 		static void DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& src, int entityID);
-
-		static void ToggleWireframe(bool val) { s_Data.RenderWireframe = val; }
-		static void ToggleTextures(bool val) { s_Data.UseTextures = val; }
 
 		static void ResetStats();
 		static Render2DStats GetStats() { return s_Data.Stats; }

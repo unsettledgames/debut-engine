@@ -26,21 +26,12 @@
 
 /*
 * 
-*   CURRENT:
-*       PROFILING:
-*           - GetMaterial: ~60.0ms
-                Probably time to get rid of YAML and use a binary, compressed format instead
-*   QOL update:
 *   CODE REFACTORING:
 *       - Group attributes, make them classes or structs. Remove some clutter from DebutantLayer (eg gizmos, viewport data...)
 * 
-*   BUGS:
-*       - 3D physics is broken: mesh colliders don't take the parent transform in account
-*       - Ambient lighting is not used at runtime
 *   QOL:
 *       - Shading buttons:
-*           - No shading
-*           - Flat shading
+*           - Textureless
 *           - Z buffer
 *       
         - Lighting settings:
@@ -51,8 +42,6 @@
 *       - Scene camera settings
 * 
 *       - New scene: automatically add a directional light and a camera
-*   INVESTIGATE:
-*       - Create a parent. Scale it 2x. Create a child, add a mesh collider and see if the simulation is ok.
 * 
     OPTIMIZATION:
         - Remove as many DecomposeTransform as possible
@@ -61,6 +50,7 @@
           required. Profile both approaches
         - MeshColliders load a whole mesh when only vertices and triangles are needed. Specify flags to know what parts
             to load
+        - Materials: Probably time to get rid of YAML and use a binary, compressed format instead
 
     - Roughness maps (PBR)
     - Reflection maps (PBR)
@@ -327,7 +317,7 @@ namespace Debut
         float verticalCenter = (menuSize.y - buttonSize) + buttonSize * 0.5f;
         float bigVerticalCenter = (menuSize.y - bigButtonSize) + bigButtonSize * 0.5f;
 
-        SceneConfig currSceneConfig = m_ActiveScene->GetSceneConfig();
+        RendererConfig currSceneConfig = Renderer::GetConfig();
 
         ImGui::SetCursorPos({ (menuSize.x - buttonSize * 1.5f) * 0.5f, bigVerticalCenter });
         // Play icon
@@ -374,12 +364,14 @@ namespace Debut
 
         if (ImGui::BeginCombo("##renderingmode", "Rendering options", ImGuiComboFlags_HeightLargest))
         {
-            if (ImGui::Selectable("Standard", currSceneConfig.RenderingMode == SceneConfig::RenderingMode::Standard))
-                currSceneConfig.RenderingMode = SceneConfig::RenderingMode::Standard;
-            if (ImGui::Selectable("Untextured", currSceneConfig.RenderingMode == SceneConfig::RenderingMode::Untextured))
-                currSceneConfig.RenderingMode = SceneConfig::RenderingMode::Untextured;
-            if (ImGui::Selectable("Depth buffer", currSceneConfig.RenderingMode == SceneConfig::RenderingMode::Depth))
-                currSceneConfig.RenderingMode = SceneConfig::RenderingMode::Depth;
+            if (ImGui::Selectable("Standard", currSceneConfig.RenderingMode == RendererConfig::RenderingMode::Standard))
+                currSceneConfig.RenderingMode = RendererConfig::RenderingMode::Standard;
+            if (ImGui::Selectable("Untextured", currSceneConfig.RenderingMode == RendererConfig::RenderingMode::Untextured))
+                currSceneConfig.RenderingMode = RendererConfig::RenderingMode::Untextured;
+            if (ImGui::Selectable("Depth buffer", currSceneConfig.RenderingMode == RendererConfig::RenderingMode::Depth))
+                currSceneConfig.RenderingMode = RendererConfig::RenderingMode::Depth;
+            if (ImGui::Selectable("None", currSceneConfig.RenderingMode == RendererConfig::RenderingMode::None))
+                currSceneConfig.RenderingMode = RendererConfig::RenderingMode::None;
 
             ImGuiUtils::Separator();
             {
@@ -396,7 +388,7 @@ namespace Debut
             ImGui::EndCombo();
         }
 
-        m_ActiveScene->SetSceneConfig(currSceneConfig);
+        Renderer::SetConfig(currSceneConfig);
         ImGui::PopStyleVar();
         ImGui::PopStyleVar();
     }
@@ -524,7 +516,6 @@ namespace Debut
             // Don't account for menu when drawing viewport
             m_TopMenuSize = { ImGui::GetItemRectSize().x, ImGui::GetItemRectSize().y };
             m_TopMenuSize.y += ImGui::GetTextLineHeight() * 1.5f;
-            viewportSize.y -= m_TopMenuSize.y;
 
             // Draw scene
             uint32_t texId = m_FrameBuffer->GetColorAttachment();

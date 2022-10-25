@@ -7,7 +7,7 @@
 
 namespace Debut
 {
-	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData();
+	RendererConfig Renderer::m_Config;
 
 	void Renderer::Init()
 	{
@@ -20,17 +20,5 @@ namespace Debut
 	void Renderer::OnWindowResized(uint32_t width, uint32_t height)
 	{
 		RenderCommand::SetViewport(0, 0, width, height);
-	}
-
-	void Renderer::ToggleTextures(bool val)
-	{
-		Renderer2D::ToggleTextures(val);
-		Renderer3D::ToggleWireframe(val);
-	}
-
-	void Renderer::ToggleWireframe(bool val)
-	{
-		Renderer2D::ToggleWireframe(val);
-		Renderer3D::ToggleWireframe(val);
 	}
 }

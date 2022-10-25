@@ -10,6 +10,7 @@
 #include <Debut/Rendering/Renderer/RenderCommand.h>
 #include <Debut/Rendering/Shader.h>
 #include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Rendering/Renderer/Renderer.h>
 #include <Debut/Rendering/Renderer/Renderer2D.h>
 #include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Scene/Components.h>
@@ -102,7 +103,7 @@ namespace Debut
 
 		StartBatch();
 
-		if (s_Data.RenderWireframe)
+		if (Renderer::GetConfig().RenderWireframe)
 			RendererDebug::BeginScene(camera, transform);
 	}
 
@@ -114,9 +115,11 @@ namespace Debut
 			uint64_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
 			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
-			s_Data.TextureShader->Bind();
+			if (Renderer::GetConfig().RenderingMode != RendererConfig::RenderingMode::None)
+				s_Data.TextureShader->Bind();
 			Flush();
-			s_Data.TextureShader->Unbind();
+			if (Renderer::GetConfig().RenderingMode != RendererConfig::RenderingMode::None)
+				s_Data.TextureShader->Unbind();
 		}
 
 		RendererDebug::EndScene();
@@ -260,7 +263,7 @@ namespace Debut
 		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
 
-		if (s_Data.RenderWireframe)
+		if (Renderer::GetConfig().RenderWireframe)
 			DrawQuad(transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 

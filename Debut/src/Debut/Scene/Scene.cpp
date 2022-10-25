@@ -153,9 +153,14 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Editor update");
 		
+		// Global variables
 		glm::mat4 transform = glm::inverse(camera.GetView());
 		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms(transform[3]);
 		std::vector<LightComponent*> lights;
+
+		// Flags
+		bool renderColliders = Renderer::GetConfig().RenderColliders;
+
 		// Directional light
 		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
 		bool full = false;
@@ -206,7 +211,7 @@ namespace Debut
 
 		Renderer2D::EndScene();
 
-		if (m_SceneConfig.RenderColliders)
+		if (Renderer::GetConfig().RenderColliders)
 		{
 			RendererDebug::BeginScene(camera, transform);
 			
@@ -671,17 +676,6 @@ namespace Debut
 		m_Skybox = AssetManager::Request<Skybox>(skybox);
 	}
 
-	void Scene::SetSceneConfig(const SceneConfig& config)
-	{
-		if (config != m_SceneConfig)
-		{
-			m_SceneConfig = config;
-			Renderer::ToggleTextures(m_SceneConfig.RenderSurfaces);
-			Renderer::ToggleWireframe(m_SceneConfig.RenderWireframe);
-		}
-	}
-
-
 	Ref<Scene> Scene::Copy(Ref<Scene> other)
 	{
 		Ref<Scene> newScene = CreateRef<Scene>();
@@ -731,6 +725,8 @@ namespace Debut
 		}
 
 		newScene->m_Skybox = other->m_Skybox;
+		newScene->m_AmbientLight = other->m_AmbientLight;
+		newScene->m_AmbientLightIntensity = other->m_AmbientLightIntensity;
 
 		return newScene;
 	}

@@ -19,34 +19,6 @@ namespace Debut
 	class Skybox;
 	class PhysicsSystem3D;
 
-	struct SceneConfig
-	{
-		bool RenderSurfaces = true;
-		bool RenderWireframe = false;
-		bool RenderColliders = false;
-
-		enum class RenderingMode
-		{
-			Standard = 0, Untextured = 1, Depth = 2
-		};
-		RenderingMode RenderingMode;
-
-		bool operator==(const SceneConfig& a) const
-		{
-			return a.RenderSurfaces == RenderSurfaces && a.RenderWireframe == RenderWireframe &&
-				a.RenderColliders == RenderColliders && a.RenderingMode == RenderingMode;
-		}
-
-		bool operator!=(const SceneConfig& a) const
-		{
-			return !(a.RenderSurfaces == RenderSurfaces && a.RenderWireframe == RenderWireframe &&
-				a.RenderColliders == RenderColliders && a.RenderingMode == RenderingMode);
-		}
-
-		SceneConfig() = default;
-		SceneConfig(const SceneConfig& config) = default;
-	};
-
 	class Scene
 	{
 	friend class Entity;
@@ -77,12 +49,10 @@ namespace Debut
 		inline glm::vec3 GetAmbientLight() { return m_AmbientLight; }
 		inline float GetAmbientLightIntensity() { return m_AmbientLightIntensity; }
 		inline glm::vec2 GetViewportSize() { return { m_ViewportWidth, m_ViewportHeight }; }
-		inline SceneConfig GetSceneConfig() { return m_SceneConfig; }
 
 		void SetSkybox(UUID path);
 		inline void SetAmbientLight(glm::vec3 light) { m_AmbientLight = light; }
 		inline void SetAmbientLightIntensity(float light) { m_AmbientLightIntensity = light; }
-		void SetSceneConfig(const SceneConfig& config);
 
 		static Ref<Scene> Copy(Ref<Scene> other);
 		std::vector<ShaderUniform> GetGlobalUniforms(glm::vec3 cameraPos);
@@ -97,9 +67,6 @@ namespace Debut
 		uint32_t m_ViewportWidth = 0;
 		uint32_t m_ViewportHeight = 0;
 
-		// Config
-		SceneConfig m_SceneConfig;
-		
 		// Physics
 		b2World* m_PhysicsWorld2D = nullptr;		
 		PhysicsSystem3D* m_PhysicsSystem3D = nullptr;
