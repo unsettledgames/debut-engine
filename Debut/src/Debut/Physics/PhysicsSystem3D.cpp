@@ -202,17 +202,21 @@ namespace Debut
 	}
 
 	BodyID* PhysicsSystem3D::CreateMeshColliderBody(const MeshCollider3DComponent& collider, const Rigidbody3DComponent& rb,
-		const TransformComponent& transform)
+		TransformComponent& transform)
 	{
 		Ref<PhysicsMaterial3D> physicsMaterial = AssetManager::Request<PhysicsMaterial3D>(collider.Material);
 		Ref<Mesh> mesh = AssetManager::Request<Mesh>(collider.Mesh);
+		glm::mat4 transformMat = transform.GetTransform();
+		glm::vec3 trans, rot, scale;
 
-		glm::vec3 offset = glm::mat4(glm::quat(transform.Rotation)) * glm::vec4(transform.Scale * collider.Offset, 1.0f);
-		glm::vec3 startPos = transform.Translation;
-		glm::vec3 startRot = transform.Rotation;
+		MathUtils::DecomposeTransform(transformMat, trans, rot, scale);
+
+		glm::vec3 offset = glm::mat4(glm::quat(rot)) * glm::vec4(scale * collider.Offset, 1.0f);
+		glm::vec3 startPos = trans;
+		glm::vec3 startRot = rot;
 
 		Vec3Arg pos = { startPos.x + offset.x, startPos.y + offset.y, startPos.z + offset.z };
-		QuatArg rot = Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z });
+		QuatArg rotQuat = Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z });
 
 		VertexList vertices;
 		IndexedTriangleList triangles;
@@ -227,9 +231,9 @@ namespace Debut
 			memcpy(vertices.data(), meshVerts.data(), meshVerts.size() * sizeof(float));
 			for (uint32_t i = 0; i < vertices.size(); i++)
 			{
-				vertices[i].x *= transform.Scale.x;
-				vertices[i].y *= transform.Scale.y;
-				vertices[i].z *= transform.Scale.z;
+				vertices[i].x *= scale.x;
+				vertices[i].y *= scale.y;
+				vertices[i].z *= scale.z;
 			}
 
 			triangles.resize(meshIndices.size() / 3);
@@ -245,7 +249,7 @@ namespace Debut
 		Shape::ShapeResult out;
 		MeshShape* shape = new MeshShape(settings, out);
 
-		return CreateBody(shape, physicsMaterial, rb, pos, rot, EMotionType::Static, Layers::NON_MOVING);
+		return CreateBody(shape, physicsMaterial, rb, pos, rotQuat, EMotionType::Static, Layers::NON_MOVING);
 	}
 
 	PhysicsSystem3D::~PhysicsSystem3D()

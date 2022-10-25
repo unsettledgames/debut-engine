@@ -225,7 +225,15 @@ namespace Debut
 		transform.Translation = in["Translation"].as<glm::vec3>();
 		transform.Rotation = in["Rotation"].as<glm::vec3>();
 		transform.Scale = in["Scale"].as<glm::vec3>();
-		transform.SetParent(in["Parent"] ? scene->GetEntityByID(in["Parent"].as<uint64_t>()) : Entity(entt::null, nullptr));
+
+		if (in["Parent"] && in["Parent"].as<uint64_t>() != 0)
+		{
+			Entity parent = scene->GetEntityByID(in["Parent"].as<uint64_t>());
+			transform.Parent = parent;
+			parent.Transform().Children.push_back(transform.Owner);
+		}
+		else
+			transform.Parent = Entity(entt::null, nullptr);
 	}
 
 	template <>

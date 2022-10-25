@@ -225,7 +225,7 @@ namespace Debut
 
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
 
-		BodyType Type = BodyType::Static;
+		BodyType Type = BodyType::Dynamic;
 		// TODO: constraints
 		bool FixedRotation = false;
 
@@ -249,7 +249,7 @@ namespace Debut
 		UUID Owner;
 
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
-		BodyType Type;
+		BodyType Type = BodyType::Dynamic;
 
 		float Mass = 1.0f;
 		float GravityFactor = 1.0f;

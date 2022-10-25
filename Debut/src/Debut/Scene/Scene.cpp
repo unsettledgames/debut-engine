@@ -68,12 +68,23 @@ namespace Debut
 	template<>
 	void Scene::OnComponentAdded(CircleCollider2DComponent& bc2d, Entity entity) { }
 	template<>
-	void Scene::OnComponentAdded(BoxCollider3DComponent& bc3d, Entity entity) { }
+	void Scene::OnComponentAdded(BoxCollider3DComponent& bc3d, Entity entity) 
+	{
+		if (!entity.HasComponent<Rigidbody3DComponent>())
+			entity.AddComponent <Rigidbody3DComponent>();
+	}
 	template<>
-	void Scene::OnComponentAdded(SphereCollider3DComponent& sc3d, Entity entity) { }
+	void Scene::OnComponentAdded(SphereCollider3DComponent& sc3d, Entity entity) 
+	{ 
+		if (!entity.HasComponent<Rigidbody3DComponent>())
+			entity.AddComponent <Rigidbody3DComponent>();
+	}
 	template<>
 	void Scene::OnComponentAdded(MeshCollider3DComponent& sc3d, Entity entity)
 	{
+		if (!entity.HasComponent<Rigidbody3DComponent>())
+			entity.AddComponent <Rigidbody3DComponent>();
+
 		// Automatically add the mesh if the object has a mesh renderer
 		if (entity.HasComponent<MeshRendererComponent>())
 		{

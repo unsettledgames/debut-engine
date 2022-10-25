@@ -35,26 +35,21 @@
 *       - Group attributes, make them classes or structs. Remove some clutter from DebutantLayer (eg gizmos, viewport data...)
 * 
 *   BUGS:
-*       - Gizmos are broken for 2D objects
-*       - Saving stuff is fucked up apparently?
+*       - 3D physics is broken: mesh colliders don't take the parent transform in account
 *       - Ambient lighting is not used at runtime
 *   QOL:
-*       - Send the flags to the renderers
-* 
 *       - Shading buttons:
-*           - Render colliders
-*
+*           - No shading
 *           - Flat shading
 *           - Z buffer
 *       
         - Lighting settings:
 *           - Use scene lighting
+*           - Disable lighting
 *           - Editor light: intensity, direction, color
 *       
 *       - Scene camera settings
 * 
-*       - Visualize a collider only if the entry in the inspector is open
-*       - When adding a rigidbody add a default box collider and viceversa
 *       - New scene: automatically add a directional light and a camera
 *   INVESTIGATE:
 *       - Create a parent. Scale it 2x. Create a child, add a mesh collider and see if the simulation is ok.
@@ -528,7 +523,7 @@ namespace Debut
 
             // Don't account for menu when drawing viewport
             m_TopMenuSize = { ImGui::GetItemRectSize().x, ImGui::GetItemRectSize().y };
-            m_TopMenuSize.y += ImGui::GetTextLineHeight();
+            m_TopMenuSize.y += ImGui::GetTextLineHeight() * 1.5f;
             viewportSize.y -= m_TopMenuSize.y;
 
             // Draw scene
