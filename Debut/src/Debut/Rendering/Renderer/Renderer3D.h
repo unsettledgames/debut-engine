@@ -49,6 +49,7 @@ namespace Debut
 
 		std::vector<LightComponent*> Lights;
 		std::vector<ShaderUniform> GlobalUniforms;
+		Ref<Material> UntexturedMaterial;
 	};
 
 	class Renderer3D

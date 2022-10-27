@@ -46,6 +46,8 @@ namespace Debut
 			s_Data.VertexArray->AddVertexBuffer(s_Data.VertexBuffers[names[i]]);
 		}
 		s_Data.VertexArray->AddIndexBuffer(s_Data.IndexBuffer);
+		s_Data.UntexturedMaterial = CreateRef<Material>();
+		s_Data.UntexturedMaterial->SetShader(AssetManager::Request<Shader>("assets\\shaders\\untextured.glsl"));
 	}
 
 	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& cameraTransform, std::vector<LightComponent*>& lights,
@@ -202,18 +204,22 @@ namespace Debut
 
 			{
 				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
-				SendLights(material);
-				SendGlobals(material);
+				Material materialToUse;
+				if (Renderer::GetConfig().RenderingMode == RendererConfig::RenderingMode::Untextured)
+					materialToUse = *s_Data.UntexturedMaterial.get();
+				else
+					materialToUse = material;
+
+				SendLights(materialToUse);
+				SendGlobals(materialToUse);
 
 				if (Renderer::GetConfig().RenderingMode != RendererConfig::RenderingMode::None)
 				{
-					material.SetMat4("u_Transform", transform * mesh.GetTransform());
-					material.SetMat4("u_ViewMatrix", s_Data.CameraView);
-					material.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
-					material.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
-
-					// If untextured, use a certain material instead of changing the shader
-					material.Use();
+					materialToUse.SetMat4("u_Transform", transform * mesh.GetTransform());
+					materialToUse.SetMat4("u_ViewMatrix", s_Data.CameraView);
+					materialToUse.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
+					materialToUse.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+					materialToUse.Use();
 				}
 			}
 

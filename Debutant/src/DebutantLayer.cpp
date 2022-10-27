@@ -31,7 +31,6 @@
 * 
 *   QOL:
 *       - Shading buttons:
-*           - Textureless
 *           - Z buffer
 *       
         - Lighting settings:
