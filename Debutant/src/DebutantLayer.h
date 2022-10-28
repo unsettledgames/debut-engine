@@ -6,6 +6,7 @@
 #include <Panels/SceneHierarchyPanel.h>
 #include <Panels/ContentBrowserPanel.h>
 #include <Panels/InspectorPanel.h>
+#include <Panels/ViewportPanel.h>
 #include <Camera/EditorCamera.h>
 
 namespace Debut
@@ -22,6 +23,8 @@ namespace Debut
 
 	class DebutantLayer : public Layer
 	{
+		friend class ViewportPanel;
+
 	public:
 		enum class SceneState
 		{
@@ -49,13 +52,13 @@ namespace Debut
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
+		void LoadModel(const std::filesystem::path path);
+
 	private:
 		glm::vec4 GetHoveredPixel(uint32_t attachmentIndex);
 		glm::vec2 GetFrameBufferCoords();
 
 		// UI panels
-		void DrawViewport();
-		void DrawViewportToolbar(ImVec2& menuSize);
 		void DrawTopBar();
 		void DrawSettingsWindow();
 		void DrawAssetMapWindow();
@@ -66,18 +69,9 @@ namespace Debut
 		void ManipulatePhysicsGizmos();
 
 		// Drag & droppable objects
-		void LoadModel(const std::filesystem::path path);
 		void LoadModelNode(Ref<Model> model, Entity& parent);
 
 	private:
-
-		// Viewport data
-		glm::vec2 m_TopMenuSize;
-		glm::vec2 m_ViewportSize;
-		glm::vec2 m_ViewportBounds[2];
-		bool m_ViewportFocused;
-		bool m_ViewportHovered;
-
 		Ref<FrameBuffer> m_FrameBuffer;
 
 		// Scene
@@ -91,6 +85,7 @@ namespace Debut
 		ContentBrowserPanel m_ContentBrowser;
 		PropertiesPanel m_PropertiesPanel;
 		InspectorPanel m_Inspector;
+		ViewportPanel m_Viewport;
 
 		// Editor state
 		std::string m_ScenePath = "";

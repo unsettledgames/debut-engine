@@ -27,6 +27,7 @@
 /*
 * 
 *   CODE REFACTORING:
+*       - CURRENT: moving viewport related stuff from DebutantLayer to ViewportPanel
 *       - Group attributes, make them classes or structs. Remove some clutter from DebutantLayer (eg gizmos, viewport data...)
 * 
 *   QOL:
@@ -39,8 +40,6 @@
 *           - Editor light: intensity, direction, color
 *       
 *       - Scene camera settings
-* 
-*       - New scene: automatically add a directional light and a camera
 * 
     OPTIMIZATION:
         - Remove as many DecomposeTransform as possible
@@ -85,6 +84,9 @@ namespace Debut
         m_SceneHierarchy.SetContext(m_ActiveScene);
         m_SceneHierarchy.RebuildSceneGraph();
 
+        m_Viewport = ViewportPanel(this, m_FrameBuffer);
+        m_Viewport.SetContext(m_ActiveScene.get());
+
         m_SceneHierarchy.SetInspectorPanel(&m_Inspector);
         m_ContentBrowser.SetPropertiesPanel(&m_PropertiesPanel);
 
@@ -101,7 +103,7 @@ namespace Debut
         DBT_PROFILE_SCOPE("EgineUpdate");
         //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
-        if (m_ViewportFocused)
+        if (m_Viewport.IsFocused())
             m_EditorCamera.OnUpdate(ts);
 
         Renderer2D::ResetStats();
@@ -230,6 +232,10 @@ namespace Debut
                 DBT_PROFILE_SCOPE("Debutant::PropertiesPanelUpdate");
                 m_PropertiesPanel.OnImGuiRender();
             }
+            {
+                DBT_PROFILE_SCOPE("Debutant::ViewportPanelUpdate");
+                m_Viewport.OnImGuiRender();
+            }
             
 
 #ifdef DBT_DEBUG
@@ -238,8 +244,6 @@ namespace Debut
 #endif
             if (m_SettingsOpen)
                 DrawSettingsWindow();
-
-            DrawViewport();
 
         ImGui::End();
     }
@@ -307,89 +311,6 @@ namespace Debut
         }
 
         ImGui::End();
-    }
-
-    void DebutantLayer::DrawViewportToolbar(ImVec2& menuSize)
-    {
-        float buttonSize = ImGui::GetTextLineHeight() * 2.0f;
-        float bigButtonSize = buttonSize * 1.5f;
-        float verticalCenter = (menuSize.y - buttonSize) + buttonSize * 0.5f;
-        float bigVerticalCenter = (menuSize.y - bigButtonSize) + bigButtonSize * 0.5f;
-
-        RendererConfig currSceneConfig = Renderer::GetConfig();
-
-        ImGui::SetCursorPos({ (menuSize.x - buttonSize * 1.5f) * 0.5f, bigVerticalCenter });
-        // Play icon
-        if (ImGui::Button(m_SceneState == SceneState::Edit ? IMGUI_ICON_PLAY : IMGUI_ICON_STOP, 
-            ImVec2(buttonSize * 1.5f, buttonSize * 1.5f)))
-        {
-            // TODO: pause scene
-            if (m_SceneState == SceneState::Edit)
-                OnScenePlay();
-            else if (m_SceneState == SceneState::Play)
-                OnSceneStop();
-        }
-
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 3, 3 });
-        ImGui::SetCursorPos({ 10, verticalCenter });
-
-        // Gizmo mode
-        if (ImGui::Button(m_GizmoMode == ImGuizmo::LOCAL ? IMGUI_ICON_GIZMO_GLOBAL : IMGUI_ICON_GIZMO_LOCAL, { buttonSize, buttonSize }))
-            m_GizmoMode = m_GizmoMode == ImGuizmo::LOCAL ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
-
-        // Translation rotation scale buttons
-        ImGuizmo::OPERATION operations[3] = {ImGuizmo::TRANSLATE, ImGuizmo::ROTATE, ImGuizmo::SCALE};
-        const char* icons[3] = { IMGUI_ICON_TRANSLATE, IMGUI_ICON_ROTATE, IMGUI_ICON_SCALE };
-
-        for (uint32_t i = 0; i < 3; i++)
-        {
-            ImGui::SetCursorPosY(verticalCenter);
-            if (m_GizmoType == operations[i])
-            {
-                ScopedStyleColor col(ImGuiCol_Button, ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered]);
-                if (ImGui::Button(icons[i], { buttonSize, buttonSize }))
-                    m_GizmoType = operations[i];
-            }
-            else if(ImGui::Button(icons[i], { buttonSize, buttonSize }))
-                m_GizmoType = operations[i];
-        }
-
-        // Rendering modes
-        ImVec2 padding(5.0f, 5.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, padding);
-
-        ImGui::SetCursorPos({ menuSize.x - 190.0f - padding.x, -padding.y + verticalCenter + ImGui::GetTextLineHeight() / 2.0f});
-        ImGui::SetNextItemWidth(170.0f);
-
-        if (ImGui::BeginCombo("##renderingmode", "Rendering options", ImGuiComboFlags_HeightLargest))
-        {
-            if (ImGui::Selectable("Standard", currSceneConfig.RenderingMode == RendererConfig::RenderingMode::Standard))
-                currSceneConfig.RenderingMode = RendererConfig::RenderingMode::Standard;
-            if (ImGui::Selectable("Untextured", currSceneConfig.RenderingMode == RendererConfig::RenderingMode::Untextured))
-                currSceneConfig.RenderingMode = RendererConfig::RenderingMode::Untextured;
-            if (ImGui::Selectable("Depth buffer", currSceneConfig.RenderingMode == RendererConfig::RenderingMode::Depth))
-                currSceneConfig.RenderingMode = RendererConfig::RenderingMode::Depth;
-            if (ImGui::Selectable("None", currSceneConfig.RenderingMode == RendererConfig::RenderingMode::None))
-                currSceneConfig.RenderingMode = RendererConfig::RenderingMode::None;
-
-            ImGuiUtils::Separator();
-            {
-                ScopedStyleVar var(ImGuiStyleVar_FramePadding, { 0.0f, 0.0f });
-                ImGui::Checkbox("Render wireframe", &currSceneConfig.RenderWireframe);
-            }
-            {
-                ScopedStyleVar var(ImGuiStyleVar_FramePadding, { 0.0f, 0.0f });
-                ImGui::Checkbox("Render colliders", &currSceneConfig.RenderColliders);
-            }
-
-            ImGui::Dummy({ 0.0f, 3.0f });
-            
-            ImGui::EndCombo();
-        }
-
-        Renderer::SetConfig(currSceneConfig);
-        ImGui::PopStyleVar();
-        ImGui::PopStyleVar();
     }
 
     void DebutantLayer::DrawAssetMapWindow()
@@ -492,78 +413,6 @@ namespace Debut
         }
     }
 
-    void DebutantLayer::DrawViewport()
-    {
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, ImGui::GetTextLineHeight()});
-        ImGui::Begin("Viewport", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar);
-        {
-            ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-            ImVec2 menuSize;
-            m_TopMenuSize = { viewportSize.x, ImGui::GetTextLineHeight() * 2 };
-
-            // Overlay menu bar
-            if (ImGui::BeginMenuBar())
-            {
-                ImVec2 desiredSize = { viewportSize.x, ImGui::GetTextLineHeight() * 1.5f };
-                ImGui::PopStyleVar();
-
-                DrawViewportToolbar(desiredSize);
-            }
-            ImGui::EndMenuBar();
-
-            // Don't account for menu when drawing viewport
-            m_TopMenuSize = { ImGui::GetItemRectSize().x, ImGui::GetItemRectSize().y };
-            m_TopMenuSize.y += ImGui::GetTextLineHeight() * 1.5f;
-
-            // Draw scene
-            uint32_t texId = m_FrameBuffer->GetColorAttachment();
-            ImGui::Image((void*)texId, ImVec2(viewportSize.x, viewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
-
-            // Accept scene loading
-            if (ImGui::BeginDragDropTarget())
-            {
-                const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_DATA");
-                if (payload != nullptr)
-                {
-                    std::filesystem::path path((const wchar_t*)payload->Data);
-                    if (path.extension() == ".debut")
-                        OpenScene(path);
-                    else if (path.extension() == ".model")
-                        LoadModel(path);
-                    ImGui::EndDragDropTarget();
-                }
-            }
-
-            // Window resizing
-            auto viewportOffset = ImGui::GetCursorPos();            
-
-            m_ViewportFocused = ImGui::IsWindowFocused();
-            m_ViewportHovered = ImGui::IsWindowHovered();
-            Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused && !m_ViewportHovered);
-
-            if (m_ViewportSize.x != viewportSize.x || m_ViewportSize.y != viewportSize.y)
-            {
-                m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
-
-                m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
-                m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
-                m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            }
-
-            // Save bounds for mouse picking
-            ImVec2 minBound = ImGui::GetItemRectMin();
-            ImVec2 maxBound = ImGui::GetItemRectMax();
-            m_ViewportBounds[0] = { minBound.x, minBound.y };
-            m_ViewportBounds[1] = { maxBound.x, maxBound.y - menuSize.y };
-
-            if (m_SceneState == SceneState::Edit)
-                DrawTransformGizmos();
-
-            ImGui::PopStyleVar();
-        }
-        ImGui::End();
-    }
 
     void DebutantLayer::LoadModel(const std::filesystem::path path)
     {
@@ -621,10 +470,12 @@ namespace Debut
         {
             float winWidth = ImGui::GetWindowWidth();
             float winHeight = ImGui::GetWindowHeight();
+            glm::vec2 viewportSize = m_Viewport.GetViewportSize();
+            glm::vec2 menuSize = m_Viewport.GetMenuSize();
 
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
-            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + m_TopMenuSize.y, m_ViewportSize.x, m_ViewportSize.y);
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + menuSize.y, viewportSize.x, viewportSize.y);
 
             if (!m_PhysicsSelection.Valid)
             {
@@ -664,8 +515,10 @@ namespace Debut
     void DebutantLayer::DrawPhysicsGizmos()
     {
         DBT_PROFILE_FUNCTION();
+        glm::vec2* viewportBounds = m_Viewport.GetViewportBounds();
+
         Entity currSelection = m_SceneHierarchy.GetSelectionContext();
-        glm::vec4 viewport = glm::vec4(0.0f, 0.0f, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+        glm::vec4 viewport = glm::vec4(0.0f, 0.0f, viewportBounds[1].x - viewportBounds[0].x, viewportBounds[1].y - viewportBounds[0].y);
         // Points
         std::vector<glm::vec3> points;
         // Labels
@@ -1008,9 +861,11 @@ namespace Debut
     glm::vec2 DebutantLayer::GetFrameBufferCoords()
     {
         auto [mouseX, mouseY] = ImGui::GetMousePos();
-        mouseX -= m_ViewportBounds[0].x;
-        mouseY -= m_ViewportBounds[0].y;
-        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+        glm::vec2* viewportBounds = m_Viewport.GetViewportBounds();
+
+        mouseX -= viewportBounds[0].x;
+        mouseY -= viewportBounds[0].y;
+        glm::vec2 viewportSize = viewportBounds[1] - viewportBounds[0];
 
         int intMouseX = (int)mouseX;
         int intMouseY = (int)(viewportSize.y - mouseY);
@@ -1020,11 +875,21 @@ namespace Debut
 
     void DebutantLayer::NewScene()
     {
+        glm::vec2 viewportSize = m_Viewport.GetViewportSize();
         if (m_SceneState == SceneState::Play)
             OnSceneStop();
 
         m_EditorScene = CreateRef<Scene>();
-        m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+        m_EditorScene->OnViewportResize(viewportSize.x, viewportSize.y);
+
+        Entity camera = m_EditorScene->CreateEntity({}, "Camera");
+        CameraComponent& cameraComp = camera.AddComponent<CameraComponent>();
+        cameraComp.Camera.SetPerspective(30, 0.1f, 1000.0f);
+        camera.Transform().Translation = glm::vec3(0.0f, 5.0f, 10.0f);
+
+        Entity directionalLight = m_EditorScene->CreateEntity({}, "Directional light");
+        DirectionalLightComponent& light = directionalLight.AddComponent<DirectionalLightComponent>();
+        light.Direction = glm::vec3(0.5f, 0.5f, 0.5f);
 
         m_ActiveScene = m_EditorScene;
         m_RuntimeScene = nullptr;
@@ -1043,6 +908,7 @@ namespace Debut
 
     void DebutantLayer::OpenScene(std::filesystem::path path)
     {
+        glm::vec2 viewportSize = m_Viewport.GetViewportSize();
         YAML::Node additionalData;
         additionalData["Valid"] = false;
 
@@ -1057,7 +923,7 @@ namespace Debut
         SceneSerializer ss(m_EditorScene);
         EntitySceneNode* sceneHierarchy = ss.DeserializeText(path.string(), additionalData);
 
-        m_EditorScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+        m_EditorScene->OnViewportResize(viewportSize.x, viewportSize.y);
         m_ScenePath = path.string();
         m_ActiveScene = m_EditorScene;
 
