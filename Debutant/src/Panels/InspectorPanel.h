@@ -21,13 +21,7 @@ namespace Debut
 		InspectorPanel() = default;
 		~InspectorPanel() = default;
 
-		inline void SetSelectedEntity(const Entity& entity)
-		{
-			if ((int)(entt::entity)entity != -1)
-				m_SelectionContext = entity;
-			else
-				m_SelectionContext = {};
-		}
+		inline void SetSelectedEntity(const Entity& entity) { m_SelectionContext = entity; }
 
 		inline Entity GetSelectedEntity() { return m_SelectionContext; }
 		void OnImGuiRender();

@@ -434,7 +434,8 @@ namespace Debut
 		out << YAML::EndMap;
 	}
 
-	void SceneSerializer::SerializeText(const std::string& fileName, EntitySceneNode& sceneGraph, YAML::Node& additionalData)
+	void SceneSerializer::SerializeText(const std::string& fileName, const EntitySceneNode& sceneGraph, 
+		const YAML::Node& additionalData)
 	{
 		YAML::Emitter out;
 		std::ofstream outFile(fileName);

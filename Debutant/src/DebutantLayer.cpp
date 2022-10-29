@@ -12,6 +12,7 @@
 #include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Scene/Scene.h>
 #include <Debut/Scene/Components.h>
+#include <DebutantApp.h>
 
 #include <chrono>
 #include "Debut/ImGui/ImGuiUtils.h"
@@ -28,9 +29,11 @@
 * 
 *   CODE REFACTORING:
 *       - CURRENT: moving viewport related stuff from DebutantLayer to ViewportPanel
+*           - Propagate mouse events to viewport, mouse pick / edit gizmos there too
 *       - Group attributes, make them classes or structs. Remove some clutter from DebutantLayer (eg gizmos, viewport data...)
 * 
 *   QOL:
+*       - Drop skybox to set it in the current scene
 *       - Shading buttons:
 *           - Z buffer
 *       
@@ -66,26 +69,12 @@ namespace Debut
     void DebutantLayer::OnAttach()
     {
         DBT_PROFILE_SCOPE("DebutantSetup");
-        FrameBufferSpecifications fbSpecs;
-        fbSpecs.Attachments = { 
-            FrameBufferTextureFormat::Color, FrameBufferTextureFormat::Depth,
-            FrameBufferTextureFormat::RED_INTEGER
-        };
 
-        fbSpecs.Width = Application::Get().GetWindow().GetWidth();
-        fbSpecs.Height = Application::Get().GetWindow().GetHeight();
-
-        m_FrameBuffer = FrameBuffer::Create(fbSpecs);
-
-        m_EditorScene = CreateRef<Scene>();
-        m_ActiveScene = m_EditorScene;
-        m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
-
+        m_ActiveScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
         m_SceneHierarchy.SetContext(m_ActiveScene);
         m_SceneHierarchy.RebuildSceneGraph();
 
-        m_Viewport = ViewportPanel(this, m_FrameBuffer);
-        m_Viewport.SetContext(m_ActiveScene.get());
+        m_Viewport = ViewportPanel(this);
 
         m_SceneHierarchy.SetInspectorPanel(&m_Inspector);
         m_ContentBrowser.SetPropertiesPanel(&m_PropertiesPanel);
@@ -100,59 +89,8 @@ namespace Debut
 
     void DebutantLayer::OnUpdate(Timestep& ts)
     {
-        DBT_PROFILE_SCOPE("EgineUpdate");
-        //Log.CoreInfo("FPS: {0}", 1.0f / ts);
-        // Update camera
-        if (m_Viewport.IsFocused())
-            m_EditorCamera.OnUpdate(ts);
-
-        Renderer2D::ResetStats();
-        {
-            DBT_PROFILE_SCOPE("Debutant::RendererSetup");
-            m_FrameBuffer->Bind();
-
-            RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
-            RenderCommand::Clear();
-
-            // Clear frame buffer for mouse picking
-            m_FrameBuffer->ClearAttachment(1, -1);
-        }
-
-        // Update the scene
-        switch (m_SceneState)
-        {
-        case SceneState::Play:
-            m_ActiveScene->OnRuntimeUpdate(ts);
-            break;
-        case SceneState::Edit:
-            m_ActiveScene->OnEditorUpdate(ts, m_EditorCamera);
-            // Render debug
-            DrawPhysicsGizmos();
-            break;
-        }
-
-        m_FrameBuffer->Unbind();
+        m_Viewport.OnUpdate(ts);
     }
-
-    void DebutantLayer::OnScenePlay()
-    {
-        m_SceneState = SceneState::Play;
-
-        m_RuntimeScene = Scene::Copy(m_ActiveScene);
-        m_RuntimeScene->OnRuntimeStart();
-
-        m_ActiveScene = m_RuntimeScene;
-    }
-
-    void DebutantLayer::OnSceneStop()
-    {
-        m_SceneState = SceneState::Edit;
-        m_ActiveScene->OnRuntimeStop();
-
-        m_RuntimeScene = nullptr;
-        m_ActiveScene = m_EditorScene;
-    }
-    
 
     void DebutantLayer::OnImGuiRender()
     {
@@ -236,7 +174,14 @@ namespace Debut
                 DBT_PROFILE_SCOPE("Debutant::ViewportPanelUpdate");
                 m_Viewport.OnImGuiRender();
             }
-            
+
+            // Entity changed from scene hierarchy
+            if (m_SceneHierarchy.GetSelectionContext() != m_SelectedEntity)
+            {
+                m_SelectedEntity = m_SceneHierarchy.GetSelectionContext();
+                m_Viewport.SetSelectedEntity(m_SceneHierarchy.GetSelectionContext());
+                m_Inspector.SetSelectedEntity(m_SceneHierarchy.GetSelectionContext());
+            }
 
 #ifdef DBT_DEBUG
             if (m_AssetMapOpen)
@@ -371,21 +316,16 @@ namespace Debut
             if (ImGui::BeginMenu("File"))
             {
                 if (ImGui::MenuItem("New scene", "Ctrl+N"))
-                    NewScene();
+                    OnNewScene();
 
                 if (ImGui::MenuItem("Open scene", "Ctrl+O"))
-                    OpenScene();
+                    OnOpenScene();
 
                 if (ImGui::MenuItem("Save scene", "Ctrl+S"))
-                {
-                    if (m_ScenePath != "")
-                        SaveScene();
-                    else
-                        SaveSceneAs();
-                }
+                    OnSaveScene();
 
                 if (ImGui::MenuItem("Save scene as...", "Ctrl+Shift+S"))
-                    SaveSceneAs();
+                    OnSaveSceneAs();
 
                 if (ImGui::MenuItem("Exit")) 
                     Application::Get().Close();
@@ -448,262 +388,23 @@ namespace Debut
         if (model->GetMeshes().size() == 1)
             modelEntity.AddComponent<MeshRendererComponent>(model->GetMeshes()[0], model->GetMaterials()[0]);
         else
+        {
             for (uint32_t i = 0; i < model->GetMeshes().size(); i++)
             {
                 Entity additional = m_ActiveScene->CreateEntity({}, name + " i");
                 additional.Transform().SetParent(modelEntity);
                 additional.AddComponent<MeshRendererComponent>(model->GetMeshes()[i], model->GetMaterials()[i]);
             }
+        }
 
         // Add submodels as children
         for (uint32_t i = 0; i < model->GetSubmodels().size(); i++)
             LoadModelNode(AssetManager::Request<Model>(model->GetSubmodels()[i]), modelEntity);
     }
 
-    void DebutantLayer::DrawTransformGizmos()
-    {
-        DBT_PROFILE_FUNCTION();
-        // Draw gizmos
-        Entity currSelection = m_SceneHierarchy.GetSelectionContext();
-
-        if (currSelection)
-        {
-            float winWidth = ImGui::GetWindowWidth();
-            float winHeight = ImGui::GetWindowHeight();
-            glm::vec2 viewportSize = m_Viewport.GetViewportSize();
-            glm::vec2 menuSize = m_Viewport.GetMenuSize();
-
-            ImGuizmo::SetOrthographic(false);
-            ImGuizmo::SetDrawlist();
-            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + menuSize.y, viewportSize.x, viewportSize.y);
-
-            if (!m_PhysicsSelection.Valid)
-            {
-                auto& tc = currSelection.Transform();
-                glm::mat4 transform = tc.GetTransform();
-
-                const glm::mat4& cameraView = m_EditorCamera.GetViewMatrix();
-                const glm::mat4& cameraProj = m_EditorCamera.GetProjection();
-
-                bool snapping = Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL);
-                float snapAmount = 0.5f;
-                if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
-                    snapAmount = 45;
-                float snapValues[] = { snapAmount, snapAmount, snapAmount };
-
-                if (ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProj),
-                    m_GizmoType, m_GizmoMode, glm::value_ptr(transform), nullptr, snapping ? snapValues : nullptr))
-                {
-                    glm::vec3 finalTrans, finalRot, finalScale;
-                    transform = (tc.Parent ? glm::inverse(tc.Parent.Transform().GetTransform()) : glm::mat4(1.0)) * transform;
-                    MathUtils::DecomposeTransform(transform, finalTrans, finalRot, finalScale);
-
-                    glm::vec3 deltaRot = finalRot - tc.Rotation;
-
-                    tc.Translation = finalTrans;
-                    tc.Rotation += deltaRot;
-                    tc.Scale = finalScale;
-                }
-            }
-            else
-            {
-                ManipulatePhysicsGizmos();
-            }
-        }
-    }
-
-    void DebutantLayer::DrawPhysicsGizmos()
-    {
-        DBT_PROFILE_FUNCTION();
-        glm::vec2* viewportBounds = m_Viewport.GetViewportBounds();
-
-        Entity currSelection = m_SceneHierarchy.GetSelectionContext();
-        glm::vec4 viewport = glm::vec4(0.0f, 0.0f, viewportBounds[1].x - viewportBounds[0].x, viewportBounds[1].y - viewportBounds[0].y);
-        // Points
-        std::vector<glm::vec3> points;
-        // Labels
-        std::vector<std::string> labels;
-
-        if (currSelection)
-        {
-            TransformComponent& transform = currSelection.Transform();
-            glm::mat4 transformMat = transform.GetTransform();
-            glm::mat4 viewProj = m_EditorCamera.GetViewProjection();
-
-            RendererDebug::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
-
-            if (currSelection.HasComponent<BoxCollider2DComponent>())
-            {
-                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::BoxCollider2D");
-
-                BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
-                glm::vec2 size = boxCollider.Size;
-                glm::vec2 offset = boxCollider.Offset;
-
-                points = {
-                        glm::vec3(-size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f), glm::vec3(-size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f),
-                        glm::vec3(size.x / 2 + offset.x, size.y / 2 + offset.y, 0.0f), glm::vec3(size.x / 2 + offset.x, -size.y / 2 + offset.y, 0.0f)
-                };
-                labels = { "TopLeft", "BottomLeft", "TopRight", "BottomRight" };
-
-                glm::vec3 topLeft = transformMat * glm::vec4(points[0], 1.0f);
-                glm::vec3 bottomLeft = transformMat * glm::vec4(points[1], 1.0f);
-                glm::vec3 topRight = transformMat * glm::vec4(points[2], 1.0f);
-                glm::vec3 bottomRight = transformMat * glm::vec4(points[3], 1.0f);
-
-                RendererDebug::DrawRect(transformMat, boxCollider.Size, boxCollider.Offset, { 0.0, 1.0, 0.0, 1.0 }, false);
-
-                for (uint32_t i = 0; i < 4; i++)
-                    RendererDebug::DrawPoint(transformMat * glm::vec4(points[i], 1.0f), glm::vec4(0, 1, 0, 1));
-                m_PhysicsSelection.PointTransform = transformMat;
-            }
-            else if (currSelection.HasComponent<CircleCollider2DComponent>())
-            {
-                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::CircleCollider2D");
-
-                CircleCollider2DComponent& cc = currSelection.GetComponent<CircleCollider2DComponent>();
-                glm::vec3 center = glm::vec3(cc.Offset, 0.0f);
-                points = {
-                        glm::vec3(-cc.Radius + cc.Offset.x, cc.Offset.y, 0.0f), glm::vec3(cc.Offset.x, cc.Radius + cc.Offset.y, 0.0f),
-                        glm::vec3(cc.Radius + cc.Offset.x, cc.Offset.y, 0.0f), glm::vec3(cc.Offset.x, -cc.Radius + cc.Offset.y, 0.0f)
-                };
-                labels = { "Left", "Top", "Right", "Bottom" };
-
-                RendererDebug::DrawCircle(cc.Radius, center, transform.GetTransform(), 40);
-                for (uint32_t i = 0; i < 4; i++)
-                    RendererDebug::DrawPoint(glm::vec3(transformMat * glm::vec4(points[i], 1.0f)) / transform.Scale, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                m_PhysicsSelection.PointTransform = transformMat;
-            }
-            else if (currSelection.HasComponent<PolygonCollider2DComponent>())
-            {
-                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::PolygonCollider2D");
-
-                PolygonCollider2DComponent& polygon = currSelection.GetComponent<PolygonCollider2DComponent>();
-                glm::vec3 center = glm::vec3(polygon.Offset, 0.0f);
-
-                // Render points
-                for (uint32_t i = 0; i < polygon.Points.size(); i++)
-                {
-                    glm::vec2 currPoint = polygon.Points[i];
-                    std::stringstream ss;
-                    ss << i;
-                    points.push_back(glm::vec3(currPoint, 0.0f));
-                    labels.push_back(ss.str());
-
-                    RendererDebug::DrawPoint(glm::vec3(transformMat * glm::vec4(center + glm::vec3(currPoint, 0.0f), 1.0f)), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                }
-                RendererDebug::DrawPolygon(polygon.GetTriangles(), glm::vec3(polygon.Offset, transform.Translation.z), 
-                    transformMat, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                m_PhysicsSelection.PointTransform = transformMat;
-            }
-            else if (currSelection.HasComponent<BoxCollider3DComponent>())
-            {
-                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::BoxCollider3D");
-
-                BoxCollider3DComponent& collider = currSelection.GetComponent<BoxCollider3DComponent>();
-                glm::vec3 center = collider.Offset;
-                glm::vec3 hSize = collider.Size / 2.0f;
-
-                // Fill points
-                points = {
-                    glm::vec3(hSize.x, hSize.y, hSize.z) + center,
-                    glm::vec3(-hSize.x, hSize.y, hSize.z) + center,
-                    glm::vec3(hSize.x,-hSize.y, hSize.z) + center,
-                    glm::vec3(-hSize.x,-hSize.y, hSize.z) + center,
-                    glm::vec3(hSize.x, hSize.y,-hSize.z) + center,
-                    glm::vec3(-hSize.x, hSize.y,-hSize.z) + center,
-                    glm::vec3(hSize.x,-hSize.y,-hSize.z) + center,
-                    glm::vec3(-hSize.x,-hSize.y,-hSize.z) + center
-                };
-
-                labels = { "0", "1", "2", "3", "4", "5", "6", "7" };
-                // Fill labels
-                for (uint32_t i = 0; i < points.size(); i++)
-                {
-                    std::stringstream ss;
-                    ss << i;
-                    labels.push_back(ss.str());
-                }
-
-                RendererDebug::DrawBox(collider.Size, collider.Offset, transformMat, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                m_PhysicsSelection.PointTransform = transformMat;
-            }
-            else if (currSelection.HasComponent<SphereCollider3DComponent>())
-            {
-                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::SphereCollider3D");
-
-                glm::vec3 trans, rot, scale;
-                MathUtils::DecomposeTransform(transform.GetTransform(), trans, rot, scale);
-                SphereCollider3DComponent& collider = currSelection.GetComponent<SphereCollider3DComponent>();
-                float radius = collider.Radius;
-                glm::mat4 circleTransform = MathUtils::CreateTransform(trans, rot, glm::vec3(glm::compMin(scale)));
-                
-                // Use it to draw
-                RendererDebug::DrawSphere(radius, collider.Offset, rot, scale, glm::mat4(glm::mat3(m_EditorCamera.GetView())),
-                    circleTransform);
-
-                points = {
-                    glm::vec3(radius, 0.0f, 0.0f) + collider.Offset, glm::vec3(-radius, 0.0f, 0.0f) + collider.Offset,
-                    glm::vec3(0.0f, radius, 0.0f) + collider.Offset, glm::vec3(0.0f, -radius, 0.0f) + collider.Offset,
-                    glm::vec3(0.0f, 0.0f, radius) + collider.Offset, glm::vec3(0.0f, 0.0f, -radius) + collider.Offset
-                };
-                labels = { "Right", "Left", "Top", "Down", "Front", "Bottom" };
-
-                for (uint32_t i = 0; i < points.size(); i++)
-                    RendererDebug::DrawPoint(circleTransform * glm::vec4(points[i], 1.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                m_PhysicsSelection.PointTransform = circleTransform;
-            }
-            else if (currSelection.HasComponent<MeshCollider3DComponent>())
-            {
-                DBT_PROFILE_SCOPE("Debutant::DrawPhysicsGizmos::MeshCollider3D");
-
-                MeshCollider3DComponent& collider = currSelection.GetComponent<MeshCollider3DComponent>();
-                RendererDebug::DrawMesh(collider.Mesh, collider.Offset, transformMat, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-            }
-
-            // Render points
-            RendererDebug::EndScene();
-
-            // IMPLEMENT LOGIC
-            // Selection and dragging
-            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-            {
-                // Don't edit the selection if the user is dragging a vertex
-                if (ImGuizmo::IsUsing())
-                    return;
-
-                // Get hovered color
-                glm::vec2 coords = GetFrameBufferCoords();
-                glm::vec4 pixel = m_FrameBuffer->ReadPixel(0, coords.x, coords.y);
-
-                // Check that the distance is far from the selected point before disabling TODO
-                if (!(pixel.r == 0.0 && pixel.g == 255.0 && pixel.b == 0.0 && pixel.a == 255) && 
-                    glm::distance(TransformationUtils::WorldToScreenPos(m_PhysicsSelection.SelectedPoint,
-                        m_EditorCamera.GetViewProjection(), m_PhysicsSelection.PointTransform, viewport), 
-                        glm::vec3(coords, m_PhysicsSelection.SelectedPoint.z)) > 6.0f)
-                {
-                    m_PhysicsSelection.Valid = false;
-                    m_PhysicsSelection.SelectedName = "";
-                    return;
-                }        
-
-                for (uint32_t i = 0; i < points.size(); i++)
-                {
-                    glm::vec3 screenPoint = TransformationUtils::WorldToScreenPos(points[i], viewProj, m_PhysicsSelection.PointTransform, viewport);
-                    if (glm::distance(screenPoint, glm::vec3(coords, screenPoint.z)) < 6.0f)
-                    {
-                        m_PhysicsSelection.Valid = true;
-                        m_PhysicsSelection.SelectedName = labels[i];
-                        m_PhysicsSelection.SelectedPoint = points[i];
-                        m_PhysicsSelection.SelectedEntity = currSelection;
-                    }
-                }
-            }
-        }
-    }
-
     void DebutantLayer::ManipulatePhysicsGizmos()
     {
+        /*
         DBT_PROFILE_FUNCTION();
         Entity currSelection = m_SceneHierarchy.GetSelectionContext();
 
@@ -773,13 +474,14 @@ namespace Debut
                 m_PhysicsSelection.SelectedPoint = newPoint;
             }
         }
+        */
     }
 
     void DebutantLayer::OnEvent(Event& e)
     {
         EventDispatcher dispatcher(e);
-        if (m_SceneState == SceneState::Edit)
-            m_EditorCamera.OnEvent(e);
+        if (DebutantApp::Get().GetSceneManager().GetState() == SceneManager::SceneState::Edit)
+            m_Viewport.Camera().OnEvent(e);
 
         dispatcher.Dispatch<KeyPressedEvent>(DBT_BIND(DebutantLayer::OnKeyPressed));
         dispatcher.Dispatch<MouseButtonPressedEvent>(DBT_BIND(DebutantLayer::OnMouseButtonPressed));
@@ -794,38 +496,27 @@ namespace Debut
         {
         // Hierarchy shortcuts
         case DBT_KEY_D:
-            m_ActiveScene->DuplicateEntity(m_SceneHierarchy.GetSelectionContext(), m_SceneHierarchy.GetSelectionContext().Transform().Parent);
+            if (Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL) || Input::IsKeyPressed(DBT_KEY_RIGHT_CONTROL))
+                m_ActiveScene->DuplicateEntity(m_SceneHierarchy.GetSelectionContext(), m_SceneHierarchy.GetSelectionContext().Transform().Parent);
             break;
         // File Menu
         case DBT_KEY_N:
             if (Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL) || Input::IsKeyPressed(DBT_KEY_RIGHT_CONTROL))
-                NewScene();
+                OnNewScene();
             break;
         case DBT_KEY_O:
             if (Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL) || Input::IsKeyPressed(DBT_KEY_RIGHT_CONTROL))
-                OpenScene();
+                OnOpenScene();
             break;
         case DBT_KEY_S:
             if (Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL) || Input::IsKeyPressed(DBT_KEY_RIGHT_CONTROL))
-                if (Input::IsKeyPressed(DBT_KEY_LEFT_SHIFT) || Input::IsKeyPressed(DBT_KEY_RIGHT_SHIFT) || m_ScenePath == "")
-                    SaveSceneAs();
+                if (Input::IsKeyPressed(DBT_KEY_LEFT_SHIFT) || Input::IsKeyPressed(DBT_KEY_RIGHT_SHIFT))
+                    OnSaveSceneAs();
                 else
-                    SaveScene();
+                    OnSaveScene();
             break;
-        case DBT_KEY_1:
-            m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-            break;
-        case DBT_KEY_2:
-            m_GizmoType = ImGuizmo::OPERATION::ROTATE;
-            break;
-        case DBT_KEY_3:
-            m_GizmoType = ImGuizmo::OPERATION::SCALE;
-            break;
-        case DBT_KEY_4:
-            m_GizmoType = ImGuizmo::OPERATION::UNIVERSAL;
-            break;
-
         default:
+            m_Viewport.OnKeyPressed(e);
             break;
         }
 
@@ -834,137 +525,91 @@ namespace Debut
 
     bool DebutantLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
     {
+        Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
+
         // Mouse picking
         if (e.GetMouseButton() == DBT_MOUSE_BUTTON_LEFT && !ImGuizmo::IsUsing() && !ImGuizmo::IsOver())
         {
-            glm::vec2 mouseCoords = GetFrameBufferCoords();
-            int col = m_FrameBuffer->ReadRedPixel(1, mouseCoords.x, mouseCoords.y);
+            glm::vec2 mouseCoords = m_Viewport.GetFrameBufferCoords();
+            int col = m_Viewport.GetFrameBuffer()->ReadRedPixel(1, mouseCoords.x, mouseCoords.y);
 
             if (col < 0)
-                m_HoveredEntity = {};
+                m_SelectedEntity = {};
             else
             {
-                Entity entity = { (entt::entity)col, m_ActiveScene.get()};
+                Entity entity = { (entt::entity)col, activeScene.get()};
                 if (entity.IsValid())
-                    m_HoveredEntity = entity;
+                    m_SelectedEntity = entity;
                 else
-                    m_HoveredEntity = {};
+                    m_SelectedEntity = {};
 
-                m_SceneHierarchy.SetSelectedEntity(m_HoveredEntity);
-                m_Inspector.SetSelectedEntity(m_HoveredEntity);
+                m_SceneHierarchy.SetSelectedEntity(m_SelectedEntity);
+                m_Inspector.SetSelectedEntity(m_SelectedEntity);
+                m_Viewport.SetSelectedEntity(m_SelectedEntity);
             }
         }
 
         return true;
     }
 
-    glm::vec2 DebutantLayer::GetFrameBufferCoords()
-    {
-        auto [mouseX, mouseY] = ImGui::GetMousePos();
-        glm::vec2* viewportBounds = m_Viewport.GetViewportBounds();
-
-        mouseX -= viewportBounds[0].x;
-        mouseY -= viewportBounds[0].y;
-        glm::vec2 viewportSize = viewportBounds[1] - viewportBounds[0];
-
-        int intMouseX = (int)mouseX;
-        int intMouseY = (int)(viewportSize.y - mouseY);
-
-        return { intMouseX, intMouseY };
-    }
-
-    void DebutantLayer::NewScene()
+    void DebutantLayer::OnNewScene()
     {
         glm::vec2 viewportSize = m_Viewport.GetViewportSize();
-        if (m_SceneState == SceneState::Play)
-            OnSceneStop();
-
-        m_EditorScene = CreateRef<Scene>();
-        m_EditorScene->OnViewportResize(viewportSize.x, viewportSize.y);
-
-        Entity camera = m_EditorScene->CreateEntity({}, "Camera");
-        CameraComponent& cameraComp = camera.AddComponent<CameraComponent>();
-        cameraComp.Camera.SetPerspective(30, 0.1f, 1000.0f);
-        camera.Transform().Translation = glm::vec3(0.0f, 5.0f, 10.0f);
-
-        Entity directionalLight = m_EditorScene->CreateEntity({}, "Directional light");
-        DirectionalLightComponent& light = directionalLight.AddComponent<DirectionalLightComponent>();
-        light.Direction = glm::vec3(0.5f, 0.5f, 0.5f);
-
-        m_ActiveScene = m_EditorScene;
-        m_RuntimeScene = nullptr;
+        DebutantApp::Get().GetSceneManager().NewScene(viewportSize);
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
         m_SceneHierarchy.RebuildSceneGraph();
-        m_ScenePath = "";
     }
 
-    void DebutantLayer::OpenScene()
+    void DebutantLayer::OnOpenScene()
     {
         std::string path = FileDialogs::OpenFile("Debut Scene (*.debut)\0*.debut\0");
         if (!path.empty())
-            OpenScene(path);
+            OnOpenScene(path);
     }
 
-    void DebutantLayer::OpenScene(std::filesystem::path path)
+    void DebutantLayer::OnOpenScene(std::filesystem::path path)
     {
-        glm::vec2 viewportSize = m_Viewport.GetViewportSize();
         YAML::Node additionalData;
-        additionalData["Valid"] = false;
 
-        if (m_SceneState != SceneState::Edit)
-            OnSceneStop();
+        SceneManager& sceneManager = DebutantApp::Get().GetSceneManager();
+        EntitySceneNode* sceneNode = sceneManager.OpenScene(path, additionalData);
 
-        m_RuntimeScene = nullptr;
-        Ref<Scene> oldScene = m_EditorScene;
-        m_EditorScene = CreateRef<Scene>();
-        m_EditorScene->OnViewportResize(oldScene->GetViewportSize().x, oldScene->GetViewportSize().y);
-
-        SceneSerializer ss(m_EditorScene);
-        EntitySceneNode* sceneHierarchy = ss.DeserializeText(path.string(), additionalData);
-
-        m_EditorScene->OnViewportResize(viewportSize.x, viewportSize.y);
-        m_ScenePath = path.string();
-        m_ActiveScene = m_EditorScene;
-
-        m_SceneHierarchy.SetContext(m_ActiveScene);
-        m_SceneHierarchy.LoadTree(sceneHierarchy);
+        m_SceneHierarchy.SetContext(sceneManager.GetActiveScene());
+        m_SceneHierarchy.LoadTree(sceneNode);
         m_SceneHierarchy.RebuildSceneGraph();
 
         if (additionalData["Valid"].as<bool>())
         {
             if (additionalData["EditorCameraPitch"])
-                m_EditorCamera.SetPitch(additionalData["EditorCameraPitch"].as<float>());
+                m_Viewport.Camera().SetPitch(additionalData["EditorCameraPitch"].as<float>());
             if (additionalData["EditorCameraYaw"])
-                m_EditorCamera.SetYaw(additionalData["EditorCameraYaw"].as<float>());
+                m_Viewport.Camera().SetYaw(additionalData["EditorCameraYaw"].as<float>());
             if (additionalData["EditorCameraFocalPoint"])
-                m_EditorCamera.SetFocalPoint(additionalData["EditorCameraFocalPoint"].as<glm::vec3>());
+                m_Viewport.Camera().SetFocalPoint(additionalData["EditorCameraFocalPoint"].as<glm::vec3>());
             if (additionalData["EditorCameraDistance"])
-                m_EditorCamera.SetDistance(additionalData["EditorCameraDistance"].as<float>());
+                m_Viewport.Camera().SetDistance(additionalData["EditorCameraDistance"].as<float>());
         }
     }
 
-    void DebutantLayer::SaveScene()
+    void DebutantLayer::OnSaveScene()
+    {
+        DebutantApp::Get().GetSceneManager().SaveScene(*m_SceneHierarchy.GetSceneGraph(), GetAdditionalSceneData());
+    }
+
+    void DebutantLayer::OnSaveSceneAs()
+    {
+        DebutantApp::Get().GetSceneManager().SaveSceneAs(*m_SceneHierarchy.GetSceneGraph(), GetAdditionalSceneData());
+    }
+
+    YAML::Node DebutantLayer::GetAdditionalSceneData()
     {
         YAML::Node additionalData;
-        additionalData["EditorCameraPitch"] = m_EditorCamera.GetPitch();
-        additionalData["EditorCameraYaw"] = m_EditorCamera.GetYaw();
-        additionalData["EditorCameraFocalPoint"] = m_EditorCamera.GetFocalPoint();
-        additionalData["EditorCameraDistance"] = m_EditorCamera.GetDistance();
+        additionalData["EditorCameraPitch"] = m_Viewport.Camera().GetPitch();
+        additionalData["EditorCameraYaw"] = m_Viewport.Camera().GetYaw();
+        additionalData["EditorCameraFocalPoint"] = m_Viewport.Camera().GetFocalPoint();
+        additionalData["EditorCameraDistance"] = m_Viewport.Camera().GetDistance();
 
-        SceneSerializer ss(m_ActiveScene);
-        ss.SerializeText(m_ScenePath, *m_SceneHierarchy.GetSceneGraph(), additionalData);
-    }
-
-    void DebutantLayer::SaveSceneAs()
-    {
-        std::string path = FileDialogs::SaveFile("Debut Scene (*.debut)\0*.debut\0");
-        if (!path.empty())
-        {
-            if (!CppUtils::String::EndsWith(path, ".debut"))
-                path += ".debut";
-            m_ScenePath = path;
-            SaveScene();
-        }
+        return additionalData;
     }
 }

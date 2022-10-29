@@ -1,6 +1,11 @@
 #pragma once
 
 #include <Debut/Core/Core.h>
+#include <Debut/Scene/Entity.h>
+
+#include <Camera/EditorCamera.h>
+#include <Widgets/Gizmos.h>
+
 #include <glm/glm.hpp>
 
 struct ImVec2;
@@ -11,21 +16,34 @@ namespace Debut
 	class FrameBuffer;
 	class DebutantLayer;
 
+	class Timestep;
+
 	class ViewportPanel
 	{
 	public:
 		ViewportPanel() = default;
-		ViewportPanel(DebutantLayer* layer, Ref<FrameBuffer> frameBuffer) : m_ParentLayer(layer), m_FrameBuffer(frameBuffer) {}
+		ViewportPanel(DebutantLayer* layer);
+
+		void OnUpdate(Timestep& ts);
+		bool OnKeyPressed(KeyPressedEvent& e);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
 		void OnImGuiRender();
 		void DrawTopBar(ImVec2& menuSize);
+		void DrawCollider();
 
-		inline void SetContext(Scene* context) { m_Context = context; }
+		glm::vec2 GetFrameBufferCoords();
 
 		inline bool IsFocused() { return m_ViewportFocused; }
 		inline glm::vec2 GetViewportSize() { return m_ViewportSize; }
 		inline glm::vec2* GetViewportBounds() { return m_ViewportBounds; }
 		inline glm::vec2 GetMenuSize() { return m_TopMenuSize; }
+		inline Ref<FrameBuffer> GetFrameBuffer() { return m_FrameBuffer; }
+		inline Entity GetSelectedEntity() { return m_Selection; }
+
+		inline EditorCamera& Camera() { return m_EditorCamera; }
+
+		void SetSelectedEntity(Entity entity) { m_Selection = entity; }
 
 	private:
 		// Viewport data
@@ -37,7 +55,15 @@ namespace Debut
 		bool m_ViewportFocused;
 		bool m_ViewportHovered;
 
-		Scene* m_Context;
+		// Camera
+		EditorCamera m_EditorCamera;
+		// Gizmos
+		Gizmos m_Gizmos;
+
+		// Selection
+		Entity m_Selection;
+		PhysicsColliderSelection m_ColliderSelection;
+
 		DebutantLayer* m_ParentLayer;
 		Ref<FrameBuffer> m_FrameBuffer;
 	};

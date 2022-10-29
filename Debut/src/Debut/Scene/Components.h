@@ -281,7 +281,7 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		void SetPoint(glm::vec2& point, std::string& type)
+		void SetPoint(const glm::vec2& point, const std::string& type)
 		{
 			glm::vec2 diff;
 			if (type == "TopLeft")
@@ -336,7 +336,7 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		void SetPoint(glm::vec2& point, std::string& type)
+		void SetPoint(const glm::vec2& point, const std::string& type)
 		{
 			glm::vec2 diff;
 			if (type == "Left")
@@ -387,7 +387,7 @@ namespace Debut
 		std::vector<glm::vec2> Points;
 		std::vector<uint32_t> Indices;
 
-		void SetPoint(int index, glm::vec2 value)
+		void SetPoint(int index, const glm::vec2& value)
 		{
 			// Update point
 			Points[index] = value;
@@ -438,7 +438,7 @@ namespace Debut
 		glm::vec3 Offset = glm::vec3(0.0f);
 		UUID Material = 0;
 
-		void SetPoint(const std::string& label, const glm::vec3 newPoint)
+		void SetPoint(const std::string& label, const glm::vec3& newPoint)
 		{
 			glm::vec3 hSize = Size / 2.0f;
 			glm::vec3 mults;
@@ -488,7 +488,7 @@ namespace Debut
 		glm::vec3 Offset = glm::vec3(0.0f);
 		UUID Material = 0;
 
-		void SetPoint(const std::string& label, const glm::vec3 newPoint)
+		void SetPoint(const std::string& label, const glm::vec3& newPoint)
 		{
 			if (label == "Top")
 			{

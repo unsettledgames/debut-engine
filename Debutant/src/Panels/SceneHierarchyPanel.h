@@ -21,13 +21,7 @@ namespace Debut
 
 		void SetContext(const Ref<Scene>& scene);
 		void SetInspectorPanel(InspectorPanel* panel) { m_Inspector = panel; }
-		inline void SetSelectedEntity(const Entity& entity)
-		{
-			if ((int)(entt::entity)entity != -1)
-				m_SelectionContext = entity;
-			else
-				m_SelectionContext = {};
-		}
+		inline void SetSelectedEntity(const Entity& entity) { m_SelectionContext = entity; }
 
 		void OnImGuiRender();
 		void DrawEntityNode(EntitySceneNode& entity);

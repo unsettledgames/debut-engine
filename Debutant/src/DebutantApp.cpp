@@ -1,27 +1,18 @@
 #include <iostream>
 // Entry point
+#include <DebutantApp.h>
 #include "Debut/Core/EntryPoint.h"
 #include <Debut.h>
+#include <Scene/SceneManager.h>
 #include "DebutantLayer.h"
 
 
 namespace Debut
 {
-	class DebutantApp : public Application
+	DebutantApp::DebutantApp() : Application("Debutant")
 	{
-	public:
-		DebutantApp() : Application("Debutant")
-		{
-			PushLayer(new DebutantLayer());
-		}
-
-		~DebutantApp()
-		{
-
-		}
-	private:
-
-	};
+		PushLayer(new DebutantLayer());
+	}
 
 	Application* CreateApplication()
 	{
