@@ -1,4 +1,8 @@
 Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+  Skybox: 0
 Entities:
   - "Entity: ": 8816300609158737073
     HierarchyOrder: 0
@@ -45,8 +49,8 @@ Entities:
       Type: Dynamic
       FixedRotation: false
     CircleCollider2DComponent:
-      Radius: 1
-      Offset: [0, 0]
+      Radius: 0.504535675
+      Offset: [0, -0.00453567505]
       Material: 0
     Children:
       []
@@ -58,7 +62,7 @@ Entities:
       Name: New Entity
       Tag: Untagged
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [0, 0, -10]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       Parent: 0
@@ -67,10 +71,10 @@ Entities:
       Primary: true
       CameraData:
         ProjectionType: 1
-        OrthoNear: 0
-        OrthoFar: 1000
-        PerspNear: 0
-        PerspFar: 1000
+        OrthoNear: -10
+        OrthoFar: 10
+        PerspNear: -10
+        PerspFar: 10
         OrthoSize: 20
         PerspFOV: 0.785398185
     Children:

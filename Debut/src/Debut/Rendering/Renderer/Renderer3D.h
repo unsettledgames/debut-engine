@@ -49,6 +49,7 @@ namespace Debut
 
 		std::vector<LightComponent*> Lights;
 		std::vector<ShaderUniform> GlobalUniforms;
+		Ref<Material> UntexturedMaterial;
 	};
 
 	class Renderer3D
@@ -62,8 +63,8 @@ namespace Debut
 		static void EndScene();
 		static void Flush();
 
-		static void DrawModel(const MeshRendererComponent& model, const glm::mat4& transform);
-		static void DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, bool instanced = false);
+		static void DrawModel(const MeshRendererComponent& model, const glm::mat4& transform, int entityID);
+		static void DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, int entityID, bool instanced = false);
 
 		static void SendLights(Material& material);
 		static void SendGlobals(Material& material);

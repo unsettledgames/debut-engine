@@ -32,11 +32,24 @@ namespace Debut
 		EditorCache::Textures().Put("cb-back", Texture2D::Create("assets/icons/back.png"));
 		EditorCache::Textures().Put("cb-search", Texture2D::Create("assets/icons/search.png"));
 		m_SelectedDir = "assets";
+
+		// Get contents: this is used to show folder first and then files
+		for (auto& dirEntry : std::filesystem::directory_iterator(s_AssetsPath))
+		{
+			// Don't show meta files
+			if (dirEntry.path().extension() == ".meta")
+				continue;
+
+			// Sort the entry
+			if (dirEntry.is_directory())
+				m_Dirs.push_back(dirEntry);
+			else
+				m_Files.push_back(dirEntry);
+		}
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
 	{
-		std::vector<std::filesystem::path> dirs, files;
 		ImGui::Begin("Content browser");
 		
 		static float padding = s_Settings.padding;
@@ -49,30 +62,16 @@ namespace Debut
 		if (columnCount < 1)
 			columnCount = 1;
 
-		DrawTopBar();
-
-		// Get contents: this is used to show folder first and then files
-		for (auto& dirEntry : std::filesystem::directory_iterator(s_AssetsPath))
-		{
-			// Don't show meta files
-			if (dirEntry.path().extension() == ".meta")
-				continue;
-
-			// Sort the entry
-			if (dirEntry.is_directory())
-				dirs.push_back(dirEntry);
-			else
-				files.push_back(dirEntry);
-		}
+		DrawTopBar();		
 
 		// Draw contents 
-		for (auto& path : dirs)
+		for (auto& path : m_Dirs)
 		{
 			DrawHierarchy(path, true);
 			ImGui::NextColumn();
 		}
 
-		for (auto& path : files)
+		for (auto& path : m_Files)
 		{
 			DrawHierarchy(path, false);
 			ImGui::NextColumn();
@@ -249,15 +248,15 @@ namespace Debut
 			m_PropertiesPanel->SetAsset(model->GetPath());
 			std::stringstream ss;
 			ss << model->GetPath() << model->GetID();
-			m_SelectedAsset = ss.str();
 
-			m_RightClicked = model->GetPath();
+			m_SelectedAsset = ss.str();
+			m_RightClicked = AssetManager::GetPath(model->GetID());
 		}
 
 		if (ImGui::IsItemClicked(1))
 		{
-			m_RightClicked = path;
-			m_SelectedAsset = path;
+			m_RightClicked = AssetManager::GetPath(model->GetID());
+			m_SelectedAsset = m_RightClicked;
 		}
 
 		AddDragSource(model->GetPath());

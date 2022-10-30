@@ -1,0 +1,39 @@
+Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+  Skybox: 0
+Entities:
+  - "Entity: ": 14288381343792065458
+    HierarchyOrder: 0
+    IDComponent:
+      ID: 14288381343792065458
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0.00576592982, 1.93715096e-06, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      Texture: 0
+      TilingFactor: 1
+    PolygonCollider2DComponent:
+      Offset: [0, 0]
+      Points:
+        - [0.85703969, 2.00977063]
+        - [1.67575836, 1.4970932]
+        - [2.02159119, -0.0158622265]
+        - [0.88325882, -0.822761536]
+        - [-0.61266017, -1.22361827]
+        - [-1.34462619, -0.912356138]
+        - [-2.10541987, -0.750984907]
+        - [-2.26681018, -0.382105619]
+        - [-2.45700526, 0.857043505]
+        - [-1.51179194, 2.26338887]
+        - [-0.0132473856, 2.59191251]
+      Material: 0
+    Children:
+      []

@@ -37,9 +37,10 @@ namespace Debut
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 
+		Entity CreateEmptyEntity();
 		Entity CreateEntity(Entity parent, const std::string& name = "New Entity");
 		Entity CreateEntity(Entity parent, const UUID& id, const std::string& name = "New Entity");
-		void DuplicateEntity(Entity& entity);
+		Entity DuplicateEntity(Entity& entity, Entity& parent);
 		void DestroyEntity(Entity entity);
 
 		Entity GetPrimaryCameraEntity();
@@ -65,7 +66,7 @@ namespace Debut
 
 		uint32_t m_ViewportWidth = 0;
 		uint32_t m_ViewportHeight = 0;
-		
+
 		// Physics
 		b2World* m_PhysicsWorld2D = nullptr;		
 		PhysicsSystem3D* m_PhysicsSystem3D = nullptr;

@@ -7,7 +7,7 @@
 
 namespace Debut
 {
-	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData();
+	RendererConfig Renderer::m_Config;
 
 	void Renderer::Init()
 	{

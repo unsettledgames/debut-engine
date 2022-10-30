@@ -28,6 +28,8 @@
 	#define DBT_PROFILE 1
 #endif 
 
+#define DBT_PROFILE 1
+
 #define BIT(x) (1 << x)
 
 #define DBT_BIND(x) [this](auto&&... args) -> decltype(auto) {return this->x(std::forward<decltype(args)>(args)...);}

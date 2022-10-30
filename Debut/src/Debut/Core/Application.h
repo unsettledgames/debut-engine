@@ -37,6 +37,9 @@ namespace Debut
 		inline Window& GetWindow() { return *m_Window; }
 		static inline Application& Get() { return *s_Instance; }
 
+	protected:
+		static Application* s_Instance;
+
 	private:
 		bool OnWindowClosed(WindowCloseEvent& e);
 		bool OnWindowResized(WindowResizedEvent& e);
@@ -49,7 +52,6 @@ namespace Debut
 		ImGuiLayer* m_ImGuiLayer;
 
 		LayerStack m_LayerStack;
-		static Application* s_Instance;
 
 		float m_LastFrameTime = 0.0f;
 		Timestep m_Timestep;

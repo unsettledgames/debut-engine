@@ -12,7 +12,9 @@
 #include <Debut/Scene/Components.h>
 
 #include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Rendering/Renderer/Renderer.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
+#include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Core/Instrumentor.h>
 #include <Debut/Rendering/Renderer/RenderCommand.h>
 
@@ -32,9 +34,10 @@ namespace Debut
 		s_Data.IndexBuffer = IndexBuffer::Create();
 
 		// Attach buffers to VertexArray
-		ShaderDataType types[] = { ShaderDataType::Float3, ShaderDataType::Float4, ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2 };
-		std::string attribNames[] = { "a_Position", "a_Color", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0" };
-		std::string names[] = { "Positions", "Colors", "Normals", "Tangents", "Bitangents", "TexCoords0" };
+		ShaderDataType types[] = { ShaderDataType::Float3, ShaderDataType::Float4, ShaderDataType::Float3, 
+			ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2, ShaderDataType::Int};
+		std::string attribNames[] = { "a_Position", "a_Color", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0", "a_EntityID"};
+		std::string names[] = { "Positions", "Colors", "Normals", "Tangents", "Bitangents", "TexCoords0", "EntityID"};
 		
 		for (uint32_t i = 0; i < sizeof(types); i++)
 		{
@@ -43,6 +46,8 @@ namespace Debut
 			s_Data.VertexArray->AddVertexBuffer(s_Data.VertexBuffers[names[i]]);
 		}
 		s_Data.VertexArray->AddIndexBuffer(s_Data.IndexBuffer);
+		s_Data.UntexturedMaterial = CreateRef<Material>();
+		s_Data.UntexturedMaterial->SetShader(AssetManager::Request<Shader>("assets\\shaders\\untextured.glsl"));
 	}
 
 	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& cameraTransform, std::vector<LightComponent*>& lights,
@@ -80,9 +85,13 @@ namespace Debut
 			skybox->Unbind();
 			skyboxMaterial->Unuse();
 		}
+
+		if (Renderer::GetConfig().RenderWireframe)
+			RendererDebug::BeginScene(camera, cameraTransform);
+
 	}
 
-	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform)
+	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform, int entityID)
 	{
 		DBT_PROFILE_FUNCTION();
 
@@ -110,10 +119,10 @@ namespace Debut
 			return;
 		}
 
-		DrawModel(*mesh.get(), *material.get(), transform, meshComponent.Instanced);
+		DrawModel(*mesh.get(), *material.get(), transform, entityID, meshComponent.Instanced);
 	}
 
-	void Renderer3D::DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, bool instanced /* = false*/)
+	void Renderer3D::DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, int entityID, bool instanced /* = false*/)
 	{
 		DBT_PROFILE_FUNCTION();
 
@@ -151,6 +160,12 @@ namespace Debut
 				DBT_PROFILE_SCOPE("DrawModel::SendGeometry");
 				std::vector<float>& positions = mesh.GetPositions();
 				std::vector<int>& indices = mesh.GetIndices();
+				std::vector<int> entityIDs;
+
+				// Fill the entity IDs vector
+				entityIDs.resize(positions.size() / 3);
+				std::fill_n(entityIDs.data(), entityIDs.size(), entityID);
+
 				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
 				s_Data.IndexBuffer->SetData(mesh.GetIndices().data(), mesh.GetIndices().size());
 
@@ -183,17 +198,29 @@ namespace Debut
 					std::vector<float>& texCoords = mesh.GetTexCoords(0);
 					s_Data.VertexBuffers["TexCoords0"]->SetData(texCoords.data(), texCoords.size() * sizeof(float));
 				}
+
+				s_Data.VertexBuffers["EntityID"]->SetData(entityIDs.data(), entityIDs.size() * sizeof(int));
 			}
 
 			{
 				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
-				SendLights(material);
-				SendGlobals(material);
-				material.SetMat4("u_Transform", transform * mesh.GetTransform());
-				material.SetMat4("u_ViewMatrix", s_Data.CameraView);
-				material.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
-				material.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
-				material.Use();
+				Material materialToUse;
+				if (Renderer::GetConfig().RenderingMode == RendererConfig::RenderingMode::Untextured)
+					materialToUse = *s_Data.UntexturedMaterial.get();
+				else
+					materialToUse = material;
+
+				SendLights(materialToUse);
+				SendGlobals(materialToUse);
+
+				if (Renderer::GetConfig().RenderingMode != RendererConfig::RenderingMode::None)
+				{
+					materialToUse.SetMat4("u_Transform", transform * mesh.GetTransform());
+					materialToUse.SetMat4("u_ViewMatrix", s_Data.CameraView);
+					materialToUse.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
+					materialToUse.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+					materialToUse.Use();
+				}
 			}
 
 			{
@@ -201,11 +228,17 @@ namespace Debut
 				RenderCommand::DrawIndexed(s_Data.VertexArray, mesh.GetIndices().size());
 			}
 		}
+
+		if (Renderer::GetConfig().RenderWireframe)
+			RendererDebug::DrawMesh(mesh.GetID(), glm::vec3(0.0f), transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	void Renderer3D::EndScene()
 	{
 		Flush();
+
+		if (Renderer::GetConfig().RenderWireframe)
+			RendererDebug::EndScene();
 	}
 
 	void Renderer3D::Flush()

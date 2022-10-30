@@ -4,6 +4,34 @@
 
 namespace Debut
 {
+	struct RendererConfig
+	{
+		bool RenderSurfaces = true;
+		bool RenderWireframe = false;
+		bool RenderColliders = false;
+
+		enum class RenderingMode
+		{
+			Standard = 0, Untextured = 1, Depth = 2, None
+		};
+		RenderingMode RenderingMode = RenderingMode::Standard;
+
+		bool operator==(const RendererConfig& a) const
+		{
+			return a.RenderSurfaces == RenderSurfaces && a.RenderWireframe == RenderWireframe &&
+				a.RenderColliders == RenderColliders && a.RenderingMode == RenderingMode;
+		}
+
+		bool operator!=(const RendererConfig& a) const
+		{
+			return !(a.RenderSurfaces == RenderSurfaces && a.RenderWireframe == RenderWireframe &&
+				a.RenderColliders == RenderColliders && a.RenderingMode == RenderingMode);
+		}
+
+		RendererConfig() = default;
+		RendererConfig(const RendererConfig& config) = default;
+	};
+
 	class Renderer
 	{
 	public:
@@ -13,12 +41,11 @@ namespace Debut
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		inline static void SetApi(RendererAPI::API val) { RendererAPI::SetAPI(val); }
-	private:
-		struct SceneData
-		{
-			glm::mat4 ViewProjectionMatrix;
-		};
 
-		static SceneData* m_SceneData;
+		inline static RendererConfig GetConfig() { return m_Config; }
+		inline static void SetConfig(const RendererConfig& config) { m_Config = config; }
+	
+	private:
+		static RendererConfig m_Config;
 	};
 }

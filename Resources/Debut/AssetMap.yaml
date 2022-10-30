@@ -105,10 +105,14 @@ Associations:
     Path: assets\models\crypt\source\1_map_3_terrain1.tga
   - ID: 3783102316066835285
     Path: assets\textures\brickwall.jpg
-  - ID: 8294294578217565759
-    Path: assets\materials\NewMaterial-copy.mat
+  - ID: 11965128317319471170
+    Path: .\Lib\Assets\11965128317319471170
+  - ID: 16042514667033753809
+    Path: .\Lib\Assets\16042514667033753809
   - ID: 8831543769636242346
     Path: assets\models\steampunk-pistol\textures\steampunk_pistol_Base_Color.jpeg
+  - ID: 8294294578217565759
+    Path: assets\materials\NewMaterial-copy.mat
   - ID: 7034169328369129652
     Path: assets\models\crypt\source\map_3_castle.tga
   - ID: 13534503281884501872
@@ -175,8 +179,6 @@ Associations:
     Path: assets\shaders\unlit.glsl
   - ID: 4828538092107330917
     Path: assets\models\house\textures\HouseDiffuseWithPadding.tga.png
-  - ID: 14023455725757432436
-    Path: .\Lib\Assets\14023455725757432436
   - ID: 5309011165480151126
     Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
   - ID: 7587298459034673770
@@ -487,6 +489,8 @@ Associations:
     Path: assets\textures\brickwall.jpg
   - ID: 4964372507739464730
     Path: assets\textures\brickwall_normal.png
+  - ID: 1256725994748723075
+    Path: assets\models\sphere\spher.obj.model
   - ID: 6071031804359898668
     Path: assets\textures\brickwall.jpg
   - ID: 18143502886565724911
@@ -515,6 +519,8 @@ Associations:
     Path: assets\models\crypt\source\map_3_objects.tga
   - ID: 6305572206173454821
     Path: .\Lib\Assets\6305572206173454821
+  - ID: 7814648692656951235
+    Path: assets\models\cube\BlankCube.obj.model
   - ID: 3774299101985491
     Path: assets\models\crypt\source\map_3_castle.tga
   - ID: 5466004678159062249
@@ -529,8 +535,6 @@ Associations:
     Path: assets\models\rock\textures\Rock_Albedo.tga.png
   - ID: 13493598359333310756
     Path: assets\models\crypt\textures\1_map_3_castle.png
-  - ID: 1690097574047688153
-    Path: .\Lib\Assets\1690097574047688153
   - ID: 8393925351512146033
     Path: assets\models\crypt\textures\1_map_3_terrain1.png
   - ID: 7976745778681102681
@@ -539,8 +543,6 @@ Associations:
     Path: assets\models\rock\textures\New_Graph_normal.tga.png
   - ID: 2413467931280478410
     Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 10217410328078154480
-    Path: .\Lib\Assets\10217410328078154480
   - ID: 2766814386403205802
     Path: assets\models\crypt\textures\1_map_3_objects1.png
   - ID: 5578105148680491352
@@ -593,6 +595,8 @@ Associations:
     Path: assets\models\crypt\source\1_map_3_terrain1.tga
   - ID: 51568806588511096
     Path: assets\models\crypt\textures\1_map_3_objects1.png
+  - ID: 9268856829888650321
+    Path: .\Lib\Assets\9268856829888650321
   - ID: 10969952433464626947
     Path: assets\models\rock\textures\Rock_Albedo.tga.png
   - ID: 1498946699845261743
@@ -615,6 +619,8 @@ Associations:
     Path: TexturedCrypt.model
   - ID: 2172188542675550929
     Path: assets\models\crypt\textures\1_map_3_castle.png
+  - ID: 750782998047202661
+    Path: assets\textures\ParallaxMappingTest\toy_box_normal.png
   - ID: 14109756748910589104
     Path: assets\textures\brickwall.jpg
   - ID: 14412564267496858417
@@ -795,8 +801,6 @@ Associations:
     Path: assets\models\crypt\source\map_3_objects.tga
   - ID: 7484183097664411654
     Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 6628255526805493744
-    Path: .\Lib\Assets\6628255526805493744
   - ID: 10844971806348272083
     Path: assets\models\crypt\source\map_2_fire.TGA
   - ID: 1596986274774940349
@@ -875,6 +879,8 @@ Associations:
     Path: assets\models\crypt\source\map_2_fire.TGA
   - ID: 6216936954159291170
     Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 7400900367242271316
+    Path: assets\models\plane\parallax_plane.model
   - ID: 6282674495892740000
     Path: assets\models\crypt\source\map_2_fire.TGA
   - ID: 17257002156840858224
@@ -925,6 +931,8 @@ Associations:
     Path: assets\models\sands-location\source\sands-location\map_terrain.tga
   - ID: 3697496726445197896
     Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 10417032972314332955
+    Path: assets\materials\RedCube.mat
   - ID: 3642892159212930029
     Path: assets\models\sands-location\source\sands-location\sands location.obj.model
   - ID: 2588625468283765729
@@ -1011,16 +1019,16 @@ Associations:
     Path: assets\textures\brickwall_normal.png
   - ID: 5362399081429794561
     Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 10203452858280690580
-    Path: assets\models\crypt\source\map_3_castle.tga
   - ID: 10967015138126777915
     Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 9123314344138913789
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 17434299944855295013
-    Path: assets\textures\brickwall.jpg
+  - ID: 10203452858280690580
+    Path: assets\models\crypt\source\map_3_castle.tga
   - ID: 5235020533688991535
     Path: assets\models\crypt\source\map_3_castle.tga
+  - ID: 17434299944855295013
+    Path: assets\textures\brickwall.jpg
+  - ID: 9123314344138913789
+    Path: assets\models\crypt\source\map_3_objects.tga
   - ID: 11648963702940542842
     Path: assets\models\crypt\source\1_map_3_terrain1.tga
   - ID: 17663074581187777616
@@ -1037,8 +1045,6 @@ Associations:
     Path: assets\models\crypt\source\1_map_3_terrain1.tga
   - ID: 10597798699818057041
     Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 6826706909325877091
-    Path: assets\models\crypt\source\12.obj.model
   - ID: 3480360699195747540
     Path: assets\models\crypt\textures\map_3_terrain.tga
   - ID: 7404259638715069494
@@ -1087,8 +1093,6 @@ Associations:
     Path: assets\models\crypt\source\map_2_fire.TGA
   - ID: 13324056805413078855
     Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 8831070580866869222
-    Path: .\Lib\Assets\8831070580866869222
   - ID: 7914080308684120168
     Path: assets\models\crypt\source\map_2_fire.TGA
   - ID: 9032920023369020597
@@ -1221,6 +1225,8 @@ Associations:
     Path: assets\models\crypt\source\map_3_objects.tga
   - ID: 9304448543085870565
     Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 4995879526974478990
+    Path: .\Lib\Assets\4995879526974478990
   - ID: 8462128334642127754
     Path: assets\models\crypt\source\1_map_3_terrain1.tga
   - ID: 14253667752770208663
@@ -1291,6 +1297,8 @@ Associations:
     Path: assets\models\crypt\source\map_3_castle.tga
   - ID: 6400260343843573701
     Path: assets\textures\brickwall.jpg
+  - ID: 14926624653016929100
+    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
   - ID: 370459542369252606
     Path: assets\models\crypt\source\map_3_castle.tga
   - ID: 6348797762231415599
@@ -1351,8 +1359,6 @@ Associations:
     Path: assets\textures\brickwall.jpg
   - ID: 5776276403693436545
     Path: .\Lib\Assets\\Sphere.model
-  - ID: 9453495855374604848
-    Path: assets\models\sphere\spher.obj.model
   - ID: 3734444441391077455
     Path: assets\textures\brickwall.jpg
   - ID: 3446896272368023474
@@ -1441,6 +1447,8 @@ Associations:
     Path: assets\textures\brickwall.jpg
   - ID: 16758047024414170900
     Path: assets\textures\brickwall.jpg
+  - ID: 11828188906118361340
+    Path: assets\textures\ParallaxMappingTest\bricks2_disp.jpg
   - ID: 2808040821363814186
     Path: assets\textures\brickwall.jpg
   - ID: 12477571469687088054
@@ -1487,8 +1495,8 @@ Associations:
     Path: assets\textures\brick_normals.png
   - ID: 8167387896285196615
     Path: assets\textures\brickwall.jpg
-  - ID: 11554631534795946412
-    Path: .\Lib\Assets\11554631534795946412
+  - ID: 13773864361395150190
+    Path: Unnamed model.model
   - ID: 4125918917028677294
     Path: assets\textures\brickwall_normal.png
   - ID: 14829421689221700242
@@ -1533,6 +1541,8 @@ Associations:
     Path: assets\textures\brickwall_normal.jpg
   - ID: 3221629854271778310
     Path: assets\textures\brick_normals.png
+  - ID: 3735481657713192254
+    Path: assets\models\rock\textures\rock_heightmap.png
   - ID: 9250712575893636882
     Path: assets\textures\checkerboard.png
   - ID: 12883982998772194022
@@ -1541,6 +1551,8 @@ Associations:
     Path: assets\textures\brickwall_normal.png
   - ID: 13695285973080144260
     Path: assets\textures\brickwall_normal.png
+  - ID: 93274382301896432
+    Path: .\Lib\Assets\93274382301896432
   - ID: 7951957840409595592
     Path: assets\textures\brickwall_normal.png
   - ID: 11878606560476491622
@@ -1569,6 +1581,8 @@ Associations:
     Path: assets\textures\brickwall.jpg
   - ID: 8933204498938687601
     Path: assets\textures\brickwall_normal.png
+  - ID: 1420164544645635477
+    Path: .\Lib\Assets\1420164544645635477
   - ID: 15169147561476744218
     Path: assets\textures\brickwall.jpg
   - ID: 18331311107789574419
@@ -1671,6 +1685,8 @@ Associations:
     Path: assets\models\rock\textures\Rock_Albedo.tga.png
   - ID: 991741143404470695
     Path: assets\models\rock\textures\New_Graph_normal.tga.png
+  - ID: 14465440846783980101
+    Path: .\Lib\Assets\14465440846783980101
   - ID: 9553889746735046601
     Path: assets\textures\brickwall.jpg
   - ID: 14433999550212183494
@@ -1739,6 +1755,8 @@ Associations:
     Path: assets\textures\Penguins\penguin2.png
   - ID: 7784274777875186998
     Path: assets\textures\akita.png
+  - ID: 4075647621872926833
+    Path: assets\models\fire-greatsword\textures\Greatsword_Specular.jpg
   - ID: 4105343900727531526
     Path: assets\textures\checkerboard.png
   - ID: 8575016493320453415
@@ -1775,6 +1793,8 @@ Associations:
     Path: assets\textures\brickwall_normal.jpg
   - ID: 6321637187019122074
     Path: .\Lib\Assets\6321637187019122074
+  - ID: 4596119592625345067
+    Path: assets\textures\ParallaxMappingTest\bricks2.jpg
   - ID: 15018284743161705623
     Path: assets\textures\brickwall.jpg
   - ID: 3378632771608757897
@@ -1809,53 +1829,51 @@ Associations:
     Path: .\Lib\Assets\9683473178817963546
   - ID: 8453054500141706143
     Path: 12.obj.model
-  - ID: 2017505377002399720
-    Path: .\Lib\Assets\2017505377002399720
-  - ID: 6021829262408798039
-    Path: .\Lib\Assets\6021829262408798039
   - ID: 3466315924723883873
     Path: assets\models\fire-greatsword\source\Magmarion.fbx.model
-  - ID: 9268856829888650321
-    Path: .\Lib\Assets\9268856829888650321
-  - ID: 11965128317319471170
-    Path: .\Lib\Assets\11965128317319471170
   - ID: 9461433953195561840
     Path: assets\models\plane\plane.obj.model
-  - ID: 14465440846783980101
-    Path: .\Lib\Assets\14465440846783980101
-  - ID: 93274382301896432
-    Path: .\Lib\Assets\93274382301896432
-  - ID: 7400900367242271316
-    Path: assets\models\plane\parallax_plane.model
-  - ID: 16042514667033753809
-    Path: .\Lib\Assets\16042514667033753809
-  - ID: 1420164544645635477
-    Path: .\Lib\Assets\1420164544645635477
   - ID: 7317632190844075748
     Path: assets\textures\ParallaxMappingTest\wood.png
   - ID: 15824291623381072347
     Path: assets\textures\ParallaxMappingTest\toy_box_disp.png
-  - ID: 750782998047202661
-    Path: assets\textures\ParallaxMappingTest\toy_box_normal.png
-  - ID: 4075647621872926833
-    Path: assets\models\fire-greatsword\textures\Greatsword_Specular.jpg
   - ID: 14473289118525795991
     Path: assets\models\plane\plane_bricks.model
-  - ID: 4596119592625345067
-    Path: assets\textures\ParallaxMappingTest\bricks2.jpg
-  - ID: 11828188906118361340
-    Path: assets\textures\ParallaxMappingTest\bricks2_disp.jpg
   - ID: 2181145312930488737
     Path: assets\textures\ParallaxMappingTest\bricks2_normal.jpg
   - ID: 16238352811152569358
     Path: .\Lib\Assets\16238352811152569358
-  - ID: 4995879526974478990
-    Path: .\Lib\Assets\4995879526974478990
-  - ID: 3735481657713192254
-    Path: assets\models\rock\textures\rock_heightmap.png
   - ID: 1418662701905176250
     Path: assets\models\plane\coinplane.model
   - ID: 5977369063083290551
     Path: assets\textures\Coin\plane_0.jpg
   - ID: 10730754667949693981
     Path: assets\textures\Coin\normals.png
+  - ID: 15208097360668704190
+    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
+  - ID: 15138046311618176639
+    Path: .\Lib\Assets\15138046311618176639
+  - ID: 1028703064176906114
+    Path: .\Lib\Assets\1028703064176906114
+  - ID: 11216845012748853521
+    Path: assets\testPhysmat3D.physmat3d
+  - ID: 11341896402037837687
+    Path: 12.obj.model
+  - ID: 4320707546600485926
+    Path: assets\models\crypt\source\12.obj.model
+  - ID: 12491863777754502555
+    Path: .\Lib\Assets\12491863777754502555
+  - ID: 15941924426567246104
+    Path: .\Lib\Assets\15941924426567246104
+  - ID: 16261802292019949206
+    Path: .\Lib\Assets\16261802292019949206
+  - ID: 15270155261650687889
+    Path: .\Lib\Assets\15270155261650687889
+  - ID: 17109705724441798053
+    Path: .\Lib\Assets\17109705724441798053
+  - ID: 7664153071317264184
+    Path: .\Lib\Assets\7664153071317264184
+  - ID: 15684960583102189672
+    Path: .\Lib\Assets\15684960583102189672
+  - ID: 17023575168735300130
+    Path: .\Lib\Assets\17023575168735300130

@@ -1,4 +1,8 @@
 Scene: Untitled scene
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+  Skybox: 0
 Entities:
   - "Entity: ": 9054631664072566459
     HierarchyOrder: 0
@@ -8,12 +12,12 @@ Entities:
       Name: Ground
       Tag: Untagged
     TransformComponent:
-      Translation: [-0.117507935, 0.965239525, 0]
+      Translation: [-0.117507935, 2.70551968, 0]
       Rotation: [0, 0, 0]
       Scale: [16.7594719, 0.862908661, 1]
       Parent: 0
     SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
+      Color: [1, 1, 1, 0.0392156877]
       Texture: 0
       TilingFactor: 1
     Rigidbody2DComponent:
@@ -114,3 +118,21 @@ Entities:
           Material: 0
         Children:
           []
+  - "Entity: ": 2766436942515741297
+    HierarchyOrder: 4
+    IDComponent:
+      ID: 2766436942515741297
+    TagComponent:
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+    BoxCollider2DComponent:
+      Size: [1, 1]
+      Offset: [0, 0]
+      Material: 0
+    Children:
+      []

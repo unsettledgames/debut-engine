@@ -5,6 +5,7 @@
 #include "Debut/Scene/Components.h"
 #include "Debut/Rendering/Shader.h"
 #include <Debut/Rendering/Renderer/RendererDebug.h>
+#include <Debut/Rendering/Renderer/Renderer.h>
 #include "Debut/Rendering/Renderer/Renderer2D.h"
 #include "Debut/Rendering/Renderer/Renderer3D.h"
 #include "Debut/AssetManager/AssetManager.h"
@@ -67,12 +68,23 @@ namespace Debut
 	template<>
 	void Scene::OnComponentAdded(CircleCollider2DComponent& bc2d, Entity entity) { }
 	template<>
-	void Scene::OnComponentAdded(BoxCollider3DComponent& bc3d, Entity entity) { }
+	void Scene::OnComponentAdded(BoxCollider3DComponent& bc3d, Entity entity) 
+	{
+		if (!entity.HasComponent<Rigidbody3DComponent>())
+			entity.AddComponent <Rigidbody3DComponent>();
+	}
 	template<>
-	void Scene::OnComponentAdded(SphereCollider3DComponent& sc3d, Entity entity) { }
+	void Scene::OnComponentAdded(SphereCollider3DComponent& sc3d, Entity entity) 
+	{ 
+		if (!entity.HasComponent<Rigidbody3DComponent>())
+			entity.AddComponent <Rigidbody3DComponent>();
+	}
 	template<>
 	void Scene::OnComponentAdded(MeshCollider3DComponent& sc3d, Entity entity)
 	{
+		if (!entity.HasComponent<Rigidbody3DComponent>())
+			entity.AddComponent <Rigidbody3DComponent>();
+
 		// Automatically add the mesh if the object has a mesh renderer
 		if (entity.HasComponent<MeshRendererComponent>())
 		{
@@ -109,7 +121,12 @@ namespace Debut
 	static void CopyComponentIfExists(Entity& dst, Entity& src)
 	{
 		if (src.HasComponent<Component>())
-			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+		{
+			Component& c = dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+			if (dst.HasComponent<IDComponent>())
+				c.Owner = dst.GetComponent<IDComponent>().ID;
+		}
+
 	}
 
 	//TODO: OnComponentRemove, delete bodies
@@ -136,9 +153,14 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Editor update");
 		
+		// Global variables
 		glm::mat4 transform = glm::inverse(camera.GetView());
 		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms(transform[3]);
 		std::vector<LightComponent*> lights;
+
+		// Flags
+		bool renderColliders = Renderer::GetConfig().RenderColliders;
+
 		// Directional light
 		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
 		bool full = false;
@@ -172,7 +194,7 @@ namespace Debut
 		for (auto entity : group3D)
 		{
 			auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
-			Renderer3D::DrawModel(mesh, transform.GetTransform());
+			Renderer3D::DrawModel(mesh, transform.GetTransform(), (int)entity);
 		}
 
 		Renderer3D::EndScene();
@@ -180,14 +202,75 @@ namespace Debut
 		// 2D Rendering
 		Renderer2D::BeginScene(camera, glm::inverse(camera.GetView()));
 
-		auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
-		for (auto entity : group)
+		auto group2D = m_Registry.group<TransformComponent, SpriteRendererComponent>();
+		for (auto entity : group2D)
 		{
-			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			auto& [transform, sprite] = group2D.get<TransformComponent, SpriteRendererComponent>(entity);
 			Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 		}
 
 		Renderer2D::EndScene();
+
+		if (Renderer::GetConfig().RenderColliders)
+		{
+			RendererDebug::BeginScene(camera, transform);
+			
+			// 3D Physics colliders
+			auto rigidbody3DGroup = m_Registry.view<Rigidbody3DComponent>();
+			for (auto entity : rigidbody3DGroup)
+			{
+				Entity e = { entity, this };
+				auto& objTransform = e.Transform();
+
+				if (e.HasComponent<BoxCollider3DComponent>())
+				{
+					auto& collider = e.GetComponent<BoxCollider3DComponent>();
+					RendererDebug::DrawBox(collider.Size, collider.Offset, objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+				}
+				else if (e.HasComponent<SphereCollider3DComponent>())
+				{
+					glm::vec3 trans, rot, scale;
+					glm::mat4 objTransformMat = objTransform.GetTransform();
+					MathUtils::DecomposeTransform(objTransformMat, trans, rot, scale);
+
+					auto& collider = e.GetComponent<SphereCollider3DComponent>();
+					RendererDebug::DrawSphere(collider.Radius, collider.Offset, rot, scale, glm::inverse(transform), objTransformMat);
+				}
+				else if (e.HasComponent<MeshCollider3DComponent>())
+				{
+					auto& collider = e.GetComponent<MeshCollider3DComponent>();
+					RendererDebug::DrawMesh(collider.Mesh, collider.Offset, objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+				}
+			}
+
+			// 2D Physics colliders
+			auto rigidbody2DGroup = m_Registry.view<Rigidbody2DComponent>();
+			for (auto entity : rigidbody2DGroup)
+			{
+				Entity e = { entity, this };
+				auto& objTransform = e.Transform();
+
+				if (e.HasComponent<BoxCollider2DComponent>())
+				{
+					auto& collider = e.GetComponent<BoxCollider2DComponent>();
+					RendererDebug::DrawRect(objTransform.GetTransform(), collider.Size, collider.Offset, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+				}
+				else if (e.HasComponent<CircleCollider2DComponent>())
+				{
+					auto& collider = e.GetComponent<CircleCollider2DComponent>();
+					RendererDebug::DrawCircle(collider.Radius, glm::vec3(collider.Offset, objTransform.Translation.z), 
+						objTransform.GetTransform(), 40);
+				}
+				else if (e.HasComponent<PolygonCollider2DComponent>())
+				{
+					auto& collider = e.GetComponent<PolygonCollider2DComponent>();
+					RendererDebug::DrawPolygon(collider.GetTriangles(), glm::vec3(collider.Offset, objTransform.Translation.z),
+						objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+				}
+			}
+			
+			RendererDebug::EndScene();
+		}
 	}
 	
 
@@ -299,7 +382,7 @@ namespace Debut
 				for (auto entity : group)
 				{
 					auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
-					Renderer3D::DrawModel(mesh, transform.GetTransform());
+					Renderer3D::DrawModel(mesh, transform.GetTransform(), (int)entity);
 				}
 
 				Renderer3D::EndScene();
@@ -495,13 +578,14 @@ namespace Debut
 		m_PhysicsSystem3D->End();
 	}
 
-	void Scene::DuplicateEntity(Entity& entity)
+	Entity Scene::DuplicateEntity(Entity& entity, Entity& parent)
 	{
 		if (!entity)
-			return;
-
-		Entity duplicate = CreateEntity({}, entity.GetComponent<TagComponent>().Name + " Copy");
+			return {};
+		Entity duplicate = CreateEmptyEntity();
 		
+		CopyComponentIfExists<TagComponent>(duplicate, entity);
+		duplicate.GetComponent<TagComponent>().Name += " Copy";
 		CopyComponentIfExists<TransformComponent>(duplicate, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(duplicate, entity);
 		CopyComponentIfExists<Rigidbody2DComponent>(duplicate, entity);
@@ -518,18 +602,36 @@ namespace Debut
 		CopyComponentIfExists<DirectionalLightComponent>(duplicate, entity);
 		CopyComponentIfExists<PointLightComponent>(duplicate, entity);
 		
-		duplicate.Transform().Parent = duplicate.Transform().Parent;
+		auto& transform = entity.Transform();
+		duplicate.Transform().SetParent(parent);
+
+		// Refill children
+		for (uint32_t i = 0; i < transform.Children.size(); i++)
+			Entity childDup = DuplicateEntity(Entity::s_ExistingEntities[transform.Children[i]], duplicate);
+
+		return duplicate;
+	}
+
+	Entity Scene::CreateEmptyEntity()
+	{
+		Entity ret = { m_Registry.create(), this };
+
+		IDComponent id = ret.AddComponent<IDComponent>();
+		Entity::s_ExistingEntities[id.ID] = ret;
+
+		return ret;
 	}
 
 	Entity Scene::CreateEntity(Entity parent, const std::string& name)
 	{
 		Entity ret = { m_Registry.create(), this };
 
+		IDComponent id = ret.AddComponent<IDComponent>();
 		ret.AddComponent<TransformComponent>();
 		ret.AddComponent<TagComponent>(name);
-		ret.AddComponent<IDComponent>();
+		ret.Transform().SetParent(parent);
 
-		ret.Transform().Parent = parent;
+		Entity::s_ExistingEntities[id.ID] = ret;
 
 		return ret;
 	}
@@ -542,8 +644,9 @@ namespace Debut
 		idC.ID = id;
 		ret.AddComponent<TransformComponent>();
 		ret.AddComponent<TagComponent>(name);
+		ret.Transform().SetParent(parent);
 
-		ret.Transform().Parent = parent;
+		Entity::s_ExistingEntities[id] = ret;
 
 		return ret;
 	}
@@ -563,6 +666,8 @@ namespace Debut
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		entity.Transform().SetParent({});
+		Entity::s_ExistingEntities.erase(entity.ID());
 		m_Registry.destroy(entity);
 	}
 
@@ -620,6 +725,8 @@ namespace Debut
 		}
 
 		newScene->m_Skybox = other->m_Skybox;
+		newScene->m_AmbientLight = other->m_AmbientLight;
+		newScene->m_AmbientLightIntensity = other->m_AmbientLightIntensity;
 
 		return newScene;
 	}

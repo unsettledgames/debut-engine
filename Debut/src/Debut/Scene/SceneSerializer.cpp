@@ -42,10 +42,12 @@ namespace Debut
 	{
 		if (!e.HasComponent<T>())
 			return;
+		T& component = e.GetComponent<T>();
 
 		out << YAML::Key << name << YAML::Value;
 		out << YAML::BeginMap;
-		SerializeComponent(e.GetComponent<T>(), out);
+		out << YAML::Key << "Owner" << YAML::Value << component.Owner;
+		SerializeComponent(component, out);
 		out << YAML::EndMap;
 	}
 
@@ -66,6 +68,12 @@ namespace Debut
 		out << YAML::Key << "Rotation" << YAML::Value << t.Rotation;
 		out << YAML::Key << "Scale" << YAML::Value << t.Scale;
 		out << YAML::Key << "Parent" << YAML::Value << (!t.Parent ? 0 : (uint64_t)t.Parent.GetComponent<IDComponent>().ID);
+		out << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
+		
+		for (uint64_t child : t.Children)
+			out << child;
+
+		out << YAML::EndSeq;
 	}
 
 	static void SerializeComponent(const CameraComponent& c, YAML::Emitter& out)
@@ -188,7 +196,22 @@ namespace Debut
 	{
 		if (!in) return;
 		IDComponent& id = e.GetComponent<IDComponent>();
+		if (Entity::s_ExistingEntities.find(id.ID) != Entity::s_ExistingEntities.end())
+			Entity::s_ExistingEntities.erase(id.ID);
+
 		id.ID = in["ID"].as<uint64_t>();
+		id.Owner = in["Owner"] ? in["Owner"].as<uint64_t>() : id.ID;
+		Entity::s_ExistingEntities[id.ID] = e;
+	}
+
+	template <>
+	static void DeserializeComponent<TagComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in) return;
+		TagComponent& tag = e.AddComponent<TagComponent>();
+		tag.Name = in["Name"].as<std::string>();
+		tag.Tag = in["Tag"].as<std::string>();
+		tag.Owner = in["Owner"] ? in["Owner"].as<uint64_t>() : 0;
 	}
 
 	template <>
@@ -196,12 +219,21 @@ namespace Debut
 	{
 		if (!in)
 			return;
-		TransformComponent& transform = e.GetComponent<TransformComponent>();
+		TransformComponent& transform = e.AddComponent<TransformComponent>();
 
+		transform.Owner = e.GetComponent<IDComponent>().ID;
 		transform.Translation = in["Translation"].as<glm::vec3>();
 		transform.Rotation = in["Rotation"].as<glm::vec3>();
 		transform.Scale = in["Scale"].as<glm::vec3>();
-		transform.Parent = in["Parent"] ? scene->GetEntityByID(in["Parent"].as<uint64_t>()) : Entity(entt::null, nullptr);
+
+		if (in["Parent"] && in["Parent"].as<uint64_t>() != 0)
+		{
+			Entity parent = scene->GetEntityByID(in["Parent"].as<uint64_t>());
+			transform.Parent = parent;
+			parent.Transform().Children.push_back(transform.Owner);
+		}
+		else
+			transform.Parent = Entity(entt::null, nullptr);
 	}
 
 	template <>
@@ -210,7 +242,6 @@ namespace Debut
 		if (!in)
 			return;
 		CameraComponent& cc = e.AddComponent<CameraComponent>();
-
 		cc.FixedAspectRatio = in["FixedAspectRatio"].as<bool>();
 		cc.Primary = in["Primary"].as<bool>();
 
@@ -275,7 +306,6 @@ namespace Debut
 		if (!in)
 			return;
 		BoxCollider2DComponent& bc2d = e.AddComponent<BoxCollider2DComponent>();
-
 		bc2d.Offset = in["Offset"].as<glm::vec2>();
 		bc2d.Size = in["Size"].as<glm::vec2>();
 		bc2d.Material = in["Material"] ? in["Material"].as<uint64_t>() : 0;
@@ -286,11 +316,10 @@ namespace Debut
 	{
 		if (!in)
 			return;
-		CircleCollider2DComponent& bc2d = e.AddComponent<CircleCollider2DComponent>();
-
-		bc2d.Offset = in["Offset"].as<glm::vec2>();
-		bc2d.Radius = in["Radius"].as<float>();
-		bc2d.Material = in["Material"].as<uint64_t>();
+		CircleCollider2DComponent& cc2d = e.AddComponent<CircleCollider2DComponent>();
+		cc2d.Offset = in["Offset"].as<glm::vec2>();
+		cc2d.Radius = in["Radius"].as<float>();
+		cc2d.Material = in["Material"].as<uint64_t>();
 	}
 
 	template<>
@@ -299,7 +328,6 @@ namespace Debut
 		if (!in)
 			return;
 		PolygonCollider2DComponent& pc2d = e.AddComponent<PolygonCollider2DComponent>();
-
 		pc2d.Offset = in["Offset"].as<glm::vec2>();
 		uint32_t i = 0;
 		// Remove default points
@@ -322,7 +350,6 @@ namespace Debut
 		if (!in)
 			return;
 		BoxCollider3DComponent& bc3d = e.AddComponent<BoxCollider3DComponent>();
-
 		bc3d.Offset = in["Offset"].as<glm::vec3>();
 		bc3d.Size = in["Size"].as<glm::vec3>();
 		bc3d.Material = in["Material"] ? in["Material"].as<uint64_t>() : 0;
@@ -334,7 +361,6 @@ namespace Debut
 		if (!in)
 			return;
 		SphereCollider3DComponent& bc3d = e.AddComponent<SphereCollider3DComponent>();
-
 		bc3d.Offset = in["Offset"].as<glm::vec3>();
 		bc3d.Radius = in["Radius"].as<float>();
 		bc3d.Material = in["Material"] ? in["Material"].as<uint64_t>() : 0;
@@ -346,7 +372,6 @@ namespace Debut
 		if (!in)
 			return;
 		MeshCollider3DComponent& mesh = e.AddComponent<MeshCollider3DComponent>();
-		
 		mesh.Offset = in["Offset"].as<glm::vec3>();
 		mesh.Mesh = in["Mesh"].as<uint64_t>();
 		mesh.Material = in["Material"].as<uint64_t>();
@@ -358,7 +383,6 @@ namespace Debut
 		if (!in)
 			return;
 		DirectionalLightComponent& dl = e.AddComponent<DirectionalLightComponent>();
-
 		dl.Direction = in["Direction"].as<glm::vec3>();
 		dl.Color = in["Color"].as<glm::vec3>();
 		dl.Intensity = in["Intensity"].as<float>();
@@ -370,7 +394,6 @@ namespace Debut
 		if (!in)
 			return;
 		PointLightComponent& dl = e.AddComponent<PointLightComponent>();
-
 		dl.Color = in["Color"].as<glm::vec3>();
 		dl.Intensity = in["Intensity"].as<float>();
 		dl.Radius = in["Radius"].as<float>();
@@ -411,7 +434,8 @@ namespace Debut
 		out << YAML::EndMap;
 	}
 
-	void SceneSerializer::SerializeText(const std::string& fileName, EntitySceneNode& sceneGraph)
+	void SceneSerializer::SerializeText(const std::string& fileName, const EntitySceneNode& sceneGraph, 
+		const YAML::Node& additionalData)
 	{
 		YAML::Emitter out;
 		std::ofstream outFile(fileName);
@@ -419,6 +443,7 @@ namespace Debut
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene" << YAML::Value << "Untitled scene";
 		
+		out << YAML::Key << "AdditionalData" << YAML::Value << additionalData;
 		out << YAML::Key << "Lighting" << YAML::Value << YAML::BeginMap;
 		out << YAML::Key << "AmbientLightColor" << YAML::Value << m_Scene->GetAmbientLight();
 		out << YAML::Key << "AmbientLightIntensity" << YAML::Value << m_Scene->GetAmbientLightIntensity();
@@ -439,7 +464,7 @@ namespace Debut
 		outFile << out.c_str();
 	}
 
-	EntitySceneNode* SceneSerializer::DeserializeText(const std::string& fileName)
+	EntitySceneNode* SceneSerializer::DeserializeText(const std::string& fileName, YAML::Node& additionalData)
 	{
 		if (!CppUtils::String::EndsWith(fileName, ".debut"))
 			return nullptr;
@@ -453,6 +478,12 @@ namespace Debut
 
 		if (!in["Scene"])
 			return nullptr;
+
+		if (in["AdditionalData"])
+		{
+			additionalData = in["AdditionalData"];
+			additionalData["Valid"] = true;
+		}
 
 		auto entities = in["Entities"];
 		EntitySceneNode* sceneTree = new EntitySceneNode();
@@ -477,13 +508,15 @@ namespace Debut
 	{
 		// Create a new entity, set the tag and name
 		auto tc = yamlEntity["TagComponent"];
-		Entity entity = m_Scene->CreateEntity({}, tc["Name"].as<std::string>());
+		Entity entity = m_Scene->CreateEmptyEntity();
 		EntitySceneNode* node = new EntitySceneNode(false, entity);
 		node->IndexInNode = yamlEntity["HierarchyOrder"].as<uint32_t>();
-		entity.GetComponent<TagComponent>().Tag = tc["Tag"].as<std::string>();
 
 		// Deserialize the other components
+		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
+		DeserializeComponent<TagComponent>(entity, yamlEntity["TagComponent"]);
 		DeserializeComponent<TransformComponent>(entity, yamlEntity["TransformComponent"], m_Scene);
+
 		DeserializeComponent<CameraComponent>(entity, yamlEntity["CameraComponent"], m_Scene);
 		DeserializeComponent<SpriteRendererComponent>(entity, yamlEntity["SpriteRendererComponent"]);
 		DeserializeComponent<MeshRendererComponent>(entity, yamlEntity["MeshRendererComponent"]);
@@ -499,7 +532,6 @@ namespace Debut
 		DeserializeComponent<SphereCollider3DComponent>(entity, yamlEntity["SphereCollider3DComponent"]);
 		DeserializeComponent<MeshCollider3DComponent>(entity, yamlEntity["MeshCollider3DComponent"]);
 
-		DeserializeComponent<IDComponent>(entity, yamlEntity["IDComponent"]);
 		DeserializeComponent<DirectionalLightComponent>(entity, yamlEntity["DirectionalLightComponent"]);
 		DeserializeComponent<PointLightComponent>(entity, yamlEntity["PointLightComponent"]);
 

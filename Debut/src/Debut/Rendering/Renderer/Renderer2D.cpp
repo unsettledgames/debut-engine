@@ -10,7 +10,9 @@
 #include <Debut/Rendering/Renderer/RenderCommand.h>
 #include <Debut/Rendering/Shader.h>
 #include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Rendering/Renderer/Renderer.h>
 #include <Debut/Rendering/Renderer/Renderer2D.h>
+#include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Scene/Components.h>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -86,7 +88,7 @@ namespace Debut
 		delete[] s_Data.QuadVertexBufferBase;
 	}
 
-	void Renderer2D::BeginScene(Camera& camera, const glm::mat4 transform)
+	void Renderer2D::BeginScene(Camera& camera, const glm::mat4& transform)
 	{
 		DBT_PROFILE_FUNCTION();
 
@@ -100,6 +102,9 @@ namespace Debut
 		s_Data.TextureShader->Unbind();
 
 		StartBatch();
+
+		if (Renderer::GetConfig().RenderWireframe)
+			RendererDebug::BeginScene(camera, transform);
 	}
 
 	void Renderer2D::EndScene()
@@ -110,10 +115,14 @@ namespace Debut
 			uint64_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
 			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
-			s_Data.TextureShader->Bind();
+			if (Renderer::GetConfig().RenderingMode != RendererConfig::RenderingMode::None)
+				s_Data.TextureShader->Bind();
 			Flush();
-			s_Data.TextureShader->Unbind();
+			if (Renderer::GetConfig().RenderingMode != RendererConfig::RenderingMode::None)
+				s_Data.TextureShader->Unbind();
 		}
+
+		RendererDebug::EndScene();
 	}
 
 	void Renderer2D::FlushAndReset()
@@ -133,36 +142,6 @@ namespace Debut
 		// Draw call
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 		s_Data.Stats.DrawCalls++;
-	}
-
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const glm::vec4 color)
-	{
-		DBT_PROFILE_FUNCTION();
-
-		// If we have drawn too many quads, we start a new batch
-		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
-			FlushAndReset();
-		
-		// Use the white texture
-		const float texIndex = 0;
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-			glm::rotate(glm::mat4(1.0f), (rotationAngle), glm::vec3(0, 0, 1)) *
-			glm::scale(glm::mat4(1.0f), glm::vec3(size.x, size.y, 1.0f));
-		glm::vec2 texCoords[] = { glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 1) };
-
-		for (int i = 0; i < 4; i++)
-		{
-			s_Data.QuadVertexBufferPtr->Position = glm::vec3(transform * s_Data.QuadVertexPositions[i]);
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = texCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = 0;
-			s_Data.QuadVertexBufferPtr->TilingFactor = 1;
-			s_Data.QuadVertexBufferPtr++;
-		}
-
-		s_Data.QuadIndexCount += 6;
-		s_Data.Stats.QuadCount++;
 	}
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4 color)
@@ -189,6 +168,8 @@ namespace Debut
 
 		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
+
+		RendererDebug::DrawQuad(transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<Texture>& texture, float tilingFactor)
@@ -233,50 +214,9 @@ namespace Debut
 
 		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
-	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotationAngle, const Ref<SubTexture2D>& texture, float tilingFactor)
-	{
-		DBT_PROFILE_FUNCTION();
+		RendererDebug::DrawQuad(transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-		// If we have drawn too many quads, we start a new batch
-		if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
-			FlushAndReset();
-
-		float textureIndex = 0.0f;
-		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
-		{
-			if (*s_Data.TextureSlots[i].get() == *(texture->GetTexture().get()))
-			{
-				textureIndex = (float)i;
-				break;
-			}
-		}
-		if (textureIndex == 0.0f)
-		{
-			textureIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture->GetTexture();
-			s_Data.TextureSlotIndex++;
-		}
-
-		const glm::vec4 color = glm::vec4(1.0, 1.0, 1.0, 1.0);
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-			glm::rotate(glm::mat4(1.0f), (rotationAngle), glm::vec3(0, 0, 1)) *
-			glm::scale(glm::mat4(1.0f), glm::vec3(size.x, size.y, 1.0f));
-		glm::vec2 texCoords[] = { glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 1) };
-
-		for (int i = 0; i < 4; i++)
-		{
-			s_Data.QuadVertexBufferPtr->Position = glm::vec3(transform * s_Data.QuadVertexPositions[i]);
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = texture->GetTexCoords()[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr++;
-		}
-
-		s_Data.QuadIndexCount += 6;
-		s_Data.Stats.QuadCount++;
 	}
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& src, int entityID)
@@ -322,6 +262,9 @@ namespace Debut
 
 		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
+
+		if (Renderer::GetConfig().RenderWireframe)
+			DrawQuad(transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	void Renderer2D::ResetStats()

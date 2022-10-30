@@ -12,11 +12,39 @@
 #define IMGUI_ICON_UNIMPORTED_MODEL	u8"\ue006"
 #define IMGUI_ICON_ENTITY			u8"\ue007"
 
+#define IMGUI_ICON_GIZMO_GLOBAL		u8"\ue008"
+#define IMGUI_ICON_GIZMO_LOCAL		u8"\ue009"
+
+#define IMGUI_ICON_TRANSLATE		u8"\ue00a"
+#define IMGUI_ICON_ROTATE			u8"\ue00b"
+#define IMGUI_ICON_SCALE			u8"\ue00c"
+
+#define IMGUI_ICON_PLAY				u8"\ue00d"
+#define IMGUI_ICON_STOP				u8"\ue00e"
+
+
 namespace Debut
 {
 	class Texture2D;
 	class PhysicsMaterial2D;
 	class AssetManager;
+
+	class ScopedStyleVar
+	{
+	public:
+		ScopedStyleVar(ImGuiStyleVar var, float val)			{ ImGui::PushStyleVar(var, val); }
+		ScopedStyleVar(ImGuiStyleVar var, const ImVec2& val)	{ ImGui::PushStyleVar(var, val); }
+
+		~ScopedStyleVar() { ImGui::PopStyleVar(); }
+	};
+
+	class ScopedStyleColor
+	{
+	public:
+		ScopedStyleColor(ImGuiCol col, const ImVec4& val) { ImGui::PushStyleColor(col, val); }
+
+		~ScopedStyleColor() { ImGui::PopStyleColor(); }
+	};
 
 	class ImGuiUtils
 	{

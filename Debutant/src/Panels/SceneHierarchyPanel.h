@@ -8,6 +8,7 @@
 namespace Debut
 {
 	class Scene;
+	class InspectorPanel;
 
 	struct TransformComponent;
 
@@ -19,20 +20,13 @@ namespace Debut
 		~SceneHierarchyPanel();
 
 		void SetContext(const Ref<Scene>& scene);
-		void SetSelectedEntity(const Entity& entity);
-		void RegisterEntity(const Entity& entity);
+		void SetInspectorPanel(InspectorPanel* panel) { m_Inspector = panel; }
+		inline void SetSelectedEntity(const Entity& entity) { m_SelectionContext = entity; }
 
 		void OnImGuiRender();
+		void DrawEntityNode(EntitySceneNode& entity);
 
-		inline Entity GetSelectionContext() { 
-			if (m_SelectionContext)
-			{
-				TransformComponent& transform = m_SelectionContext.Transform();
-				int sas = 5;
-			}
-			return m_SelectionContext; 
-		}
-
+		inline Entity GetSelectionContext() { return m_SelectionContext; }
 		inline EntitySceneNode* GetSceneGraph() { return m_CachedSceneGraph; }
 
 		void RebuildSceneGraph();
@@ -42,28 +36,12 @@ namespace Debut
 
 	private:
 		uint32_t GetParentInSceneGraph(EntitySceneNode* node, uint32_t entity);
-
-		void DrawEntityNode(EntitySceneNode& entity);
-		void DrawComponents(Entity& entity);
-
-		template <typename T>
-		void DrawAddComponentEntry(const std::string& componentName)
-		{
-			if (!m_SelectionContext.HasComponent<T>())
-			{
-				if (ImGui::MenuItem(componentName.c_str()))
-				{
-					m_SelectionContext.AddComponent<T>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-		}
-
 		void DestroySceneNode(EntitySceneNode& node);
 
 	private:
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
+		InspectorPanel* m_Inspector;
 
 		// Scene graph management
 		bool m_RebuiltGraph = false;

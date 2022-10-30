@@ -6,3 +6,7 @@ Material icon: <a href="https://www.flaticon.com/free-icon/circle-with-curves-pa
 Mesh icon: <a href="https://www.flaticon.com/free-icon/grid_6934388">Mesh icon by th studio - Flaticon</a>
 Unimpored 3D model icon: <a href="https://www.flaticon.com/free-icon/layers_4362005?related_id=4362005&origin=search">Unimported 3D model by Freepik</a>
 Entity icon: <a href="https://www.flaticon.com/free-icon/priority_6742340?term=rhombus&page=1&position=23&page=1&position=23&related_id=6742340&origin=style">Entity icon by Andrean Prabowo</a>
+Gizmo icon(s): <a href="https://www.flaticon.com/free-icons/axis" title="axis icons">Axis icons created by Uniconlabs - Flaticon</a>
+Move icon: <a href="https://www.flaticon.com/free-icons/move" title="move icons">Move icons created by Freepik - Flaticon</a>
+Scale icon: <a href="https://www.flaticon.com/free-icons/resize" title="resize icons">Resize icons created by Freepik - Flaticon</a>
+Rotate icon: <a href="https://www.flaticon.com/free-icons/refresh" title="refresh icons">Refresh icons created by Freepik - Flaticon</a>

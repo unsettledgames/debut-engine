@@ -2,5 +2,5 @@
 Asset: Texture2D
 ID: 2181145312930488737
 Filtering: Linear
-WrapMode: Clamp
+WrapMode: Repeat
 ...

@@ -55,6 +55,7 @@ namespace Debut
 	struct IDComponent
 	{
 		UUID ID;
+		UUID Owner;
 
 		IDComponent() = default;
 		IDComponent(const IDComponent&) = default;
@@ -62,9 +63,12 @@ namespace Debut
 
 	struct TagComponent
 	{
+		UUID Owner;
+
 		std::string Tag;
 		std::string Name;
 
+		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
 		TagComponent(const std::string& name) : Tag("Untagged"), Name(name) {}
 		TagComponent(const std::string& name, const std::string& tag) : Tag(tag), Name(name) {}
@@ -72,11 +76,14 @@ namespace Debut
 
 	struct TransformComponent
 	{
+		UUID Owner;
+
 		glm::vec3 Translation = glm::vec3(0.0f);
 		glm::vec3 Rotation = glm::vec3(0.0f);
 		glm::vec3 Scale = glm::vec3(1.0f);
 
 		Entity Parent = {};
+		std::vector<UUID> Children;
 
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent& other) = default;
@@ -113,7 +120,7 @@ namespace Debut
 				* glm::scale(glm::mat4(1.0f), Scale));
 		}
 
-		void SetParent(Entity parent) 
+		void SetParent(Entity newParent) 
 		{ 
 			glm::mat4 finalTransform = GetLocalTransform();
 			glm::quat rotation;
@@ -121,19 +128,32 @@ namespace Debut
 			glm::vec4 persp;
 
 			if (Parent)
-				finalTransform = Parent.Transform().GetTransform() * finalTransform;
-			if (parent)
-				finalTransform = glm::inverse(parent.Transform().GetTransform()) * finalTransform;
+			{
+				auto& parentTransform = Parent.Transform();
+				finalTransform = parentTransform.GetTransform() * finalTransform;
+				// Remove this entity from the parent's children
+				parentTransform.Children.erase(std::remove(parentTransform.Children.begin(), parentTransform.Children.end(), 
+					Owner), parentTransform.Children.end());
+			}
+			if (newParent)
+			{
+				auto& parentTransform = newParent.Transform();
+				finalTransform = glm::inverse(parentTransform.GetTransform()) * finalTransform;
+				// Add this entity to the parent's children
+				parentTransform.Children.push_back(Owner);
+			}
 
 			glm::decompose(finalTransform, Scale, rotation, Translation, skew, persp);
 			Rotation = glm::eulerAngles(rotation);
 
-			Parent = parent; 
+			Parent = newParent;
 		}
 	};
 
 	struct CameraComponent
 	{
+		UUID Owner;
+
 		Debut::SceneCamera Camera;
 		bool Primary = true;
 		bool FixedAspectRatio = false;
@@ -147,6 +167,8 @@ namespace Debut
 
 	struct SpriteRendererComponent
 	{
+		UUID Owner;
+
 		glm::vec4 Color = glm::vec4(1.0f);
 		UUID Texture = 0;
 		float TilingFactor = 1.0f;
@@ -162,6 +184,7 @@ namespace Debut
 		UUID Mesh = 0;
 
 		bool Instanced = false;
+		UUID Owner;
 
 		MeshRendererComponent()  {}
 		MeshRendererComponent(const MeshRendererComponent&) = default;
@@ -171,6 +194,8 @@ namespace Debut
 	// LIGHTING
 	struct DirectionalLightComponent : LightComponent
 	{
+		UUID Owner;
+
 		glm::vec3 Direction = glm::vec3(1.0f);
 		glm::vec3 Color = glm::vec3(1.0f);
 		float Intensity = 1.0f;
@@ -181,6 +206,8 @@ namespace Debut
 
 	struct PointLightComponent : LightComponent
 	{
+		UUID Owner;
+
 		glm::vec3 Color = glm::vec3(1.0f);
 		glm::vec3 Position = glm::vec3(0.0f);
 
@@ -194,9 +221,11 @@ namespace Debut
 	// PHYSICS AND COLLIDERS
 	struct Rigidbody2DComponent
 	{
+		UUID Owner;
+
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
 
-		BodyType Type = BodyType::Static;
+		BodyType Type = BodyType::Dynamic;
 		// TODO: constraints
 		bool FixedRotation = false;
 
@@ -217,8 +246,10 @@ namespace Debut
 
 	struct Rigidbody3DComponent
 	{
+		UUID Owner;
+
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
-		BodyType Type;
+		BodyType Type = BodyType::Dynamic;
 
 		float Mass = 1.0f;
 		float GravityFactor = 1.0f;
@@ -241,6 +272,8 @@ namespace Debut
 
 	struct BoxCollider2DComponent : Collider2DComponent
 	{
+		UUID Owner;
+
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		glm::vec2 Size = { 1.0f, 1.0f };
 
@@ -248,7 +281,7 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		void SetPoint(glm::vec2& point, std::string& type)
+		void SetPoint(const glm::vec2& point, const std::string& type)
 		{
 			glm::vec2 diff;
 			if (type == "TopLeft")
@@ -294,6 +327,8 @@ namespace Debut
 
 	struct CircleCollider2DComponent : Collider2DComponent
 	{
+		UUID Owner;
+
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		float Radius = 1.0f;
 
@@ -301,7 +336,7 @@ namespace Debut
 
 		void* RuntimeFixture = nullptr;
 
-		void SetPoint(glm::vec2& point, std::string& type)
+		void SetPoint(const glm::vec2& point, const std::string& type)
 		{
 			glm::vec2 diff;
 			if (type == "Left")
@@ -343,6 +378,8 @@ namespace Debut
 
 	struct PolygonCollider2DComponent : Collider2DComponent
 	{
+		UUID Owner;
+
 		UUID Material = 0;
 		void* RuntimeFixture = nullptr;
 		
@@ -350,7 +387,7 @@ namespace Debut
 		std::vector<glm::vec2> Points;
 		std::vector<uint32_t> Indices;
 
-		void SetPoint(int index, glm::vec2 value)
+		void SetPoint(int index, const glm::vec2& value)
 		{
 			// Update point
 			Points[index] = value;
@@ -395,11 +432,13 @@ namespace Debut
 
 	struct BoxCollider3DComponent : Collider3DComponent
 	{
+		UUID Owner;
+
 		glm::vec3 Size = glm::vec3(1.0f);
 		glm::vec3 Offset = glm::vec3(0.0f);
 		UUID Material = 0;
 
-		void SetPoint(const std::string& label, const glm::vec3 newPoint)
+		void SetPoint(const std::string& label, const glm::vec3& newPoint)
 		{
 			glm::vec3 hSize = Size / 2.0f;
 			glm::vec3 mults;
@@ -443,11 +482,13 @@ namespace Debut
 
 	struct SphereCollider3DComponent : Collider3DComponent
 	{
+		UUID Owner;
+
 		float Radius = 1.0f;
 		glm::vec3 Offset = glm::vec3(0.0f);
 		UUID Material = 0;
 
-		void SetPoint(const std::string& label, const glm::vec3 newPoint)
+		void SetPoint(const std::string& label, const glm::vec3& newPoint)
 		{
 			if (label == "Top")
 			{
@@ -499,6 +540,8 @@ namespace Debut
 
 	struct MeshCollider3DComponent : Collider3DComponent
 	{
+		UUID Owner;
+
 		UUID Mesh = 0;
 		UUID Material = 0;
 
@@ -511,6 +554,7 @@ namespace Debut
 	// SCRIPT
 	struct NativeScriptComponent
 	{
+		UUID Owner;
 		ScriptableEntity* Instance = nullptr;
 
 		ScriptableEntity*(*InstantiateScript)();

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 namespace Debut
 {
 	// At the moment, Events are totally synchronous, that means that events are immediately dispatched as soon as

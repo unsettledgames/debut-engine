@@ -1,6 +1,5 @@
 #include "Debut/dbtpch.h"
 #include "ImGuiLayer.h"
-#include "imgui.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
 #include "Debut/Core/Application.h"
@@ -26,7 +25,8 @@ namespace Debut
 	
 	void ImGuiLayer::SetDarkThemeColors()
 	{
-		auto& colors = ImGui::GetStyle().Colors;
+		ImGuiStyle& imStyle = ImGui::GetStyle();
+		auto& colors = imStyle.Colors;
 		colors[ImGuiCol_WindowBg] = ImVec4{0.1f, 0.105f, 0.11f, 1.0f};
 
 		// Headers
@@ -50,36 +50,31 @@ namespace Debut
 		colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.2805f, 0.281f, 1.0f };
 		colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
-		/*
-		// Headers
-		colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.41f, 1.0f };
-		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.51f, 1.0f };
-		colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.351f, 1.0f };
+		
 
-		// Buttons
-		colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.31f, 1.0f };
-		colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.3f, 0.305f, 0.41f, 1.0f };
-		colors[ImGuiCol_ButtonActive] = ImVec4{ 0.15f, 0.1505f, 0.251f, 1.0f };
+		Style style;
 
-		// Frame BG
-		colors[ImGuiCol_FrameBg] = ImVec4{ 0.2f, 0.205f, 0.31f, 1.0f };
-		colors[ImGuiCol_FrameBgHovered] = ImVec4{ 0.3f, 0.305f, 0.41f, 1.0f };
-		colors[ImGuiCol_FrameBgActive] = ImVec4{ 0.15f, 0.1505f, 0.251f, 1.0f };
+		//WindowStyle
+		{
+			imStyle.PopupBorderSize = style.Window.PopupBorderSize;
+			imStyle.WindowBorderSize = style.Window.BorderSize;
+			imStyle.DisplaySafeAreaPadding = style.Window.DisplaySafeArea;
+			imStyle.WindowTitleAlign = style.Window.TitleAlign;
+			imStyle.WindowRounding = style.Window.Rounding;
+		}
+		//FrameStyle
+		{
+			imStyle.FrameBorderSize = style.Frame.BorderSize;
+			imStyle.FrameRounding = style.Frame.Rounding;
+		}
+		//TabStyle
+		{
+			imStyle.TabRounding = style.Tab.TabRounding;
+		}
+		//Rest of the style
 
-		// Tabs
-		colors[ImGuiCol_Tab] = ImVec4{ 0.15f, 0.1505f, 0.251f, 1.0f };
-		colors[ImGuiCol_TabHovered] = ImVec4{ 0.38f, 0.3805f, 0.481f, 1.0f };
-		colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.2805f, 0.381f, 1.0f };
-		colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.251f, 1.0f };
-		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.31f, 1.0f };
-
-		// Title
-		colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.251f, 1.0f };
-		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.251f, 1.0f };
-		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.251f, 1.0f };
-
-		colors[ImGuiCol_PlotHistogram] = ImVec4{ 0.25f, 0.4505f, 0.751f, 1.0f };
-		colors[ImGuiCol_PlotHistogramHovered] = ImVec4{ 0.38f, 0.3805f, 0.481f, 1.0f };*/
+		imStyle.ItemInnerSpacing = style.ItemInnerSpacing;
+		imStyle.IndentSpacing = style.IndentSpacing;
 	}
 
 	void ImGuiLayer::OnAttach()
@@ -134,7 +129,6 @@ namespace Debut
 				stbi_image_free(textureData);
 			}
 		}
-
 
 		ImGui::StyleColorsDark();
 
@@ -229,17 +223,22 @@ namespace Debut
 			{L'\ue005', "assets\\icons\\material.png"},
 			// UNIMPORTED_MODEL_ICON
 			{L'\ue006', "assets\\icons\\unimported_model.png"},
-			// ENITTY ICON
-			{L'\ue007', "assets\\icons\\entity.png"}
-			/*,
-			{'\ue007', "assets\\icons\\model.png"},
-			{'\ue008', "assets\\icons\\model.png"},
-			{'\ue009', "assets\\icons\\model.png"},
-			{'\ue00a', "assets\\icons\\model.png"},
-			{'\ue00b', "assets\\icons\\model.png"},
-			{'\ue00c', "assets\\icons\\model.png"},
-			{'\ue00d', "assets\\icons\\model.png"},
-			{'\ue00e', "assets\\icons\\model.png"},
+			// ENTITY ICON
+			{L'\ue007', "assets\\icons\\entity.png"},
+			// GLOBAL GIZMO ICON
+			{L'\ue008', "assets\\icons\\GizmoGlobal.png"},
+			// LOCAL GIZMO ICON
+			{L'\ue009', "assets\\icons\\GizmoLocal.png"},
+			// TRANSLATE ICON
+			{L'\ue00a', "assets\\icons\\move.png"},
+			// ROTATE ICON
+			{L'\ue00b', "assets\\icons\\rotate.png"},
+			// SCALE ICON
+			{'\ue00c', "assets\\icons\\scale.png"},
+			// PLAY ICON
+			{'\ue00d', "assets\\icons\\play.png"},
+			// STOP ICON
+			{'\ue00e', "assets\\icons\\stop.png"}/*,
 			{'\ue00f', "assets\\icons\\model.png"},
 			{'\ue010', "assets\\icons\\model.png"},
 			{'\ue011', "assets\\icons\\model.png"},

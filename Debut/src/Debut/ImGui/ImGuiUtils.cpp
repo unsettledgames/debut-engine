@@ -204,7 +204,6 @@ namespace Debut
 		ImGui::NextColumn();
 
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-		
 
 		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 		ImVec2 buttonSize = { lineHeight, lineHeight };
@@ -351,7 +350,7 @@ namespace Debut
 
 	bool ImGuiUtils::ImageButton(Ref<Texture2D> texture, ImVec2 size, ImVec4 color)
 	{
-		return ImGui::ImageButton((ImTextureID)texture->GetRendererID(), size, { 1, 0 }, { 0, 1 }, -1, color);
+		return ImGui::ImageButton((ImTextureID)texture->GetRendererID(), size, { 0, 1 }, { 1, 0 }, -1, color);
 	}
 
 	template Ref<Texture2D> ImGuiUtils::ImageDragDestination(uint32_t, ImVec2, const char* id);
