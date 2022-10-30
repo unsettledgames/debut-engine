@@ -103,4 +103,12 @@ namespace Debut
             SaveScene(graph, additionalData);
         }
     }
+
+    /*void SceneManager::LoadInScene(const std::string& path)
+    {
+        if (CppUtils::String::EndsWith(path, ".debut"))
+        {
+
+        }
+    }*/
 }

@@ -29,10 +29,10 @@ namespace Debut
 
 		SceneManager();
 
-		void OnUpdate(Timestep& ts);
-		void OnEvent(Event& e);
 		void OnScenePlay();
 		void OnSceneStop();
+
+		//void LoadInScene(const std::string& path);
 
 		void NewScene(const glm::vec2& viewportSize);
 		EntitySceneNode* OpenScene(const std::filesystem::path& path, YAML::Node& additionalData);
@@ -41,6 +41,12 @@ namespace Debut
 
 		inline Ref<Scene> GetActiveScene() { return m_ActiveScene; }
 		inline SceneState GetState() { return m_SceneState; }
+
+	private:
+		/*
+		template <typename T>
+		void LoadInScene(Ref<T> toLoad);
+		*/
 
 	private:
 		Ref<Scene> m_EditorScene;

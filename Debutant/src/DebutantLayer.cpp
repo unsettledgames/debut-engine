@@ -28,11 +28,10 @@
 /*
 * 
 *   CODE REFACTORING:
-*       - CURRENT: moving viewport related stuff from DebutantLayer to ViewportPanel
-*           - Propagate mouse events to viewport, mouse pick / edit gizmos there too
-*       - Group attributes, make them classes or structs. Remove some clutter from DebutantLayer (eg gizmos, viewport data...)
 * 
 *   QOL:
+*       - Custom events, propagated starting from the Application: in this way we can avoid pointers to other classes
+*           (e.g. DebutantLayer* in ViewportPanel, which I really don't like at the moment)
 *       - Drop skybox to set it in the current scene
 *       - Shading buttons:
 *           - Z buffer
@@ -400,81 +399,6 @@ namespace Debut
         // Add submodels as children
         for (uint32_t i = 0; i < model->GetSubmodels().size(); i++)
             LoadModelNode(AssetManager::Request<Model>(model->GetSubmodels()[i]), modelEntity);
-    }
-
-    void DebutantLayer::ManipulatePhysicsGizmos()
-    {
-        /*
-        DBT_PROFILE_FUNCTION();
-        Entity currSelection = m_SceneHierarchy.GetSelectionContext();
-
-        if (currSelection)
-        {
-            // Convert from collider space to world space
-            glm::mat4 pointTransform = glm::translate(m_PhysicsSelection.PointTransform, m_PhysicsSelection.SelectedPoint);
-
-            // Manipulate the selected point
-            if (ImGuizmo::Manipulate(glm::value_ptr(m_EditorCamera.GetView()),
-                glm::value_ptr(m_EditorCamera.GetProjection()), ImGuizmo::TRANSLATE,
-                m_GizmoMode, glm::value_ptr(pointTransform)))
-            {
-                // Apply the changes
-                glm::vec3 newPoint = m_PhysicsSelection.SelectedPoint;
-
-                glm::vec3 finalTrans, finalRot, finalScale;
-                MathUtils::DecomposeTransform(pointTransform, finalTrans, finalRot, finalScale);
-                // Convert back to collider space
-                newPoint = glm::vec3(glm::inverse(m_PhysicsSelection.PointTransform) * glm::vec4(finalTrans, 1.0f));
-
-                // Send the changes to the collider
-                if (newPoint != m_PhysicsSelection.SelectedPoint)
-                {
-                    if (currSelection.HasComponent<BoxCollider2DComponent>())
-                    {
-                        DBT_PROFILE_SCOPE("Debutant::ManipulatePhysicsGizmos::UpdateBoxCollider2D");
-
-                        BoxCollider2DComponent& boxCollider = currSelection.GetComponent<BoxCollider2DComponent>();
-                        boxCollider.SetPoint(glm::vec2(newPoint), m_PhysicsSelection.SelectedName);
-                    }
-                    else if (currSelection.HasComponent<CircleCollider2DComponent>())
-                    {
-                        DBT_PROFILE_SCOPE("Debutant::ManipulatePhysicsGizmos::UpdateCircleCollider2D");
-
-                        CircleCollider2DComponent& circleCollider = currSelection.GetComponent<CircleCollider2DComponent>();
-                        if (m_PhysicsSelection.SelectedName == "Top" || m_PhysicsSelection.SelectedName == "Bottom")
-                            newPoint.x = circleCollider.Offset.x;
-                        else
-                            newPoint.y = circleCollider.Offset.y;
-
-                        circleCollider.SetPoint(glm::vec2(newPoint.x, newPoint.y), m_PhysicsSelection.SelectedName);
-                    }
-                    else if (currSelection.HasComponent<PolygonCollider2DComponent>())
-                    {
-                        DBT_PROFILE_SCOPE("Debutant::ManipulatePhysicsGizmos::UpdatePolygonCollider2D");
-
-                        PolygonCollider2DComponent& polygonCollider = currSelection.GetComponent<PolygonCollider2DComponent>();
-                        polygonCollider.SetPoint(std::stoi(m_PhysicsSelection.SelectedName), glm::vec2(newPoint));
-                    }
-                    else if (currSelection.HasComponent<BoxCollider3DComponent>())
-                    {
-                        DBT_PROFILE_SCOPE("Debutant::ManipulatePhysicsGizmos::UpdateBoxCollider3D");
-
-                        BoxCollider3DComponent& boxCollider = currSelection.GetComponent<BoxCollider3DComponent>();
-                        boxCollider.SetPoint(m_PhysicsSelection.SelectedName, newPoint);
-                    }
-                    else if (currSelection.HasComponent<SphereCollider3DComponent>())
-                    {
-                        DBT_PROFILE_SCOPE("Debutant::ManipulatePhysicsGizmos::UpdateSphereCollider3D");
-
-                        SphereCollider3DComponent& sphereCollider = currSelection.GetComponent<SphereCollider3DComponent>();
-                        sphereCollider.SetPoint(m_PhysicsSelection.SelectedName, newPoint);
-                    }
-                }
-
-                m_PhysicsSelection.SelectedPoint = newPoint;
-            }
-        }
-        */
     }
 
     void DebutantLayer::OnEvent(Event& e)

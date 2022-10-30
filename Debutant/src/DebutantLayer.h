@@ -46,9 +46,6 @@ namespace Debut
 		void DrawSettingsWindow();
 		void DrawAssetMapWindow();
 
-		// Debug & Gizmos
-		void ManipulatePhysicsGizmos();
-
 		// Drag & droppable objects
 		void LoadModelNode(Ref<Model> model, Entity& parent);
 
