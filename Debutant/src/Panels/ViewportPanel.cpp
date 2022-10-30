@@ -99,6 +99,7 @@ namespace Debut
             // Compute menu size
             m_TopMenuSize = { ImGui::GetItemRectSize().x, ImGui::GetItemRectSize().y };
             m_TopMenuSize.y += ImGui::GetTextLineHeight() * 1.5f;
+            viewportSize.y -= m_TopMenuSize.y;
 
             // Draw scene
             uint32_t texId = m_FrameBuffer->GetColorAttachment();
@@ -143,7 +144,15 @@ namespace Debut
             m_ViewportBounds[1] = { maxBound.x, maxBound.y - menuSize.y };
 
             if (sceneState == SceneManager::SceneState::Edit)
-                m_Gizmos.ManipulateTransform(m_Selection, m_EditorCamera, viewportSize, ImGui::GetWindowPos());
+            {
+                ImVec2 windowPos = ImGui::GetWindowPos();
+                windowPos.y += m_TopMenuSize.y;
+
+                if (!m_ColliderSelection.Valid)
+                    m_Gizmos.ManipulateTransform(m_Selection, m_EditorCamera, viewportSize, windowPos);
+                else
+                    m_Gizmos.ManipulateCollider(m_Selection, m_EditorCamera, viewportSize, windowPos, m_ColliderSelection);
+            }
 
             ImGui::PopStyleVar();
         }

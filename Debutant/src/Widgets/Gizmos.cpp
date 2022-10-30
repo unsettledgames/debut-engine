@@ -89,7 +89,6 @@ namespace Debut
                 tc.Rotation += deltaRot;
                 tc.Scale = finalScale;
             }
-            
         }
 	}
 
