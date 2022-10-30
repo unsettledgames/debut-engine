@@ -26,8 +26,34 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
+*   CURRENT: SHADOWS
 * 
-*   CODE REFACTORING:
+*   MAIN SHADOW WORKFLOW
+* 
+*   - Whatever I choose to do, the first thing I need to do is properly setting up a depth attachment
+*   - Standard shadow mapping: good for directional lighting, but it requires that I render the whole freakin scene??? I mean,
+*       it might be a nice technique to start with (already done it previously too) and to use to expand it later.
+*       - Of course, a view-projection matrix is needed, in the tutorial glm::lookAt is used, as the position I could use the camera
+*           x and z coordinates and add a certain amount to it. Would be a pretty nice start
+* 
+*   - Point shadow mapping
+*       - Well, start by implementing the base workflow with a single light. Cubemaps are needed, which means 6 * shadowMapRes
+*           pixels of stuff per light. Doom 2016 apparently uses an 8K shadow map atlas, which means you only have to bind
+*           a single texture and then pass the right UVs. 8000x8000 leaves room for 64 1000x1000 shadow maps, which is pretty
+*           nice? See optimization section about that
+* 
+*   OPTIMIZATION AND IMPROVEMENTS
+*   
+*   - Important lights: find the lights that, at the moment, are important. The nearest to the camera? Always consider the 
+*       directional light(s?), I wonder if there's some cheap way to check if the shadows produced by a light will be visible 
+*       in the scnee without actually rendering the scene. I don't think so.
+*   - A fast approach to the above issue would consist in reserving higher resolution maps to important lights and smaller
+*       maps to ones that aren't. Also keep in mind that what Doom 2016 is a very specific game with very specific needs, their
+*       approach might not be optimal for a generic use. What if multiple shadow maps depending on level of importance?
+*   - PCF and other smoothening algorithms. Gaussian blur on the shadow maps?
+* 
+*   BUGS:
+*       - Viewport messed up again, don't subtract menusize from viewportsize before rendering the image
 * 
 *   QOL:
 *       - Custom events, propagated starting from the Application: in this way we can avoid pointers to other classes
@@ -42,6 +68,9 @@
 *           - Editor light: intensity, direction, color
 *       
 *       - Scene camera settings
+*           - Movement data
+*       - The debug renderer should probably only used in a DebugLayer since it kinda behaves as such
+*       - Implement rendering modes in 2D too
 * 
     OPTIMIZATION:
         - Remove as many DecomposeTransform as possible

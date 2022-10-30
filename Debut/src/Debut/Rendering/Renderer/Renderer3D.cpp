@@ -46,8 +46,12 @@ namespace Debut
 			s_Data.VertexArray->AddVertexBuffer(s_Data.VertexBuffers[names[i]]);
 		}
 		s_Data.VertexArray->AddIndexBuffer(s_Data.IndexBuffer);
+
 		s_Data.UntexturedMaterial = CreateRef<Material>();
+		s_Data.DepthmapMaterial = CreateRef<Material>();
+
 		s_Data.UntexturedMaterial->SetShader(AssetManager::Request<Shader>("assets\\shaders\\untextured.glsl"));
+		s_Data.DepthmapMaterial->SetShader(AssetManager::Request<Shader>("assets\\shaders\\depth.glsl"));
 	}
 
 	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& cameraTransform, std::vector<LightComponent*>& lights,
@@ -56,6 +60,8 @@ namespace Debut
 		s_Data.CameraView = glm::inverse(cameraTransform);
 		s_Data.CameraProjection = camera.GetProjection();
 		s_Data.CameraTransform = s_Data.CameraProjection * s_Data.CameraView;
+		s_Data.CameraNear = camera.GetNearPlane();
+		s_Data.CameraFar = camera.GetFarPlane();
 		
 		s_Data.Lights = lights;
 		s_Data.GlobalUniforms = globalUniforms;
@@ -205,10 +211,20 @@ namespace Debut
 			{
 				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
 				Material materialToUse;
-				if (Renderer::GetConfig().RenderingMode == RendererConfig::RenderingMode::Untextured)
+				switch (Renderer::GetConfig().RenderingMode)
+				{
+				case RendererConfig::RenderingMode::Untextured:
 					materialToUse = *s_Data.UntexturedMaterial.get();
-				else
+					break;
+				case RendererConfig::RenderingMode::Depth:
+					materialToUse = *s_Data.DepthmapMaterial.get();
+					materialToUse.SetFloat("u_NearPlane", s_Data.CameraNear);
+					materialToUse.SetFloat("u_FarPlane", s_Data.CameraFar);
+					break;
+				default:
 					materialToUse = material;
+					break;
+				}
 
 				SendLights(materialToUse);
 				SendGlobals(materialToUse);

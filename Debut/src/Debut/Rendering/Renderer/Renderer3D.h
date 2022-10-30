@@ -43,13 +43,19 @@ namespace Debut
 		// One batch per Material
 		std::unordered_map<UUID, RenderBatch3D*> Batches;
 
+		// Camera data (might as well store the whole camera at this point)
 		glm::mat4 CameraTransform;
 		glm::mat4 CameraView;
 		glm::mat4 CameraProjection;
+		float CameraNear;
+		float CameraFar;
 
 		std::vector<LightComponent*> Lights;
 		std::vector<ShaderUniform> GlobalUniforms;
+
+		// Extra materials for special rendering modes
 		Ref<Material> UntexturedMaterial;
+		Ref<Material> DepthmapMaterial;
 	};
 
 	class Renderer3D
