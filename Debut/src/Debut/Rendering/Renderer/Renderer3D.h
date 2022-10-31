@@ -64,8 +64,8 @@ namespace Debut
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& transform, std::vector<LightComponent*>& lights,
-			std::vector<ShaderUniform>& globalUniforms);
+		static void BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& transform, 
+			std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms);
 		static void EndScene();
 		static void Flush();
 

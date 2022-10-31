@@ -54,8 +54,8 @@ namespace Debut
 		s_Data.DepthmapMaterial->SetShader(AssetManager::Request<Shader>("assets\\shaders\\depth.glsl"));
 	}
 
-	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& cameraTransform, std::vector<LightComponent*>& lights,
-		std::vector<ShaderUniform>& globalUniforms)
+	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& cameraTransform, 
+		std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms)
 	{
 		s_Data.CameraView = glm::inverse(cameraTransform);
 		s_Data.CameraProjection = camera.GetProjection();

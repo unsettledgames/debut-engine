@@ -47,28 +47,18 @@ namespace Debut
         if (m_ViewportFocused)
             m_EditorCamera.OnUpdate(ts);
 
-        Renderer2D::ResetStats();
-        {
-            DBT_PROFILE_SCOPE("Debutant::RendererSetup");
-            m_FrameBuffer->Bind();
-
-            RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
-            RenderCommand::Clear();
-
-            // Clear frame buffer for mouse picking
-            m_FrameBuffer->ClearAttachment(1, -1);
-        }
-
         SceneManager::SceneState sceneState = DebutantApp::Get().GetSceneManager().GetState();
         Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
         // Update the scene
         switch (sceneState)
         {
         case SceneManager::SceneState::Play:
-            activeScene->OnRuntimeUpdate(ts);
+            activeScene->OnRuntimeUpdate(ts, m_FrameBuffer);
             break;
         case SceneManager::SceneState::Edit:
-            activeScene->OnEditorUpdate(ts, m_EditorCamera);
+            activeScene->OnEditorUpdate(ts, m_EditorCamera, m_FrameBuffer);
+
+            m_FrameBuffer->Bind();
             // Render debug
             DrawCollider();
             break;
@@ -99,7 +89,6 @@ namespace Debut
             // Compute menu size
             m_TopMenuSize = { ImGui::GetItemRectSize().x, ImGui::GetItemRectSize().y };
             m_TopMenuSize.y += ImGui::GetTextLineHeight() * 1.5f;
-            viewportSize.y -= m_TopMenuSize.y;
 
             // Draw scene
             uint32_t texId = m_FrameBuffer->GetColorAttachment();

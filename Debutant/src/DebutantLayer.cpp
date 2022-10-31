@@ -27,10 +27,14 @@
 
 /*
 *   CURRENT: SHADOWS
+*       - Pseudo code
+*           - ISSUE: I need a FrameBuffer for each Light. Since it will always be used as a ShadowMap, I think I could
+*               just write a ShadowMap class, which contains the FrameBuffer used for rendering and some data about the 
+*               light
+*       - Implement rendering3d and rendering2d functions in Scene.cpp
 * 
 *   MAIN SHADOW WORKFLOW
 * 
-*   - Whatever I choose to do, the first thing I need to do is properly setting up a depth attachment
 *   - Standard shadow mapping: good for directional lighting, but it requires that I render the whole freakin scene??? I mean,
 *       it might be a nice technique to start with (already done it previously too) and to use to expand it later.
 *       - Of course, a view-projection matrix is needed, in the tutorial glm::lookAt is used, as the position I could use the camera
@@ -53,9 +57,10 @@
 *   - PCF and other smoothening algorithms. Gaussian blur on the shadow maps?
 * 
 *   BUGS:
-*       - Viewport messed up again, don't subtract menusize from viewportsize before rendering the image
+*       - Can't open 2 scenes in the same run (invalid entt)
 * 
 *   QOL:
+*       - Move Texture, Shader, Material and SubTexture2D to Resources folder
 *       - Custom events, propagated starting from the Application: in this way we can avoid pointers to other classes
 *           (e.g. DebutantLayer* in ViewportPanel, which I really don't like at the moment)
 *       - Drop skybox to set it in the current scene

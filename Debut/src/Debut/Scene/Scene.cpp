@@ -4,6 +4,8 @@
 #include "Debut/Scene/Entity.h"
 #include "Debut/Scene/Components.h"
 #include "Debut/Rendering/Shader.h"
+#include <Debut/Rendering/Structures/FrameBuffer.h>
+#include <Debut/Rendering/Renderer/RenderCommand.h>
 #include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Rendering/Renderer/Renderer.h>
 #include "Debut/Rendering/Renderer/Renderer2D.h"
@@ -149,133 +151,48 @@ namespace Debut
 		return {};
 	}
 
-	void Scene::OnEditorUpdate(Timestep ts, Camera& camera)
+	void Scene::OnEditorUpdate(Timestep ts, Camera& camera, Ref<FrameBuffer> target)
 	{
 		DBT_PROFILE_SCOPE("Editor update");
-		
-		// Global variables
-		glm::mat4 transform = glm::inverse(camera.GetView());
-		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms(transform[3]);
-		std::vector<LightComponent*> lights;
 
+		Renderer2D::ResetStats();
+		{
+			DBT_PROFILE_SCOPE("Debutant::RendererSetup");
+			target->Bind();
+
+			RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
+			RenderCommand::Clear();
+
+			// Clear frame buffer for mouse picking
+			target->ClearAttachment(1, -1);
+		}
+		
 		// Flags
 		bool renderColliders = Renderer::GetConfig().RenderColliders;
+		glm::mat4 cameraTransform = glm::inverse(camera.GetView());
 
-		// Directional light
-		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
-		bool full = false;
-		for (auto entity : lightGroup)
-		{
-			auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
-			lights.push_back(&light);
-			full = true;
-		}
-		DirectionalLightComponent tmpDirLight;
-		if (!full)
-		{
-			tmpDirLight.Intensity = 0;
-			lights.push_back(&tmpDirLight);
-		}
-
-		// Point lights
-		auto pointLights = m_Registry.view<TransformComponent, PointLightComponent>();
-		for (auto entity : pointLights)
-		{
-			auto& [transform, light] = pointLights.get<TransformComponent, PointLightComponent>(entity);
-			// Update light position
-			light.Position = transform.Translation;
-			lights.push_back(&light);
-		}
-
-		// 3D Rendering
-		Renderer3D::BeginScene(camera, m_Skybox, glm::inverse(camera.GetView()), lights, globalUniforms);
-		
-		auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
-		for (auto entity : group3D)
-		{
-			auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
-			Renderer3D::DrawModel(mesh, transform.GetTransform(), (int)entity);
-		}
-
-		Renderer3D::EndScene();
-
-		// 2D Rendering
-		Renderer2D::BeginScene(camera, glm::inverse(camera.GetView()));
-
-		auto group2D = m_Registry.group<TransformComponent, SpriteRendererComponent>();
-		for (auto entity : group2D)
-		{
-			auto& [transform, sprite] = group2D.get<TransformComponent, SpriteRendererComponent>(entity);
-			Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-		}
-
-		Renderer2D::EndScene();
+		Rendering3D(camera, cameraTransform);
+		Rendering2D(camera, glm::inverse(camera.GetView()));
 
 		if (Renderer::GetConfig().RenderColliders)
-		{
-			RendererDebug::BeginScene(camera, transform);
-			
-			// 3D Physics colliders
-			auto rigidbody3DGroup = m_Registry.view<Rigidbody3DComponent>();
-			for (auto entity : rigidbody3DGroup)
-			{
-				Entity e = { entity, this };
-				auto& objTransform = e.Transform();
-
-				if (e.HasComponent<BoxCollider3DComponent>())
-				{
-					auto& collider = e.GetComponent<BoxCollider3DComponent>();
-					RendererDebug::DrawBox(collider.Size, collider.Offset, objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-				}
-				else if (e.HasComponent<SphereCollider3DComponent>())
-				{
-					glm::vec3 trans, rot, scale;
-					glm::mat4 objTransformMat = objTransform.GetTransform();
-					MathUtils::DecomposeTransform(objTransformMat, trans, rot, scale);
-
-					auto& collider = e.GetComponent<SphereCollider3DComponent>();
-					RendererDebug::DrawSphere(collider.Radius, collider.Offset, rot, scale, glm::inverse(transform), objTransformMat);
-				}
-				else if (e.HasComponent<MeshCollider3DComponent>())
-				{
-					auto& collider = e.GetComponent<MeshCollider3DComponent>();
-					RendererDebug::DrawMesh(collider.Mesh, collider.Offset, objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-				}
-			}
-
-			// 2D Physics colliders
-			auto rigidbody2DGroup = m_Registry.view<Rigidbody2DComponent>();
-			for (auto entity : rigidbody2DGroup)
-			{
-				Entity e = { entity, this };
-				auto& objTransform = e.Transform();
-
-				if (e.HasComponent<BoxCollider2DComponent>())
-				{
-					auto& collider = e.GetComponent<BoxCollider2DComponent>();
-					RendererDebug::DrawRect(objTransform.GetTransform(), collider.Size, collider.Offset, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-				}
-				else if (e.HasComponent<CircleCollider2DComponent>())
-				{
-					auto& collider = e.GetComponent<CircleCollider2DComponent>();
-					RendererDebug::DrawCircle(collider.Radius, glm::vec3(collider.Offset, objTransform.Translation.z), 
-						objTransform.GetTransform(), 40);
-				}
-				else if (e.HasComponent<PolygonCollider2DComponent>())
-				{
-					auto& collider = e.GetComponent<PolygonCollider2DComponent>();
-					RendererDebug::DrawPolygon(collider.GetTriangles(), glm::vec3(collider.Offset, objTransform.Translation.z),
-						objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-				}
-			}
-			
-			RendererDebug::EndScene();
-		}
+			RenderingDebug(camera, glm::inverse(camera.GetView()));
 	}
 	
 
-	void Scene::OnRuntimeUpdate(Timestep ts)
+	void Scene::OnRuntimeUpdate(Timestep ts, Ref<FrameBuffer> target)
 	{
+		Renderer2D::ResetStats();
+		{
+			DBT_PROFILE_SCOPE("Debutant::RendererSetup");
+			target->Bind();
+
+			RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
+			RenderCommand::Clear();
+
+			// Clear frame buffer for mouse picking
+			target->ClearAttachment(1, -1);
+		}
+
 		// Update scripts
 		{
 			DBT_PROFILE_SCOPE("Scene: Script Update");
@@ -356,52 +273,8 @@ namespace Debut
 
 		if (mainCamera)
 		{
-			// 3D Rendering
-			{
-				DBT_PROFILE_SCOPE("Renderer3D update");
-				// Get lights
-				glm::mat4 cameraView = mainCamera->GetView();
-				std::vector<LightComponent*> lights;
-				std::vector<ShaderUniform> globals = GetGlobalUniforms({ cameraView[0][3], cameraView[1][3], cameraView[2][3]});
-
-				auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
-				for (auto entity : lightGroup)
-				{
-					auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
-					lights.push_back(&light);
-				}
-				auto pointLights = m_Registry.view<TransformComponent, PointLightComponent>();
-				for (auto entity : pointLights)
-				{
-					auto& [transform, light] = pointLights.get<TransformComponent, PointLightComponent>(entity);
-					lights.push_back(&light);
-				}
-				Renderer3D::BeginScene(*mainCamera, m_Skybox, cameraTransform, lights, globals);
-
-				auto group = m_Registry.view<TransformComponent, MeshRendererComponent>();
-				for (auto entity : group)
-				{
-					auto& [transform, mesh] = group.get<TransformComponent, MeshRendererComponent>(entity);
-					Renderer3D::DrawModel(mesh, transform.GetTransform(), (int)entity);
-				}
-
-				Renderer3D::EndScene();
-			}
-
-			// 2D Rendering
-			{
-				DBT_PROFILE_SCOPE("Renderer2D update");
-				Renderer2D::BeginScene(*mainCamera, cameraTransform);
-
-				auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
-				for (auto entity : group)
-				{
-					auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-				}
-
-				Renderer2D::EndScene();
-			}
+			Rendering3D(*mainCamera, cameraTransform);
+			Rendering2D(*mainCamera, cameraTransform);
 		}
 	}
 
@@ -570,6 +443,169 @@ namespace Debut
 		m_PhysicsSystem3D->Begin();
 	}
 
+	void Scene::Rendering2D(Camera& camera, const glm::mat4& cameraTransform)
+	{
+		// 2D Rendering
+		{
+			DBT_PROFILE_SCOPE("Rendering2D");
+			Renderer2D::BeginScene(camera, cameraTransform);
+
+			auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
+			for (auto entity : group)
+			{
+				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+			}
+
+			Renderer2D::EndScene();
+		}
+	}
+
+	void Scene::Rendering3D(Camera& camera, const glm::mat4& cameraTransform)
+	{
+		// Global variables
+		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms(cameraTransform[3]);
+		std::vector<LightComponent*> lights;
+
+		// Get directional light
+		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
+		bool full = false;
+		for (auto entity : lightGroup)
+		{
+			auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
+			lights.push_back(&light);
+			full = true;
+		}
+		// A directional light with 0 intensity to override the previous one, if there were any
+		DirectionalLightComponent tmpDirLight;
+		if (!full)
+		{
+			tmpDirLight.Intensity = 0;
+			lights.push_back(&tmpDirLight);
+		}
+
+		// Point lights
+		auto pointLights = m_Registry.view<TransformComponent, PointLightComponent>();
+		for (auto entity : pointLights)
+		{
+			auto& [transform, light] = pointLights.get<TransformComponent, PointLightComponent>(entity);
+			// Update light position
+			light.Position = transform.Translation;
+			lights.push_back(&light);
+		}
+
+		// 3D Rendering
+		/*
+
+		for (auto light : lights)
+		{
+			if (light.CastShadows)
+			{
+				glm::mat4 lightView;
+				glm::mat4 lightProj;
+
+				if (light.Type == Light2DComponent::LightType::Directional)
+				{
+					lightView = glm::lookAt(lightPos etc etc);
+					lightProj = orthoMat;
+				}
+				else
+				{
+					lightView = glm::translate(glm::mat4(1.0f));
+					lightProj = perspMat;
+				}
+
+				Renderer3D::BeginShadow(lightView, lightProj);
+				{
+					DBT_PROFILE_SCOPE("ShadowPass");
+
+					// Can I recycle this to actually render stuff?
+					auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
+					for (auto entity : group3D)
+					{
+						auto& [transform, mesh] = group3D.Get<TransformComponent, MeshRendererComponent>(entity);
+						Renderer3D::DrawModel(mesh, transform.GetTransform(), (int)entity);
+					}
+				}
+				Ref<FrameBuffer> shadowMap = Renderer3D::EndShadow();
+			}
+		*/
+
+		Renderer3D::BeginScene(camera, m_Skybox, cameraTransform, lights, globalUniforms);
+		{
+			DBT_PROFILE_SCOPE("Rendering3D");
+			auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
+			for (auto entity : group3D)
+			{
+				auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
+				Renderer3D::DrawModel(mesh, transform.GetTransform(), (int)entity);
+			}
+		}
+		Renderer3D::EndScene();
+	}
+
+	void Scene::RenderingDebug(Camera& camera, const glm::mat4& cameraTransform)
+	{
+		RendererDebug::BeginScene(camera, cameraTransform);
+		{
+			DBT_PROFILE_SCOPE("RenderingDebug");
+			// 3D Physics colliders
+			auto rigidbody3DGroup = m_Registry.view<Rigidbody3DComponent>();
+			for (auto entity : rigidbody3DGroup)
+			{
+				Entity e = { entity, this };
+				auto& objTransform = e.Transform();
+
+				if (e.HasComponent<BoxCollider3DComponent>())
+				{
+					auto& collider = e.GetComponent<BoxCollider3DComponent>();
+					RendererDebug::DrawBox(collider.Size, collider.Offset, objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+				}
+				else if (e.HasComponent<SphereCollider3DComponent>())
+				{
+					glm::vec3 trans, rot, scale;
+					glm::mat4 objTransformMat = objTransform.GetTransform();
+					MathUtils::DecomposeTransform(objTransformMat, trans, rot, scale);
+
+					auto& collider = e.GetComponent<SphereCollider3DComponent>();
+					RendererDebug::DrawSphere(collider.Radius, collider.Offset, rot, scale, glm::inverse(cameraTransform), objTransformMat);
+				}
+				else if (e.HasComponent<MeshCollider3DComponent>())
+				{
+					auto& collider = e.GetComponent<MeshCollider3DComponent>();
+					RendererDebug::DrawMesh(collider.Mesh, collider.Offset, objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+				}
+			}
+
+			// 2D Physics colliders
+			auto rigidbody2DGroup = m_Registry.view<Rigidbody2DComponent>();
+			for (auto entity : rigidbody2DGroup)
+			{
+				Entity e = { entity, this };
+				auto& objTransform = e.Transform();
+
+				if (e.HasComponent<BoxCollider2DComponent>())
+				{
+					auto& collider = e.GetComponent<BoxCollider2DComponent>();
+					RendererDebug::DrawRect(objTransform.GetTransform(), collider.Size, collider.Offset, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+				}
+				else if (e.HasComponent<CircleCollider2DComponent>())
+				{
+					auto& collider = e.GetComponent<CircleCollider2DComponent>();
+					RendererDebug::DrawCircle(collider.Radius, glm::vec3(collider.Offset, objTransform.Translation.z),
+						objTransform.GetTransform(), 40);
+				}
+				else if (e.HasComponent<PolygonCollider2DComponent>())
+				{
+					auto& collider = e.GetComponent<PolygonCollider2DComponent>();
+					RendererDebug::DrawPolygon(collider.GetTriangles(), glm::vec3(collider.Offset, objTransform.Translation.z),
+						objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+				}
+			}
+		}
+		RendererDebug::EndScene();
+	}
+
 	void Scene::OnRuntimeStop()
 	{
 		delete m_PhysicsWorld2D;
@@ -733,7 +769,7 @@ namespace Debut
 
 	std::vector<ShaderUniform> Scene::GetGlobalUniforms(glm::vec3 cameraPos)
 	{
-		//Log.CoreInfo("X{0}Y{1}Z{2}", cameraPos[0], cameraPos[1], cameraPos[2]);
+		Log.CoreInfo("X{0}Y{1}Z{2}", cameraPos[0], cameraPos[1], cameraPos[2]);
 		std::vector<ShaderUniform> ret;
 		ShaderUniform::UniformData data;
 

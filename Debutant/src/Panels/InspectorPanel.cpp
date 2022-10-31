@@ -379,6 +379,7 @@ namespace Debut
 				ImGuiUtils::RGBVec3("Direction", { "X", "Y", "Z" }, { &component.Direction.x, &component.Direction.y, &component.Direction.z });
 				ImGuiUtils::Color3("Color", { &component.Color.r,&component.Color.g,&component.Color.b });
 				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.1f);
+				ImGui::Checkbox("Cast shadows", &component.CastShadows);
 			});
 
 		DrawComponent<PointLightComponent>("Point Light", entity, [&](auto& component)
@@ -386,6 +387,7 @@ namespace Debut
 				ImGuiUtils::Color3("Color", { &component.Color.x, &component.Color.y, &component.Color.z });
 				ImGuiUtils::DragFloat("Intensity", &component.Intensity, 0.04f, 0.0f);
 				ImGuiUtils::DragFloat("Radius", &component.Radius, 0.05f, 0.0f);
+				ImGui::Checkbox("Cast shadows", &component.CastShadows);
 
 				component.Position = entity.Transform().Translation;
 			});
