@@ -68,6 +68,7 @@ namespace Debut
 
 		inline UUID GetID() { return m_ID; }
 		inline UUID GetShader() { return m_Shader; }
+		inline uint32_t GetCurrentTextureSlot() { return m_CurrTextureSlot; }
 		inline std::string GetName() { return m_Name; }
 		inline std::string GetPath() { return m_Path; }
 		inline std::unordered_map<std::string, ShaderUniform> GetUniforms() { return m_Uniforms; }
@@ -87,6 +88,7 @@ namespace Debut
 
 		UUID m_Shader;
 		std::unordered_map<std::string, ShaderUniform> m_Uniforms;
+		uint32_t m_CurrTextureSlot = 0;
 
 		std::string m_Path;
 		std::string m_MetaPath;

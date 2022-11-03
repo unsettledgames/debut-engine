@@ -310,6 +310,8 @@ namespace Debut
 				break;
 			}
 		}
+
+		m_CurrTextureSlot = currSlot;
 	}
 
 	void Material::Unuse()

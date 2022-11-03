@@ -3,8 +3,7 @@
 
 namespace Debut
 {
-	ShadowMap::ShadowMap(uint32_t width, uint32_t height, const glm::mat4& view, const glm::mat4& proj) :
-		m_Width(width), m_Height(height), m_ViewProjection(proj * view)
+	ShadowMap::ShadowMap(uint32_t width, uint32_t height) : m_Width(width), m_Height(height)
 	{
 		FrameBufferSpecifications specs;
 		specs.Attachments = { FrameBufferTextureFormat::Depth };
@@ -17,6 +16,11 @@ namespace Debut
 	void ShadowMap::Bind()
 	{
 		m_FrameBuffer->Bind();
+	}
+
+	void ShadowMap::BindAsTexture(uint32_t slot)
+	{
+		m_FrameBuffer->BindAsTexture(slot);
 	}
 
 	void ShadowMap::Unbind()

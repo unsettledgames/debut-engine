@@ -18,6 +18,7 @@ namespace Debut
 		virtual glm::vec4 ReadPixel(uint32_t index, int x, int y) override;
 
 		virtual void Bind() override;
+		virtual void BindAsTexture(uint32_t slot) override;
 		virtual void Unbind() override;
 
 		inline virtual uint32_t GetColorAttachment(int idx = 0) const override { DBT_ASSERT(idx < m_ColorAttachments.size()); return m_ColorAttachments[idx]; }

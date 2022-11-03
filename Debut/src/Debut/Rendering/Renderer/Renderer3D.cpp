@@ -8,6 +8,7 @@
 #include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Rendering/Structures/VertexArray.h>
 #include <Debut/Rendering/Structures/Buffer.h>
+#include <Debut/Rendering/Structures/ShadowMap.h>
 #include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Scene/Components.h>
 
@@ -48,14 +49,16 @@ namespace Debut
 		s_Data.VertexArray->AddIndexBuffer(s_Data.IndexBuffer);
 
 		s_Data.UntexturedMaterial = CreateRef<Material>();
+		s_Data.VisualizeDepthmapMaterial = CreateRef<Material>();
 		s_Data.DepthmapMaterial = CreateRef<Material>();
 
 		s_Data.UntexturedMaterial->SetShader(AssetManager::Request<Shader>("assets\\shaders\\untextured.glsl"));
+		s_Data.VisualizeDepthmapMaterial->SetShader(AssetManager::Request<Shader>("assets\\shaders\\depthvisualizer.glsl"));
 		s_Data.DepthmapMaterial->SetShader(AssetManager::Request<Shader>("assets\\shaders\\depth.glsl"));
 	}
 
 	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& cameraTransform, 
-		std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms)
+		std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, Ref<ShadowMap> shadowMap)
 	{
 		s_Data.CameraView = glm::inverse(cameraTransform);
 		s_Data.CameraProjection = camera.GetProjection();
@@ -65,6 +68,7 @@ namespace Debut
 		
 		s_Data.Lights = lights;
 		s_Data.GlobalUniforms = globalUniforms;
+		s_Data.ShadowMap = shadowMap;
 
 		// Draw the skybox
 		if (skybox != nullptr)
@@ -132,49 +136,21 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION();
 
-		// Instanced rendering if the MeshRenderer is instanced
-		if (instanced)
 		{
-			if (s_Data.Batches.find(material.GetID()) == s_Data.Batches.end())
-				AddBatch(material.GetID());
-			RenderBatch3D* currBatch = s_Data.Batches[material.GetID()];
+			DBT_PROFILE_SCOPE("DrawModel::SendGeometry");
+			std::vector<float>& positions = mesh.GetPositions();
+			std::vector<int>& indices = mesh.GetIndices();
+			std::vector<int> entityIDs;
 
-			// Send data to buffers
+			// Fill the entity IDs vector
+			entityIDs.resize(positions.size() / 3);
+			std::fill_n(entityIDs.data(), entityIDs.size(), entityID);
+
+			s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
+			s_Data.IndexBuffer->SetData(mesh.GetIndices().data(), mesh.GetIndices().size());
+
+			if (s_Data.CurrentPass != RenderingPass::Shadow)
 			{
-				DBT_PROFILE_SCOPE("Renderer3D::PushData");
-				currBatch->Buffers["Positions"]->PushData(mesh.GetPositions().data(), sizeof(float) * mesh.GetPositions().size());
-
-				if (mesh.HasColors())
-					currBatch->Buffers["Colors"]->PushData(mesh.GetColors().data(), sizeof(float) * mesh.GetColors().size());
-				if (mesh.HasNormals())
-					currBatch->Buffers["Normals"]->PushData(mesh.GetNormals().data(), sizeof(float) * mesh.GetNormals().size());
-				if (mesh.HasTangents())
-					currBatch->Buffers["Tangents"]->PushData(mesh.GetTangents().data(), sizeof(float) * mesh.GetTangents().size());
-				if (mesh.HasBitangents())
-					currBatch->Buffers["Bitangents"]->PushData(mesh.GetBitangents().data(), sizeof(float) * mesh.GetBitangents().size());
-
-				// Add indices
-				size_t currIndicesSize = currBatch->Indices.size();
-				currBatch->Indices.resize(currBatch->Indices.size() + mesh.GetIndices().size());
-				memcpy(currBatch->Indices.data() + currIndicesSize, mesh.GetIndices().data(), mesh.GetIndices().size() * sizeof(int));
-			}
-		}
-		// Just draw the model otherwise
-		else
-		{
-			{
-				DBT_PROFILE_SCOPE("DrawModel::SendGeometry");
-				std::vector<float>& positions = mesh.GetPositions();
-				std::vector<int>& indices = mesh.GetIndices();
-				std::vector<int> entityIDs;
-
-				// Fill the entity IDs vector
-				entityIDs.resize(positions.size() / 3);
-				std::fill_n(entityIDs.data(), entityIDs.size(), entityID);
-
-				s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
-				s_Data.IndexBuffer->SetData(mesh.GetIndices().data(), mesh.GetIndices().size());
-
 				if (mesh.HasColors())
 				{
 					std::vector<float>& colors = mesh.GetColors();
@@ -207,17 +183,21 @@ namespace Debut
 
 				s_Data.VertexBuffers["EntityID"]->SetData(entityIDs.data(), entityIDs.size() * sizeof(int));
 			}
+		}
 
+		{
+			DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
+			Material materialToUse;
+
+			if (s_Data.CurrentPass == RenderingPass::Shaded)
 			{
-				DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
-				Material materialToUse;
 				switch (Renderer::GetConfig().RenderingMode)
 				{
 				case RendererConfig::RenderingMode::Untextured:
 					materialToUse = *s_Data.UntexturedMaterial.get();
 					break;
 				case RendererConfig::RenderingMode::Depth:
-					materialToUse = *s_Data.DepthmapMaterial.get();
+					materialToUse = *s_Data.VisualizeDepthmapMaterial.get();
 					materialToUse.SetFloat("u_NearPlane", s_Data.CameraNear);
 					materialToUse.SetFloat("u_FarPlane", s_Data.CameraFar);
 					break;
@@ -225,24 +205,36 @@ namespace Debut
 					materialToUse = material;
 					break;
 				}
-
-				SendLights(materialToUse);
-				SendGlobals(materialToUse);
-
-				if (Renderer::GetConfig().RenderingMode != RendererConfig::RenderingMode::None)
-				{
-					materialToUse.SetMat4("u_Transform", transform * mesh.GetTransform());
-					materialToUse.SetMat4("u_ViewMatrix", s_Data.CameraView);
-					materialToUse.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
-					materialToUse.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
-					materialToUse.Use();
-				}
 			}
-
+			else
 			{
-				DBT_PROFILE_SCOPE("DrawModel::DrawIndexed");
-				RenderCommand::DrawIndexed(s_Data.VertexArray, mesh.GetIndices().size());
+				materialToUse = *s_Data.DepthmapMaterial.get();
+				materialToUse.SetFloat("u_NearPlane", s_Data.CameraNear);
+				materialToUse.SetFloat("u_FarPlane", s_Data.CameraFar);
 			}
+
+			SendLights(materialToUse);
+			SendGlobals(materialToUse);
+
+			if (Renderer::GetConfig().RenderingMode != RendererConfig::RenderingMode::None)
+			{
+				materialToUse.SetMat4("u_Transform", transform * mesh.GetTransform());
+				materialToUse.SetMat4("u_ViewMatrix", s_Data.CameraView);
+				materialToUse.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
+				materialToUse.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+				
+				materialToUse.SetInt("u_ShadowMap", s_Data.ShadowMap->GetRendererID());
+				materialToUse.SetMat4("u_LightMatrix", s_Data.ShadowMap->GetMatrix());
+
+				materialToUse.Use();
+
+				s_Data.ShadowMap->BindAsTexture(materialToUse.GetCurrentTextureSlot());
+			}
+		}
+
+		{
+			DBT_PROFILE_SCOPE("DrawModel::DrawIndexed");
+			RenderCommand::DrawIndexed(s_Data.VertexArray, mesh.GetIndices().size());
 		}
 
 		if (Renderer::GetConfig().RenderWireframe)
@@ -255,6 +247,18 @@ namespace Debut
 
 		if (Renderer::GetConfig().RenderWireframe)
 			RendererDebug::EndScene();
+	}
+
+	void Renderer3D::BeginShadow(const glm::mat4& lightView, const glm::mat4& lightProj)
+	{
+		s_Data.CameraView = lightView;
+		s_Data.CameraProjection = lightProj;
+		s_Data.CurrentPass = RenderingPass::Shadow;
+	}
+
+	void Renderer3D::EndShadow()
+	{
+		s_Data.CurrentPass = RenderingPass::Shaded;
 	}
 
 	void Renderer3D::Flush()

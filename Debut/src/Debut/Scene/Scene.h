@@ -13,12 +13,14 @@ class b2World;
 namespace Debut
 {
 	struct EntitySceneNode;
+	struct LightComponent;
 	struct ShaderUniform;
 
 	class Camera;
 	class FrameBuffer;
 	class Skybox;
 	class PhysicsSystem3D;
+	class ShadowMap;
 
 	class Scene
 	{
@@ -39,8 +41,8 @@ namespace Debut
 		void OnRuntimeStop();
 		
 		void EnableRendering(Ref<FrameBuffer> target);
-		void Rendering2D(Camera& camera, const glm::mat4& cameraTransform);
-		void Rendering3D(Camera& camera, const glm::mat4& cameraTransform);
+		void Rendering2D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
+		void Rendering3D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
 		void RenderingDebug(Camera& camera, const glm::mat4& cameraTransform);
 
 		Entity CreateEmptyEntity();
@@ -55,6 +57,7 @@ namespace Debut
 		inline glm::vec3 GetAmbientLight() { return m_AmbientLight; }
 		inline float GetAmbientLightIntensity() { return m_AmbientLightIntensity; }
 		inline glm::vec2 GetViewportSize() { return { m_ViewportWidth, m_ViewportHeight }; }
+		inline Ref<ShadowMap> GetShadowMap() { return m_ShadowMap; }
 
 		void SetSkybox(UUID path);
 		inline void SetAmbientLight(glm::vec3 light) { m_AmbientLight = light; }
@@ -62,6 +65,7 @@ namespace Debut
 
 		static Ref<Scene> Copy(Ref<Scene> other);
 		std::vector<ShaderUniform> GetGlobalUniforms(glm::vec3 cameraPos);
+		std::vector<LightComponent*> GetLights();
 
 	private:
 		template<typename T>
@@ -81,6 +85,8 @@ namespace Debut
 		Ref<Skybox> m_Skybox;
 		glm::vec3 m_AmbientLight = glm::vec3(0.0f);
 		float m_AmbientLightIntensity = 1.0f;
+
+		Ref<ShadowMap> m_ShadowMap = nullptr;
 	};
 }
 

@@ -55,6 +55,7 @@ namespace Debut
 		static Ref<FrameBuffer> Create(const FrameBufferSpecifications& specs);
 
 		virtual void Bind() = 0;
+		virtual void BindAsTexture(uint32_t slot) = 0;
 		virtual void Unbind() = 0;
 
 		virtual void Invalidate() = 0;

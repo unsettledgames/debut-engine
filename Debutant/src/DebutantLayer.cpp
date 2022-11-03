@@ -27,11 +27,13 @@
 
 /*
 *   CURRENT: SHADOWS
+*       - TODO: CastShadows flag in MeshRendererComponent
+*       - Serialize EnableShadows in LightComponent
 *       - Pseudo code
-*           - ISSUE: I need a FrameBuffer for each Light. Since it will always be used as a ShadowMap, I think I could
-*               just write a ShadowMap class, which contains the FrameBuffer used for rendering and some data about the 
-*               light
-*       - Implement rendering3d and rendering2d functions in Scene.cpp
+*           - ISSUE: I need a FrameBuffer for each Light, how do I save them and pass them to the renderer? Not a problem
+*               atm since I'm jus trying to make it work for a single directional light, but in the future I could just
+*               send a vector of Ref<ShadowMap> and have a structure in the shader, which contains the sampler and the 
+*               matrix
 * 
 *   MAIN SHADOW WORKFLOW
 * 
@@ -58,6 +60,10 @@
 * 
 *   BUGS:
 *       - Can't open 2 scenes in the same run (invalid entt)
+*       - Light position doesn't take in account parent transform
+*       - Creating new scene bugged when another one is open
+*       - Can't import models in already existing scenes
+*       - Render colliders button not working anymore
 * 
 *   QOL:
 *       - Move Texture, Shader, Material and SubTexture2D to Resources folder

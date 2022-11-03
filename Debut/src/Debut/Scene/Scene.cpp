@@ -5,6 +5,7 @@
 #include "Debut/Scene/Components.h"
 #include "Debut/Rendering/Shader.h"
 #include <Debut/Rendering/Structures/FrameBuffer.h>
+#include <Debut/Rendering/Structures/ShadowMap.h>
 #include <Debut/Rendering/Renderer/RenderCommand.h>
 #include <Debut/Rendering/Renderer/RendererDebug.h>
 #include <Debut/Rendering/Renderer/Renderer.h>
@@ -171,8 +172,8 @@ namespace Debut
 		bool renderColliders = Renderer::GetConfig().RenderColliders;
 		glm::mat4 cameraTransform = glm::inverse(camera.GetView());
 
-		Rendering3D(camera, cameraTransform);
-		Rendering2D(camera, glm::inverse(camera.GetView()));
+		Rendering3D(camera, cameraTransform, target);
+		Rendering2D(camera, glm::inverse(camera.GetView()), target);
 
 		if (Renderer::GetConfig().RenderColliders)
 			RenderingDebug(camera, glm::inverse(camera.GetView()));
@@ -273,8 +274,8 @@ namespace Debut
 
 		if (mainCamera)
 		{
-			Rendering3D(*mainCamera, cameraTransform);
-			Rendering2D(*mainCamera, cameraTransform);
+			Rendering3D(*mainCamera, cameraTransform, target);
+			Rendering2D(*mainCamera, cameraTransform, target);
 		}
 	}
 
@@ -443,7 +444,7 @@ namespace Debut
 		m_PhysicsSystem3D->Begin();
 	}
 
-	void Scene::Rendering2D(Camera& camera, const glm::mat4& cameraTransform)
+	void Scene::Rendering2D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target)
 	{
 		// 2D Rendering
 		{
@@ -461,61 +462,30 @@ namespace Debut
 		}
 	}
 
-	void Scene::Rendering3D(Camera& camera, const glm::mat4& cameraTransform)
+	void Scene::Rendering3D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target)
 	{
 		// Global variables
 		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms(cameraTransform[3]);
-		std::vector<LightComponent*> lights;
+		std::vector<LightComponent*> lights = GetLights();
 
-		// Get directional light
-		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
-		bool full = false;
-		for (auto entity : lightGroup)
-		{
-			auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
-			lights.push_back(&light);
-			full = true;
-		}
-		// A directional light with 0 intensity to override the previous one, if there were any
-		DirectionalLightComponent tmpDirLight;
-		if (!full)
-		{
-			tmpDirLight.Intensity = 0;
-			lights.push_back(&tmpDirLight);
-		}
-
-		// Point lights
-		auto pointLights = m_Registry.view<TransformComponent, PointLightComponent>();
-		for (auto entity : pointLights)
-		{
-			auto& [transform, light] = pointLights.get<TransformComponent, PointLightComponent>(entity);
-			// Update light position
-			light.Position = transform.Translation;
-			lights.push_back(&light);
-		}
-
-		// 3D Rendering
-		/*
-
+		// Render shadowmaps
 		for (auto light : lights)
 		{
-			if (light.CastShadows)
+			if (light->CastShadows)
 			{
 				glm::mat4 lightView;
 				glm::mat4 lightProj;
 
-				if (light.Type == Light2DComponent::LightType::Directional)
+				if (light->Type == LightComponent::LightType::Directional)
 				{
-					lightView = glm::lookAt(lightPos etc etc);
-					lightProj = orthoMat;
-				}
-				else
-				{
-					lightView = glm::translate(glm::mat4(1.0f));
-					lightProj = perspMat;
+					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
+					lightProj = glm::ortho(-300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 1000.0f);
+					lightView = glm::lookAt(glm::normalize(dirLight->Direction) * 100.0f, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					m_ShadowMap->SetMatrix(lightProj * glm::inverse(lightView));
 				}
 
-				Renderer3D::BeginShadow(lightView, lightProj);
+				m_ShadowMap->Bind();
+				Renderer3D::BeginShadow(lightProj, lightView);
 				{
 					DBT_PROFILE_SCOPE("ShadowPass");
 
@@ -523,15 +493,17 @@ namespace Debut
 					auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
 					for (auto entity : group3D)
 					{
-						auto& [transform, mesh] = group3D.Get<TransformComponent, MeshRendererComponent>(entity);
+						auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
 						Renderer3D::DrawModel(mesh, transform.GetTransform(), (int)entity);
 					}
 				}
-				Ref<FrameBuffer> shadowMap = Renderer3D::EndShadow();
+				Renderer3D::EndShadow();
+				m_ShadowMap->Unbind();
 			}
-		*/
+		}
 
-		Renderer3D::BeginScene(camera, m_Skybox, cameraTransform, lights, globalUniforms);
+		target->Bind();
+		Renderer3D::BeginScene(camera, m_Skybox, cameraTransform, lights, globalUniforms, m_ShadowMap);
 		{
 			DBT_PROFILE_SCOPE("Rendering3D");
 			auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
@@ -542,6 +514,7 @@ namespace Debut
 			}
 		}
 		Renderer3D::EndScene();
+		target->Unbind();
 	}
 
 	void Scene::RenderingDebug(Camera& camera, const glm::mat4& cameraTransform)
@@ -787,6 +760,39 @@ namespace Debut
 		return ret;
 	}
 
+	std::vector<LightComponent*> Scene::GetLights()
+	{
+		std::vector<LightComponent*> lights;
+		// Get directional light
+		auto lightGroup = m_Registry.view<TransformComponent, DirectionalLightComponent>();
+		bool full = false;
+		for (auto entity : lightGroup)
+		{
+			auto& [transform, light] = lightGroup.get<TransformComponent, DirectionalLightComponent>(entity);
+			lights.push_back(&light);
+			full = true;
+		}
+		// A directional light with 0 intensity to override the previous one, if there were any
+		DirectionalLightComponent tmpDirLight;
+		if (!full)
+		{
+			tmpDirLight.Intensity = 0;
+			lights.push_back(&tmpDirLight);
+		}
+
+		// Point lights
+		auto pointLights = m_Registry.view<TransformComponent, PointLightComponent>();
+		for (auto entity : pointLights)
+		{
+			auto& [transform, light] = pointLights.get<TransformComponent, PointLightComponent>(entity);
+			// Update light position
+			light.Position = transform.Translation;
+			lights.push_back(&light);
+		}
+
+		return lights;
+	}
+
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
 		auto view = m_Registry.view<CameraComponent>();
@@ -799,5 +805,8 @@ namespace Debut
 
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
+
+		if (m_ShadowMap == nullptr)
+			m_ShadowMap = CreateRef<ShadowMap>(m_ViewportWidth, m_ViewportHeight);
 	}
 }

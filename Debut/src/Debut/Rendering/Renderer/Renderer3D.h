@@ -6,6 +6,7 @@ namespace Debut
 	class VertexArray;
 	class VertexBuffer;
 	class IndexBuffer;
+	class ShadowMap;
 
 	class Material;
 	class Skybox;
@@ -16,6 +17,8 @@ namespace Debut
 	struct MeshRendererComponent;
 	struct LightComponent;
 	struct ShaderUniform;
+
+	enum class RenderingPass { Shadow = 0, Shaded };
 
 	struct RenderBatch3D
 	{
@@ -55,7 +58,13 @@ namespace Debut
 
 		// Extra materials for special rendering modes
 		Ref<Material> UntexturedMaterial;
+		Ref<Material> VisualizeDepthmapMaterial;
 		Ref<Material> DepthmapMaterial;
+
+		// Shadow map
+		Ref<ShadowMap> ShadowMap;
+
+		RenderingPass CurrentPass = RenderingPass::Shaded;
 	};
 
 	class Renderer3D
@@ -65,9 +74,12 @@ namespace Debut
 		static void Shutdown();
 
 		static void BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& transform, 
-			std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms);
+			std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, Ref<ShadowMap> shadowMap);
 		static void EndScene();
 		static void Flush();
+
+		static void BeginShadow(const glm::mat4& lightView, const glm::mat4& lightProj);
+		static void EndShadow();
 
 		static void DrawModel(const MeshRendererComponent& model, const glm::mat4& transform, int entityID);
 		static void DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, int entityID, bool instanced = false);
