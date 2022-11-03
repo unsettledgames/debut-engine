@@ -27,8 +27,8 @@
 
 /*
 *   CURRENT: SHADOWS
+*       - CURRENT: render stuff to a quad instead of directly using the framebuffer. Also propedeutic to post processing.
 *       - TODO: CastShadows flag in MeshRendererComponent
-*       - Serialize EnableShadows in LightComponent
 *       - Pseudo code
 *           - ISSUE: I need a FrameBuffer for each Light, how do I save them and pass them to the renderer? Not a problem
 *               atm since I'm jus trying to make it work for a single directional light, but in the future I could just

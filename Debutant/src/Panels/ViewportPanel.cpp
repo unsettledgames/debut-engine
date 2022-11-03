@@ -8,7 +8,9 @@
 #include <Debut/ImGui/ImGuiUtils.h>
 
 #include <Debut/Scene/Scene.h>
+#include <Debut/Rendering/RenderTexture.h>
 #include <Debut/Rendering/Structures/FrameBuffer.h>
+#include <Debut/Rendering/Structures/ShadowMap.h>
 #include <Debut/Rendering/Renderer/Renderer.h>
 #include <Debut/Rendering/Renderer/RendererDebug.h>
 
@@ -36,6 +38,7 @@ namespace Debut
         fbSpecs.Height = DebutantApp::Get().GetWindow().GetHeight();
 
         m_FrameBuffer = FrameBuffer::Create(fbSpecs);
+        m_RenderTexture = RenderTexture::Create(fbSpecs.Width, fbSpecs.Height, m_FrameBuffer);
         m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
     }
 

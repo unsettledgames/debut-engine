@@ -223,12 +223,16 @@ namespace Debut
 				materialToUse.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
 				materialToUse.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
 				
-				materialToUse.SetInt("u_ShadowMap", s_Data.ShadowMap->GetRendererID());
-				materialToUse.SetMat4("u_LightMatrix", s_Data.ShadowMap->GetMatrix());
+				if (s_Data.CurrentPass != RenderingPass::Shadow)
+				{
+					materialToUse.SetInt("u_ShadowMap", s_Data.ShadowMap->GetRendererID());
+					materialToUse.SetMat4("u_LightMatrix", s_Data.ShadowMap->GetMatrix());
+				}
 
 				materialToUse.Use();
 
-				s_Data.ShadowMap->BindAsTexture(materialToUse.GetCurrentTextureSlot());
+				if (s_Data.CurrentPass != RenderingPass::Shadow)
+					s_Data.ShadowMap->BindAsTexture(materialToUse.GetCurrentTextureSlot());
 			}
 		}
 

@@ -14,6 +14,7 @@ namespace Debut
 {
 	class Scene;
 	class FrameBuffer;
+	class RenderTexture;
 	class DebutantLayer;
 
 	class Timestep;
@@ -65,6 +66,8 @@ namespace Debut
 		PhysicsColliderSelection m_ColliderSelection;
 
 		DebutantLayer* m_ParentLayer;
+		// Scene rendering
 		Ref<FrameBuffer> m_FrameBuffer;
+		Ref<RenderTexture> m_RenderTexture;
 	};
 }

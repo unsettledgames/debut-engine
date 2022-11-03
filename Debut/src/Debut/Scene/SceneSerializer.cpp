@@ -174,6 +174,7 @@ namespace Debut
 	static void SerializeComponent(const DirectionalLightComponent& c, YAML::Emitter& out)
 	{
 		out << YAML::Key << "Direction" << YAML::Value << c.Direction;
+		out << YAML::Key << "EnableShadows" << YAML::Value << c.CastShadows;
 		out << YAML::Key << "Color" << YAML::Value << c.Color;
 		out << YAML::Key << "Intensity" << YAML::Value << c.Intensity;
 	}
@@ -386,6 +387,7 @@ namespace Debut
 		dl.Direction = in["Direction"].as<glm::vec3>();
 		dl.Color = in["Color"].as<glm::vec3>();
 		dl.Intensity = in["Intensity"].as<float>();
+		dl.CastShadows = in["EnableShadows"] ? in["EnableShadows"].as<bool>() : false;
 	}
 
 	template<>

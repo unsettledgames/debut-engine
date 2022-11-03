@@ -479,9 +479,10 @@ namespace Debut
 				if (light->Type == LightComponent::LightType::Directional)
 				{
 					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
-					lightProj = glm::ortho(-300.0f, 300.0f, -300.0f, 300.0f, 0.1f, 1000.0f);
-					lightView = glm::lookAt(glm::normalize(dirLight->Direction) * 100.0f, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-					m_ShadowMap->SetMatrix(lightProj * glm::inverse(lightView));
+					lightProj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 1000.0f);
+					lightView = glm::lookAt(dirLight->Direction, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					if (m_ShadowMap != nullptr)
+						m_ShadowMap->SetMatrix(lightProj * glm::inverse(lightView));
 				}
 
 				m_ShadowMap->Bind();
@@ -742,7 +743,6 @@ namespace Debut
 
 	std::vector<ShaderUniform> Scene::GetGlobalUniforms(glm::vec3 cameraPos)
 	{
-		Log.CoreInfo("X{0}Y{1}Z{2}", cameraPos[0], cameraPos[1], cameraPos[2]);
 		std::vector<ShaderUniform> ret;
 		ShaderUniform::UniformData data;
 
