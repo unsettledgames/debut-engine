@@ -28,22 +28,39 @@ namespace Debut
 {
     ViewportPanel::ViewportPanel(DebutantLayer* layer) : m_ParentLayer(layer)
     {
-        FrameBufferSpecifications fbSpecs;
-        fbSpecs.Attachments = {
+        FrameBufferSpecifications sceneFbSpecs;
+        FrameBufferSpecifications textureFbSpecs;
+
+        sceneFbSpecs.Attachments = {
             FrameBufferTextureFormat::Color, FrameBufferTextureFormat::Depth,
             FrameBufferTextureFormat::RED_INTEGER
         };
 
-        fbSpecs.Width = DebutantApp::Get().GetWindow().GetWidth();
-        fbSpecs.Height = DebutantApp::Get().GetWindow().GetHeight();
+        textureFbSpecs.Attachments = { FrameBufferTextureFormat::Color };
 
-        m_FrameBuffer = FrameBuffer::Create(fbSpecs);
-        m_RenderTexture = RenderTexture::Create(fbSpecs.Width, fbSpecs.Height, m_FrameBuffer);
+        sceneFbSpecs.Width = DebutantApp::Get().GetWindow().GetWidth();
+        sceneFbSpecs.Height = DebutantApp::Get().GetWindow().GetHeight();
+
+        textureFbSpecs.Width = sceneFbSpecs.Width;
+        textureFbSpecs.Height = sceneFbSpecs.Height;
+
+        m_SceneFrameBuffer = FrameBuffer::Create(sceneFbSpecs);
+        m_TextureFrameBuffer = FrameBuffer::Create(textureFbSpecs);
+
+        m_RenderTexture = RenderTexture::Create(sceneFbSpecs.Width, sceneFbSpecs.Height, m_SceneFrameBuffer);
+        m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
+
         m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
     }
 
     void ViewportPanel::OnUpdate(Timestep& ts)
     {
+        /*
+            WORKFLOW:
+                - Render resulting texture on texture frame buffer
+                - Render the texture frame buffer color attachment in imgui
+        */
+
         DBT_PROFILE_SCOPE("EgineUpdate");
         //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
@@ -56,18 +73,22 @@ namespace Debut
         switch (sceneState)
         {
         case SceneManager::SceneState::Play:
-            activeScene->OnRuntimeUpdate(ts, m_FrameBuffer);
+            activeScene->OnRuntimeUpdate(ts, m_SceneFrameBuffer);
             break;
         case SceneManager::SceneState::Edit:
-            activeScene->OnEditorUpdate(ts, m_EditorCamera, m_FrameBuffer);
+            activeScene->OnEditorUpdate(ts, m_EditorCamera, m_SceneFrameBuffer);
 
-            m_FrameBuffer->Bind();
+            m_SceneFrameBuffer->Bind();
             // Render debug
             DrawCollider();
             break;
         }
+        m_SceneFrameBuffer->Unbind();
 
-        m_FrameBuffer->Unbind();
+        // The scene frame buffer now contains the whole scene. Render the frame buffer to a texture.
+        m_TextureFrameBuffer->Bind();
+        m_RenderTexture->Draw(m_FullscreenShader);
+        m_TextureFrameBuffer->Unbind();
     }
 
 	void ViewportPanel::OnImGuiRender()
@@ -94,7 +115,7 @@ namespace Debut
             m_TopMenuSize.y += ImGui::GetTextLineHeight() * 1.5f;
 
             // Draw scene
-            uint32_t texId = m_FrameBuffer->GetColorAttachment();
+            uint32_t texId = m_TextureFrameBuffer->GetColorAttachment();
             ImGui::Image((void*)texId, ImVec2(viewportSize.x, viewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
 
             // Accept scene loading
@@ -123,7 +144,7 @@ namespace Debut
             {
                 m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
 
-                m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+                m_SceneFrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
                 m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
                 DebutantApp::Get().GetSceneManager().GetActiveScene()->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             }
@@ -400,7 +421,7 @@ namespace Debut
 
                 // Get hovered color
                 glm::vec2 coords = GetFrameBufferCoords();
-                glm::vec4 pixel = m_FrameBuffer->ReadPixel(0, coords.x, coords.y);
+                glm::vec4 pixel = m_SceneFrameBuffer->ReadPixel(0, coords.x, coords.y);
 
                 // Check that the distance is far from the selected point before disabling TODO
                 if (!(pixel.r == 0.0 && pixel.g == 255.0 && pixel.b == 0.0 && pixel.a == 255) &&

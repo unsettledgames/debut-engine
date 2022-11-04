@@ -12,5 +12,8 @@ namespace Debut
 
 		virtual void Bind() override;
 		virtual void Unbind() override;
+
+	private:
+		Ref<FrameBuffer> m_FrameBuffer;
 	};
 }

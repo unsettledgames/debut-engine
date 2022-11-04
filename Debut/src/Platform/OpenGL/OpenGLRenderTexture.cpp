@@ -14,45 +14,44 @@ namespace Debut
 		m_Width = width;
 		m_Height = height;
 
-		float vertices[8] = { -1, -1, 1, -1, 1, 1, -1, -1 };
-		int indices[6] = { 0, 1, 2, 2, 3, 1 };
+		float vertices[16] = { 
+			-1, 1, 0, 1,
+			1, 1, 1, 1,
+			1, -1, 1, 0,
+			-1, -1, 0, 0};
+		int indices[6] = { 0, 1, 2, 2, 3, 0 };
 
-		m_VertexBuffer = VertexBuffer::Create(vertices, 8);
+		m_VertexBuffer = VertexBuffer::Create(vertices, 16);
 		m_IndexBuffer = IndexBuffer::Create(indices, 6);
 		m_VertexArray = VertexArray::Create();
+		m_FrameBuffer = buffer;
 
-		m_VertexBuffer->SetLayout(BufferLayout({ { ShaderDataType::Float3, "a_Position", false } }));
+		m_VertexBuffer->SetLayout(BufferLayout({ 
+			{ ShaderDataType::Float2, "a_Position", false },
+			{ ShaderDataType::Float2, "a_TexCoords", false}
+		}));
 
 		m_VertexArray->AddIndexBuffer(m_IndexBuffer);
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
-
-		// generate texture
-		GLCall(glGenTextures(1, &m_RendererID));
-		GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
-		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
-		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
-
-		buffer->Bind();
-		// attach it to currently bound framebuffer object
-		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + buffer->GetSpecs().Attachments.Attachments.size(), 
-			GL_TEXTURE_2D, m_RendererID, 0));
-		buffer->Unbind();
 	}
 
 	void OpenGLRenderTexture::Draw(Ref<Shader> shader)
 	{
-		Bind();
 		m_VertexArray->Bind();
+		shader->Bind();
+		shader->SetInt("u_Texture", 0);
+		Bind();
+
 		RenderCommand::DrawIndexed(m_VertexArray, m_VertexArray->GetIndexBuffer()->GetCount());
-		m_VertexArray->Unbind();
+		
 		Unbind();
+		shader->Unbind();
+		m_VertexArray->Unbind();
 	}
 
 	void OpenGLRenderTexture::Bind()
 	{
-		GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+		GLCall(glBindTexture(GL_TEXTURE_2D, m_FrameBuffer->GetColorAttachment()));
 	}
 
 	void OpenGLRenderTexture::Unbind()
