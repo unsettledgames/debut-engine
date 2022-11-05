@@ -9,10 +9,11 @@
 
 namespace Debut
 {
-	OpenGLRenderTexture::OpenGLRenderTexture(float width, float height, Ref<FrameBuffer> buffer)
+	OpenGLRenderTexture::OpenGLRenderTexture(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode)
 	{
 		m_Width = width;
 		m_Height = height;
+		m_Mode = mode;
 
 		float vertices[16] = { 
 			-1, 1, 0, 1,
@@ -51,11 +52,23 @@ namespace Debut
 
 	void OpenGLRenderTexture::Bind()
 	{
-		GLCall(glBindTexture(GL_TEXTURE_2D, m_FrameBuffer->GetColorAttachment()));
+		uint32_t attachment = 0;
+
+		switch (m_Mode)
+		{
+		case RenderTextureMode::Color:
+			attachment = m_FrameBuffer->GetColorAttachment();
+			break;
+		case RenderTextureMode::Depth:
+			attachment = m_FrameBuffer->GetDepthAttachment();
+			break;
+		}
+
+		GLCall(glBindTextureUnit(0, attachment));
 	}
 
 	void OpenGLRenderTexture::Unbind()
 	{
-		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+		GLCall(glBindTextureUnit(0, 0));
 	}
 }

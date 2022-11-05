@@ -135,6 +135,7 @@ namespace Debut
 	void Renderer3D::DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, int entityID, bool instanced /* = false*/)
 	{
 		DBT_PROFILE_FUNCTION();
+		Material materialToUse;
 
 		{
 			DBT_PROFILE_SCOPE("DrawModel::SendGeometry");
@@ -187,7 +188,6 @@ namespace Debut
 
 		{
 			DBT_PROFILE_SCOPE("DrawModel::UseMaterial");
-			Material materialToUse;
 
 			if (s_Data.CurrentPass == RenderingPass::Shaded)
 			{
@@ -231,14 +231,15 @@ namespace Debut
 
 				materialToUse.Use();
 
-				if (s_Data.CurrentPass != RenderingPass::Shadow)
-					s_Data.ShadowMap->BindAsTexture(materialToUse.GetCurrentTextureSlot());
+				/*if (s_Data.CurrentPass != RenderingPass::Shadow)
+					s_Data.ShadowMap->BindAsTexture(materialToUse.GetCurrentTextureSlot());*/
 			}
 		}
 
 		{
 			DBT_PROFILE_SCOPE("DrawModel::DrawIndexed");
 			RenderCommand::DrawIndexed(s_Data.VertexArray, mesh.GetIndices().size());
+			materialToUse.Unuse();
 		}
 
 		if (Renderer::GetConfig().RenderWireframe)

@@ -229,7 +229,7 @@ namespace Debut
 
 	void Material::Use()
 	{
-		/* This could work, but the bound shader should be in some kind of OpenGLState class: the shader can be
+		/* This could work, but the bound shader should be in some kind of RendererState class: the shader can be
 		*  changed by other renderers
 		if (s_PrevShader != m_RuntimeShader->GetID())
 		{

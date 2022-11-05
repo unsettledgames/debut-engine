@@ -40,7 +40,7 @@ namespace Debut
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 		
-		void EnableRendering(Ref<FrameBuffer> target);
+		void RenderingSetup(Ref<FrameBuffer> target);
 		void Rendering2D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
 		void Rendering3D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
 		void RenderingDebug(Camera& camera, const glm::mat4& cameraTransform);

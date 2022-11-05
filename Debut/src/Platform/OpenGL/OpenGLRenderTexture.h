@@ -6,14 +6,11 @@ namespace Debut
 	class OpenGLRenderTexture : public RenderTexture
 	{
 	public:
-		OpenGLRenderTexture(float width, float height, Ref<FrameBuffer> buffer);
+		OpenGLRenderTexture(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode);
 
 		virtual void Draw(Ref<Shader> shader) override;
 
 		virtual void Bind() override;
 		virtual void Unbind() override;
-
-	private:
-		Ref<FrameBuffer> m_FrameBuffer;
 	};
 }

@@ -37,8 +37,6 @@ namespace Debut
 		uint64_t count = indexCount == 0 ? va->GetIndexBuffer()->GetCount() : indexCount;
 		va->Bind();
 		GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr));
-		// Reset the texture after a draw call
-		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 		va->Unbind();
 	}
 

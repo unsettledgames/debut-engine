@@ -156,17 +156,11 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Editor update");
 
-		Renderer2D::ResetStats();
-		{
-			DBT_PROFILE_SCOPE("Debutant::RendererSetup");
-			target->Bind();
+		RenderingSetup(target);
+		RenderingSetup(m_ShadowMap->GetFrameBuffer());
 
-			RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
-			RenderCommand::Clear();
-
-			// Clear frame buffer for mouse picking
-			target->ClearAttachment(1, -1);
-		}
+		// Clear frame buffer for mouse picking
+		target->ClearAttachment(1, -1);
 		
 		// Flags
 		bool renderColliders = Renderer::GetConfig().RenderColliders;
@@ -182,17 +176,10 @@ namespace Debut
 
 	void Scene::OnRuntimeUpdate(Timestep ts, Ref<FrameBuffer> target)
 	{
+		RenderingSetup(target);
+		RenderingSetup(m_ShadowMap->GetFrameBuffer());
+
 		Renderer2D::ResetStats();
-		{
-			DBT_PROFILE_SCOPE("Debutant::RendererSetup");
-			target->Bind();
-
-			RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
-			RenderCommand::Clear();
-
-			// Clear frame buffer for mouse picking
-			target->ClearAttachment(1, -1);
-		}
 
 		// Update scripts
 		{
@@ -486,11 +473,11 @@ namespace Debut
 				}
 
 				m_ShadowMap->Bind();
-				Renderer3D::BeginShadow(lightProj, lightView);
+				Renderer3D::BeginShadow(camera.GetView(), camera.GetProjection());
 				{
 					DBT_PROFILE_SCOPE("ShadowPass");
 
-					// Can I recycle this to actually render stuff?
+					// Can I recycle this group to render stuff later on?
 					auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
 					for (auto entity : group3D)
 					{
@@ -578,6 +565,15 @@ namespace Debut
 			}
 		}
 		RendererDebug::EndScene();
+	}
+
+	void Scene::RenderingSetup(Ref<FrameBuffer> frameBuffer)
+	{
+		DBT_PROFILE_SCOPE("Debutant::RendererSetup");
+		frameBuffer->Bind();
+
+		RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
+		RenderCommand::Clear();
 	}
 
 	void Scene::OnRuntimeStop()

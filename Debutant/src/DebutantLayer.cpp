@@ -67,6 +67,7 @@
 * 
 *   QOL:
 *       - Move Texture, Shader, Material and SubTexture2D to Resources folder
+*       - Change way of rendering DepthMap (use Depth mode of RenderTexture)
 *       - Custom events, propagated starting from the Application: in this way we can avoid pointers to other classes
 *           (e.g. DebutantLayer* in ViewportPanel, which I really don't like at the moment)
 *       - Drop skybox to set it in the current scene

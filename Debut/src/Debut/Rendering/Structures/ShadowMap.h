@@ -14,8 +14,9 @@ namespace Debut
 
 		inline uint32_t GetWidth() { return m_Width; }
 		inline uint32_t GetHeight() { return m_Height; }
-
 		inline glm::mat4 GetMatrix() { return m_ViewProjection; }
+		inline Ref<FrameBuffer> GetFrameBuffer() { return m_FrameBuffer; }
+
 		inline void SetMatrix(const glm::mat4& viewProj) { m_ViewProjection = viewProj; }
 
 		void Bind();

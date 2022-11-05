@@ -20,6 +20,15 @@
 #include <imgui.h>
 
 /**
+* CURR BUG: shadowmap not working
+*   - I framebuffer sono corretti perché renderizzare una scena normale funziona
+*   - I cubi vengono renderizzati correttamente, solo il depth buffer non funziona
+*   - La texture viene renderizzata correttamente, ma mancano i mesh
+* 
+*   - Lo shader potrebbe essere incorretto
+*   - Framebuffer su cui renderizza la scena non è lo stesso per renderizzare sul quad finale: effettivamente il framebuffer
+*       della render texture dovrebbe essere aggiornato ogni volta che viene aperta una scena
+* 
     USES OF DEBUTANTLAYER:
         - Loading droppable assets
 */
@@ -47,7 +56,8 @@ namespace Debut
         m_SceneFrameBuffer = FrameBuffer::Create(sceneFbSpecs);
         m_TextureFrameBuffer = FrameBuffer::Create(textureFbSpecs);
 
-        m_RenderTexture = RenderTexture::Create(sceneFbSpecs.Width, sceneFbSpecs.Height, m_SceneFrameBuffer);
+        m_RenderTexture = RenderTexture::Create(sceneFbSpecs.Width, sceneFbSpecs.Height, 
+            DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMap()->GetFrameBuffer(), RenderTextureMode::Depth);
         m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
 
         m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
@@ -55,12 +65,6 @@ namespace Debut
 
     void ViewportPanel::OnUpdate(Timestep& ts)
     {
-        /*
-            WORKFLOW:
-                - Render resulting texture on texture frame buffer
-                - Render the texture frame buffer color attachment in imgui
-        */
-
         DBT_PROFILE_SCOPE("EgineUpdate");
         //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
@@ -87,6 +91,7 @@ namespace Debut
 
         // The scene frame buffer now contains the whole scene. Render the frame buffer to a texture.
         m_TextureFrameBuffer->Bind();
+        m_RenderTexture->SetFrameBuffer(DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMap()->GetFrameBuffer());
         m_RenderTexture->Draw(m_FullscreenShader);
         m_TextureFrameBuffer->Unbind();
     }

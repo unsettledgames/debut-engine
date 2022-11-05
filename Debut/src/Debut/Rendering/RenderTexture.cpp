@@ -7,12 +7,12 @@
 
 namespace Debut
 {
-	Ref<RenderTexture> RenderTexture::Create(float width, float height, Ref<FrameBuffer> buffer)
+	Ref<RenderTexture> RenderTexture::Create(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode)
 	{
 		switch (RendererAPI::GetAPI())
 		{
 		case RendererAPI::API::OpenGL:
-			return CreateRef<OpenGLRenderTexture>(width, height, buffer);
+			return CreateRef<OpenGLRenderTexture>(width, height, buffer, mode);
 		default:
 			return nullptr;
 		}
