@@ -66,6 +66,7 @@
 *       - Render colliders button not working anymore
 * 
 *   QOL:
+*       - Render Light directions and gizmos, same for camera
 *       - Move Texture, Shader, Material and SubTexture2D to Resources folder
 *       - Change way of rendering DepthMap (use Depth mode of RenderTexture)
 *       - Custom events, propagated starting from the Application: in this way we can avoid pointers to other classes

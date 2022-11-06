@@ -21,9 +21,7 @@
 
 /**
 * CURR BUG: shadowmap not working
-*   - I framebuffer sono corretti perché renderizzare una scena normale funziona
-*   - I cubi vengono renderizzati correttamente, solo il depth buffer non funziona
-*   - La texture viene renderizzata correttamente, ma mancano i mesh
+*   - Depth acquisita correttamente, ma la variazione è bassissima e viene tutto clampato a 0 mi sa
 * 
 *   - Lo shader potrebbe essere incorretto
 *   - Framebuffer su cui renderizza la scena non è lo stesso per renderizzare sul quad finale: effettivamente il framebuffer
@@ -57,7 +55,7 @@ namespace Debut
         m_TextureFrameBuffer = FrameBuffer::Create(textureFbSpecs);
 
         m_RenderTexture = RenderTexture::Create(sceneFbSpecs.Width, sceneFbSpecs.Height, 
-            DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMap()->GetFrameBuffer(), RenderTextureMode::Depth);
+            DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMap()->GetFrameBuffer(), RenderTextureMode::Color);
         m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
 
         m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
@@ -91,7 +89,7 @@ namespace Debut
 
         // The scene frame buffer now contains the whole scene. Render the frame buffer to a texture.
         m_TextureFrameBuffer->Bind();
-        m_RenderTexture->SetFrameBuffer(DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMap()->GetFrameBuffer());
+        m_RenderTexture->SetFrameBuffer(m_SceneFrameBuffer);
         m_RenderTexture->Draw(m_FullscreenShader);
         m_TextureFrameBuffer->Unbind();
     }

@@ -254,11 +254,13 @@ namespace Debut
 			RendererDebug::EndScene();
 	}
 
-	void Renderer3D::BeginShadow(const glm::mat4& lightView, const glm::mat4& lightProj)
+	void Renderer3D::BeginShadow(const glm::mat4& lightView, const glm::mat4& lightProj, float cameraNear, float cameraFar)
 	{
 		s_Data.CameraView = lightView;
 		s_Data.CameraProjection = lightProj;
 		s_Data.CurrentPass = RenderingPass::Shadow;
+		s_Data.CameraNear = cameraNear;
+		s_Data.CameraFar = cameraFar;
 	}
 
 	void Renderer3D::EndShadow()

@@ -466,14 +466,18 @@ namespace Debut
 				if (light->Type == LightComponent::LightType::Directional)
 				{
 					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
-					lightProj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 1000.0f);
-					lightView = glm::lookAt(dirLight->Direction, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					float orthoWidth = (m_ViewportWidth / m_ViewportHeight) * 30;
+					float orthoHeight = 30;
+
+					lightProj = glm::ortho(-0.5f * orthoWidth, 0.5f * orthoWidth, -0.5f * orthoHeight, 0.5f * orthoHeight, 
+						0.1f, 1000.0f);
+					lightView = glm::lookAt(glm::normalize(dirLight->Direction) * 500.0f, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 					if (m_ShadowMap != nullptr)
-						m_ShadowMap->SetMatrix(lightProj * glm::inverse(lightView));
+						m_ShadowMap->SetMatrix(lightProj * lightView);
 				}
 
 				m_ShadowMap->Bind();
-				Renderer3D::BeginShadow(camera.GetView(), camera.GetProjection());
+				Renderer3D::BeginShadow(lightView, lightProj, 0.1f, 1000.0f);
 				{
 					DBT_PROFILE_SCOPE("ShadowPass");
 
