@@ -68,6 +68,7 @@ namespace Debut
 
 		inline UUID GetID() { return m_ID; }
 		inline UUID GetShader() { return m_Shader; }
+		inline Ref<Shader> GetRuntimeShader() { return m_RuntimeShader; }
 		inline uint32_t GetCurrentTextureSlot() { return m_CurrTextureSlot; }
 		inline std::string GetName() { return m_Name; }
 		inline std::string GetPath() { return m_Path; }

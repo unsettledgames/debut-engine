@@ -64,6 +64,7 @@
 *       - Creating new scene bugged when another one is open
 *       - Can't import models in already existing scenes
 *       - Render colliders button not working anymore
+*       - Ambient lighting settings not working anymore
 * 
 *   QOL:
 *       - Render Light directions and gizmos, same for camera

@@ -468,16 +468,21 @@ namespace Debut
 					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
 					float orthoWidth = (m_ViewportWidth / m_ViewportHeight) * 30;
 					float orthoHeight = 30;
+					float viewportMult = 2.0f;
 
-					lightProj = glm::ortho(-0.5f * orthoWidth, 0.5f * orthoWidth, -0.5f * orthoHeight, 0.5f * orthoHeight, 
-						0.1f, 1000.0f);
-					lightView = glm::lookAt(glm::normalize(dirLight->Direction) * 500.0f, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					lightProj = glm::ortho(-viewportMult * orthoWidth, viewportMult * orthoWidth, 
+						-viewportMult * orthoHeight, viewportMult * orthoHeight, 1.0f, 100.0f);
+					lightView = glm::lookAt(glm::normalize(dirLight->Direction) * 50.0f, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 					if (m_ShadowMap != nullptr)
+					{
 						m_ShadowMap->SetMatrix(lightProj * lightView);
+						m_ShadowMap->SetNear(1.0f);
+						m_ShadowMap->SetFar(100.0f);
+					}
 				}
 
 				m_ShadowMap->Bind();
-				Renderer3D::BeginShadow(lightView, lightProj, 0.1f, 1000.0f);
+				Renderer3D::BeginShadow(lightView, lightProj, 1.0f, 100.0f);
 				{
 					DBT_PROFILE_SCOPE("ShadowPass");
 
@@ -807,6 +812,6 @@ namespace Debut
 		m_ViewportHeight = height;
 
 		if (m_ShadowMap == nullptr)
-			m_ShadowMap = CreateRef<ShadowMap>(m_ViewportWidth, m_ViewportHeight);
+			m_ShadowMap = CreateRef<ShadowMap>(m_ViewportWidth * 2, m_ViewportHeight * 2);
 	}
 }

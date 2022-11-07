@@ -19,7 +19,11 @@ namespace Debut
 
 		virtual void Bind() override;
 		virtual void BindAsTexture(uint32_t slot) override;
+		virtual void BindDepth(uint32_t slot) override;
+		virtual void BindAttachment(uint32_t slot, uint32_t index = 0) override;
+
 		virtual void Unbind() override;
+		virtual void UnbindDepth(uint32_t slot) override;
 
 		inline virtual uint32_t GetColorAttachment(int idx = 0) const override { DBT_ASSERT(idx < m_ColorAttachments.size()); return m_ColorAttachments[idx]; }
 		inline virtual uint32_t GetDepthAttachment() const override { return m_DepthAttachment; }

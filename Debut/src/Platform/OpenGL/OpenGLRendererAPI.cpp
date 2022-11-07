@@ -9,13 +9,15 @@ namespace Debut
 {
 	void OpenGLRendererAPI::Init()
 	{
-		glEnable(GL_DEPTH_TEST);
+		GLCall(glEnable(GL_DEPTH_TEST));
 		GLCall(glEnable(GL_LINE_SMOOTH));
-		GLCall(glDepthRange(0.0f, 1.0f));
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		GLCall(glEnable(GL_BLEND));
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+		GLCall(glEnable(GL_CULL_FACE));
+		GLCall(glCullFace(GL_BACK));
+		GLCall(glFrontFace(GL_CCW));
 	}
 
 	void OpenGLRendererAPI::Clear()
@@ -31,6 +33,16 @@ namespace Debut
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4 color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
+	}
+
+	void OpenGLRendererAPI::CullFront()
+	{
+		GLCall(glCullFace(GL_FRONT));
+	}
+
+	void OpenGLRendererAPI::CullBack()
+	{
+		GLCall(glCullFace(GL_BACK));
 	}
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& va, uint32_t indexCount)

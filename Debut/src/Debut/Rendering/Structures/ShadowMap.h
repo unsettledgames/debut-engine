@@ -16,12 +16,18 @@ namespace Debut
 		inline uint32_t GetHeight() { return m_Height; }
 		inline glm::mat4 GetMatrix() { return m_ViewProjection; }
 		inline Ref<FrameBuffer> GetFrameBuffer() { return m_FrameBuffer; }
+		inline float GetNear() { return m_Near; }
+		inline float GetFar() { return m_Far; }
 
 		inline void SetMatrix(const glm::mat4& viewProj) { m_ViewProjection = viewProj; }
+		inline void SetNear(float cameraNear) { m_Near = cameraNear; }
+		inline void SetFar(float cameraFar) { m_Far = cameraFar; }
 
 		void Bind();
 		void BindAsTexture(uint32_t slot);
+
 		void Unbind();
+		void UnbindTexture(uint32_t slot);
 
 		uint32_t GetRendererID();
 
@@ -30,6 +36,9 @@ namespace Debut
 		uint32_t m_Height;
 
 		glm::mat4 m_ViewProjection;
+		float m_Near;
+		float m_Far;
+
 		Ref<FrameBuffer> m_FrameBuffer;
 	};
 }

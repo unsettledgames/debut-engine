@@ -20,12 +20,17 @@ namespace Debut
 
 	void ShadowMap::BindAsTexture(uint32_t slot)
 	{
-		m_FrameBuffer->BindAsTexture(slot);
+		m_FrameBuffer->BindDepth(slot);
 	}
 
 	void ShadowMap::Unbind()
 	{
 		m_FrameBuffer->Unbind();
+	}
+
+	void ShadowMap::UnbindTexture(uint32_t slot)
+	{
+		m_FrameBuffer->UnbindDepth(slot);
 	}
 
 	uint32_t ShadowMap::GetRendererID()

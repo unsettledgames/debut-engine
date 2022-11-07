@@ -97,9 +97,9 @@ namespace Debut
 				// TODO: move to frame buffer specs
 				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
-				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER));
+				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
+				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
 				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT));
 			}
 
@@ -273,6 +273,21 @@ namespace Debut
 		m_Bound = true;
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
 		GLCall(glViewport(0, 0, m_Specs.Width, m_Specs.Height));
+	}
+
+	void OpenGLFrameBuffer::BindDepth(uint32_t slot)
+	{
+		GLCall(glBindTextureUnit(slot, m_DepthAttachment))
+	}
+	void OpenGLFrameBuffer::UnbindDepth(uint32_t slot)
+	{
+		GLCall(glBindTextureUnit(slot, 0));
+	}
+
+	void OpenGLFrameBuffer::BindAttachment(uint32_t slot, uint32_t index /* =0 */)
+	{
+		DBT_ASSERT(m_ColorAttachments.size() > index && index >= 0);
+		GLCall(glBindTextureUnit(slot, m_ColorAttachments[index]));
 	}
 
 	void OpenGLFrameBuffer::BindAsTexture(uint32_t slot)

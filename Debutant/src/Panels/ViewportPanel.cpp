@@ -20,13 +20,6 @@
 #include <imgui.h>
 
 /**
-* CURR BUG: shadowmap not working
-*   - Depth acquisita correttamente, ma la variazione è bassissima e viene tutto clampato a 0 mi sa
-* 
-*   - Lo shader potrebbe essere incorretto
-*   - Framebuffer su cui renderizza la scena non è lo stesso per renderizzare sul quad finale: effettivamente il framebuffer
-*       della render texture dovrebbe essere aggiornato ogni volta che viene aperta una scena
-* 
     USES OF DEBUTANTLAYER:
         - Loading droppable assets
 */

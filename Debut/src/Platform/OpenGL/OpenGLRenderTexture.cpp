@@ -20,7 +20,7 @@ namespace Debut
 			1, 1, 1, 1,
 			1, -1, 1, 0,
 			-1, -1, 0, 0};
-		int indices[6] = { 0, 1, 2, 2, 3, 0 };
+		int indices[6] = { 0, 2, 1, 2, 0, 3 };
 
 		m_VertexBuffer = VertexBuffer::Create(vertices, 16);
 		m_IndexBuffer = IndexBuffer::Create(indices, 6);

@@ -56,7 +56,11 @@ namespace Debut
 
 		virtual void Bind() = 0;
 		virtual void BindAsTexture(uint32_t slot) = 0;
+		virtual void BindDepth(uint32_t slot) = 0;
+		virtual void BindAttachment(uint32_t slot, uint32_t index = 0) = 0;
+
 		virtual void Unbind() = 0;
+		virtual void UnbindDepth(uint32_t slot) = 0;
 
 		virtual void Invalidate() = 0;
 		virtual void Resize(uint32_t x, uint32_t y) = 0;
