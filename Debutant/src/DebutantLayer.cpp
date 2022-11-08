@@ -27,20 +27,9 @@
 
 /*
 *   CURRENT: SHADOWS
-*       - CURRENT: render stuff to a quad instead of directly using the framebuffer. Also propedeutic to post processing.
-*       - TODO: CastShadows flag in MeshRendererComponent
-*       - Pseudo code
-*           - ISSUE: I need a FrameBuffer for each Light, how do I save them and pass them to the renderer? Not a problem
-*               atm since I'm jus trying to make it work for a single directional light, but in the future I could just
-*               send a vector of Ref<ShadowMap> and have a structure in the shader, which contains the sampler and the 
-*               matrix
-* 
+*       - Change rendering pov to support bigger scenes. 
+*
 *   MAIN SHADOW WORKFLOW
-* 
-*   - Standard shadow mapping: good for directional lighting, but it requires that I render the whole freakin scene??? I mean,
-*       it might be a nice technique to start with (already done it previously too) and to use to expand it later.
-*       - Of course, a view-projection matrix is needed, in the tutorial glm::lookAt is used, as the position I could use the camera
-*           x and z coordinates and add a certain amount to it. Would be a pretty nice start
 * 
 *   - Point shadow mapping
 *       - Well, start by implementing the base workflow with a single light. Cubemaps are needed, which means 6 * shadowMapRes
@@ -49,22 +38,16 @@
 *           nice? See optimization section about that
 * 
 *   OPTIMIZATION AND IMPROVEMENTS
-*   
+*   - Cascading shadow maps: render multiple maps from an increasing distance, use the right one depending on the object
+*       distance from the camera
+*   - Configurable PCSS for soft shadows
 *   - Important lights: find the lights that, at the moment, are important. The nearest to the camera? Always consider the 
 *       directional light(s?), I wonder if there's some cheap way to check if the shadows produced by a light will be visible 
 *       in the scnee without actually rendering the scene. I don't think so.
 *   - A fast approach to the above issue would consist in reserving higher resolution maps to important lights and smaller
 *       maps to ones that aren't. Also keep in mind that what Doom 2016 is a very specific game with very specific needs, their
 *       approach might not be optimal for a generic use. What if multiple shadow maps depending on level of importance?
-*   - PCF and other smoothening algorithms. Gaussian blur on the shadow maps?
-* 
-*   BUGS:
-*       - Can't open 2 scenes in the same run (invalid entt)
-*       - Light position doesn't take in account parent transform
-*       - Creating new scene bugged when another one is open
-*       - Can't import models in already existing scenes
-*       - Render colliders button not working anymore
-*       - Ambient lighting settings not working anymore
+*   -  Gaussian blur on the shadow maps?
 * 
 *   QOL:
 *       - Render Light directions and gizmos, same for camera
@@ -87,6 +70,7 @@
 *       - Implement rendering modes in 2D too
 * 
     OPTIMIZATION:
+*       - Update AssetMap only OnClose or once when this layer is attached
         - Remove as many DecomposeTransform as possible
         - Optimize transformation in physics
         - Maybe remove indices from PolygonCollider? The concept is similar to creating a transform matrix every time it's 
@@ -98,7 +82,6 @@
     - Roughness maps (PBR)
     - Reflection maps (PBR)
     
-    - Find out why some models are huge or super small sometimes->Don't use model imported transform?
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
@@ -132,6 +115,7 @@ namespace Debut
     void DebutantLayer::OnUpdate(Timestep& ts)
     {
         m_Viewport.OnUpdate(ts);
+        m_ActiveScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
     }
 
     void DebutantLayer::OnImGuiRender()
@@ -523,6 +507,8 @@ namespace Debut
     {
         glm::vec2 viewportSize = m_Viewport.GetViewportSize();
         DebutantApp::Get().GetSceneManager().NewScene(viewportSize);
+
+        m_ActiveScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
         m_SceneHierarchy.RebuildSceneGraph();

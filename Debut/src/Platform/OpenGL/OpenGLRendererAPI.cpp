@@ -14,10 +14,6 @@ namespace Debut
 
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-		GLCall(glEnable(GL_CULL_FACE));
-		GLCall(glCullFace(GL_BACK));
-		GLCall(glFrontFace(GL_CCW));
 	}
 
 	void OpenGLRendererAPI::Clear()
@@ -33,6 +29,20 @@ namespace Debut
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4 color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
+	}
+
+	void OpenGLRendererAPI::EnableCulling()
+	{
+		DBT_PROFILE_FUNCTION();
+		GLCall(glEnable(GL_CULL_FACE));
+		GLCall(glCullFace(GL_BACK));
+		GLCall(glFrontFace(GL_CCW));
+	}
+
+	void OpenGLRendererAPI::DisableCulling()
+	{
+		DBT_PROFILE_FUNCTION();
+		GLCall(glDisable(GL_CULL_FACE));
 	}
 
 	void OpenGLRendererAPI::CullFront()

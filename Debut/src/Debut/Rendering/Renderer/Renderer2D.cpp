@@ -30,13 +30,13 @@ namespace Debut
 		uint32_t offset = 0;
 		for (int i = 0; i < s_Data.MaxIndices; i+=6)
 		{
-			quadIndices[i + 0] = offset + 0;
+			quadIndices[i + 0] = offset + 2;
 			quadIndices[i + 1] = offset + 1;
-			quadIndices[i + 2] = offset + 2;
+			quadIndices[i + 2] = offset + 0;
 
-			quadIndices[i + 3] = offset + 2;
-			quadIndices[i + 4] = offset + 3;
-			quadIndices[i + 5] = offset + 0;
+			quadIndices[i + 3] = offset + 3;
+			quadIndices[i + 4] = offset + 0;
+			quadIndices[i + 5] = offset + 2;
 
 			offset += 4;
 		}
@@ -91,6 +91,7 @@ namespace Debut
 	void Renderer2D::BeginScene(Camera& camera, const glm::mat4& transform)
 	{
 		DBT_PROFILE_FUNCTION();
+		RenderCommand::DisableCulling();
 
 		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
 		s_Data.TextureShader->Bind();
@@ -123,6 +124,7 @@ namespace Debut
 		}
 
 		RendererDebug::EndScene();
+		RenderCommand::EnableCulling();
 	}
 
 	void Renderer2D::FlushAndReset()

@@ -164,13 +164,13 @@ namespace Debut
 		
 		// Flags
 		bool renderColliders = Renderer::GetConfig().RenderColliders;
-		glm::mat4 cameraTransform = glm::inverse(camera.GetView());
+		glm::mat4 cameraView = glm::inverse(camera.GetView());
 
-		Rendering3D(camera, cameraTransform, target);
-		Rendering2D(camera, glm::inverse(camera.GetView()), target);
+		Rendering3D(camera, cameraView, target);
+		Rendering2D(camera, cameraView, target);
 
 		if (Renderer::GetConfig().RenderColliders)
-			RenderingDebug(camera, glm::inverse(camera.GetView()));
+			RenderingDebug(camera, cameraView, target);
 	}
 	
 
@@ -433,6 +433,8 @@ namespace Debut
 
 	void Scene::Rendering2D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target)
 	{
+		target->Bind();
+
 		// 2D Rendering
 		{
 			DBT_PROFILE_SCOPE("Rendering2D");
@@ -447,6 +449,8 @@ namespace Debut
 
 			Renderer2D::EndScene();
 		}
+
+		target->Unbind();
 	}
 
 	void Scene::Rendering3D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target)
@@ -514,8 +518,10 @@ namespace Debut
 		target->Unbind();
 	}
 
-	void Scene::RenderingDebug(Camera& camera, const glm::mat4& cameraTransform)
+	void Scene::RenderingDebug(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target)
 	{
+		target->Bind();
+
 		RendererDebug::BeginScene(camera, cameraTransform);
 		{
 			DBT_PROFILE_SCOPE("RenderingDebug");
@@ -574,6 +580,8 @@ namespace Debut
 			}
 		}
 		RendererDebug::EndScene();
+
+		target->Unbind();
 	}
 
 	void Scene::RenderingSetup(Ref<FrameBuffer> frameBuffer)
@@ -742,6 +750,7 @@ namespace Debut
 		newScene->m_Skybox = other->m_Skybox;
 		newScene->m_AmbientLight = other->m_AmbientLight;
 		newScene->m_AmbientLightIntensity = other->m_AmbientLightIntensity;
+		newScene->m_ShadowMap = other->m_ShadowMap;
 
 		return newScene;
 	}
@@ -790,8 +799,11 @@ namespace Debut
 		for (auto entity : pointLights)
 		{
 			auto& [transform, light] = pointLights.get<TransformComponent, PointLightComponent>(entity);
+			glm::vec3 translation = transform.Translation;
 			// Update light position
-			light.Position = transform.Translation;
+			if (transform.Parent)
+				translation = transform.Parent.Transform().GetTransform() * glm::vec4(translation, 1.0f);
+			light.Position = translation;
 			lights.push_back(&light);
 		}
 

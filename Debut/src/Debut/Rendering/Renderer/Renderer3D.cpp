@@ -85,6 +85,8 @@ namespace Debut
 		s_Data.GlobalUniforms = globalUniforms;
 		s_Data.ShadowMap = shadowMap;
 
+		RenderCommand::DisableCulling();
+
 		// Draw the skybox
 		if (skybox != nullptr)
 		{
@@ -110,6 +112,8 @@ namespace Debut
 			skybox->Unbind();
 			skyboxMaterial->Unuse();
 		}
+
+		RenderCommand::EnableCulling();
 
 		if (Renderer::GetConfig().RenderWireframe)
 			RendererDebug::BeginScene(camera, cameraTransform);

@@ -21,6 +21,8 @@ namespace Debut
 		virtual void ClearDepth() = 0;
 		virtual void SetClearColor(const glm::vec4 color) = 0;
 
+		virtual void EnableCulling() = 0;
+		virtual void DisableCulling() = 0;
 		virtual void CullFront() = 0;
 		virtual void CullBack() = 0;
 

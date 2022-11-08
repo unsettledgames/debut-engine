@@ -12,6 +12,8 @@ namespace Debut
 		virtual void ClearDepth() override;
 		virtual void SetClearColor(const glm::vec4 color) override;
 
+		virtual void EnableCulling() override;
+		virtual void DisableCulling() override;
 		virtual void CullFront() override;
 		virtual void CullBack() override;
 

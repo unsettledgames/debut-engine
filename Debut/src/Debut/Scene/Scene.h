@@ -43,7 +43,7 @@ namespace Debut
 		void RenderingSetup(Ref<FrameBuffer> target);
 		void Rendering2D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
 		void Rendering3D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
-		void RenderingDebug(Camera& camera, const glm::mat4& cameraTransform);
+		void RenderingDebug(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
 
 		Entity CreateEmptyEntity();
 		Entity CreateEntity(Entity parent, const std::string& name = "New Entity");

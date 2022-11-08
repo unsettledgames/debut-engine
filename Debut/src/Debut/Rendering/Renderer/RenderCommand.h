@@ -19,11 +19,18 @@ namespace Debut
 			s_RendererAPI->SetClearColor(color); 
 		}
 
+		inline static void EnableCulling()
+		{
+			s_RendererAPI->EnableCulling();
+		}
+		inline static  void DisableCulling()
+		{
+			s_RendererAPI->DisableCulling();
+		}
 		inline static void CullFront()
 		{
 			s_RendererAPI->CullFront();
 		}
-
 		inline static void CullBack()
 		{
 			s_RendererAPI->CullBack();

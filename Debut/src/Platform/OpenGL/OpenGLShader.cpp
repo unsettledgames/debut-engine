@@ -185,6 +185,7 @@ namespace Debut
 
 	std::vector<ShaderUniform> OpenGLShader::GetUniforms() const
 	{
+		DBT_PROFILE_FUNCTION();
 		std::vector<ShaderUniform> ret;
 
 		GLint i;
