@@ -98,6 +98,8 @@ namespace Debut
             ImGui::DragFloat("Camera far", &activeScene->cameraFar);
             ImGui::DragFloat("Ortho size", &activeScene->orthoSize);
             ImGui::DragFloat("Camera distance", &activeScene->cameraDistance);
+            ImGui::DragFloat("Fadeout start distance", &activeScene->fadeoutStartDistance);
+            ImGui::DragFloat("Fadeout end distance", &activeScene->fadeoutEndDistance);
         }
         ImGui::End();
 

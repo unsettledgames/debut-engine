@@ -478,7 +478,7 @@ namespace Debut
 
 					lightProj = glm::ortho(-orthoSize * orthoWidth, orthoSize * orthoWidth,
 						-orthoSize * orthoHeight, orthoSize * orthoHeight, cameraNear, cameraFar);
-					lightView = camera.GetView();// glm::lookAt(lightPos, cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
+					lightView = glm::lookAt(lightPos, cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
 					if (m_ShadowMap != nullptr)
 					{
 						m_ShadowMap->SetMatrix(lightProj * lightView);
@@ -772,6 +772,12 @@ namespace Debut
 		// Ambient light intensity
 		data.Float = m_AmbientLightIntensity;
 		ret.push_back(ShaderUniform("u_AmbientLightIntensity", ShaderDataType::Float, data));
+
+		// TEMPORARY
+		data.Float = fadeoutStartDistance;
+		ret.push_back(ShaderUniform("u_ShadowFadeoutStart", ShaderDataType::Float, data));
+		data.Float = fadeoutEndDistance;
+		ret.push_back(ShaderUniform("u_ShadowFadeoutEnd", ShaderDataType::Float, data));
 
 		return ret;
 	}

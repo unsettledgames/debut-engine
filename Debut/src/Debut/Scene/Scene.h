@@ -90,10 +90,12 @@ namespace Debut
 
 		Ref<ShadowMap> m_ShadowMap = nullptr;
 		// TEMPORARY
-		float cameraNear = -10;
-		float cameraFar = 10;
-		float orthoSize = 20;
-		float cameraDistance = 5;
+		float cameraNear = -25;
+		float cameraFar = 250;
+		float orthoSize = 12;
+		float cameraDistance = 1;
+		float fadeoutStartDistance = 5;
+		float fadeoutEndDistance = 7;
 	};
 }
 

@@ -29,7 +29,7 @@
 *   CURRENT: SHADOWS
 *       - Reorganize the shader code to be a bit cleaner
 *       - Support bigger scenes.
-*           - Start by adding a fadeout to far shadows
+*           - Find the right camera frustum depending on the one of the camera
 *
 *   MAIN SHADOW WORKFLOW
 * 
