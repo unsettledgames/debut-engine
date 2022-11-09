@@ -51,7 +51,7 @@ namespace Debut
             DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMap()->GetFrameBuffer(), RenderTextureMode::Color);
         m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
 
-        m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
+        m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 10000.0f);
     }
 
     void ViewportPanel::OnUpdate(Timestep& ts)
@@ -89,6 +89,18 @@ namespace Debut
 
 	void ViewportPanel::OnImGuiRender()
 	{
+        ImGui::Begin("ShadowMap");
+        {
+            Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
+            uint32_t rendererID = activeScene->GetShadowMap()->GetFrameBuffer()->GetDepthAttachment();
+            ImGui::Image((void*)rendererID, { 300, 300 }, { 0, 1 }, { 1, 0 });
+            ImGui::DragFloat("Camera near", &activeScene->cameraNear);
+            ImGui::DragFloat("Camera far", &activeScene->cameraFar);
+            ImGui::DragFloat("Ortho size", &activeScene->orthoSize);
+            ImGui::DragFloat("Camera distance", &activeScene->cameraDistance);
+        }
+        ImGui::End();
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, ImGui::GetTextLineHeight() });
         ImGui::Begin("Viewport", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar);
@@ -157,10 +169,13 @@ namespace Debut
                 ImVec2 windowPos = ImGui::GetWindowPos();
                 windowPos.y += m_TopMenuSize.y;
 
-                if (!m_ColliderSelection.Valid)
-                    m_Gizmos.ManipulateTransform(m_Selection, m_EditorCamera, viewportSize, windowPos);
-                else
-                    m_Gizmos.ManipulateCollider(m_Selection, m_EditorCamera, viewportSize, windowPos, m_ColliderSelection);
+                if (m_Selection && m_Selection.IsValid())
+                {
+                    if (!m_ColliderSelection.Valid)
+                        m_Gizmos.ManipulateTransform(m_Selection, m_EditorCamera, viewportSize, windowPos);
+                    else
+                        m_Gizmos.ManipulateCollider(m_Selection, m_EditorCamera, viewportSize, windowPos, m_ColliderSelection);
+                }
             }
 
             ImGui::PopStyleVar();

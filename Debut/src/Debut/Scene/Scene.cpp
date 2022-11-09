@@ -470,18 +470,20 @@ namespace Debut
 				if (light->Type == LightComponent::LightType::Directional)
 				{
 					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
-					float orthoWidth = (m_ViewportWidth / m_ViewportHeight) * 30;
-					float orthoHeight = 30;
-					float viewportMult = 2.0f;
+					float orthoWidth = (m_ViewportWidth / m_ViewportHeight);
+					float orthoHeight = 1.0f;
 
-					lightProj = glm::ortho(-viewportMult * orthoWidth, viewportMult * orthoWidth, 
-						-viewportMult * orthoHeight, viewportMult * orthoHeight, 1.0f, 100.0f);
-					lightView = glm::lookAt(glm::normalize(dirLight->Direction) * 50.0f, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+					glm::vec3 cameraPos = cameraTransform[3];
+					glm::vec3 lightPos = cameraPos + glm::normalize(dirLight->Direction) * cameraDistance;
+
+					lightProj = glm::ortho(-orthoSize * orthoWidth, orthoSize * orthoWidth,
+						-orthoSize * orthoHeight, orthoSize * orthoHeight, cameraNear, cameraFar);
+					lightView = camera.GetView();// glm::lookAt(lightPos, cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
 					if (m_ShadowMap != nullptr)
 					{
 						m_ShadowMap->SetMatrix(lightProj * lightView);
-						m_ShadowMap->SetNear(1.0f);
-						m_ShadowMap->SetFar(100.0f);
+						m_ShadowMap->SetNear(cameraNear);
+						m_ShadowMap->SetFar(cameraFar);
 					}
 				}
 

@@ -27,7 +27,9 @@
 
 /*
 *   CURRENT: SHADOWS
-*       - Change rendering pov to support bigger scenes. 
+*       - Reorganize the shader code to be a bit cleaner
+*       - Support bigger scenes.
+*           - Start by adding a fadeout to far shadows
 *
 *   MAIN SHADOW WORKFLOW
 * 
@@ -50,6 +52,9 @@
 *   -  Gaussian blur on the shadow maps?
 * 
 *   QOL:
+*       - Find a better way to update entity selection: if it's selected or destroyed somewhere, it must be selected 
+*           or destroyed everywhere
+*       - Highlight selected entity in scene hierarchy when it's selected in the viewport
 *       - Render Light directions and gizmos, same for camera
 *       - Move Texture, Shader, Material and SubTexture2D to Resources folder
 *       - Change way of rendering DepthMap (use Depth mode of RenderTexture)
@@ -202,7 +207,7 @@ namespace Debut
             }
 
             // Entity changed from scene hierarchy
-            if (m_SceneHierarchy.GetSelectionContext() != m_SelectedEntity)
+            if (m_SceneHierarchy.GetSelectionContext() != m_SelectedEntity || m_Viewport.GetSelectedEntity() != m_SelectedEntity)
             {
                 m_SelectedEntity = m_SceneHierarchy.GetSelectionContext();
                 m_Viewport.SetSelectedEntity(m_SceneHierarchy.GetSelectionContext());

@@ -26,6 +26,8 @@ namespace Debut
 	{
 	friend class Entity;
 	friend class SceneHierarchyPanel;
+	// TEMPORARY
+	friend class ViewportPanel;
 	friend class TopPanel;
 	friend class SceneSerializer;
 
@@ -87,6 +89,11 @@ namespace Debut
 		float m_AmbientLightIntensity = 1.0f;
 
 		Ref<ShadowMap> m_ShadowMap = nullptr;
+		// TEMPORARY
+		float cameraNear = -10;
+		float cameraFar = 10;
+		float orthoSize = 20;
+		float cameraDistance = 5;
 	};
 }
 
