@@ -15,12 +15,15 @@
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/Physics/PhysicsSystem3D.h>
 #include <Debut/Rendering/Resources/Skybox.h>
+#include <Debut/Rendering/Structures/Frustum.h>
 
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_circle_shape.h"
 #include "box2d/b2_fixture.h"
+
+#include <limits>
 
 namespace Debut
 {
@@ -470,15 +473,55 @@ namespace Debut
 				if (light->Type == LightComponent::LightType::Directional)
 				{
 					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
-					float orthoWidth = (m_ViewportWidth / m_ViewportHeight);
-					float orthoHeight = 1.0f;
+
+					Frustum perspectiveFrustum(camera);
+					float left, right, top, down, front, bottom;
+					glm::vec2 xBounds = { std::numeric_limits<float>::max(), -std::numeric_limits<float>::max() };
+					glm::vec2 yBounds = { xBounds.x, xBounds.y };
+					glm::vec2 zBounds = { xBounds.x, xBounds.y };
 
 					glm::vec3 cameraPos = cameraTransform[3];
-					glm::vec3 lightPos = cameraPos + glm::normalize(dirLight->Direction) * cameraDistance;
+					glm::vec3 cameraForward = glm::vec3(glm::normalize(cameraTransform * glm::vec4(0.0f, 0.0f, 1.0, 1.0f)));
+					glm::vec3 lightPos = cameraPos + cameraForward * cameraDistance + glm::normalize(dirLight->Direction);
 
-					lightProj = glm::ortho(-orthoSize * orthoWidth, orthoSize * orthoWidth,
-						-orthoSize * orthoHeight, orthoSize * orthoHeight, cameraNear, cameraFar);
+					
+					lightPos = cameraPos + glm::normalize(dirLight->Direction) * cameraDistance;
+
+					// Use the camera forward instead of its position
 					lightView = glm::lookAt(lightPos, cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
+					//lightView = glm::lookAt(lightPos, cameraPos + cameraForward * cameraDistance, glm::vec3(0.0f, 1.0f, 0.0f));
+
+					for (auto point : perspectiveFrustum.GetPoints())
+					{
+						point = lightView * glm::vec4(point, 1.0f);
+
+						if (point.x < xBounds.x)
+							xBounds.x = point.x;
+						else if (point.x > xBounds.y)
+							xBounds.y = point.x;
+
+						if (point.y < yBounds.x)
+							yBounds.x = point.y;
+						else if (point.y > yBounds.y)
+							yBounds.y = point.y;
+
+						if (point.z < zBounds.x)
+							zBounds.x = point.z;
+						else if (point.z > zBounds.y)
+							zBounds.y = point.z;
+					}
+
+					float maxRectBound = 100;
+					float maxDepth = 200;
+
+					left = std::max(xBounds.x, -maxRectBound); right = std::min(xBounds.y, maxRectBound);
+					down = std::max(yBounds.x, -maxRectBound); top = std::min(yBounds.y, maxRectBound);
+					bottom = std::max(std::abs(zBounds.x) * -1, -maxDepth); front = std::min(zBounds.y, maxDepth);
+
+					//left = -100; right = 100; top = 100; down = -100; front = 100; bottom = -100;
+
+					lightProj = glm::ortho(left, right, down, top, bottom, front);
+
 					if (m_ShadowMap != nullptr)
 					{
 						m_ShadowMap->SetMatrix(lightProj * lightView);

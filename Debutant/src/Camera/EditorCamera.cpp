@@ -12,16 +12,20 @@
 namespace Debut
 {
 	EditorCamera::EditorCamera(float fov, float aspectRatio, float nearClip, float farClip)
-		: m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip), Camera(glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip))
+		: Camera(glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip))
 	{
 		m_ProjectionType = ProjectionType::Perspective;
+		m_FOV = fov;
+		m_AspectRatio = aspectRatio;
+		m_NearPlane = nearClip;
+		m_FarPlane = farClip;
 		UpdateView();
 	}
 
 	void EditorCamera::UpdateProjection()
 	{
 		m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
-		m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip);
+		m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearPlane, m_FarPlane);
 	}
 
 	void EditorCamera::UpdateView()
@@ -42,7 +46,7 @@ namespace Debut
 		float y = std::min(m_ViewportHeight / 1000.0f, 2.4f); // max = 2.4f
 		float yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
 
-		return { xFactor, yFactor };
+		return { 0.7f, 0.7f};
 	}
 
 	float EditorCamera::RotationSpeed() const
@@ -56,7 +60,7 @@ namespace Debut
 		distance = std::max(distance, 0.0f);
 		float speed = distance * distance;
 		speed = std::min(speed, 100.0f); // max speed = 100
-		return speed;
+		return 50.0f;
 	}
 
 	void EditorCamera::OnUpdate(Timestep ts)
