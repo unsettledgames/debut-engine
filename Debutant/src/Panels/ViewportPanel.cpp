@@ -51,7 +51,7 @@ namespace Debut
             DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMap()->GetFrameBuffer(), RenderTextureMode::Color);
         m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
 
-        m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 10000.0f);
+        m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
     }
 
     void ViewportPanel::OnUpdate(Timestep& ts)
