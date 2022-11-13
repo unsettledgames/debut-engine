@@ -59,7 +59,7 @@ namespace Debut
 		inline glm::vec3 GetAmbientLight() { return m_AmbientLight; }
 		inline float GetAmbientLightIntensity() { return m_AmbientLightIntensity; }
 		inline glm::vec2 GetViewportSize() { return { m_ViewportWidth, m_ViewportHeight }; }
-		inline Ref<ShadowMap> GetShadowMap() { return m_ShadowMap; }
+		inline std::vector<Ref<ShadowMap>> GetShadowMaps() { return m_ShadowMaps; }
 
 		void SetSkybox(UUID path);
 		inline void SetAmbientLight(glm::vec3 light) { m_AmbientLight = light; }
@@ -88,7 +88,7 @@ namespace Debut
 		glm::vec3 m_AmbientLight = glm::vec3(0.0f);
 		float m_AmbientLightIntensity = 1.0f;
 
-		Ref<ShadowMap> m_ShadowMap = nullptr;
+		std::vector<Ref<ShadowMap>> m_ShadowMaps;
 		// TEMPORARY
 		float cameraNear = -25;
 		float cameraFar = 250;

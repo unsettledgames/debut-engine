@@ -62,7 +62,7 @@ namespace Debut
 		Ref<Material> DepthmapMaterial;
 
 		// Shadow map
-		Ref<ShadowMap> ShadowMap;
+		std::vector<Ref<ShadowMap>> ShadowMaps;
 
 		RenderingPass CurrentPass = RenderingPass::Shaded;
 	};
@@ -74,7 +74,7 @@ namespace Debut
 		static void Shutdown();
 
 		static void BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& transform, 
-			std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, Ref<ShadowMap> shadowMap);
+			std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, std::vector<Ref<ShadowMap>> shadowMaps);
 		static void EndScene();
 		static void Flush();
 

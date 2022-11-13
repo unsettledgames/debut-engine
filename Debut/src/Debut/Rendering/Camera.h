@@ -22,6 +22,7 @@ namespace Debut
 		inline float GetAspectRatio() const { return m_AspectRatio; }
 		inline float GetFov() const { return glm::radians(m_FOV); }
 
+		inline void SetView(const glm::mat4& view) { m_ViewMatrix = view; }
 		inline void SetNearPlane(float val) { m_NearPlane = val; }
 		inline void SetFarPlane(float val) { m_FarPlane = val; }
 		inline void SetAspectRatio(float val) { m_AspectRatio = val; }

@@ -48,7 +48,7 @@ namespace Debut
         m_TextureFrameBuffer = FrameBuffer::Create(textureFbSpecs);
 
         m_RenderTexture = RenderTexture::Create(sceneFbSpecs.Width, sceneFbSpecs.Height, 
-            DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMap()->GetFrameBuffer(), RenderTextureMode::Color);
+            DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMaps()[0]->GetFrameBuffer(), RenderTextureMode::Color);
         m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
 
         m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
@@ -91,15 +91,21 @@ namespace Debut
 	{
         ImGui::Begin("ShadowMap");
         {
+            static int shadowMapIndex = 0;
+
             Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
-            uint32_t rendererID = activeScene->GetShadowMap()->GetFrameBuffer()->GetDepthAttachment();
+            uint32_t rendererID = activeScene->GetShadowMaps()[shadowMapIndex]->GetFrameBuffer()->GetDepthAttachment();
+
             ImGui::Image((void*)rendererID, { 300, 300 }, { 0, 1 }, { 1, 0 });
+            ImGui::DragInt("Shadowmap index", &shadowMapIndex);
             ImGui::DragFloat("Camera near", &activeScene->cameraNear);
             ImGui::DragFloat("Camera far", &activeScene->cameraFar);
             ImGui::DragFloat("Ortho size", &activeScene->orthoSize);
             ImGui::DragFloat("Camera distance", &activeScene->cameraDistance);
             ImGui::DragFloat("Fadeout start distance", &activeScene->fadeoutStartDistance);
             ImGui::DragFloat("Fadeout end distance", &activeScene->fadeoutEndDistance);
+
+            shadowMapIndex = std::min(std::max(0, shadowMapIndex), 3);
         }
         ImGui::End();
 

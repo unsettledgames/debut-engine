@@ -73,7 +73,8 @@ namespace Debut
 	}
 
 	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& cameraTransform, 
-		std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, Ref<ShadowMap> shadowMap)
+		std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, 
+		std::vector<Ref<ShadowMap>> shadowMaps)
 	{
 		s_Data.CameraView = glm::inverse(cameraTransform);
 		s_Data.CameraProjection = camera.GetProjection();
@@ -83,7 +84,7 @@ namespace Debut
 		
 		s_Data.Lights = lights;
 		s_Data.GlobalUniforms = globalUniforms;
-		s_Data.ShadowMap = shadowMap;
+		s_Data.ShadowMaps = shadowMaps;
 
 		RenderCommand::DisableCulling();
 
@@ -246,11 +247,11 @@ namespace Debut
 
 				if (s_Data.CurrentPass != RenderingPass::Shadow)
 				{
-					materialToUse.GetRuntimeShader()->SetMat4("u_LightMatrix", s_Data.ShadowMap->GetMatrix());
+					materialToUse.GetRuntimeShader()->SetMat4("u_LightMatrix", s_Data.ShadowMaps[0]->GetMatrix());
 					materialToUse.GetRuntimeShader()->SetInt("u_ShadowMap", materialToUse.GetCurrentTextureSlot());
-					materialToUse.GetRuntimeShader()->SetFloat("u_ShadowNear", s_Data.ShadowMap->GetNear());
-					materialToUse.GetRuntimeShader()->SetFloat("u_ShadowFar", s_Data.ShadowMap->GetFar());
-					s_Data.ShadowMap->BindAsTexture(materialToUse.GetCurrentTextureSlot());
+					materialToUse.GetRuntimeShader()->SetFloat("u_ShadowNear", s_Data.ShadowMaps[0]->GetNear());
+					materialToUse.GetRuntimeShader()->SetFloat("u_ShadowFar", s_Data.ShadowMaps[0]->GetFar());
+					s_Data.ShadowMaps[0]->BindAsTexture(materialToUse.GetCurrentTextureSlot());
 				}
 			}
 		}
@@ -260,7 +261,7 @@ namespace Debut
 			RenderCommand::DrawIndexed(s_Data.VertexArray, mesh.GetIndices().size());
 			materialToUse.Unuse();
 			if (s_Data.CurrentPass != RenderingPass::Shadow)
-				s_Data.ShadowMap->UnbindTexture(8);
+				s_Data.ShadowMaps[0]->UnbindTexture(8);
 		}
 
 		if (Renderer::GetConfig().RenderWireframe)

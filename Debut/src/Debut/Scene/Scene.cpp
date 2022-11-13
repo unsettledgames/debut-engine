@@ -160,7 +160,6 @@ namespace Debut
 		DBT_PROFILE_SCOPE("Editor update");
 
 		RenderingSetup(target);
-		RenderingSetup(m_ShadowMap->GetFrameBuffer());
 
 		// Clear frame buffer for mouse picking
 		target->ClearAttachment(1, -1);
@@ -180,7 +179,6 @@ namespace Debut
 	void Scene::OnRuntimeUpdate(Timestep ts, Ref<FrameBuffer> target)
 	{
 		RenderingSetup(target);
-		RenderingSetup(m_ShadowMap->GetFrameBuffer());
 
 		Renderer2D::ResetStats();
 
@@ -467,72 +465,15 @@ namespace Debut
 		{
 			if (light->CastShadows)
 			{
-				glm::mat4 lightView;
-				glm::mat4 lightProj;
-
-				glm::vec2 xBounds = { std::numeric_limits<float>::max(), -std::numeric_limits<float>::max() };
-				glm::vec2 yBounds = { xBounds.x, xBounds.y };
-				glm::vec2 zBounds = { xBounds.x, xBounds.y };
-
 				if (light->Type == LightComponent::LightType::Directional)
 				{
 					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
-					float left, right, top, down, front, bottom;
-					
-					glm::vec3 lightPos;
-					glm::vec3 cameraPos = glm::vec3(0.0f);
-					std::vector<glm::vec3> frustumPoints = Frustum::GetWorldViewPoints(camera);
-
-					for (auto point : frustumPoints)
-						cameraPos += point;
-					cameraPos /= frustumPoints.size();
-
-					lightPos = cameraPos + glm::normalize(dirLight->Direction) * cameraDistance;
-
-					// Use the camera forward instead of its position
-					float zMult = 1.0f;
-					float xyDiv = 10.0f;
-					lightView = glm::lookAt(lightPos, cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
-
-					// Projection matrix is probably fucked up. View matrix seems to work fine though.
-
-					for (auto point : frustumPoints)
-					{
-						point = lightView * glm::vec4(point, 1.0f);
-						
-						xBounds.x = std::min(xBounds.x, point.x);
-						xBounds.y = std::max(xBounds.y, point.x);
-
-						yBounds.x = std::min(yBounds.x, point.y);
-						yBounds.y = std::max(yBounds.y, point.y);
-
-						zBounds.x = std::min(zBounds.x, point.z);
-						zBounds.y = std::max(zBounds.y, point.z);
-					}
-
-					// Pull near
-					if (zBounds.x < 0)
-						zBounds.x *= zMult;
-					else
-						zBounds.x /= zMult;
-					// Push far
-					if (zBounds.y < 0)
-						zBounds.y /= zMult;
-					else
-						zBounds.y *= zMult;
-
-					lightProj = glm::ortho(xBounds.x, xBounds.y, yBounds.x, yBounds.y, zBounds.x, zBounds.y);
-
-					if (m_ShadowMap != nullptr)
-					{
-						m_ShadowMap->SetMatrix(lightProj * lightView);
-						m_ShadowMap->SetNear(cameraNear);
-						m_ShadowMap->SetFar(cameraFar);
-					}
+					m_ShadowMaps[0]->SetFromCamera(camera, dirLight->Direction);
 				}
 
-				m_ShadowMap->Bind();
-				Renderer3D::BeginShadow(lightView, lightProj, zBounds.x, zBounds.y);
+				m_ShadowMaps[0]->Bind();
+				Renderer3D::BeginShadow(m_ShadowMaps[0]->GetView(), m_ShadowMaps[0]->GetProjection(), 
+					m_ShadowMaps[0]->GetNear(), m_ShadowMaps[0]->GetFar());
 				{
 					DBT_PROFILE_SCOPE("ShadowPass");
 
@@ -545,12 +486,12 @@ namespace Debut
 					}
 				}
 				Renderer3D::EndShadow();
-				m_ShadowMap->Unbind();
+				m_ShadowMaps[0]->Unbind();
 			}
 		}
 
 		target->Bind();
-		Renderer3D::BeginScene(camera, m_Skybox, cameraTransform, lights, globalUniforms, m_ShadowMap);
+		Renderer3D::BeginScene(camera, m_Skybox, cameraTransform, lights, globalUniforms, m_ShadowMaps);
 		{
 			DBT_PROFILE_SCOPE("Rendering3D");
 			auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
@@ -634,9 +575,16 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Debutant::RendererSetup");
 		frameBuffer->Bind();
-
 		RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
 		RenderCommand::Clear();
+		frameBuffer->Unbind();
+
+		for (uint32_t i = 0; i < m_ShadowMaps.size(); i++)
+		{
+			m_ShadowMaps[i]->Bind();
+			RenderCommand::ClearDepth();
+			m_ShadowMaps[i]->Unbind();
+		}
 	}
 
 	void Scene::OnRuntimeStop()
@@ -796,7 +744,7 @@ namespace Debut
 		newScene->m_Skybox = other->m_Skybox;
 		newScene->m_AmbientLight = other->m_AmbientLight;
 		newScene->m_AmbientLightIntensity = other->m_AmbientLightIntensity;
-		newScene->m_ShadowMap = other->m_ShadowMap;
+		newScene->m_ShadowMaps = other->m_ShadowMaps;
 
 		return newScene;
 	}
@@ -875,7 +823,19 @@ namespace Debut
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
-		if (m_ShadowMap == nullptr)
-			m_ShadowMap = CreateRef<ShadowMap>(m_ViewportWidth * 2, m_ViewportHeight * 2);
+		if (m_ShadowMaps.size() == 0)
+		{
+			m_ShadowMaps.resize(4);
+			float farDistances[4] = { 50.0f, 100.0f, 500.0f, 1000.0f };
+			float nearDistances[4] = { 0.1f, -1.0f, -10.f, -100.0f };
+			float cameraDistances[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			for (uint32_t i = 0; i < 4; i++)
+			{
+				m_ShadowMaps[i] = CreateRef<ShadowMap>(m_ViewportWidth * 2, m_ViewportHeight * 2);
+				m_ShadowMaps[i]->SetNear(nearDistances[i]);
+				m_ShadowMaps[i]->SetFar(farDistances[i]);
+				m_ShadowMaps[i]->SetCameraDistance(cameraDistances[i]);
+			}
+		}
 	}
 }
