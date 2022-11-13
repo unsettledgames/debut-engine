@@ -491,7 +491,10 @@ namespace Debut
 
 					// Use the camera forward instead of its position
 					float zMult = 1.0f;
+					float xyDiv = 10.0f;
 					lightView = glm::lookAt(lightPos, cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
+
+					// Projection matrix is probably fucked up. View matrix seems to work fine though.
 
 					for (auto point : frustumPoints)
 					{
@@ -518,8 +521,7 @@ namespace Debut
 					else
 						zBounds.y *= zMult;
 
-					lightProj = glm::ortho(xBounds.x * 100, xBounds.y * 100, yBounds.x * 100, yBounds.y * 100, zBounds.x, zBounds.y);
-					lightProj = glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, -100.0f, 100.0f);
+					lightProj = glm::ortho(xBounds.x, xBounds.y, yBounds.x, yBounds.y, zBounds.x, zBounds.y);
 
 					if (m_ShadowMap != nullptr)
 					{

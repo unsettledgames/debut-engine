@@ -62,13 +62,13 @@ namespace Debut
 		glm::mat4 inverse = glm::inverse(camera.GetProjection() * camera.GetView());
 
 		std::vector<glm::vec3> ret;
-		for (uint32_t x = 0; x < 2; x++)
+		for (uint32_t x = 0; x < 2; ++x)
 		{
-			for (uint32_t y = 0; y < 2; y++)
+			for (uint32_t y = 0; y < 2; ++y)
 			{
-				for (uint32_t z = 0; z < 2; z++)
+				for (uint32_t z = 0; z < 2; ++z)
 				{
-					glm::vec4 point = inverse * glm::vec4(2.0f * x, 2.0f * y, 2.0f * z, 1.0f);
+					glm::vec4 point = inverse * glm::vec4(2.0f * x - 1.0f, 2.0f * y - 1.0f, 2.0f * z - 1.0f, 1.0f);
 					ret.push_back(point / point.w);
 				}
 			}
