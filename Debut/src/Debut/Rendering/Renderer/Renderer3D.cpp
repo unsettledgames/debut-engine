@@ -247,11 +247,19 @@ namespace Debut
 
 				if (s_Data.CurrentPass != RenderingPass::Shadow)
 				{
-					materialToUse.GetRuntimeShader()->SetMat4("u_LightMatrix", s_Data.ShadowMaps[0]->GetMatrix());
-					materialToUse.GetRuntimeShader()->SetInt("u_ShadowMap", materialToUse.GetCurrentTextureSlot());
-					materialToUse.GetRuntimeShader()->SetFloat("u_ShadowNear", s_Data.ShadowMaps[0]->GetNear());
-					materialToUse.GetRuntimeShader()->SetFloat("u_ShadowFar", s_Data.ShadowMaps[0]->GetFar());
-					s_Data.ShadowMaps[0]->BindAsTexture(materialToUse.GetCurrentTextureSlot());
+					// Set shadowmaps
+					for (uint32_t i = 0; i < s_Data.ShadowMaps.size(); i++)
+					{
+						std::stringstream ss;
+						ss << "u_ShadowMaps[" << i << "]";
+
+						materialToUse.GetRuntimeShader()->SetMat4(ss.str() + ".LightMatrix", s_Data.ShadowMaps[i]->GetMatrix());
+						materialToUse.GetRuntimeShader()->SetInt(ss.str() + ".Sampler", materialToUse.GetCurrentTextureSlot() + i);
+						materialToUse.GetRuntimeShader()->SetFloat(ss.str() + ".Near", s_Data.ShadowMaps[i]->GetNear());
+						materialToUse.GetRuntimeShader()->SetFloat(ss.str() + ".Far", s_Data.ShadowMaps[i]->GetFar());
+						s_Data.ShadowMaps[i]->BindAsTexture(materialToUse.GetCurrentTextureSlot() + i);
+					}
+					
 				}
 			}
 		}
@@ -276,13 +284,13 @@ namespace Debut
 			RendererDebug::EndScene();
 	}
 
-	void Renderer3D::BeginShadow(const glm::mat4& lightView, const glm::mat4& lightProj, float cameraNear, float cameraFar)
+	void Renderer3D::BeginShadow(Ref<ShadowMap> shadowMap)
 	{
-		s_Data.CameraView = lightView;
-		s_Data.CameraProjection = lightProj;
+		s_Data.CameraView = shadowMap->GetView();
+		s_Data.CameraProjection = shadowMap->GetProjection();
 		s_Data.CurrentPass = RenderingPass::Shadow;
-		s_Data.CameraNear = cameraNear;
-		s_Data.CameraFar = cameraFar;
+		s_Data.CameraNear = shadowMap->GetNear();
+		s_Data.CameraFar = shadowMap->GetFar();
 
 		RenderCommand::CullFront();
 	}

@@ -13,6 +13,7 @@ namespace Debut
 	public:
 		ShadowMap(uint32_t width, uint32_t height);
 
+		inline uint32_t GetIndex() { return m_Index; }
 		inline uint32_t GetWidth() { return m_Width; }
 		inline uint32_t GetHeight() { return m_Height; }
 		inline glm::mat4 GetMatrix() { return m_ViewProjection; }
@@ -22,6 +23,7 @@ namespace Debut
 		inline float GetNear() { return m_Near; }
 		inline float GetFar() { return m_Far; }
 
+		inline void SetIndex(uint32_t idx) { m_Index = idx; }
 		inline void SetMatrix(const glm::mat4& viewProj) { m_ViewProjection = viewProj; }
 		inline void SetNear(float cameraNear) { m_Near = cameraNear; }
 		inline void SetFar(float cameraFar) { m_Far = cameraFar; }
@@ -38,6 +40,7 @@ namespace Debut
 		uint32_t GetRendererID();
 
 	private:
+		uint32_t m_Index;
 		uint32_t m_Width;
 		uint32_t m_Height;
 

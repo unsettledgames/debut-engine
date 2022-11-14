@@ -78,7 +78,7 @@ namespace Debut
 		static void EndScene();
 		static void Flush();
 
-		static void BeginShadow(const glm::mat4& lightView, const glm::mat4& lightProj, float near, float far);
+		static void BeginShadow(Ref<ShadowMap> shadowMap);
 		static void EndShadow();
 
 		static void DrawModel(const MeshRendererComponent& model, const glm::mat4& transform, int entityID);

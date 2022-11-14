@@ -468,25 +468,27 @@ namespace Debut
 				if (light->Type == LightComponent::LightType::Directional)
 				{
 					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
-					m_ShadowMaps[0]->SetFromCamera(camera, dirLight->Direction);
-				}
 
-				m_ShadowMaps[0]->Bind();
-				Renderer3D::BeginShadow(m_ShadowMaps[0]->GetView(), m_ShadowMaps[0]->GetProjection(), 
-					m_ShadowMaps[0]->GetNear(), m_ShadowMaps[0]->GetFar());
-				{
-					DBT_PROFILE_SCOPE("ShadowPass");
-
-					// Can I recycle this group to render stuff later on?
-					auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
-					for (auto entity : group3D)
+					for (uint32_t i = 0; i < m_ShadowMaps.size(); i++)
 					{
-						auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
-						Renderer3D::DrawModel(mesh, transform.GetTransform(), (int)entity);
+						m_ShadowMaps[i]->SetFromCamera(camera, dirLight->Direction);
+						m_ShadowMaps[i]->Bind();
+						Renderer3D::BeginShadow(m_ShadowMaps[i]);
+						{
+							DBT_PROFILE_SCOPE("ShadowPass");
+
+							// Can I recycle this group to render stuff later on?
+							auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
+							for (auto entity : group3D)
+							{
+								auto& [transform, mesh] = group3D.get<TransformComponent, MeshRendererComponent>(entity);
+								Renderer3D::DrawModel(mesh, transform.GetTransform(), (int)entity);
+							}
+						}
+						Renderer3D::EndShadow();
+						m_ShadowMaps[i]->Unbind();
 					}
 				}
-				Renderer3D::EndShadow();
-				m_ShadowMaps[0]->Unbind();
 			}
 		}
 
@@ -832,6 +834,7 @@ namespace Debut
 			for (uint32_t i = 0; i < 4; i++)
 			{
 				m_ShadowMaps[i] = CreateRef<ShadowMap>(m_ViewportWidth * 2, m_ViewportHeight * 2);
+				m_ShadowMaps[i]->SetIndex(i);
 				m_ShadowMaps[i]->SetNear(nearDistances[i]);
 				m_ShadowMaps[i]->SetFar(farDistances[i]);
 				m_ShadowMaps[i]->SetCameraDistance(cameraDistances[i]);
