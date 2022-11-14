@@ -29,8 +29,7 @@ TODO List:
   - 2D Physics
     - Joints
   - 3D physics
-    - Box, Sphere, Mesh, Capsule colliders
-    - Joints
+    - Capsule and cylinder colliders, joints
     - The cool stuff that Jolt apparently supports
   - Triggers
 - Scripting
