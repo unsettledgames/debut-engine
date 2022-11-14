@@ -3,7 +3,7 @@ AdditionalData:
   EditorCameraPitch: 0.415198863
   EditorCameraYaw: 5.83918858
   EditorCameraFocalPoint: [-15.0514431, 10.931653, -5.29169846]
-  EditorCameraDistance: 133.195984
+  EditorCameraDistance: 163.195984
 Lighting:
   AmbientLightColor: [0, 0, 0]
   AmbientLightIntensity: 1
@@ -29,6 +29,7 @@ Entities:
     DirectionalLightComponent:
       Owner: 553393135324909514
       Direction: [0.5, 0.5, 0.5]
+      EnableShadows: false
       Color: [1, 1, 1]
       Intensity: 1
     Children:

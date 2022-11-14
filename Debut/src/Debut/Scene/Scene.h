@@ -90,12 +90,9 @@ namespace Debut
 
 		std::vector<Ref<ShadowMap>> m_ShadowMaps;
 		// TEMPORARY
-		float cameraNear = -25;
-		float cameraFar = 250;
-		float orthoSize = 12;
-		float cameraDistance = 1;
-		float fadeoutStartDistance = 5;
-		float fadeoutEndDistance = 7;
+		float lambda = 1.0f;
+		float fadeoutStartDistance = 50;
+		float fadeoutEndDistance = 70;
 	};
 }
 

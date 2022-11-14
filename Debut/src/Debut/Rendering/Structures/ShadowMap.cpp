@@ -39,10 +39,9 @@ namespace Debut
 		lightPos = cameraPos + glm::normalize(lightDirection) * m_DistanceFromCamera;
 
 		// Use the camera forward instead of its position
-		float zMult = 1.0f;
+		float zMult = 3.0f;
 		m_View = glm::lookAt(lightPos, cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
 
-		// Projection matrix is probably fucked up. View matrix seems to work fine though.
 		for (auto point : points)
 		{
 			point = m_View * glm::vec4(point, 1.0f);

@@ -825,15 +825,17 @@ namespace Debut
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
+		float nSplits = 5;
+
 		if (m_ShadowMaps.size() == 0)
 		{
-			m_ShadowMaps.resize(4);
-			float farDistances[4] = { 50.0f, 100.0f, 500.0f, 1000.0f };
-			float nearDistances[4] = { 0.1f, -1.0f, -10.f, -100.0f };
-			float cameraDistances[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			for (uint32_t i = 0; i < 4; i++)
+			m_ShadowMaps.resize(nSplits);
+			float nearDistances[5] = { -1.0f, -5.0f, -10.f, -50.0f, -100.0f };
+			float farDistances[5] = { 20.0f, 50.0f, 100.0f, 250.0f, 750.0f };
+			float cameraDistances[5] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+			for (uint32_t i = 0; i < 5; i++)
 			{
-				m_ShadowMaps[i] = CreateRef<ShadowMap>(m_ViewportWidth * 2, m_ViewportHeight * 2);
+				m_ShadowMaps[i] = CreateRef<ShadowMap>(m_ViewportWidth, m_ViewportHeight);
 				m_ShadowMaps[i]->SetIndex(i);
 				m_ShadowMaps[i]->SetNear(nearDistances[i]);
 				m_ShadowMaps[i]->SetFar(farDistances[i]);

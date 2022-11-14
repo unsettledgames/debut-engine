@@ -98,12 +98,9 @@ namespace Debut
 
             ImGui::Image((void*)rendererID, { 300, 300 }, { 0, 1 }, { 1, 0 });
             ImGui::DragInt("Shadowmap index", &shadowMapIndex);
-            ImGui::DragFloat("Camera near", &activeScene->cameraNear);
-            ImGui::DragFloat("Camera far", &activeScene->cameraFar);
-            ImGui::DragFloat("Ortho size", &activeScene->orthoSize);
-            ImGui::DragFloat("Camera distance", &activeScene->cameraDistance);
             ImGui::DragFloat("Fadeout start distance", &activeScene->fadeoutStartDistance);
             ImGui::DragFloat("Fadeout end distance", &activeScene->fadeoutEndDistance);
+            ImGui::DragFloat("Lambda", &activeScene->lambda, 0.01f, 0.0f, 1.0f);
 
             shadowMapIndex = std::min(std::max(0, shadowMapIndex), 3);
         }

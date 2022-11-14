@@ -259,7 +259,6 @@ namespace Debut
 						materialToUse.GetRuntimeShader()->SetFloat(ss.str() + ".Far", s_Data.ShadowMaps[i]->GetFar());
 						s_Data.ShadowMaps[i]->BindAsTexture(materialToUse.GetCurrentTextureSlot() + i);
 					}
-					
 				}
 			}
 		}
