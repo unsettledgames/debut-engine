@@ -56,6 +56,7 @@ namespace Debut
 
     void ViewportPanel::OnUpdate(Timestep& ts)
     {
+        fps = 1.0f / ts;
         DBT_PROFILE_SCOPE("EgineUpdate");
         //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
@@ -89,8 +90,16 @@ namespace Debut
 
 	void ViewportPanel::OnImGuiRender()
 	{
-        ImGui::Begin("ShadowMap");
+        ImGui::Begin("Debug");
         {
+            static float fpsShown = fps;
+            static int start = 0;
+
+            if (start % 100 == 0)
+                fpsShown = fps;
+            ImGui::Text("FPS: %f", fpsShown);
+            start++;
+
             static int shadowMapIndex = 0;
 
             Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();

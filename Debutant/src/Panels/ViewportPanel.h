@@ -72,5 +72,6 @@ namespace Debut
 		Ref<RenderTexture> m_RenderTexture;
 
 		Ref<Shader> m_FullscreenShader;
+		float fps;
 	};
 }

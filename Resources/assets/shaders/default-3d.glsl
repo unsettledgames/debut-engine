@@ -337,7 +337,7 @@ void main()
 	
 	// Get point lights color
 	for (int i=0; i<u_NPointLights; i++)
-		color += texColor * shadow * vec4(PointPhong
+		color += texColor * vec4(shadow * PointPhong
 			(normal, u_PointLights[i], u_CameraPosition - v_FragPos, 
 			u_PointLights[i].Position - v_FragPos, texCoords), 1.0);
 	

@@ -115,6 +115,7 @@ namespace Debut
 		}
 
 		RenderCommand::EnableCulling();
+		RenderCommand::CullBack();
 
 		if (Renderer::GetConfig().RenderWireframe)
 			RendererDebug::BeginScene(camera, cameraTransform);
@@ -291,13 +292,13 @@ namespace Debut
 		s_Data.CameraNear = shadowMap->GetNear();
 		s_Data.CameraFar = shadowMap->GetFar();
 
-		RenderCommand::CullFront();
+		//RenderCommand::CullFront();
 	}
 
 	void Renderer3D::EndShadow()
 	{
 		s_Data.CurrentPass = RenderingPass::Shaded;
-		RenderCommand::CullBack();
+		//RenderCommand::CullBack();
 	}
 
 	void Renderer3D::Flush()

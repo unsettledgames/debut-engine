@@ -91,8 +91,8 @@ namespace Debut
 		std::vector<Ref<ShadowMap>> m_ShadowMaps;
 		// TEMPORARY
 		float lambda = 1.0f;
-		float fadeoutStartDistance = 50;
-		float fadeoutEndDistance = 70;
+		float fadeoutStartDistance = 300;
+		float fadeoutEndDistance = 400;
 	};
 }
 

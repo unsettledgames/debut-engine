@@ -468,15 +468,15 @@ namespace Debut
 				if (light->Type == LightComponent::LightType::Directional)
 				{
 					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
+					DBT_PROFILE_SCOPE("ShadowPass");
 
 					for (uint32_t i = 0; i < m_ShadowMaps.size(); i++)
 					{
 						m_ShadowMaps[i]->SetFromCamera(camera, dirLight->Direction);
 						m_ShadowMaps[i]->Bind();
+
 						Renderer3D::BeginShadow(m_ShadowMaps[i]);
 						{
-							DBT_PROFILE_SCOPE("ShadowPass");
-
 							// Can I recycle this group to render stuff later on?
 							auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
 							for (auto entity : group3D)
@@ -767,7 +767,7 @@ namespace Debut
 		data.Float = m_AmbientLightIntensity;
 		ret.push_back(ShaderUniform("u_AmbientLightIntensity", ShaderDataType::Float, data));
 
-		// TEMPORARY
+		// Shadow fading
 		data.Float = fadeoutStartDistance;
 		ret.push_back(ShaderUniform("u_ShadowFadeoutStart", ShaderDataType::Float, data));
 		data.Float = fadeoutEndDistance;
@@ -831,11 +831,11 @@ namespace Debut
 		{
 			m_ShadowMaps.resize(nSplits);
 			float nearDistances[5] = { -1.0f, -5.0f, -10.f, -50.0f, -100.0f };
-			float farDistances[5] = { 20.0f, 50.0f, 100.0f, 250.0f, 750.0f };
+			float farDistances[5] = { 20.0f, 75.0f, 200.0f, 500.0f, 750.0f };
 			float cameraDistances[5] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 			for (uint32_t i = 0; i < 5; i++)
 			{
-				m_ShadowMaps[i] = CreateRef<ShadowMap>(m_ViewportWidth, m_ViewportHeight);
+				m_ShadowMaps[i] = CreateRef<ShadowMap>(m_ViewportWidth*2, m_ViewportHeight*2);
 				m_ShadowMaps[i]->SetIndex(i);
 				m_ShadowMaps[i]->SetNear(nearDistances[i]);
 				m_ShadowMaps[i]->SetFar(farDistances[i]);
