@@ -1,0 +1,126 @@
+Scene: Untitled scene
+AdditionalData:
+  EditorCameraPitch: 0
+  EditorCameraYaw: 0
+  EditorCameraFocalPoint: [0, 0, 0]
+  EditorCameraDistance: 10
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+  Skybox: 0
+Entities:
+  - "Entity: ": 14951364547443864644
+    HierarchyOrder: 0
+    IDComponent:
+      Owner: 14951364547443864644
+      ID: 14951364547443864644
+    TagComponent:
+      Owner: 14951364547443864644
+      Name: Model
+      Tag: Untagged
+    TransformComponent:
+      Owner: 14951364547443864644
+      Translation: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+      Children:
+        - 13227748301042037075
+    Children:
+      - "Entity: ": 13227748301042037075
+        HierarchyOrder: 0
+        IDComponent:
+          Owner: 13227748301042037075
+          ID: 13227748301042037075
+        TagComponent:
+          Owner: 13227748301042037075
+          Name: Parent
+          Tag: Untagged
+        TransformComponent:
+          Owner: 13227748301042037075
+          Translation: [0, 0, 0]
+          Rotation: [0, -0, 0]
+          Scale: [1, 1, 1]
+          Parent: 14951364547443864644
+          Children:
+            - 4474150867040471573
+            - 156447514546053005
+            - 18400884510756417707
+            - 1490898190904574039
+        Children:
+          - "Entity: ": 4474150867040471573
+            HierarchyOrder: 0
+            IDComponent:
+              Owner: 4474150867040471573
+              ID: 4474150867040471573
+            TagComponent:
+              Owner: 4474150867040471573
+              Name: A
+              Tag: Untagged
+            TransformComponent:
+              Owner: 4474150867040471573
+              Translation: [0, 0, 0]
+              Rotation: [0, -0, 0]
+              Scale: [1, 1, 1]
+              Parent: 13227748301042037075
+              Children:
+                []
+            Children:
+              []
+          - "Entity: ": 156447514546053005
+            HierarchyOrder: 1
+            IDComponent:
+              Owner: 156447514546053005
+              ID: 156447514546053005
+            TagComponent:
+              Owner: 156447514546053005
+              Name: B
+              Tag: Untagged
+            TransformComponent:
+              Owner: 156447514546053005
+              Translation: [0, 0, 0]
+              Rotation: [0, -0, 0]
+              Scale: [1, 1, 1]
+              Parent: 13227748301042037075
+              Children:
+                []
+            Children:
+              []
+          - "Entity: ": 18400884510756417707
+            HierarchyOrder: 2
+            IDComponent:
+              Owner: 18400884510756417707
+              ID: 18400884510756417707
+            TagComponent:
+              Owner: 18400884510756417707
+              Name: C
+              Tag: Untagged
+            TransformComponent:
+              Owner: 18400884510756417707
+              Translation: [0, 0, 0]
+              Rotation: [0, -0, 0]
+              Scale: [1, 1, 1]
+              Parent: 13227748301042037075
+              Children:
+                []
+            Children:
+              []
+          - "Entity: ": 1490898190904574039
+            HierarchyOrder: 3
+            IDComponent:
+              Owner: 1490898190904574039
+              ID: 1490898190904574039
+            TagComponent:
+              Owner: 1490898190904574039
+              Name: D
+              Tag: Untagged
+            TransformComponent:
+              Owner: 1490898190904574039
+              Translation: [0, 0, 0]
+              Rotation: [0, -0, 0]
+              Scale: [1, 1, 1]
+              Parent: 13227748301042037075
+              Children:
+                []
+            Children:
+              []

@@ -14,6 +14,7 @@ namespace Debut
 {
 	class Scene;
 	class FrameBuffer;
+	class RenderTexture;
 	class DebutantLayer;
 
 	class Timestep;
@@ -38,7 +39,7 @@ namespace Debut
 		inline glm::vec2 GetViewportSize() { return m_ViewportSize; }
 		inline glm::vec2* GetViewportBounds() { return m_ViewportBounds; }
 		inline glm::vec2 GetMenuSize() { return m_TopMenuSize; }
-		inline Ref<FrameBuffer> GetFrameBuffer() { return m_FrameBuffer; }
+		inline Ref<FrameBuffer> GetFrameBuffer() { return m_SceneFrameBuffer; }
 		inline Entity GetSelectedEntity() { return m_Selection; }
 
 		inline EditorCamera& Camera() { return m_EditorCamera; }
@@ -65,6 +66,12 @@ namespace Debut
 		PhysicsColliderSelection m_ColliderSelection;
 
 		DebutantLayer* m_ParentLayer;
-		Ref<FrameBuffer> m_FrameBuffer;
+		// Scene rendering
+		Ref<FrameBuffer> m_SceneFrameBuffer;
+		Ref<FrameBuffer> m_TextureFrameBuffer;
+		Ref<RenderTexture> m_RenderTexture;
+
+		Ref<Shader> m_FullscreenShader;
+		float fps;
 	};
 }

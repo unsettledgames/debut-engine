@@ -1,5 +1,7 @@
 #type vertex
 #version 410
+
+#define N_SHADOW_MAPS	5
 			
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec4 a_Color;
@@ -20,7 +22,17 @@ struct Texture2D
 	sampler2D Sampler;
 };
 
+struct ShadowMap
+{
+	sampler2D Sampler;
+	mat4 LightMatrix;
+	
+	float Near;
+	float Far;
+};
+
 uniform Texture2D u_NormalMap;
+uniform ShadowMap u_ShadowMaps[N_SHADOW_MAPS];
 
 uniform mat4 u_ViewProjection;
 uniform mat4 u_ViewMatrix;
@@ -36,6 +48,8 @@ out vec3 v_FragPos;
 out mat3 v_TangentSpace;
 out vec3 v_CameraPosTangent;
 out vec3 v_FragPosTangent;
+out vec3 v_FragPosView;
+out vec4 v_FragPosLight[N_SHADOW_MAPS];
 
 flat out int v_EntityID;
 
@@ -67,9 +81,13 @@ void main()
 	
 	v_TexCoords = a_TexCoords0;
 	v_FragPos = vec3(u_Transform * vec4(a_Position, 1.0));
+	v_FragPosView = vec3(u_ViewMatrix * vec4(v_FragPos, 1.0));
 	v_CameraPosTangent = inverseTangentSpace * u_CameraPosition;
 	v_FragPosTangent = inverseTangentSpace * v_FragPos;
 	v_EntityID = a_EntityID;
+	
+	for (int i=0; i<N_SHADOW_MAPS; i++)
+		v_FragPosLight[i] = u_ShadowMaps[i].LightMatrix * u_Transform * vec4(a_Position, 1.0);
 	
 	gl_Position = position;
 }
@@ -78,6 +96,7 @@ void main()
 #version 410
 
 #define N_MAX_LIGHTS	16
+#define N_SHADOW_MAPS	5
 
 struct PointLight
 {
@@ -99,6 +118,15 @@ struct Texture2D
 	sampler2D Sampler;
 };
 
+struct ShadowMap
+{
+	sampler2D Sampler;
+	mat4 LightMatrix;
+	
+	float Near;
+	float Far;
+};
+
 in vec4 v_Color;
 in vec3 v_Normal;
 in vec2 v_TexCoords;
@@ -108,6 +136,8 @@ flat in int v_EntityID;
 in mat3 v_TangentSpace;
 in vec3 v_CameraPosTangent;
 in vec3 v_FragPosTangent;
+in vec3 v_FragPosView;
+in vec4 v_FragPosLight[N_SHADOW_MAPS];
 
 layout(location = 0) out vec4 color;
 layout(location = 1) out int id;
@@ -123,6 +153,10 @@ uniform vec3 u_AmbientLightColor;
 
 uniform int u_NPointLights;
 uniform PointLight u_PointLights[N_MAX_LIGHTS];
+
+uniform ShadowMap u_ShadowMaps[N_SHADOW_MAPS];
+uniform float u_ShadowFadeoutStart;
+uniform float u_ShadowFadeoutEnd;
 
 uniform float u_SpecularShininess;
 uniform float u_SpecularStrength;
@@ -214,16 +248,66 @@ vec2 ParallaxMapping()
 	return prevTexCoords * weight + currTexCoords * (1.0 - weight);
 }
 
+float GetShadows(vec3 normal, vec3 lightDir)
+{
+	// Get fragment depth
+	float shadow = 0;
+	float currDepth = abs(v_FragPosView.z);
+	
+	// Select shadowmap
+	int layer = 3;
+	for (int i=0; i<N_SHADOW_MAPS; i++)
+	{
+		if (currDepth < u_ShadowMaps[i].Far)
+		{
+			layer = i;
+			break;
+		}
+	}
+	
+	// Extract data from selected map
+	float near = u_ShadowMaps[layer].Near;
+	float far = u_ShadowMaps[layer].Far;
+	vec4 fragPosLight = v_FragPosLight[layer];
+	
+	vec3 projFragLight = fragPosLight.xyz / fragPosLight.w;
+	
+	projFragLight = projFragLight * 0.5 + 0.5;
+	currDepth = projFragLight.z;
+	if (currDepth  > 1.0)
+		return 0.0;
+	
+	float cameraDistance = length(v_FragPos - u_CameraPosition);
+	float attenuation = max(1.0 - ((mix(u_ShadowFadeoutStart, u_ShadowFadeoutEnd, (cameraDistance - u_ShadowFadeoutStart) / (u_ShadowFadeoutEnd - u_ShadowFadeoutStart))) - u_ShadowFadeoutStart)
+		/ (u_ShadowFadeoutEnd - u_ShadowFadeoutStart), 0.0);
+	float bias = 0.0015;// max(0.01 * (1.0 - dot(normal, lightDir)), 0.001);
+	
+	if (projFragLight.x >= 1.0 || projFragLight.x <= 0.0 || projFragLight.y >= 1.0 || projFragLight.y <= 0.0)
+		return 1.0 - attenuation;
+
+	vec2 texelSize = 1.0 / textureSize(u_ShadowMaps[layer].Sampler, 0);
+	for(int x = -1; x <= 1; ++x)
+	{
+		for(int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(u_ShadowMaps[layer].Sampler, projFragLight.xy + vec2(x, y) * texelSize).r; 
+			shadow += currDepth - bias > pcfDepth ? 1.0 : 0.0;        
+		}
+	}
+	
+	return (1.0 - (shadow / 9.0) * attenuation);
+}
+
 void main()
 {
 	vec4 texColor;
 	vec2 texCoords = v_TexCoords;
 	
+	// Apply parallax mapping
 	if (u_HeightMap.Use)
-	{
 		texCoords = ParallaxMapping();
-	}
 	
+	// Get texture color
 	if (u_DiffuseTexture.Use)
 	{
 		texColor = texture(u_DiffuseTexture.Sampler, texCoords * u_DiffuseTexture.Tiling + u_DiffuseTexture.Offset);
@@ -231,10 +315,9 @@ void main()
 			discard;
 	}
 	else
-	{
 		texColor = v_Color;
-	}
 	
+	// Compute normal vector
 	vec3 normal = normalize(v_Normal);
 	vec3 lightDir = normalize(u_DirectionalLightDir);	
 	
@@ -244,13 +327,17 @@ void main()
 		normal = normalize(v_TangentSpace * vec3(vec4(u_NormalMap.Intensity, u_NormalMap.Intensity, 1.0, 1.0) * 
 			(texture(u_NormalMap.Sampler, texCoords * u_NormalMap.Tiling + u_NormalMap.Offset) * 2 - 1)));
 	}
-		
-	// Get color
-	color = texColor * vec4(u_AmbientLightColor*u_AmbientLightIntensity, 1.0) + 
-			texColor * vec4(DirectionalPhong(normal, lightDir, u_CameraPosition - v_FragPos, texCoords), 1.0);
 	
+	// Compute shadows
+	float shadow = GetShadows(normalize(v_Normal), lightDir);
+		
+	// Get directional light color
+	color = texColor * vec4(u_AmbientLightColor*u_AmbientLightIntensity, 1.0) +
+			texColor * vec4(shadow * DirectionalPhong(normal, lightDir, u_CameraPosition - v_FragPos, texCoords), 1.0);
+	
+	// Get point lights color
 	for (int i=0; i<u_NPointLights; i++)
-		color += texColor * vec4(PointPhong
+		color += texColor * vec4(shadow * PointPhong
 			(normal, u_PointLights[i], u_CameraPosition - v_FragPos, 
 			u_PointLights[i].Position - v_FragPos, texCoords), 1.0);
 	
@@ -262,6 +349,7 @@ void main()
 			color *= occ * u_OcclusionMap.Intensity;
 	}
 	
+	// Emission map
 	if (u_EmissionMap.Use)
 	{
 		vec3 emissiveCol = (texture(u_EmissionMap.Sampler, texCoords * u_EmissionMap.Tiling + u_EmissionMap.Offset)).xyz;

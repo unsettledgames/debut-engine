@@ -229,7 +229,7 @@ namespace Debut
 
 	void Material::Use()
 	{
-		/* This could work, but the bound shader should be in some kind of OpenGLState class: the shader can be
+		/* This could work, but the bound shader should be in some kind of RendererState class: the shader can be
 		*  changed by other renderers
 		if (s_PrevShader != m_RuntimeShader->GetID())
 		{
@@ -310,6 +310,8 @@ namespace Debut
 				break;
 			}
 		}
+
+		m_CurrTextureSlot = currSlot;
 	}
 
 	void Material::Unuse()
@@ -319,6 +321,7 @@ namespace Debut
 
 	void Material::SetShader(Ref<Shader> shader)
 	{
+		DBT_PROFILE_FUNCTION();
 		if (shader == nullptr)
 			return;
 		// Set the shader and the new uniforms
@@ -326,9 +329,12 @@ namespace Debut
 		m_Shader = shader->GetID();
 		m_RuntimeShader = AssetManager::Request<Shader>(m_Shader);
 		
-		m_Uniforms.clear();
-		for (auto uniform : uniforms)
-			m_Uniforms[uniform.Name] = uniform;
+		{
+			DBT_PROFILE_SCOPE("SetUniformMap");
+			m_Uniforms.clear();
+			for (auto uniform : uniforms)
+				m_Uniforms[uniform.Name] = uniform;
+		}
 	}
 
 	void Material::SetFloat(const std::string& name, float val)

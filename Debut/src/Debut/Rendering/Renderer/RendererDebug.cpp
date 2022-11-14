@@ -16,7 +16,7 @@ namespace Debut
 
 	void RendererDebug::Init()
 	{
-		RenderCommand::SetLineWidth(1.0f);
+		RenderCommand::SetLineWidth(0.05f);
 		RenderCommand::SetPointSize(12.0f);
 
 		BufferLayout layout = {
@@ -50,6 +50,7 @@ namespace Debut
 
 	void RendererDebug::BeginScene(Camera& camera, const glm::mat4& transform)
 	{
+		RenderCommand::DisableCulling();
 		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
 
 		s_Storage.LineShader->Bind();
@@ -89,6 +90,8 @@ namespace Debut
 			FlushPoints();
 			s_Storage.PointShader->Unbind();
 		}
+
+		RenderCommand::EnableCulling();
 	}
 
 	void RendererDebug::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, bool highlightVertices)

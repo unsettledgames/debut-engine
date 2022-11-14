@@ -6,6 +6,7 @@ namespace Debut
 	class VertexArray;
 	class VertexBuffer;
 	class IndexBuffer;
+	class ShadowMap;
 
 	class Material;
 	class Skybox;
@@ -16,6 +17,8 @@ namespace Debut
 	struct MeshRendererComponent;
 	struct LightComponent;
 	struct ShaderUniform;
+
+	enum class RenderingPass { Shadow = 0, Shaded };
 
 	struct RenderBatch3D
 	{
@@ -43,13 +46,25 @@ namespace Debut
 		// One batch per Material
 		std::unordered_map<UUID, RenderBatch3D*> Batches;
 
+		// Camera data (might as well store the whole camera at this point)
 		glm::mat4 CameraTransform;
 		glm::mat4 CameraView;
 		glm::mat4 CameraProjection;
+		float CameraNear;
+		float CameraFar;
 
 		std::vector<LightComponent*> Lights;
 		std::vector<ShaderUniform> GlobalUniforms;
+
+		// Extra materials for special rendering modes
 		Ref<Material> UntexturedMaterial;
+		Ref<Material> VisualizeDepthmapMaterial;
+		Ref<Material> DepthmapMaterial;
+
+		// Shadow map
+		std::vector<Ref<ShadowMap>> ShadowMaps;
+
+		RenderingPass CurrentPass = RenderingPass::Shaded;
 	};
 
 	class Renderer3D
@@ -58,10 +73,13 @@ namespace Debut
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(Camera& camera, Ref<Skybox> skybox, glm::mat4& transform, std::vector<LightComponent*>& lights,
-			std::vector<ShaderUniform>& globalUniforms);
+		static void BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& transform, 
+			std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, std::vector<Ref<ShadowMap>> shadowMaps);
 		static void EndScene();
 		static void Flush();
+
+		static void BeginShadow(Ref<ShadowMap> shadowMap);
+		static void EndShadow();
 
 		static void DrawModel(const MeshRendererComponent& model, const glm::mat4& transform, int entityID);
 		static void DrawModel(Mesh& mesh, Material& material, const glm::mat4& transform, int entityID, bool instanced = false);

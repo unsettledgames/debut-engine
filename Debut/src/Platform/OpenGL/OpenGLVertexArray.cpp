@@ -51,10 +51,14 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION();
 		glBindVertexArray(m_RendererID);
+		if (m_IndexBuffer != nullptr)
+			m_IndexBuffer->Bind();
 	}
 
 	void OpenGLVertexArray::Unbind() const
 	{
+		if (m_IndexBuffer != nullptr)
+			m_IndexBuffer->Unbind();
 		glBindVertexArray(0);
 	}
 
@@ -96,14 +100,14 @@ namespace Debut
 			}
 		}
 		m_VertexBuffers.push_back(buffer);
-		
+		buffer->Unbind();
+		glBindVertexArray(0);
 	}
 	
 	void OpenGLVertexArray::AddIndexBuffer(const Ref<IndexBuffer>& buffer)
 	{
 		glBindVertexArray(m_RendererID);
-
-		buffer->Bind();
 		m_IndexBuffer = buffer;
+		glBindVertexArray(0);
 	}
 }

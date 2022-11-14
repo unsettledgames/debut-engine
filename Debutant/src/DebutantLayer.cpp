@@ -26,10 +26,38 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
+*   CURRENT: SHADOWS
+*       - Reorganize the shader code to be a bit cleaner
+*       - Support bigger scenes.
+*           - Find the right camera frustum depending on the one of the camera
+*
+*   MAIN SHADOW WORKFLOW
 * 
-*   CODE REFACTORING:
+*   - Point shadow mapping
+*       - Well, start by implementing the base workflow with a single light. Cubemaps are needed, which means 6 * shadowMapRes
+*           pixels of stuff per light. Doom 2016 apparently uses an 8K shadow map atlas, which means you only have to bind
+*           a single texture and then pass the right UVs. 8000x8000 leaves room for 64 1000x1000 shadow maps, which is pretty
+*           nice? See optimization section about that
+* 
+*   OPTIMIZATION AND IMPROVEMENTS
+*   - Cascading shadow maps: render multiple maps from an increasing distance, use the right one depending on the object
+*       distance from the camera
+*   - Configurable PCSS for soft shadows
+*   - Important lights: find the lights that, at the moment, are important. The nearest to the camera? Always consider the 
+*       directional light(s?), I wonder if there's some cheap way to check if the shadows produced by a light will be visible 
+*       in the scnee without actually rendering the scene. I don't think so.
+*   - A fast approach to the above issue would consist in reserving higher resolution maps to important lights and smaller
+*       maps to ones that aren't. Also keep in mind that what Doom 2016 is a very specific game with very specific needs, their
+*       approach might not be optimal for a generic use. What if multiple shadow maps depending on level of importance?
+*   -  Gaussian blur on the shadow maps?
 * 
 *   QOL:
+*       - Find a better way to update entity selection: if it's selected or destroyed somewhere, it must be selected 
+*           or destroyed everywhere
+*       - Highlight selected entity in scene hierarchy when it's selected in the viewport
+*       - Render Light directions and gizmos, same for camera
+*       - Move Texture, Shader, Material and SubTexture2D to Resources folder
+*       - Change way of rendering DepthMap (use Depth mode of RenderTexture)
 *       - Custom events, propagated starting from the Application: in this way we can avoid pointers to other classes
 *           (e.g. DebutantLayer* in ViewportPanel, which I really don't like at the moment)
 *       - Drop skybox to set it in the current scene
@@ -42,8 +70,12 @@
 *           - Editor light: intensity, direction, color
 *       
 *       - Scene camera settings
+*           - Movement data
+*       - The debug renderer should probably only used in a DebugLayer since it kinda behaves as such
+*       - Implement rendering modes in 2D too
 * 
     OPTIMIZATION:
+*       - Update AssetMap only OnClose or once when this layer is attached
         - Remove as many DecomposeTransform as possible
         - Optimize transformation in physics
         - Maybe remove indices from PolygonCollider? The concept is similar to creating a transform matrix every time it's 
@@ -55,7 +87,6 @@
     - Roughness maps (PBR)
     - Reflection maps (PBR)
     
-    - Find out why some models are huge or super small sometimes->Don't use model imported transform?
     - Mesh properties in properties panel?
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
@@ -89,6 +120,7 @@ namespace Debut
     void DebutantLayer::OnUpdate(Timestep& ts)
     {
         m_Viewport.OnUpdate(ts);
+        m_ActiveScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
     }
 
     void DebutantLayer::OnImGuiRender()
@@ -175,7 +207,7 @@ namespace Debut
             }
 
             // Entity changed from scene hierarchy
-            if (m_SceneHierarchy.GetSelectionContext() != m_SelectedEntity)
+            if (m_SceneHierarchy.GetSelectionContext() != m_SelectedEntity || m_Viewport.GetSelectedEntity() != m_SelectedEntity)
             {
                 m_SelectedEntity = m_SceneHierarchy.GetSelectionContext();
                 m_Viewport.SetSelectedEntity(m_SceneHierarchy.GetSelectionContext());
@@ -480,6 +512,8 @@ namespace Debut
     {
         glm::vec2 viewportSize = m_Viewport.GetViewportSize();
         DebutantApp::Get().GetSceneManager().NewScene(viewportSize);
+
+        m_ActiveScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
 
         m_SceneHierarchy.SetContext(m_ActiveScene);
         m_SceneHierarchy.RebuildSceneGraph();

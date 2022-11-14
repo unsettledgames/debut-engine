@@ -19,7 +19,7 @@ namespace Debut
 	void SceneCamera::SetProjectionType(ProjectionType type)
 	{
 		if (type == ProjectionType::Perspective)
-			SetPerspective(m_PerspectiveFOV, m_NearPlane, m_FarPlane);
+			SetPerspective(m_FOV, m_NearPlane, m_FarPlane);
 		else
 			SetOrthographic(m_OrthographicSize, m_NearPlane, m_FarPlane);
 	}
@@ -39,7 +39,7 @@ namespace Debut
 	{
 		m_ProjectionType = ProjectionType::Perspective;
 
-		m_PerspectiveFOV = fov;
+		m_FOV = fov;
 		m_FarPlane = farPlane;
 		m_NearPlane = nearPlane;
 
@@ -56,7 +56,7 @@ namespace Debut
 	{
 		if (m_ProjectionType == ProjectionType::Perspective)
 		{
-			m_ProjectionMatrix = glm::perspective(m_PerspectiveFOV, m_AspectRatio, m_NearPlane, m_FarPlane);
+			m_ProjectionMatrix = glm::perspective(m_FOV, m_AspectRatio, m_NearPlane, m_FarPlane);
 		}
 		else
 		{

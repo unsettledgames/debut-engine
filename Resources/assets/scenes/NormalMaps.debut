@@ -1,4 +1,9 @@
 Scene: Untitled scene
+AdditionalData:
+  EditorCameraPitch: 0.254398942
+  EditorCameraYaw: -10.322382
+  EditorCameraFocalPoint: [1.0063498, 0.496809214, 3.31333828]
+  EditorCameraDistance: 107.904747
 Lighting:
   AmbientLightColor: [0.215328455, 0.215328455, 0.215328455]
   AmbientLightIntensity: 1
@@ -7,20 +12,28 @@ Entities:
   - "Entity: ": 2610937792807730244
     HierarchyOrder: 1
     IDComponent:
+      Owner: 2610937792807730244
       ID: 2610937792807730244
     TagComponent:
+      Owner: 0
       Name: New Entity
       Tag: Untagged
     TransformComponent:
+      Owner: 2610937792807730244
       Translation: [-1.89828753, 4.0398159, 2.77844834]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       Parent: 0
+      Children:
+        []
     DirectionalLightComponent:
+      Owner: 2610937792807730244
       Direction: [-0.649999976, 1, 1]
+      EnableShadows: true
       Color: [1, 1, 1]
       Intensity: 0
     PointLightComponent:
+      Owner: 2610937792807730244
       Color: [1, 1, 1]
       Intensity: 1.08000004
       Radius: 7.94999981
@@ -29,16 +42,22 @@ Entities:
   - "Entity: ": 11920862692807592529
     HierarchyOrder: 2
     IDComponent:
+      Owner: 11920862692807592529
       ID: 11920862692807592529
     TagComponent:
+      Owner: 0
       Name: New Entity
       Tag: Untagged
     TransformComponent:
+      Owner: 11920862692807592529
       Translation: [-4.13816547, 0.266618967, -2.49265099]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       Parent: 0
+      Children:
+        []
     PointLightComponent:
+      Owner: 11920862692807592529
       Color: [0, 0.496350527, 1]
       Intensity: 2.5999999
       Radius: 5
@@ -47,16 +66,22 @@ Entities:
   - "Entity: ": 16933902736390357932
     HierarchyOrder: 3
     IDComponent:
+      Owner: 16933902736390357932
       ID: 16933902736390357932
     TagComponent:
+      Owner: 0
       Name: New Entity
       Tag: Untagged
     TransformComponent:
+      Owner: 16933902736390357932
       Translation: [1.6678952, 2.88186169, -2.15941954]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       Parent: 0
+      Children:
+        []
     PointLightComponent:
+      Owner: 16933902736390357932
       Color: [1, 0.306569338, 0]
       Intensity: 1
       Radius: 5
@@ -65,29 +90,40 @@ Entities:
   - "Entity: ": 6758744109803773468
     HierarchyOrder: 3
     IDComponent:
+      Owner: 6758744109803773468
       ID: 6758744109803773468
     TagComponent:
+      Owner: 0
       Name: rock.obj.model
       Tag: Untagged
     TransformComponent:
+      Owner: 6758744109803773468
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
       Parent: 0
+      Children:
+        - 10268164991715629172
     Children:
       - "Entity: ": 10268164991715629172
         HierarchyOrder: 0
         IDComponent:
+          Owner: 10268164991715629172
           ID: 10268164991715629172
         TagComponent:
+          Owner: 0
           Name: rock.obj.
           Tag: Untagged
         TransformComponent:
-          Translation: [0, 0, 0]
+          Owner: 10268164991715629172
+          Translation: [0, -1.1920929e-07, 0]
           Rotation: [0, 0, 0]
           Scale: [1, 1, 1]
           Parent: 6758744109803773468
+          Children:
+            []
         MeshRendererComponent:
+          Owner: 10268164991715629172
           Mesh: 12390770547143609265
           Material: 18326471430508098500
           Instanced: false

@@ -8,7 +8,9 @@
 #include <Debut/ImGui/ImGuiUtils.h>
 
 #include <Debut/Scene/Scene.h>
+#include <Debut/Rendering/RenderTexture.h>
 #include <Debut/Rendering/Structures/FrameBuffer.h>
+#include <Debut/Rendering/Structures/ShadowMap.h>
 #include <Debut/Rendering/Renderer/Renderer.h>
 #include <Debut/Rendering/Renderer/RendererDebug.h>
 
@@ -26,38 +28,40 @@ namespace Debut
 {
     ViewportPanel::ViewportPanel(DebutantLayer* layer) : m_ParentLayer(layer)
     {
-        FrameBufferSpecifications fbSpecs;
-        fbSpecs.Attachments = {
+        FrameBufferSpecifications sceneFbSpecs;
+        FrameBufferSpecifications textureFbSpecs;
+
+        sceneFbSpecs.Attachments = {
             FrameBufferTextureFormat::Color, FrameBufferTextureFormat::Depth,
             FrameBufferTextureFormat::RED_INTEGER
         };
 
-        fbSpecs.Width = DebutantApp::Get().GetWindow().GetWidth();
-        fbSpecs.Height = DebutantApp::Get().GetWindow().GetHeight();
+        textureFbSpecs.Attachments = { FrameBufferTextureFormat::Color };
 
-        m_FrameBuffer = FrameBuffer::Create(fbSpecs);
+        sceneFbSpecs.Width = DebutantApp::Get().GetWindow().GetWidth();
+        sceneFbSpecs.Height = DebutantApp::Get().GetWindow().GetHeight();
+
+        textureFbSpecs.Width = sceneFbSpecs.Width;
+        textureFbSpecs.Height = sceneFbSpecs.Height;
+
+        m_SceneFrameBuffer = FrameBuffer::Create(sceneFbSpecs);
+        m_TextureFrameBuffer = FrameBuffer::Create(textureFbSpecs);
+
+        m_RenderTexture = RenderTexture::Create(sceneFbSpecs.Width, sceneFbSpecs.Height, 
+            DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMaps()[0]->GetFrameBuffer(), RenderTextureMode::Color);
+        m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
+
         m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
     }
 
     void ViewportPanel::OnUpdate(Timestep& ts)
     {
+        fps = 1.0f / ts;
         DBT_PROFILE_SCOPE("EgineUpdate");
         //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
         if (m_ViewportFocused)
             m_EditorCamera.OnUpdate(ts);
-
-        Renderer2D::ResetStats();
-        {
-            DBT_PROFILE_SCOPE("Debutant::RendererSetup");
-            m_FrameBuffer->Bind();
-
-            RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
-            RenderCommand::Clear();
-
-            // Clear frame buffer for mouse picking
-            m_FrameBuffer->ClearAttachment(1, -1);
-        }
 
         SceneManager::SceneState sceneState = DebutantApp::Get().GetSceneManager().GetState();
         Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
@@ -65,20 +69,52 @@ namespace Debut
         switch (sceneState)
         {
         case SceneManager::SceneState::Play:
-            activeScene->OnRuntimeUpdate(ts);
+            activeScene->OnRuntimeUpdate(ts, m_SceneFrameBuffer);
             break;
         case SceneManager::SceneState::Edit:
-            activeScene->OnEditorUpdate(ts, m_EditorCamera);
+            activeScene->OnEditorUpdate(ts, m_EditorCamera, m_SceneFrameBuffer);
+
+            m_SceneFrameBuffer->Bind();
             // Render debug
             DrawCollider();
             break;
         }
+        m_SceneFrameBuffer->Unbind();
 
-        m_FrameBuffer->Unbind();
+        // The scene frame buffer now contains the whole scene. Render the frame buffer to a texture.
+        m_TextureFrameBuffer->Bind();
+        m_RenderTexture->SetFrameBuffer(m_SceneFrameBuffer);
+        m_RenderTexture->Draw(m_FullscreenShader);
+        m_TextureFrameBuffer->Unbind();
     }
 
 	void ViewportPanel::OnImGuiRender()
 	{
+        ImGui::Begin("Debug");
+        {
+            static float fpsShown = fps;
+            static int start = 0;
+
+            if (start % 100 == 0)
+                fpsShown = fps;
+            ImGui::Text("FPS: %f", fpsShown);
+            start++;
+
+            static int shadowMapIndex = 0;
+
+            Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
+            uint32_t rendererID = activeScene->GetShadowMaps()[shadowMapIndex]->GetFrameBuffer()->GetDepthAttachment();
+
+            ImGui::Image((void*)rendererID, { 300, 300 }, { 0, 1 }, { 1, 0 });
+            ImGui::DragInt("Shadowmap index", &shadowMapIndex);
+            ImGui::DragFloat("Fadeout start distance", &activeScene->fadeoutStartDistance);
+            ImGui::DragFloat("Fadeout end distance", &activeScene->fadeoutEndDistance);
+            ImGui::DragFloat("Lambda", &activeScene->lambda, 0.01f, 0.0f, 1.0f);
+
+            shadowMapIndex = std::min(std::max(0, shadowMapIndex), 3);
+        }
+        ImGui::End();
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, ImGui::GetTextLineHeight() });
         ImGui::Begin("Viewport", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_MenuBar);
@@ -99,10 +135,9 @@ namespace Debut
             // Compute menu size
             m_TopMenuSize = { ImGui::GetItemRectSize().x, ImGui::GetItemRectSize().y };
             m_TopMenuSize.y += ImGui::GetTextLineHeight() * 1.5f;
-            viewportSize.y -= m_TopMenuSize.y;
 
             // Draw scene
-            uint32_t texId = m_FrameBuffer->GetColorAttachment();
+            uint32_t texId = m_TextureFrameBuffer->GetColorAttachment();
             ImGui::Image((void*)texId, ImVec2(viewportSize.x, viewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
 
             // Accept scene loading
@@ -131,7 +166,7 @@ namespace Debut
             {
                 m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
 
-                m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+                m_SceneFrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
                 m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
                 DebutantApp::Get().GetSceneManager().GetActiveScene()->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             }
@@ -148,10 +183,13 @@ namespace Debut
                 ImVec2 windowPos = ImGui::GetWindowPos();
                 windowPos.y += m_TopMenuSize.y;
 
-                if (!m_ColliderSelection.Valid)
-                    m_Gizmos.ManipulateTransform(m_Selection, m_EditorCamera, viewportSize, windowPos);
-                else
-                    m_Gizmos.ManipulateCollider(m_Selection, m_EditorCamera, viewportSize, windowPos, m_ColliderSelection);
+                if (m_Selection && m_Selection.IsValid())
+                {
+                    if (!m_ColliderSelection.Valid)
+                        m_Gizmos.ManipulateTransform(m_Selection, m_EditorCamera, viewportSize, windowPos);
+                    else
+                        m_Gizmos.ManipulateCollider(m_Selection, m_EditorCamera, viewportSize, windowPos, m_ColliderSelection);
+                }
             }
 
             ImGui::PopStyleVar();
@@ -408,7 +446,7 @@ namespace Debut
 
                 // Get hovered color
                 glm::vec2 coords = GetFrameBufferCoords();
-                glm::vec4 pixel = m_FrameBuffer->ReadPixel(0, coords.x, coords.y);
+                glm::vec4 pixel = m_SceneFrameBuffer->ReadPixel(0, coords.x, coords.y);
 
                 // Check that the distance is far from the selected point before disabling TODO
                 if (!(pixel.r == 0.0 && pixel.g == 255.0 && pixel.b == 0.0 && pixel.a == 255) &&

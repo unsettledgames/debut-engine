@@ -278,17 +278,27 @@ namespace Debut
 	template <>
 	Ref<Shader> AssetManager::Request<Shader>(const std::string& id, const std::string& metaFile)
 	{
+		DBT_PROFILE_FUNCTION();
+
 		if (s_ShaderCache.Has(id))
 			return s_ShaderCache.Get(id);
 
-		Ref<Shader> toAdd = Shader::Create(id, metaFile);
-
-		// Update the asset map if the entry wasn't there
-		s_ShaderCache.Put(id, toAdd);
-		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+		Ref<Shader> toAdd;
+		
 		{
-			s_AssetMap[toAdd->GetID()] = id;
-			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
+			DBT_PROFILE_SCOPE("CreateShader");
+			toAdd = Shader::Create(id, metaFile);
+		}
+
+		{
+			DBT_PROFILE_SCOPE("UpdateAssetMap");
+			// Update the asset map if the entry wasn't there
+			s_ShaderCache.Put(id, toAdd);
+			if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+			{
+				s_AssetMap[toAdd->GetID()] = id;
+				AssetManager::AddAssociationToFile(toAdd->GetID(), id);
+			}
 		}
 
 		return toAdd;
@@ -378,6 +388,7 @@ namespace Debut
 	template<typename T>
 	Ref<T> AssetManager::Request(UUID id)
 	{
+		DBT_PROFILE_FUNCTION();
 		if (id == 0)
 			return nullptr;
 

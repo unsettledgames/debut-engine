@@ -9,12 +9,11 @@ namespace Debut
 {
 	void OpenGLRendererAPI::Init()
 	{
-		glEnable(GL_DEPTH_TEST);
+		GLCall(glEnable(GL_DEPTH_TEST));
 		GLCall(glEnable(GL_LINE_SMOOTH));
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+		GLCall(glEnable(GL_BLEND));
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 	}
 
 	void OpenGLRendererAPI::Clear()
@@ -32,13 +31,35 @@ namespace Debut
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
+	void OpenGLRendererAPI::EnableCulling()
+	{
+		DBT_PROFILE_FUNCTION();
+		GLCall(glEnable(GL_CULL_FACE));
+		GLCall(glCullFace(GL_BACK));
+		GLCall(glFrontFace(GL_CCW));
+	}
+
+	void OpenGLRendererAPI::DisableCulling()
+	{
+		DBT_PROFILE_FUNCTION();
+		GLCall(glDisable(GL_CULL_FACE));
+	}
+
+	void OpenGLRendererAPI::CullFront()
+	{
+		GLCall(glCullFace(GL_FRONT));
+	}
+
+	void OpenGLRendererAPI::CullBack()
+	{
+		GLCall(glCullFace(GL_BACK));
+	}
+
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& va, uint32_t indexCount)
 	{
 		uint64_t count = indexCount == 0 ? va->GetIndexBuffer()->GetCount() : indexCount;
 		va->Bind();
 		GLCall(glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr));
-		// Reset the texture after a draw call
-		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 		va->Unbind();
 	}
 

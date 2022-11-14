@@ -49,6 +49,7 @@ namespace Debut
 	{
 		enum class LightType {Directional = 0, Point, Area, Shape};
 		LightType Type;
+		bool CastShadows = false;
 	};
 
 	// CORE

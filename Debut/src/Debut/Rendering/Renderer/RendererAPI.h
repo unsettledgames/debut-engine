@@ -21,6 +21,11 @@ namespace Debut
 		virtual void ClearDepth() = 0;
 		virtual void SetClearColor(const glm::vec4 color) = 0;
 
+		virtual void EnableCulling() = 0;
+		virtual void DisableCulling() = 0;
+		virtual void CullFront() = 0;
+		virtual void CullBack() = 0;
+
 		virtual void DrawLines(const Ref<VertexArray>& va, uint32_t vertexCount) = 0;
 		virtual void DrawPoints(const Ref<VertexArray>& va, uint32_t vertexCount = 0) = 0;
 		virtual void DrawIndexed(const Ref<VertexArray>& va, uint32_t indexCount = 0) = 0;

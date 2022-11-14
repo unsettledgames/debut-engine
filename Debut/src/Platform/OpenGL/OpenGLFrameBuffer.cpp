@@ -92,18 +92,18 @@ namespace Debut
 			}
 			else
 			{
-				glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+				GLCall(glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height));
 
 				// TODO: move to frame buffer specs
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER));
+				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
+				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
+				GLCall(glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT));
 			}
 
-
-			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), texture, 0);
+			GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), texture, 0));
 		}
 	}
 
@@ -185,16 +185,17 @@ namespace Debut
 			}
 		}
 
-		if (m_ColorAttachments.size() > 1)
+		if (m_ColorAttachments.size() > 0)
 		{
 			DBT_CORE_ASSERT(m_ColorAttachments.size() <= 4);
 			GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, };
 			glDrawBuffers(m_ColorAttachments.size(), buffers);
 		}
-		else if (m_ColorAttachments.empty())
+		else
 		{
 			// Depth-pass only
-			glDrawBuffer(GL_NONE);
+			GLCall(glDrawBuffer(GL_NONE));
+			GLCall(glReadBuffer(GL_NONE));
 		}
 
 		GLCall(DBT_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Frame buffer is incomplete"));		
@@ -272,6 +273,26 @@ namespace Debut
 		m_Bound = true;
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID));
 		GLCall(glViewport(0, 0, m_Specs.Width, m_Specs.Height));
+	}
+
+	void OpenGLFrameBuffer::BindDepth(uint32_t slot)
+	{
+		GLCall(glBindTextureUnit(slot, m_DepthAttachment))
+	}
+	void OpenGLFrameBuffer::UnbindDepth(uint32_t slot)
+	{
+		GLCall(glBindTextureUnit(slot, 0));
+	}
+
+	void OpenGLFrameBuffer::BindAttachment(uint32_t slot, uint32_t index /* =0 */)
+	{
+		DBT_ASSERT(m_ColorAttachments.size() > index && index >= 0);
+		GLCall(glBindTextureUnit(slot, m_ColorAttachments[index]));
+	}
+
+	void OpenGLFrameBuffer::BindAsTexture(uint32_t slot)
+	{
+		GLCall(glBindTextureUnit(slot, m_RendererID));
 	}
 
 	void OpenGLFrameBuffer::Unbind()

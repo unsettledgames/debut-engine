@@ -16,10 +16,10 @@ namespace Debut
 		void SetViewportSize(uint32_t width, uint32_t height);
 
 		float GetOrthoSize() const { return m_OrthographicSize; }
-		float GetPerspFOV() const { return m_PerspectiveFOV; }
+		float GetPerspFOV() const { return glm::radians(m_FOV); }
 
 		void SetOrthoSize(float val) { m_OrthographicSize = val; RecalculateProjection(); }
-		void SetPerspFOV(float val) { m_PerspectiveFOV = val; RecalculateProjection(); }	
+		void SetPerspFOV(float val) { m_FOV = val; RecalculateProjection(); }
 
 		static ProjectionType StringToProjType(const char* string);
 	
@@ -27,7 +27,6 @@ namespace Debut
 		void RecalculateProjection();
 	private:
 		float m_OrthographicSize = 10.0f;
-		float m_PerspectiveFOV = glm::radians(45.0f);
 
 		float m_AspectRatio;
 	};
