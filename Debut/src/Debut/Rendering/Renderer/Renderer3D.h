@@ -30,6 +30,13 @@ namespace Debut
 		Ref<Material> Material;
 	};
 
+	struct Renderer3DStats
+	{
+		uint32_t NShadowPasses;
+		uint32_t DrawCalls;
+		uint32_t Triangles;
+	};
+
 	struct Renderer3DStorage
 	{
 		uint32_t StartupBufferSize = 4096;
@@ -87,9 +94,14 @@ namespace Debut
 		static void SendLights(Material& material);
 		static void SendGlobals(Material& material);
 
+		static inline Renderer3DStats GetStats() { return s_PrevStats; }
+		static void ResetStats();
+
 	private:
 		static void AddBatch(const UUID& material);
 	private:
 		static Renderer3DStorage s_Data;
+		static Renderer3DStats s_Stats;
+		static Renderer3DStats s_PrevStats;
 	};
 }

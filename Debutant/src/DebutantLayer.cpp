@@ -26,10 +26,15 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
-*   CURRENT: SHADOWS
-*       - Reorganize the shader code to be a bit cleaner
-*       - Support bigger scenes.
-*           - Find the right camera frustum depending on the one of the camera
+*   CURRENT: OPTIMIZATION
+*       - Gather Renderer3D statistics
+*       - Profile
+*       - Optimize default-3d shader
+* 
+*       - Frustum culling:
+            - Create an AABB when the mesh renderer is added, save it in the component
+            - Add a GetAABB method, multiply the AABB by the transform matrix
+            - Test for AABB before sending vertices https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
 *
 *   MAIN SHADOW WORKFLOW
 * 
@@ -40,8 +45,6 @@
 *           nice? See optimization section about that
 * 
 *   OPTIMIZATION AND IMPROVEMENTS
-*   - Cascading shadow maps: render multiple maps from an increasing distance, use the right one depending on the object
-*       distance from the camera
 *   - Configurable PCSS for soft shadows
 *   - Important lights: find the lights that, at the moment, are important. The nearest to the camera? Always consider the 
 *       directional light(s?), I wonder if there's some cheap way to check if the shadows produced by a light will be visible 
@@ -61,8 +64,6 @@
 *       - Custom events, propagated starting from the Application: in this way we can avoid pointers to other classes
 *           (e.g. DebutantLayer* in ViewportPanel, which I really don't like at the moment)
 *       - Drop skybox to set it in the current scene
-*       - Shading buttons:
-*           - Z buffer
 *       
         - Lighting settings:
 *           - Use scene lighting

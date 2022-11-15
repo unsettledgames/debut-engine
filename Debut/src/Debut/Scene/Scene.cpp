@@ -460,6 +460,8 @@ namespace Debut
 		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms(cameraTransform[3]);
 		std::vector<LightComponent*> lights = GetLights();
 
+		Renderer3D::ResetStats();
+
 		// Render shadowmaps
 		for (auto light : lights)
 		{

@@ -23,6 +23,8 @@
 namespace Debut
 {
 	Renderer3DStorage Renderer3D::s_Data;
+	Renderer3DStats Renderer3D::s_Stats;
+	Renderer3DStats Renderer3D::s_PrevStats;
 
 	void Renderer3D::Init()
 	{
@@ -76,6 +78,7 @@ namespace Debut
 		std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, 
 		std::vector<Ref<ShadowMap>> shadowMaps)
 	{
+		// Reset storage
 		s_Data.CameraView = glm::inverse(cameraTransform);
 		s_Data.CameraProjection = camera.GetProjection();
 		s_Data.CameraTransform = s_Data.CameraProjection * s_Data.CameraView;
@@ -84,7 +87,7 @@ namespace Debut
 		
 		s_Data.Lights = lights;
 		s_Data.GlobalUniforms = globalUniforms;
-		s_Data.ShadowMaps = shadowMaps;
+		s_Data.ShadowMaps = shadowMaps;		
 
 		RenderCommand::DisableCulling();
 
@@ -173,6 +176,9 @@ namespace Debut
 
 			if (s_Data.CurrentPass != RenderingPass::Shadow)
 			{
+				s_Stats.DrawCalls++;
+				s_Stats.Triangles += positions.size() / 3;
+
 				if (mesh.HasColors())
 				{
 					std::vector<float>& colors = mesh.GetColors();
@@ -291,6 +297,8 @@ namespace Debut
 		s_Data.CurrentPass = RenderingPass::Shadow;
 		s_Data.CameraNear = shadowMap->GetNear();
 		s_Data.CameraFar = shadowMap->GetFar();
+
+		s_Stats.NShadowPasses++;
 
 		//RenderCommand::CullFront();
 	}
@@ -438,5 +446,14 @@ namespace Debut
 		
 		// Add batch
 		s_Data.Batches[newBatch->Material->GetID()] = newBatch;
+	}
+
+	void Renderer3D::ResetStats()
+	{
+		s_PrevStats = s_Stats;
+		// Reset stats
+		s_Stats.DrawCalls = 0;
+		s_Stats.NShadowPasses = 0;
+		s_Stats.Triangles = 0;
 	}
 }

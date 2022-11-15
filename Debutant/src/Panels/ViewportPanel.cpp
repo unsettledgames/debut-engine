@@ -9,6 +9,7 @@
 
 #include <Debut/Scene/Scene.h>
 #include <Debut/Rendering/RenderTexture.h>
+#include <Debut/Rendering/Renderer/Renderer3D.h>
 #include <Debut/Rendering/Structures/FrameBuffer.h>
 #include <Debut/Rendering/Structures/ShadowMap.h>
 #include <Debut/Rendering/Renderer/Renderer.h>
@@ -90,18 +91,41 @@ namespace Debut
 
 	void ViewportPanel::OnImGuiRender()
 	{
-        ImGui::Begin("Debug");
+        ImGui::Begin("Stats");
         {
+            Renderer3DStats stats = Renderer3D::GetStats();
+
             static float fpsShown = fps;
+            static int drawCallsShown = stats.DrawCalls;
+            static int trianglesShown = stats.Triangles;
+            static int shadowPasses = stats.NShadowPasses;
             static int start = 0;
 
             if (start % 100 == 0)
+            {
                 fpsShown = fps;
+                drawCallsShown = stats.DrawCalls;
+                trianglesShown = stats.Triangles;
+                shadowPasses = stats.NShadowPasses;
+            }
             ImGui::Text("FPS: %f", fpsShown);
             start++;
 
-            static int shadowMapIndex = 0;
+            ImGui::Text("3D Draw calls: %d", drawCallsShown);
+            ImGui::Text("3D Triangles: %d", trianglesShown);
+            ImGui::Text("3D Shadow passes: %d", shadowPasses);
+        }
+        ImGui::End();
 
+        ImGui::Begin("Debug");
+        {
+            
+            
+            // 3D rendering stats
+
+            /*
+            static int shadowMapIndex = 0;
+            
             Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
             uint32_t rendererID = activeScene->GetShadowMaps()[shadowMapIndex]->GetFrameBuffer()->GetDepthAttachment();
 
@@ -112,6 +136,7 @@ namespace Debut
             ImGui::DragFloat("Lambda", &activeScene->lambda, 0.01f, 0.0f, 1.0f);
 
             shadowMapIndex = std::min(std::max(0, shadowMapIndex), 3);
+            */
         }
         ImGui::End();
 
