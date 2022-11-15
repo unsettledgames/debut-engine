@@ -74,12 +74,12 @@ namespace Debut
 		}
 	}
 
-	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& cameraTransform, 
+	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& cameraView, 
 		std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, 
 		std::vector<Ref<ShadowMap>> shadowMaps)
 	{
 		// Reset storage
-		s_Data.CameraView = glm::inverse(cameraTransform);
+		s_Data.CameraView = cameraView;
 		s_Data.CameraProjection = camera.GetProjection();
 		s_Data.CameraTransform = s_Data.CameraProjection * s_Data.CameraView;
 		s_Data.CameraNear = camera.GetNearPlane();
@@ -97,10 +97,10 @@ namespace Debut
 			Ref<Material> skyboxMaterial = AssetManager::Request<Material>(skybox->GetMaterial());
 			glm::mat4 skyboxTransform;
 			if (camera.GetProjectionType() == Camera::ProjectionType::Perspective)
-				skyboxTransform = camera.GetProjection() * glm::inverse(glm::mat4(glm::mat3(cameraTransform)));
+				skyboxTransform = camera.GetProjection() * glm::inverse(glm::mat4(glm::mat3(cameraView)));
 			else
 				skyboxTransform = glm::perspective(45.0f, 16.0f/9.0f, camera.GetNearPlane(), camera.GetFarPlane())
-					* glm::inverse(glm::mat4(glm::mat3(cameraTransform)));
+					* glm::inverse(glm::mat4(glm::mat3(cameraView)));
 			
 			skybox->Bind();
 			skyboxMaterial->SetMat4("u_ViewProjection", skyboxTransform);
@@ -121,7 +121,7 @@ namespace Debut
 		RenderCommand::CullBack();
 
 		if (Renderer::GetConfig().RenderWireframe)
-			RendererDebug::BeginScene(camera, cameraTransform);
+			RendererDebug::BeginScene(camera, cameraView);
 
 	}
 
@@ -248,9 +248,10 @@ namespace Debut
 				materialToUse.SetMat4("u_Transform", transform * mesh.GetTransform());
 				materialToUse.SetMat4("u_ViewMatrix", s_Data.CameraView);
 				materialToUse.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
-				materialToUse.SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
 
 				materialToUse.Use();
+				// STABILIZE
+				materialToUse.GetRuntimeShader()->SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
 
 				if (s_Data.CurrentPass != RenderingPass::Shadow)
 				{

@@ -100,8 +100,51 @@ namespace Debut
 	}
 	template<>
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
+	
 	template<>
-	void Scene::OnComponentAdded(MeshRendererComponent& bc2d, Entity entity) { }
+	void Scene::OnComponentAdded(MeshRendererComponent& mr, Entity entity)
+	{
+		if (mr.Mesh == 0)
+			return;
+
+		DBT_PROFILE_SCOPE("GenerateAABB");
+
+		Ref<Mesh> mesh = AssetManager::Request<Mesh>(mr.Mesh);
+		std::vector<float>& vertices = mesh->GetPositions();
+		std::vector<glm::vec3> AABB;
+
+		// Compute mesh bounds
+		float xBounds[2], yBounds[2], zBounds[2];
+		xBounds[0] = std::numeric_limits<float>().max(); xBounds[1] = -std::numeric_limits<float>().max();
+		yBounds[0] = xBounds[0]; yBounds[1] = xBounds[1];
+		zBounds[0] = xBounds[0]; zBounds[1] = xBounds[1];
+
+		for (uint32_t i=0; i<vertices.size(); i+= 3)
+		{
+			float x = vertices[i], y = vertices[i + 1], z = vertices[i + 2];
+			xBounds[0] = std::min(xBounds[0], x); xBounds[1] = std::max(xBounds[1], x);
+			yBounds[0] = std::min(yBounds[0], y); yBounds[1] = std::max(yBounds[1], y);
+			zBounds[0] = std::min(zBounds[0], x); zBounds[1] = std::max(zBounds[1], z);
+		}
+
+		// Compute AABB points
+		AABB.resize(8);
+		uint32_t pointIdx = 0;
+		for (uint32_t i = 0; i < 2; i++)
+		{
+			for (uint32_t j = 0; j < 2; j++)
+			{
+				for (uint32_t k = 0; k < 2; k++)
+				{
+					AABB[pointIdx] = { xBounds[i], yBounds[j], zBounds[k] };
+					pointIdx++;
+				}
+			}
+		}
+
+		mr.SetAABB(AABB.data());
+	}
+
 	template<>
 	void Scene::OnComponentAdded(DirectionalLightComponent& dl, Entity entity) {}
 	template<>
@@ -166,7 +209,7 @@ namespace Debut
 		
 		// Flags
 		bool renderColliders = Renderer::GetConfig().RenderColliders;
-		glm::mat4 cameraView = glm::inverse(camera.GetView());
+		glm::mat4 cameraView = camera.GetView();
 
 		Rendering3D(camera, cameraView, target);
 		Rendering2D(camera, cameraView, target);
@@ -432,14 +475,14 @@ namespace Debut
 		m_PhysicsSystem3D->Begin();
 	}
 
-	void Scene::Rendering2D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target)
+	void Scene::Rendering2D(Camera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
 	{
 		target->Bind();
 
 		// 2D Rendering
 		{
 			DBT_PROFILE_SCOPE("Rendering2D");
-			Renderer2D::BeginScene(camera, cameraTransform);
+			Renderer2D::BeginScene(camera, cameraView);
 
 			auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
 			for (auto entity : group)
@@ -509,11 +552,11 @@ namespace Debut
 		target->Unbind();
 	}
 
-	void Scene::RenderingDebug(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target)
+	void Scene::RenderingDebug(Camera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
 	{
 		target->Bind();
 
-		RendererDebug::BeginScene(camera, cameraTransform);
+		RendererDebug::BeginScene(camera, cameraView);
 		{
 			DBT_PROFILE_SCOPE("RenderingDebug");
 			// 3D Physics colliders
@@ -535,7 +578,7 @@ namespace Debut
 					MathUtils::DecomposeTransform(objTransformMat, trans, rot, scale);
 
 					auto& collider = e.GetComponent<SphereCollider3DComponent>();
-					RendererDebug::DrawSphere(collider.Radius, collider.Offset, rot, scale, glm::inverse(cameraTransform), objTransformMat);
+					RendererDebug::DrawSphere(collider.Radius, collider.Offset, rot, scale, glm::inverse(cameraView), objTransformMat);
 				}
 				else if (e.HasComponent<MeshCollider3DComponent>())
 				{

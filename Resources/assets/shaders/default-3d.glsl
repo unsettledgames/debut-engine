@@ -55,15 +55,13 @@ flat out int v_EntityID;
 
 void main()
 {
-	mat4 viewProj = u_ProjectionMatrix * u_ViewMatrix;
-	mat4 mvp = viewProj * u_Transform;
+	mat4 mvp = u_ViewProjection * u_Transform;
 	
 	// TODO: send the matrix via CPU
 	mat4 normalMatrix = transpose(inverse(u_Transform));
 	vec3 normal = normalize(normalMatrix * vec4(a_Normal, 1.0)).xyz;
 	vec4 position = mvp * vec4(a_Position, 1.0);
-
-	v_Color = a_Color;
+	
 	if (u_NormalMap.Use)
 	{
 		vec4 tangent = normalize(normalMatrix * vec4(a_Tangent, 1.0));
@@ -79,6 +77,7 @@ void main()
 	
 	mat3 inverseTangentSpace = transpose(v_TangentSpace);
 	
+	v_Color = a_Color;
 	v_TexCoords = a_TexCoords0;
 	v_FragPos = vec3(u_Transform * vec4(a_Position, 1.0));
 	v_FragPosView = vec3(u_ViewMatrix * vec4(v_FragPos, 1.0));
@@ -280,7 +279,7 @@ float GetShadows(vec3 normal, vec3 lightDir)
 	float cameraDistance = length(v_FragPos - u_CameraPosition);
 	float attenuation = max(1.0 - ((mix(u_ShadowFadeoutStart, u_ShadowFadeoutEnd, (cameraDistance - u_ShadowFadeoutStart) / (u_ShadowFadeoutEnd - u_ShadowFadeoutStart))) - u_ShadowFadeoutStart)
 		/ (u_ShadowFadeoutEnd - u_ShadowFadeoutStart), 0.0);
-	float bias = 0.0015;// max(0.01 * (1.0 - dot(normal, lightDir)), 0.001);
+	float bias = max(0.01 * (1.0 - dot(normal, lightDir)), 0.001);
 	
 	if (projFragLight.x >= 1.0 || projFragLight.x <= 0.0 || projFragLight.y >= 1.0 || projFragLight.y <= 0.0)
 		return 1.0 - attenuation;
@@ -329,17 +328,16 @@ void main()
 	}
 	
 	// Compute shadows
-	float shadow = GetShadows(normalize(v_Normal), lightDir);
+	float shadow = GetShadows(normal, lightDir);
+	vec3 fragToCamera = u_CameraPosition - v_FragPos;
 		
 	// Get directional light color
 	color = texColor * vec4(u_AmbientLightColor*u_AmbientLightIntensity, 1.0) +
-			texColor * vec4(shadow * DirectionalPhong(normal, lightDir, u_CameraPosition - v_FragPos, texCoords), 1.0);
+			texColor * vec4(shadow * DirectionalPhong(normal, lightDir, fragToCamera, texCoords), 1.0);
 	
 	// Get point lights color
 	for (int i=0; i<u_NPointLights; i++)
-		color += texColor * vec4(shadow * PointPhong
-			(normal, u_PointLights[i], u_CameraPosition - v_FragPos, 
-			u_PointLights[i].Position - v_FragPos, texCoords), 1.0);
+		color += texColor * vec4(shadow * PointPhong(normal, u_PointLights[i], fragToCamera, u_PointLights[i].Position - v_FragPos, texCoords), 1.0);
 	
 	// Occlusion
 	if (u_OcclusionMap.Use)

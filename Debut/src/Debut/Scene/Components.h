@@ -181,15 +181,33 @@ namespace Debut
 
 	struct MeshRendererComponent
 	{
+		UUID Owner;
 		UUID Material = 0;
 		UUID Mesh = 0;
 
 		bool Instanced = false;
-		UUID Owner;
+		glm::vec3 AABB[8];
+
+		std::vector<glm::vec3> GetAABB()
+		{
+			std::vector<glm::vec3> ret;
+			ret.resize(8);
+			// Get transform
+			TransformComponent& transform = Entity::s_ExistingEntities[Owner].Transform();
+			// Transform each vertex of the AABB
+			for (uint32_t i = 0; i < 8; i++)
+				ret[i] = transform.GetTransform() * glm::vec4(AABB[i], 1.0f);
+
+			return ret;
+		}
+
+		inline void SetAABB(glm::vec3* box) { memcpy(AABB, box, sizeof(glm::vec3) * 8); }
 
 		MeshRendererComponent()  {}
 		MeshRendererComponent(const MeshRendererComponent&) = default;
-		MeshRendererComponent(UUID mesh, UUID material) : Material(material), Mesh(mesh), Instanced(false) {}
+		MeshRendererComponent(UUID mesh, UUID material) : Material(material), Mesh(mesh) {}
+		MeshRendererComponent(UUID mesh, UUID material, UUID owner, bool instanced) : 
+			Owner(owner), Material(material), Mesh(mesh), Instanced(instanced) {}
 	};
 
 	// LIGHTING

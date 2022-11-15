@@ -27,14 +27,18 @@
 
 /*
 *   CURRENT: OPTIMIZATION
-*       - Gather Renderer3D statistics
-*       - Profile
-*       - Optimize default-3d shader
+*       Start:              ~58 FPS
+*       Matrix opt:         ~60 FPS
+*       Frustum culling:    
+* 
+*       - Shadow mapping: in each shadow pass, the only thing that changes is the camera, the rest stays exactly the same...
 * 
 *       - Frustum culling:
-            - Create an AABB when the mesh renderer is added, save it in the component
-            - Add a GetAABB method, multiply the AABB by the transform matrix
             - Test for AABB before sending vertices https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
+
+        - OpenGL optimizations: https://on-demand.gputechconf.com/siggraph/2014/presentation/SG4117-OpenGL-Scene-Rendering-Techniques.pdf
+        - Scene graph optimizations: https://on-demand.gputechconf.com/gtc/2013/presentations/S3032-Advanced-Scenegraph-Rendering-Pipeline.pdf
+
 *
 *   MAIN SHADOW WORKFLOW
 * 

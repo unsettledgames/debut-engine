@@ -96,6 +96,7 @@ namespace Debut
             Renderer3DStats stats = Renderer3D::GetStats();
 
             static float fpsShown = fps;
+            static float fpsMean = 0.0f;
             static int drawCallsShown = stats.DrawCalls;
             static int trianglesShown = stats.Triangles;
             static int shadowPasses = stats.NShadowPasses;
@@ -103,11 +104,15 @@ namespace Debut
 
             if (start % 100 == 0)
             {
-                fpsShown = fps;
+                fpsShown = fpsMean / 100;
                 drawCallsShown = stats.DrawCalls;
                 trianglesShown = stats.Triangles;
                 shadowPasses = stats.NShadowPasses;
+                fpsMean = fps;
             }
+            else
+                fpsMean += fps;
+
             ImGui::Text("FPS: %f", fpsShown);
             start++;
 
@@ -327,7 +332,7 @@ namespace Debut
             glm::mat4 transformMat = transform.GetTransform();
             glm::mat4 viewProj = m_EditorCamera.GetViewProjection();
 
-            RendererDebug::BeginScene(m_EditorCamera, glm::inverse(m_EditorCamera.GetView()));
+            RendererDebug::BeginScene(m_EditorCamera, m_EditorCamera.GetView());
 
             if (currSelection.HasComponent<BoxCollider2DComponent>())
             {

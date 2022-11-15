@@ -48,20 +48,20 @@ namespace Debut
 		delete[] s_Storage.PointVertexBase;
 	}
 
-	void RendererDebug::BeginScene(Camera& camera, const glm::mat4& transform)
+	void RendererDebug::BeginScene(Camera& camera, const glm::mat4& view)
 	{
 		RenderCommand::DisableCulling();
-		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
+		glm::mat4 viewProj = camera.GetProjection() * view;
 
 		s_Storage.LineShader->Bind();
 		s_Storage.LineShader->SetMat4("u_ViewProjection", viewProj);
-		s_Storage.LineShader->SetMat4("u_ViewMatrix", glm::inverse(transform));
+		s_Storage.LineShader->SetMat4("u_ViewMatrix", view);
 		s_Storage.LineShader->SetMat4("u_ProjectionMatrix", camera.GetProjection());
 		s_Storage.LineShader->Unbind();
 
 		s_Storage.PointShader->Bind();
 		s_Storage.PointShader->SetMat4("u_ViewProjection", viewProj);
-		s_Storage.PointShader->SetMat4("u_ViewMatrix", glm::inverse(transform));
+		s_Storage.PointShader->SetMat4("u_ViewMatrix", view);
 		s_Storage.PointShader->SetMat4("u_ProjectionMatrix", camera.GetProjection());
 		s_Storage.PointShader->Unbind();
 

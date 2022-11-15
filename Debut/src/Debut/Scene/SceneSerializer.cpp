@@ -274,10 +274,11 @@ namespace Debut
 	{
 		if (!in)
 			return;
-		MeshRendererComponent& mr = e.AddComponent<MeshRendererComponent>();
-		mr.Instanced = in["Instanced"].as<bool>();
-		mr.Material = in["Material"].as<uint64_t>();
-		mr.Mesh = in["Mesh"].as<uint64_t>();
+		bool instanced = in["Instanced"].as<bool>();
+		UUID material = in["Material"].as<uint64_t>();
+		UUID mesh = in["Mesh"].as<uint64_t>();
+
+		MeshRendererComponent& mr = e.AddComponent<MeshRendererComponent>(mesh, material, e.ID(), instanced);
 	}
 
 	template<>

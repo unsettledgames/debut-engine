@@ -88,15 +88,15 @@ namespace Debut
 		delete[] s_Data.QuadVertexBufferBase;
 	}
 
-	void Renderer2D::BeginScene(Camera& camera, const glm::mat4& transform)
+	void Renderer2D::BeginScene(Camera& camera, const glm::mat4& view)
 	{
 		DBT_PROFILE_FUNCTION();
 		RenderCommand::DisableCulling();
 
-		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
+		glm::mat4 viewProj = camera.GetProjection() * view;
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
-		s_Data.TextureShader->SetMat4("u_ViewMatrix", glm::inverse(transform));
+		s_Data.TextureShader->SetMat4("u_ViewMatrix", view);
 		s_Data.TextureShader->SetMat4("u_ProjectionMatrix", camera.GetProjection());
 
 		s_Data.TextureShader->SetFloat("u_TilingFactor", 1.0f);
@@ -105,7 +105,7 @@ namespace Debut
 		StartBatch();
 
 		if (Renderer::GetConfig().RenderWireframe)
-			RendererDebug::BeginScene(camera, transform);
+			RendererDebug::BeginScene(camera, view);
 	}
 
 	void Renderer2D::EndScene()
