@@ -84,6 +84,7 @@ namespace Debut
 		s_Data.CameraTransform = s_Data.CameraProjection * s_Data.CameraView;
 		s_Data.CameraNear = camera.GetNearPlane();
 		s_Data.CameraFar = camera.GetFarPlane();
+		s_Data.CameraFrustum = Frustum(camera);
 		
 		s_Data.Lights = lights;
 		s_Data.GlobalUniforms = globalUniforms;
@@ -128,6 +129,9 @@ namespace Debut
 	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform, int entityID)
 	{
 		DBT_PROFILE_FUNCTION();
+
+		if (!s_Data.CameraFrustum.TestAABB(meshComponent.GetAABB(), transform))
+			return;
 
 		Ref<Mesh> mesh;
 		Ref<Material> material;

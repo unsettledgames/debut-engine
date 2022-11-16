@@ -2,6 +2,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
+#include <glm/gtx/matrix_operation.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
@@ -10,6 +11,7 @@
 #include <Debut/Utils/MathUtils.h>
 #include "Debut/Scene/SceneCamera.h"
 #include <Debut/Scene/ScriptableEntity.h>
+#include <Debut/Rendering/Structures/Frustum.h>
 
 #include <Debut/Core/UUID.h>
 
@@ -186,22 +188,26 @@ namespace Debut
 		UUID Mesh = 0;
 
 		bool Instanced = false;
-		glm::vec3 AABB[8];
+		AABB BoundingBox;
 
-		std::vector<glm::vec3> GetAABB()
+		inline AABB GetAABB() const
 		{
-			std::vector<glm::vec3> ret;
-			ret.resize(8);
 			// Get transform
-			TransformComponent& transform = Entity::s_ExistingEntities[Owner].Transform();
-			// Transform each vertex of the AABB
-			for (uint32_t i = 0; i < 8; i++)
-				ret[i] = transform.GetTransform() * glm::vec4(AABB[i], 1.0f);
+			glm::mat4 transform = Entity::s_ExistingEntities[Owner].Transform().GetTransform();
+			AABB ret = BoundingBox;
+			
+			// Transform center
+			ret.Center = transform * glm::vec4(ret.Center, 1.0f);
+			// Scale the extents
+			glm::vec4 scale = { transform[0][0], transform[1][1], transform[2][2], transform[3][3] };
+			glm::mat4 extentTransform = glm::diagonal4x4(scale);
+			ret.MinExtents = extentTransform * glm::vec4(BoundingBox.MinExtents, 1.0f);
+			ret.MaxExtents = extentTransform * glm::vec4(BoundingBox.MaxExtents, 1.0f);
 
 			return ret;
 		}
 
-		inline void SetAABB(glm::vec3* box) { memcpy(AABB, box, sizeof(glm::vec3) * 8); }
+		inline void SetAABB(AABB box) { BoundingBox = box; }
 
 		MeshRendererComponent()  {}
 		MeshRendererComponent(const MeshRendererComponent&) = default;

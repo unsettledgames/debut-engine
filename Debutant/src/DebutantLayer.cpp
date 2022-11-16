@@ -34,6 +34,16 @@
 *       - Shadow mapping: in each shadow pass, the only thing that changes is the camera, the rest stays exactly the same...
 * 
 *       - Frustum culling:
+*           - AABB:
+*               - Center / extents
+*               - Get min / max
+*               - No transform? That's the definition of AABB, in the end the transform is always available, so that I can transform
+*                   all the vectors given by the AABB
+*           - Plane:
+*               - Far / normal
+*               - I have all the corners, the normal is the cross between 2 points, the distance is the dot between the normal
+*                   and a corner
+*           - Generate all planes of the frustum, save the normal
             - Test for AABB before sending vertices https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
 
         - OpenGL optimizations: https://on-demand.gputechconf.com/siggraph/2014/presentation/SG4117-OpenGL-Scene-Rendering-Techniques.pdf

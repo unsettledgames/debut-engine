@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Debut/Rendering/Structures/Frustum.h>
 
 namespace Debut
 {
@@ -59,6 +60,7 @@ namespace Debut
 		glm::mat4 CameraProjection;
 		float CameraNear;
 		float CameraFar;
+		Frustum CameraFrustum;
 
 		std::vector<LightComponent*> Lights;
 		std::vector<ShaderUniform> GlobalUniforms;

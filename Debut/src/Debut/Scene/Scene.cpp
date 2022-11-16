@@ -110,6 +110,10 @@ namespace Debut
 		DBT_PROFILE_SCOPE("GenerateAABB");
 
 		Ref<Mesh> mesh = AssetManager::Request<Mesh>(mr.Mesh);
+		AABB toSet;
+
+		toSet.Center = glm::vec3(0.0f);
+
 		std::vector<float>& vertices = mesh->GetPositions();
 		std::vector<glm::vec3> AABB;
 
@@ -127,22 +131,10 @@ namespace Debut
 			zBounds[0] = std::min(zBounds[0], x); zBounds[1] = std::max(zBounds[1], z);
 		}
 
-		// Compute AABB points
-		AABB.resize(8);
-		uint32_t pointIdx = 0;
-		for (uint32_t i = 0; i < 2; i++)
-		{
-			for (uint32_t j = 0; j < 2; j++)
-			{
-				for (uint32_t k = 0; k < 2; k++)
-				{
-					AABB[pointIdx] = { xBounds[i], yBounds[j], zBounds[k] };
-					pointIdx++;
-				}
-			}
-		}
+		toSet.MaxExtents = { xBounds[1], yBounds[1], zBounds[1] };
+		toSet.MinExtents = { xBounds[0], yBounds[0], zBounds[0] };
 
-		mr.SetAABB(AABB.data());
+		mr.SetAABB(toSet);
 	}
 
 	template<>
