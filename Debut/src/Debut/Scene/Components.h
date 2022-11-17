@@ -197,12 +197,9 @@ namespace Debut
 			AABB ret = BoundingBox;
 			
 			// Transform center
-			ret.Center = transform * glm::vec4(ret.Center, 1.0f);
-			// Scale the extents
-			glm::vec4 scale = { transform[0][0], transform[1][1], transform[2][2], transform[3][3] };
-			glm::mat4 extentTransform = glm::diagonal4x4(scale);
-			ret.MinExtents = extentTransform * glm::vec4(BoundingBox.MinExtents, 1.0f);
-			ret.MaxExtents = extentTransform * glm::vec4(BoundingBox.MaxExtents, 1.0f);
+			ret.Center = ret.Center;
+			ret.MinExtents = BoundingBox.MinExtents;
+			ret.MaxExtents = BoundingBox.MaxExtents;
 
 			return ret;
 		}

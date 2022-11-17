@@ -84,9 +84,9 @@ namespace Debut
 	bool Frustum::TestAABB(const AABB& aabb, const glm::mat4& transform)
 	{
 		std::vector<Plane*> planes = { &m_Far, &m_Near, &m_Top, &m_Bottom, &m_Left, &m_Right };
-		glm::vec3 boxRight = transform * glm::vec4(1, 0, 0, 1);
-		glm::vec3 boxUp = transform * glm::vec4(0, 1, 0, 1);
-		glm::vec3 boxBackwards = transform * glm::vec4(0, 0, 1, 1);
+		glm::vec3 boxRight = glm::normalize(transform * glm::vec4(1, 0, 0, 0));
+		glm::vec3 boxUp = glm::normalize(transform * glm::vec4(0, 1, 0, 0));
+		glm::vec3 boxBackwards = glm::normalize(transform * glm::vec4(0, 0, 1, 0));
 
 		// Compute oriented box vertices
 		std::vector<glm::vec3> boxVertices;
@@ -100,10 +100,10 @@ namespace Debut
 			{
 				for (uint32_t z = 0; z < 2; z++)
 				{
-					boxVertices[vertIdx] = aabb.Center +
-						((x - 0.5f) * 2.0f) * extents[x].x * boxRight +
-						((y - 0.5f) * 2.0f) * extents[y].y * boxUp +
-						((z - 0.5f) * 2.0f) * extents[z].z * boxBackwards;
+					boxVertices[vertIdx] = glm::vec3(
+						((x - 0.5f) * 2.0f) * extents[x].x,
+						((y - 0.5f) * 2.0f) * extents[y].y,
+						((z - 0.5f) * 2.0f) * extents[z].z);
 					vertIdx++;
 				}
 			}
@@ -112,9 +112,9 @@ namespace Debut
 		for (auto& plane : planes)
 		{
 			// Compute pVertex
-			float minAngle = glm::radians(360.0f);
-			glm::vec3 pVertex;
-			glm::vec3 boxSpaceNormal = transform * glm::vec4(plane->Normal, 0.0f);
+			glm::vec3 pVertex = glm::vec3(0.0f);
+			glm::vec3 boxSpaceNormal = glm::normalize(glm::vec3(glm::dot(boxRight, plane->Normal), 
+				glm::dot(boxUp, plane->Normal), glm::dot(boxBackwards, plane->Normal)));
 
 			if (boxSpaceNormal.x > 0)
 				pVertex.x = aabb.MaxExtents.x;
@@ -130,29 +130,10 @@ namespace Debut
 				pVertex.z = aabb.MaxExtents.z;
 			else
 				pVertex.z = aabb.MinExtents.z;
-			
-			/*for (uint32_t i = 0; i<boxVertices.size(); i++)
-			{
-				for (uint32_t j = i + 1; j < boxVertices.size(); j++)
-				{
-					glm::vec3 diagonal = boxVertices[i] - boxVertices[j];
-					glm::vec3 toChoose = boxVertices[i];
-					float currAngle = glm::orientedAngle(diagonal, plane->Normal, glm::normalize(glm::cross(diagonal, plane->Normal)));
 
-					if (currAngle > glm::pi<float>())
-					{
-						currAngle = glm::pi<float>() * 2 - currAngle;
-						toChoose = boxVertices[j];
-					}
-					if (currAngle < minAngle)
-					{
-						pVertex = toChoose;
-						minAngle = currAngle;
-					}
-				}
-			}*/
+			pVertex = transform * glm::vec4(pVertex, 1.0f);
 
-			// HAVE A LOOK HERE
+			// Add support to transformed objects (compute the pVertex keeping the transform in account)
 			float distance = plane->SignedDistance(pVertex);
 			if (distance < 0)
 				return false;
