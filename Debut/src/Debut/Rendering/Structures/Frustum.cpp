@@ -36,7 +36,7 @@ namespace Debut
 		farHalfSize = { wFar / 2.0f, hFar / 2.0f };
 
 		// Directions
-		forward = glm::vec3(0.0f, 0.0f, 1.0f);
+		forward = glm::vec3(0.0f, 0.0f, -1.0f);
 
 		nearCenter = forward * nearDistance;
 		farCenter = forward * farDistance;
@@ -62,28 +62,22 @@ namespace Debut
 		}
 
 		// Compute planes
-		// Pos normal
-		m_Far.Normal = glm::normalize(glm::cross(farTopRight - farTopLeft, farTopLeft - farBottomLeft));
+		m_Far.Normal = glm::normalize(glm::cross(farBottomLeft - farTopLeft, farTopRight - farTopLeft));
 		m_Far.Distance = glm::dot(farTopLeft, -m_Far.Normal);
 
-		// Neg normal
-		m_Near.Normal = glm::normalize(glm::cross(nearTopLeft - nearTopRight, nearTopRight - nearBottomRight));
+		m_Near.Normal = glm::normalize(glm::cross(nearBottomRight - nearTopRight, nearTopLeft - nearTopRight));
 		m_Near.Distance = glm::dot(nearTopLeft, -m_Near.Normal);
 
-		// Pos normal
-		m_Left.Normal = glm::normalize(glm::cross(nearTopLeft - farTopLeft, nearTopLeft - nearBottomLeft));
+		m_Left.Normal = glm::normalize(glm::cross(nearBottomLeft - nearTopLeft, farTopLeft - nearTopLeft));
 		m_Left.Distance = glm::dot(farTopLeft, -m_Left.Normal);
 
-		// Neg normal
-		m_Right.Normal = glm::normalize(glm::cross(farTopRight - nearTopRight, farTopRight - farBottomRight));
+		m_Right.Normal = glm::normalize(glm::cross(farBottomRight - farTopRight, nearTopRight - farTopRight));
 		m_Right.Distance = glm::dot(farTopRight, -m_Right.Normal);
 
-		// Neg normal
-		m_Top.Normal = glm::normalize(glm::cross(farTopRight - farTopLeft, farTopLeft - nearTopLeft));
+		m_Top.Normal = glm::normalize(glm::cross(farTopLeft - nearTopLeft, nearTopRight - nearTopLeft));
 		m_Top.Distance = glm::dot(farTopLeft, -m_Top.Normal);
 
-		// Pos normal
-		m_Bottom.Normal = glm::normalize(glm::cross(farBottomLeft - farBottomRight, farBottomLeft - nearBottomLeft));
+		m_Bottom.Normal = glm::normalize(glm::cross(nearBottomLeft - farBottomLeft, farBottomRight - farBottomLeft));
 		m_Bottom.Distance = glm::dot(farBottomLeft, -m_Bottom.Normal);
 	}
 
@@ -120,8 +114,24 @@ namespace Debut
 			// Compute pVertex
 			float minAngle = glm::radians(360.0f);
 			glm::vec3 pVertex;
+			glm::vec3 boxSpaceNormal = transform * glm::vec4(plane->Normal, 0.0f);
+
+			if (boxSpaceNormal.x > 0)
+				pVertex.x = aabb.MaxExtents.x;
+			else
+				pVertex.x = aabb.MinExtents.x;
+
+			if (boxSpaceNormal.y > 0)
+				pVertex.y = aabb.MaxExtents.y;
+			else
+				pVertex.y = aabb.MinExtents.y;
+
+			if (boxSpaceNormal.z > 0)
+				pVertex.z = aabb.MaxExtents.z;
+			else
+				pVertex.z = aabb.MinExtents.z;
 			
-			for (uint32_t i=0; i<boxVertices.size(); i++)
+			/*for (uint32_t i = 0; i<boxVertices.size(); i++)
 			{
 				for (uint32_t j = i + 1; j < boxVertices.size(); j++)
 				{
@@ -140,10 +150,11 @@ namespace Debut
 						minAngle = currAngle;
 					}
 				}
-			}
+			}*/
 
+			// HAVE A LOOK HERE
 			float distance = plane->SignedDistance(pVertex);
-			if (std::fabs(distance - plane->Distance) < 0)
+			if (distance < 0)
 				return false;
 		}
 
