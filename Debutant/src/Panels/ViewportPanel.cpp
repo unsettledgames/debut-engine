@@ -61,7 +61,6 @@ namespace Debut
     {
         fps = 1.0f / ts;
         DBT_PROFILE_SCOPE("EgineUpdate");
-        //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
         if (m_ViewportFocused)
             m_EditorCamera.OnUpdate(ts);
@@ -126,24 +125,17 @@ namespace Debut
 
         ImGui::Begin("Debug");
         {
-            
-            
-            // 3D rendering stats
+            // Shadow map
 
-            /*
             static int shadowMapIndex = 0;
             
             Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
             uint32_t rendererID = activeScene->GetShadowMaps()[shadowMapIndex]->GetFrameBuffer()->GetDepthAttachment();
 
             ImGui::Image((void*)rendererID, { 300, 300 }, { 0, 1 }, { 1, 0 });
-            ImGui::DragInt("Shadowmap index", &shadowMapIndex);
+            ImGui::DragInt("Shadowmap index", &shadowMapIndex, 0.1f, 0, 4);
             ImGui::DragFloat("Fadeout start distance", &activeScene->fadeoutStartDistance);
             ImGui::DragFloat("Fadeout end distance", &activeScene->fadeoutEndDistance);
-            ImGui::DragFloat("Lambda", &activeScene->lambda, 0.01f, 0.0f, 1.0f);
-
-            shadowMapIndex = std::min(std::max(0, shadowMapIndex), 3);
-            */
         }
         ImGui::End();
 

@@ -42,7 +42,7 @@ namespace Debut
 			float height = camera.GetOrthoSize();
 			float width = height * camera.GetAspectRatio();
 
-			nearHalfSize = { height / 2.0f, width / 2.0f };
+			nearHalfSize = { width / 2.0f, height / 2.0f };
 			farHalfSize = nearHalfSize;
 		}
 		
@@ -101,25 +101,7 @@ namespace Debut
 		glm::vec3 boxBackwards = glm::normalize(transform * glm::vec4(0, 0, 1, 0));
 
 		// Compute oriented box vertices
-		std::vector<glm::vec3> boxVertices;
 		glm::vec3 extents[2] = { aabb.MinExtents, aabb.MaxExtents };
-		uint32_t vertIdx = 0;
-		boxVertices.resize(8);
-
-		for (uint32_t x = 0; x < 2; x++)
-		{
-			for (uint32_t y = 0; y < 2; y++)
-			{
-				for (uint32_t z = 0; z < 2; z++)
-				{
-					boxVertices[vertIdx] = glm::vec3(
-						((x - 0.5f) * 2.0f) * extents[x].x,
-						((y - 0.5f) * 2.0f) * extents[y].y,
-						((z - 0.5f) * 2.0f) * extents[z].z);
-					vertIdx++;
-				}
-			}
-		}
 
 		for (auto& plane : planes)
 		{
@@ -143,7 +125,7 @@ namespace Debut
 			else
 				pVertex.z = aabb.MinExtents.z;
 
-			pVertex = transform * glm::vec4(pVertex, 1.0f);
+			pVertex = transform * glm::vec4(aabb.Center + pVertex, 1.0f);
 
 			// Add support to transformed objects (compute the pVertex keeping the transform in account)
 			float distance = plane->SignedDistance(pVertex);

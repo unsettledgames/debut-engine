@@ -129,11 +129,12 @@ namespace Debut
 			float x = vertices[i], y = vertices[i + 1], z = vertices[i + 2];
 			xBounds[0] = std::min(xBounds[0], x); xBounds[1] = std::max(xBounds[1], x);
 			yBounds[0] = std::min(yBounds[0], y); yBounds[1] = std::max(yBounds[1], y);
-			zBounds[0] = std::min(zBounds[0], x); zBounds[1] = std::max(zBounds[1], z);
+			zBounds[0] = std::min(zBounds[0], z); zBounds[1] = std::max(zBounds[1], z);
 		}
 
 		toSet.MaxExtents = { xBounds[1], yBounds[1], zBounds[1] };
 		toSet.MinExtents = { xBounds[0], yBounds[0], zBounds[0] };
+		toSet.Center = mesh->GetTransform() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 		mr.SetAABB(toSet);
 	}
@@ -278,7 +279,6 @@ namespace Debut
 		}
 
 		// Render sprites
-
 		// Find the main camera of the scene
 		SceneCamera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
@@ -871,7 +871,7 @@ namespace Debut
 		{
 			m_ShadowMaps.resize(nSplits);
 			float nearDistances[5] = { -1.0f, -5.0f, -10.f, -50.0f, -100.0f };
-			float farDistances[5] = { 20.0f, 75.0f, 200.0f, 500.0f, 750.0f };
+			float farDistances[5] = { 50.0f, 100.0f, 250.0f, 500.0f, 750.0f };
 			float cameraDistances[5] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 			for (uint32_t i = 0; i < 5; i++)
 			{

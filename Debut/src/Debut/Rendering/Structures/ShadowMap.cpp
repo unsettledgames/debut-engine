@@ -20,10 +20,11 @@ namespace Debut
 
 	void ShadowMap::SetFromCamera(const SceneCamera& camera, SceneCamera& outCamera, const glm::vec3& lightDirection)
 	{
-		outCamera = SceneCamera(Camera::ProjectionType::Orthographic, m_Near, m_Far, 10, (float)m_Width / m_Height);
-		outCamera.SetView(camera.GetView());
-		outCamera.SetType(Camera::ProjectionType::Orthographic);
-		std::vector<glm::vec3> points = Frustum::GetWorldViewPoints(outCamera);
+		SceneCamera referenceCamera;
+		referenceCamera.SetView(camera.GetView());
+		referenceCamera.SetProjection(glm::perspective(camera.GetFOV(), camera.GetAspectRatio(), m_Near, m_Far));
+		
+		std::vector<glm::vec3> points = Frustum::GetWorldViewPoints(referenceCamera);
 
 		float left, right, top, down, front, bottom;
 		glm::vec2 xBounds = { std::numeric_limits<float>::max(), -std::numeric_limits<float>::max() };
@@ -32,7 +33,7 @@ namespace Debut
 
 		glm::vec3 lightPos;
 		glm::vec3 cameraPos = glm::vec3(0.0f);
-
+		
 		// Set camera point of view
 		for (auto point : points)
 			cameraPos += point;
@@ -70,8 +71,11 @@ namespace Debut
 			zBounds.y *= zMult;
 
 		m_Projection = glm::ortho(xBounds.x, xBounds.y, yBounds.x, yBounds.y, zBounds.x, zBounds.y);
-		outCamera.SetProjection(m_Projection);
 		m_ViewProjection = m_Projection * m_View;
+
+		outCamera.SetType(Camera::ProjectionType::Orthographic);
+		outCamera.SetView(m_View);
+		outCamera.SetProjection(m_Projection);
 	}
 
 	void ShadowMap::Bind()

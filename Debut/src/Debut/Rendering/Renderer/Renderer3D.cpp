@@ -80,7 +80,6 @@ namespace Debut
 		// Reset storage
 		s_Data.CameraView = camera.GetView();
 		s_Data.CameraProjection = camera.GetProjection();
-		s_Data.CameraTransform = s_Data.CameraProjection * s_Data.CameraView;
 		s_Data.CameraNear = camera.GetNearPlane();
 		s_Data.CameraFar = camera.GetFarPlane();
 		s_Data.CameraFrustum = Frustum(camera);
@@ -121,8 +120,7 @@ namespace Debut
 		RenderCommand::CullBack();
 
 		if (Renderer::GetConfig().RenderWireframe)
-			RendererDebug::BeginScene(camera, cameraView);
-
+			RendererDebug::BeginScene(camera, s_Data.CameraView);
 	}
 
 	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform, int entityID)
@@ -253,7 +251,6 @@ namespace Debut
 				materialToUse.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
 
 				materialToUse.Use();
-				// STABILIZE
 				materialToUse.GetRuntimeShader()->SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
 
 				if (s_Data.CurrentPass != RenderingPass::Shadow)
