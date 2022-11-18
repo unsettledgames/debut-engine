@@ -101,6 +101,8 @@ namespace Debut
             static int drawCallsShown = stats.DrawCalls;
             static int trianglesShown = stats.Triangles;
             static int shadowPasses = stats.NShadowPasses;
+            static int shadowDrawCalls = stats.ShadowDrawCalls;
+            static int shadowTriangles = stats.ShadowTriangles;
             static int start = 0;
 
             if (start % 100 == 0)
@@ -109,6 +111,9 @@ namespace Debut
                 drawCallsShown = stats.DrawCalls;
                 trianglesShown = stats.Triangles;
                 shadowPasses = stats.NShadowPasses;
+                shadowDrawCalls = stats.ShadowDrawCalls;
+                shadowTriangles = stats.ShadowTriangles;
+
                 fpsMean = fps;
             }
             else
@@ -117,9 +122,11 @@ namespace Debut
             ImGui::Text("FPS: %f", fpsShown);
             start++;
 
-            ImGui::Text("3D Draw calls: %d", drawCallsShown);
-            ImGui::Text("3D Triangles: %d", trianglesShown);
-            ImGui::Text("3D Shadow passes: %d", shadowPasses);
+            ImGui::Text("DEFAULT: Draw calls: %d", drawCallsShown);
+            ImGui::Text("DEFAULT: Triangles: %d", trianglesShown);
+            ImGui::Text("DEFAULT: Shadow passes: %d", shadowPasses);
+            ImGui::Text("SHADOW: Shadow draw calls: %d", shadowDrawCalls);
+            ImGui::Text("SHADOW: Shadow triangles: %d", shadowTriangles);
         }
         ImGui::End();
 

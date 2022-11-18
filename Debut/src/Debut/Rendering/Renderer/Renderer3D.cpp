@@ -212,6 +212,11 @@ namespace Debut
 
 				s_Data.VertexBuffers["EntityID"]->SetData(entityIDs.data(), entityIDs.size() * sizeof(int));
 			}
+			else
+			{
+				s_Stats.ShadowDrawCalls++;
+				s_Stats.ShadowTriangles += positions.size() / 3;
+			}
 		}
 
 		{
@@ -457,5 +462,7 @@ namespace Debut
 		s_Stats.DrawCalls = 0;
 		s_Stats.NShadowPasses = 0;
 		s_Stats.Triangles = 0;
+		s_Stats.ShadowDrawCalls = 0;
+		s_Stats.ShadowTriangles = 0;
 	}
 }

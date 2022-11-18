@@ -16,11 +16,17 @@ namespace Debut
 		void SetProjectionType(ProjectionType type);
 		void SetViewportSize(uint32_t width, uint32_t height);
 
-		float GetOrthoSize() const { return m_OrthographicSize; }
-		float GetFOV() const { return m_FOV; }
+		inline float GetOrthoSize() const { return m_OrthographicSize; }
+		inline float GetFOV() const { return m_FOV; }
+		inline glm::vec2 GetOrthoBoundsX() const { return m_OrthoBoundsX; }
+		inline glm::vec2 GetOrthoBoundsY() const { return m_OrthoBoundsY; }
+		inline glm::vec2 GetOrthoBoundsZ() const { return m_OrthoBoundsZ; }
 
-		void SetOrthoSize(float val) { m_OrthographicSize = val; RecalculateProjection(); }
-		void SetFOV(float val) { m_FOV = val; RecalculateProjection(); }
+		inline void SetOrthoSize(float val) { m_OrthographicSize = val; RecalculateProjection(); }
+		inline void SetFOV(float val) { m_FOV = val; RecalculateProjection(); }
+		inline void SetOrthoBoundsX(const glm::vec2& bounds) { m_OrthoBoundsX = bounds; }
+		inline void SetOrthoBoundsY(const glm::vec2& bounds) { m_OrthoBoundsY = bounds; }
+		inline void SetOrthoBoundsZ(const glm::vec2& bounds) { m_OrthoBoundsZ = bounds; }
 
 		static ProjectionType StringToProjType(const char* string);
 	
@@ -29,6 +35,10 @@ namespace Debut
 	protected:
 		float m_FOV = glm::radians(40.0f);
 		float m_OrthographicSize = 10.0f;
+		
+		glm::vec2 m_OrthoBoundsX = {0,0};
+		glm::vec2 m_OrthoBoundsY = {0,0};
+		glm::vec2 m_OrthoBoundsZ = {0,0};
 	};
 }
 

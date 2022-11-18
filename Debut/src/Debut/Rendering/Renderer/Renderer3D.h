@@ -33,9 +33,11 @@ namespace Debut
 
 	struct Renderer3DStats
 	{
-		uint32_t NShadowPasses;
-		uint32_t DrawCalls;
-		uint32_t Triangles;
+		uint32_t NShadowPasses = 0;
+		uint32_t DrawCalls = 0;
+		uint32_t Triangles = 0;
+		uint32_t ShadowTriangles = 0;
+		uint32_t ShadowDrawCalls = 0;
 	};
 
 	struct Renderer3DStorage

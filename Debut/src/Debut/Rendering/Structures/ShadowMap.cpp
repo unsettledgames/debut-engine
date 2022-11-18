@@ -74,8 +74,13 @@ namespace Debut
 		m_ViewProjection = m_Projection * m_View;
 
 		outCamera.SetType(Camera::ProjectionType::Orthographic);
+		outCamera.SetOrthoSize(yBounds.y - yBounds.x);
+		outCamera.SetAspectRatio((xBounds.y - xBounds.x) / outCamera.GetOrthoSize());
 		outCamera.SetView(m_View);
 		outCamera.SetProjection(m_Projection);
+		outCamera.SetOrthoBoundsX(xBounds);
+		outCamera.SetOrthoBoundsY(yBounds);
+		outCamera.SetOrthoBoundsZ(zBounds);
 	}
 
 	void ShadowMap::Bind()

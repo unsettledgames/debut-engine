@@ -15,37 +15,46 @@ namespace Debut
 	{
 		float farDistance = camera.GetFarPlane();
 		float nearDistance = camera.GetNearPlane();
-		float fov = camera.GetFOV();
 		float aspectRatio = camera.GetAspectRatio();
 
-		float wNear, wFar, hNear, hFar;
 		glm::vec3 farCenter, nearCenter;
 		glm::vec2 farHalfSize, nearHalfSize;
+		glm::vec2 nearXBounds, nearYBounds, farXBounds, farYBounds;
 		glm::vec3 forward;
+		glm::vec3 centerOffset = { (camera.GetOrthoBoundsX().x + camera.GetOrthoBoundsX().y) / 2.0f,
+			(camera.GetOrthoBoundsY().x + camera.GetOrthoBoundsY().y) / 2.0f,
+			(camera.GetOrthoBoundsZ().x + camera.GetOrthoBoundsZ().y) / 2.0f };
 		glm::mat4 cameraTransform = glm::inverse(camera.GetView());
 
 		m_View = cameraTransform;
 
 		if (camera.GetProjectionType() == Camera::ProjectionType::Perspective)
 		{
+			float fov = camera.GetFOV();
+			float wNear, wFar, hNear, hFar;
 			// Near / far size
 			hNear = 2.0f * glm::tan(fov / 2.0f) * nearDistance;
 			hFar = 2.0f * glm::tan(fov / 2.0f) * farDistance;
 			wNear = hNear * aspectRatio;
 			wFar = hFar * aspectRatio;
 
-			nearHalfSize = { wNear / 2.0f, hNear / 2.0f };
-			farHalfSize = { wFar / 2.0f, hFar / 2.0f };
+			nearXBounds = { -wNear / 2.0f, wNear / 2.0f };
+			nearYBounds = { -hNear / 2.0f, hNear / 2.0f };
+			farXBounds = { -wFar / 2.0f, wFar / 2.0f };
+			farYBounds = { -hFar / 2.0f, hFar / 2.0f };
 		}
 		else
 		{
-			float height = camera.GetOrthoSize();
-			float width = height * camera.GetAspectRatio();
+			nearXBounds = camera.GetOrthoBoundsX();
+			nearYBounds = camera.GetOrthoBoundsY();
+			farXBounds = nearXBounds;
+			farYBounds = nearYBounds;
+			nearDistance = camera.GetOrthoBoundsZ().x;
+			farDistance = camera.GetOrthoBoundsZ().y;
 
-			nearHalfSize = { width / 2.0f, height / 2.0f };
-			farHalfSize = nearHalfSize;
+			/*nearHalfSize = { width / 2.0f, height / 2.0f };
+			farHalfSize = nearHalfSize;*/
 		}
-		
 
 		// Directions
 		forward = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -56,22 +65,15 @@ namespace Debut
 		// Compute vertices
 		glm::vec3 farTopLeft, farTopRight, farBottomLeft, farBottomRight, 
 			nearTopLeft, nearTopRight, nearBottomLeft, nearBottomRight;
-		glm::vec3* vertices[8] = { &farTopLeft, &farTopRight, &farBottomLeft, &farBottomRight,
-									&nearTopLeft, &nearTopRight, &nearBottomLeft, &nearBottomRight };
-		glm::vec2 halfSizes[2] = { farHalfSize, nearHalfSize };
-		glm::vec3 centers[2] = { farCenter, nearCenter };
-		int xSigns[4] = { -1, 1, -1, 1 };
-		int ySigns[4] = { 1, 1, -1, -1 };
 
-		for (uint32_t i = 0; i < 8; i++)
-		{
-			*vertices[i] = {
-				centers[i / 4].x + halfSizes[i / 4].x * xSigns[i % 4],
-				centers[i / 4].y + halfSizes[i / 4].y * ySigns[i % 4],
-				centers[i / 4].z
-			};
-			*vertices[i] = m_View * glm::vec4(*vertices[i], 1.0f);
-		}
+		farTopLeft =		m_View * glm::vec4(farCenter + glm::vec3(farXBounds.x, farYBounds.y, 0.0f), 1.0f);
+		farTopRight =		m_View * glm::vec4(farCenter + glm::vec3(farXBounds.y, farYBounds.y, 0.0f), 1.0f);
+		farBottomLeft =		m_View * glm::vec4(farCenter + glm::vec3(farXBounds.x, farYBounds.x, 0.0f), 1.0f);
+		farBottomRight =	m_View * glm::vec4(farCenter + glm::vec3(farXBounds.y, farYBounds.x, 0.0f), 1.0f);
+		nearTopLeft =		m_View * glm::vec4(nearCenter + glm::vec3(nearXBounds.x, nearYBounds.y, 0.0f), 1.0f);
+		nearTopRight =		m_View * glm::vec4(nearCenter + glm::vec3(nearXBounds.y, nearYBounds.y, 0.0f), 1.0f);
+		nearBottomLeft =	m_View * glm::vec4(nearCenter + glm::vec3(nearXBounds.x, nearYBounds.x, 0.0f), 1.0f);
+		nearBottomRight =	m_View * glm::vec4(nearCenter + glm::vec3(nearXBounds.y, nearYBounds.x, 0.0f), 1.0f);
 
 		// Compute planes
 		m_Far.Normal = glm::normalize(glm::cross(farBottomLeft - farTopLeft, farTopRight - farTopLeft));
