@@ -66,7 +66,7 @@ namespace Debut
             auto& tc = currSelection.Transform();
             glm::mat4 transform = tc.GetTransform();
 
-            const glm::mat4& cameraView = camera.GetViewMatrix();
+            const glm::mat4& cameraView = camera.GetView();
             const glm::mat4& cameraProj = camera.GetProjection();
 
             bool snapping = Input::IsKeyPressed(DBT_KEY_LEFT_CONTROL);

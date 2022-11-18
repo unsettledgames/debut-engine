@@ -6,7 +6,7 @@
 namespace Debut
 {
 	class FrameBuffer;
-	class Camera;
+	class SceneCamera;
 
 	class ShadowMap
 	{
@@ -29,7 +29,7 @@ namespace Debut
 		inline void SetFar(float cameraFar) { m_Far = cameraFar; }
 		inline void SetCameraDistance(float cameraDistance) { m_DistanceFromCamera = cameraDistance; }
 
-		void SetFromCamera(const Camera& camera, const glm::vec3& lightDirection);
+		void SetFromCamera(const SceneCamera& camera, SceneCamera& outCamera, const glm::vec3& lightDirection);
 
 		void Bind();
 		void BindAsTexture(uint32_t slot);

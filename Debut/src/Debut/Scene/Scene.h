@@ -16,7 +16,7 @@ namespace Debut
 	struct LightComponent;
 	struct ShaderUniform;
 
-	class Camera;
+	class SceneCamera;
 	class FrameBuffer;
 	class Skybox;
 	class PhysicsSystem3D;
@@ -36,16 +36,16 @@ namespace Debut
 		~Scene();
 
 		void OnRuntimeUpdate(Timestep ts, Ref<FrameBuffer> target);
-		void OnEditorUpdate(Timestep ts, Camera& camera, Ref<FrameBuffer> target);
+		void OnEditorUpdate(Timestep ts, SceneCamera& camera, Ref<FrameBuffer> target);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		void OnRuntimeStart();
 		void OnRuntimeStop();
 		
 		void RenderingSetup(Ref<FrameBuffer> target);
-		void Rendering2D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
-		void Rendering3D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
-		void RenderingDebug(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
+		void Rendering2D(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
+		void Rendering3D(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
+		void RenderingDebug(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
 
 		Entity CreateEmptyEntity();
 		Entity CreateEntity(Entity parent, const std::string& name = "New Entity");

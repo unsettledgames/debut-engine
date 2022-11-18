@@ -90,7 +90,7 @@ namespace Debut
 		out << YAML::Key << "PerspNear" << YAML::Value << c.Camera.GetNearPlane();
 		out << YAML::Key << "PerspFar" << YAML::Value << c.Camera.GetFarPlane();
 		out << YAML::Key << "OrthoSize" << YAML::Value << c.Camera.GetOrthoSize();
-		out << YAML::Key << "PerspFOV" << YAML::Value << c.Camera.GetPerspFOV();
+		out << YAML::Key << "PerspFOV" << YAML::Value << c.Camera.GetFOV();
 
 		out << YAML::EndMap;
 	}
@@ -250,7 +250,7 @@ namespace Debut
 		cc.Camera.SetNearPlane(in["CameraData"]["OrthoNear"].as<float>());
 		cc.Camera.SetFarPlane(in["CameraData"]["OrthoFar"].as<float>());
 
-		cc.Camera.SetPerspFOV(in["CameraData"]["PerspFOV"].as<float>());
+		cc.Camera.SetFOV(in["CameraData"]["PerspFOV"].as<float>());
 		cc.Camera.SetNearPlane(in["CameraData"]["PerspNear"].as<float>());
 		cc.Camera.SetFarPlane(in["CameraData"]["PerspFar"].as<float>());
 		cc.Camera.SetViewportSize(scene->GetViewportSize().x, scene->GetViewportSize().y);

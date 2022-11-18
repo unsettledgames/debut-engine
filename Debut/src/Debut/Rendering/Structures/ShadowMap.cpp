@@ -1,9 +1,10 @@
 #include <Debut/Rendering/Structures/ShadowMap.h>
 #include <Debut/Rendering/Structures/Frustum.h>
-#include <Debut/Rendering/Camera.h>
+#include <Debut/Scene/SceneCamera.h>
 #include <Debut/Rendering/Structures/FrameBuffer.h>
+
 #include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Debut
 {
@@ -17,11 +18,12 @@ namespace Debut
 		m_FrameBuffer = FrameBuffer::Create(specs);
 	}
 
-	void ShadowMap::SetFromCamera(const Camera& camera, const glm::vec3& lightDirection)
+	void ShadowMap::SetFromCamera(const SceneCamera& camera, SceneCamera& outCamera, const glm::vec3& lightDirection)
 	{
-		Camera referenceCamera(glm::perspective(camera.GetFov(), camera.GetAspectRatio(), m_Near, m_Far));
-		referenceCamera.SetView(camera.GetView());
-		std::vector<glm::vec3> points = Frustum::GetWorldViewPoints(referenceCamera);
+		outCamera = SceneCamera(Camera::ProjectionType::Orthographic, m_Near, m_Far, 10, (float)m_Width / m_Height);
+		outCamera.SetView(camera.GetView());
+		outCamera.SetType(Camera::ProjectionType::Orthographic);
+		std::vector<glm::vec3> points = Frustum::GetWorldViewPoints(outCamera);
 
 		float left, right, top, down, front, bottom;
 		glm::vec2 xBounds = { std::numeric_limits<float>::max(), -std::numeric_limits<float>::max() };
@@ -68,6 +70,7 @@ namespace Debut
 			zBounds.y *= zMult;
 
 		m_Projection = glm::ortho(xBounds.x, xBounds.y, yBounds.x, yBounds.y, zBounds.x, zBounds.y);
+		outCamera.SetProjection(m_Projection);
 		m_ViewProjection = m_Projection * m_View;
 	}
 

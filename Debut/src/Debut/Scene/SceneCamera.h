@@ -8,7 +8,8 @@ namespace Debut
 	{
 	public:
 		SceneCamera();
-		~SceneCamera();
+		SceneCamera(ProjectionType type, float cameraNear, float cameraFar, float size, float aspectRatio);
+		~SceneCamera() = default;
 
 		void SetOrthographic(float size, float nearPlane, float farPlane);
 		void SetPerspective(float fov, float nearPlane, float farPlane);
@@ -16,19 +17,18 @@ namespace Debut
 		void SetViewportSize(uint32_t width, uint32_t height);
 
 		float GetOrthoSize() const { return m_OrthographicSize; }
-		float GetPerspFOV() const { return glm::radians(m_FOV); }
+		float GetFOV() const { return m_FOV; }
 
 		void SetOrthoSize(float val) { m_OrthographicSize = val; RecalculateProjection(); }
-		void SetPerspFOV(float val) { m_FOV = val; RecalculateProjection(); }
+		void SetFOV(float val) { m_FOV = val; RecalculateProjection(); }
 
 		static ProjectionType StringToProjType(const char* string);
 	
-	private:
+	protected:
 		void RecalculateProjection();
-	private:
+	protected:
+		float m_FOV = glm::radians(40.0f);
 		float m_OrthographicSize = 10.0f;
-
-		float m_AspectRatio;
 	};
 }
 

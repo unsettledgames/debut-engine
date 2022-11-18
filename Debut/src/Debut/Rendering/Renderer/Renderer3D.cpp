@@ -2,7 +2,7 @@
 
 
 #include <Debut/Rendering/Texture.h>
-#include <Debut/Rendering/Camera.h>
+#include <Debut/Scene/SceneCamera.h>
 
 #include <Debut/Rendering/Material.h>
 #include <Debut/Rendering/Resources/Skybox.h>
@@ -54,7 +54,6 @@ namespace Debut
 		}
 		
 		s_Data.VertexArray->AddIndexBuffer(s_Data.IndexBuffer);
-
 		{
 			DBT_PROFILE_SCOPE("Renderer3D::Init::SetupDefaultMaterials");
 
@@ -74,12 +73,12 @@ namespace Debut
 		}
 	}
 
-	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& cameraView, 
+	void Renderer3D::BeginScene(SceneCamera& camera, Ref<Skybox> skybox, const glm::mat4& cameraView,
 		std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, 
 		std::vector<Ref<ShadowMap>> shadowMaps)
 	{
 		// Reset storage
-		s_Data.CameraView = cameraView;
+		s_Data.CameraView = camera.GetView();
 		s_Data.CameraProjection = camera.GetProjection();
 		s_Data.CameraTransform = s_Data.CameraProjection * s_Data.CameraView;
 		s_Data.CameraNear = camera.GetNearPlane();
@@ -295,13 +294,14 @@ namespace Debut
 			RendererDebug::EndScene();
 	}
 
-	void Renderer3D::BeginShadow(Ref<ShadowMap> shadowMap)
+	void Renderer3D::BeginShadow(Ref<ShadowMap> shadowMap, SceneCamera& camera)
 	{
 		s_Data.CameraView = shadowMap->GetView();
 		s_Data.CameraProjection = shadowMap->GetProjection();
 		s_Data.CurrentPass = RenderingPass::Shadow;
 		s_Data.CameraNear = shadowMap->GetNear();
 		s_Data.CameraFar = shadowMap->GetFar();
+		s_Data.CameraFrustum = Frustum(camera);
 
 		s_Stats.NShadowPasses++;
 

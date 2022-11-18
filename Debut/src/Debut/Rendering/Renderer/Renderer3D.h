@@ -12,7 +12,7 @@ namespace Debut
 	class Material;
 	class Skybox;
 	class Texture2D;
-	class Camera;
+	class SceneCamera;
 	class Mesh;
 
 	struct MeshRendererComponent;
@@ -82,12 +82,12 @@ namespace Debut
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& transform, 
+		static void BeginScene(SceneCamera& camera, Ref<Skybox> skybox, const glm::mat4& transform,
 			std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, std::vector<Ref<ShadowMap>> shadowMaps);
 		static void EndScene();
 		static void Flush();
 
-		static void BeginShadow(Ref<ShadowMap> shadowMap);
+		static void BeginShadow(Ref<ShadowMap> shadowMap, SceneCamera& camera);
 		static void EndShadow();
 
 		static void DrawModel(const MeshRendererComponent& model, const glm::mat4& transform, int entityID);

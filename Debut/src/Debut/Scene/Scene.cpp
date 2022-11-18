@@ -1,9 +1,10 @@
 #include "Debut/dbtpch.h"
 #include "Scene.h"
 #include <glm/glm.hpp>
-#include "Debut/Scene/Entity.h"
-#include "Debut/Scene/Components.h"
-#include "Debut/Rendering/Shader.h"
+#include <Debut/Scene/Entity.h>
+#include <Debut/Scene/Components.h>
+#include <Debut/Scene/SceneCamera.h>
+#include <Debut/Rendering/Shader.h>
 #include <Debut/Rendering/Structures/FrameBuffer.h>
 #include <Debut/Rendering/Structures/ShadowMap.h>
 #include <Debut/Rendering/Renderer/RenderCommand.h>
@@ -190,7 +191,7 @@ namespace Debut
 		return {};
 	}
 
-	void Scene::OnEditorUpdate(Timestep ts, Camera& camera, Ref<FrameBuffer> target)
+	void Scene::OnEditorUpdate(Timestep ts, SceneCamera& camera, Ref<FrameBuffer> target)
 	{
 		DBT_PROFILE_SCOPE("Editor update");
 
@@ -201,7 +202,7 @@ namespace Debut
 		
 		// Flags
 		bool renderColliders = Renderer::GetConfig().RenderColliders;
-		glm::mat4 cameraView = camera.GetView();
+		glm::mat4 cameraView = glm::inverse(camera.GetView());
 
 		Rendering3D(camera, cameraView, target);
 		Rendering2D(camera, cameraView, target);
@@ -279,7 +280,7 @@ namespace Debut
 		// Render sprites
 
 		// Find the main camera of the scene
-		Camera* mainCamera = nullptr;
+		SceneCamera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		{
 			auto view = m_Registry.view<CameraComponent, TransformComponent>();
@@ -467,7 +468,7 @@ namespace Debut
 		m_PhysicsSystem3D->Begin();
 	}
 
-	void Scene::Rendering2D(Camera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
+	void Scene::Rendering2D(SceneCamera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
 	{
 		target->Bind();
 
@@ -489,7 +490,7 @@ namespace Debut
 		target->Unbind();
 	}
 
-	void Scene::Rendering3D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target)
+	void Scene::Rendering3D(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target)
 	{
 		// Global variables
 		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms(cameraTransform[3]);
@@ -509,10 +510,12 @@ namespace Debut
 
 					for (uint32_t i = 0; i < m_ShadowMaps.size(); i++)
 					{
-						m_ShadowMaps[i]->SetFromCamera(camera, dirLight->Direction);
+						SceneCamera shadowCamera;
+
+						m_ShadowMaps[i]->SetFromCamera(camera, shadowCamera, dirLight->Direction);
 						m_ShadowMaps[i]->Bind();
 
-						Renderer3D::BeginShadow(m_ShadowMaps[i]);
+						Renderer3D::BeginShadow(m_ShadowMaps[i], shadowCamera);
 						{
 							// Can I recycle this group to render stuff later on?
 							auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
@@ -544,7 +547,7 @@ namespace Debut
 		target->Unbind();
 	}
 
-	void Scene::RenderingDebug(Camera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
+	void Scene::RenderingDebug(SceneCamera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
 	{
 		target->Bind();
 

@@ -1,21 +1,21 @@
 #include <Debut/dbtpch.h>
 
 #include <Debut/Rendering/Structures/Frustum.h>
-#include <Debut/Rendering/Camera.h>
+#include <Debut/Scene/SceneCamera.h>
 #include <Debut/Utils/MathUtils.h>
 
 namespace Debut
 {
-	Frustum::Frustum(const Camera& camera)
+	Frustum::Frustum(const SceneCamera& camera)
 	{
 		UpdateFrustum(camera);
 	}
 
-	void Frustum::UpdateFrustum(const Camera& camera)
+	void Frustum::UpdateFrustum(const SceneCamera& camera)
 	{
 		float farDistance = camera.GetFarPlane();
 		float nearDistance = camera.GetNearPlane();
-		float fov = camera.GetFov();
+		float fov = camera.GetFOV();
 		float aspectRatio = camera.GetAspectRatio();
 
 		float wNear, wFar, hNear, hFar;
@@ -26,14 +26,26 @@ namespace Debut
 
 		m_View = cameraTransform;
 
-		// Near / far size
-		hNear = 2.0f * glm::tan(fov / 2.0f) * nearDistance;
-		hFar = 2.0f * glm::tan(fov / 2.0f) * farDistance;
-		wNear = hNear * aspectRatio;
-		wFar = hFar * aspectRatio;
+		if (camera.GetProjectionType() == Camera::ProjectionType::Perspective)
+		{
+			// Near / far size
+			hNear = 2.0f * glm::tan(fov / 2.0f) * nearDistance;
+			hFar = 2.0f * glm::tan(fov / 2.0f) * farDistance;
+			wNear = hNear * aspectRatio;
+			wFar = hFar * aspectRatio;
 
-		nearHalfSize = { wNear / 2.0f, hNear / 2.0f };
-		farHalfSize = { wFar / 2.0f, hFar / 2.0f };
+			nearHalfSize = { wNear / 2.0f, hNear / 2.0f };
+			farHalfSize = { wFar / 2.0f, hFar / 2.0f };
+		}
+		else
+		{
+			float height = camera.GetOrthoSize();
+			float width = height * camera.GetAspectRatio();
+
+			nearHalfSize = { height / 2.0f, width / 2.0f };
+			farHalfSize = nearHalfSize;
+		}
+		
 
 		// Directions
 		forward = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -143,7 +155,7 @@ namespace Debut
 	}
 
 
-	std::vector<glm::vec3> Frustum::GetWorldViewPoints(const Camera& camera)
+	std::vector<glm::vec3> Frustum::GetWorldViewPoints(const SceneCamera& camera)
 	{
 		glm::mat4 inverse = glm::inverse(camera.GetProjection() * camera.GetView());
 

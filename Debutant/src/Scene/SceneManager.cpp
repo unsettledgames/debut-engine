@@ -47,7 +47,7 @@ namespace Debut
         Entity camera = m_EditorScene->CreateEntity({}, "Camera");
         CameraComponent& cameraComp = camera.AddComponent<CameraComponent>();
         cameraComp.Camera.SetPerspective(30, 0.1f, 1000.0f);
-        cameraComp.Camera.SetPerspFOV(40);
+        cameraComp.Camera.SetFOV(glm::radians(40.0f));
         camera.Transform().Translation = glm::vec3(0.0f, 5.0f, 10.0f);
 
         Entity directionalLight = m_EditorScene->CreateEntity({}, "Directional light");

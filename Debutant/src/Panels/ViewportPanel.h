@@ -16,8 +16,11 @@ namespace Debut
 	class FrameBuffer;
 	class RenderTexture;
 	class DebutantLayer;
+	class Shader;
 
 	class Timestep;
+	class KeyPressedEvent;
+	class MouseButtonPressedEvent;
 
 	class ViewportPanel
 	{

@@ -6,7 +6,7 @@
 
 namespace Debut
 {
-	class Camera;
+	class SceneCamera;
 
 	struct AABB
 	{
@@ -36,14 +36,13 @@ namespace Debut
 	{
 	public:
 		Frustum() = default;
-		Frustum(const Camera& camera);
+		Frustum(const SceneCamera& camera);
 
-		void UpdateFrustum(const Camera& camera);
+		void UpdateFrustum(const SceneCamera& camera);
 
 		bool TestAABB(const AABB& aabb, const glm::mat4& transform);
 
-		static std::vector<glm::vec3> GetWorldViewPoints(const Camera& camera);
-		std::vector<glm::vec3> GetPoints();
+		static std::vector<glm::vec3> GetWorldViewPoints(const SceneCamera& camera);
 
 	private:
 		Plane m_Far;

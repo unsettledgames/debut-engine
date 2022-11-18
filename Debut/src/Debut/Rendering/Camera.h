@@ -10,22 +10,22 @@ namespace Debut
 		enum class ProjectionType { Perspective = 0, Orthographic = 1 };
 
 		Camera() = default;
-		Camera(const glm::mat4& projection) : m_ProjectionMatrix(projection) {}
 		virtual ~Camera() {}
 
 		inline glm::mat4 GetProjection() const { return m_ProjectionMatrix; }
 		inline glm::mat4 GetView() const { return m_ViewMatrix; }
-		inline glm::mat4 GetViewProjection() { return m_ProjectionMatrix * glm::inverse(m_ViewMatrix); }
+		inline glm::mat4 GetViewProjection() { return m_ProjectionMatrix * m_ViewMatrix; }
 		inline ProjectionType GetProjectionType() const { return m_ProjectionType; }
 		inline float GetNearPlane() const { return m_NearPlane; }
 		inline float GetFarPlane() const { return m_FarPlane; }
 		inline float GetAspectRatio() const { return m_AspectRatio; }
-		inline float GetFov() const { return glm::radians(m_FOV); }
 
 		inline void SetView(const glm::mat4& view) { m_ViewMatrix = view; }
+		inline void SetProjection(const glm::mat4& proj) { m_ProjectionMatrix = proj; }
 		inline void SetNearPlane(float val) { m_NearPlane = val; }
 		inline void SetFarPlane(float val) { m_FarPlane = val; }
 		inline void SetAspectRatio(float val) { m_AspectRatio = val; }
+		inline void SetType(const ProjectionType& type) { m_ProjectionType = type; }
 
 	protected:
 		glm::mat4 m_ProjectionMatrix = glm::mat4(1.0f);
@@ -35,6 +35,5 @@ namespace Debut
 		float m_NearPlane = 0.1f;
 		float m_FarPlane = 1000.0f;
 		float m_AspectRatio;
-		float m_FOV = glm::radians(45.0f);
 	};
 }

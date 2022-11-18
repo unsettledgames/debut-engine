@@ -4,6 +4,8 @@
 #include <Debut/Core/Application.h>
 #include <Debut/Core/Instrumentor.h>
 #include <Debut/Core/Window.h>
+#include <Debut/Events/KeyEvent.h>
+#include <Debut/Events/MouseEvent.h>
 #include <Debut/ImGui/ImGuiLayer.h>
 #include <Debut/ImGui/ImGuiUtils.h>
 
@@ -52,7 +54,7 @@ namespace Debut
             DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMaps()[0]->GetFrameBuffer(), RenderTextureMode::Color);
         m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
 
-        m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
+        m_EditorCamera = EditorCamera(glm::radians(30.0f), 16.0f / 9.0f, 0.1f, 1000.0f);
     }
 
     void ViewportPanel::OnUpdate(Timestep& ts)

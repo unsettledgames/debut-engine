@@ -12,7 +12,7 @@ namespace Debut
 	class Shader;
 	class Texture;
 	class SubTexture2D;
-	class Camera;
+	class SceneCamera;
 
 	struct SpriteRendererComponent;
 
@@ -66,7 +66,7 @@ namespace Debut
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(Camera& camera, const glm::mat4& transform);
+		static void BeginScene(SceneCamera& camera, const glm::mat4& transform);
 		static void EndScene();
 
 		// Primitives

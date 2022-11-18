@@ -79,9 +79,9 @@ namespace Debut
 
 				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 				{
-					float perspFOV = glm::degrees(camera.GetPerspFOV());
+					float perspFOV = glm::degrees(camera.GetFOV());
 					if (ImGuiUtils::DragFloat("Vertical FOV", &perspFOV, 0.15f))
-						camera.SetPerspFOV(glm::radians(perspFOV));
+						camera.SetFOV(glm::radians(perspFOV));
 
 					float perspNear = camera.GetNearPlane();
 					if (ImGuiUtils::DragFloat("Near clip", &perspNear, 0.15f))
