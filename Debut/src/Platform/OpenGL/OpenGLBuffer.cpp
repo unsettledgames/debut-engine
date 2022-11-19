@@ -10,9 +10,9 @@ namespace Debut
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, unsigned int count)
 	{
 		DBT_PROFILE_FUNCTION();
-		glCreateBuffers(1, &m_RendererID);
-		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * count, vertices, GL_STATIC_DRAW);
+		GLCall(glCreateBuffers(1, &m_RendererID));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * count, vertices, GL_STATIC_DRAW));
 	}
 
 	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size, uint32_t maxBufferSize)
@@ -111,7 +111,7 @@ namespace Debut
 	void OpenGLIndexBuffer::Bind() const
 	{
 		DBT_PROFILE_FUNCTION();
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
 	}
 
 	void OpenGLIndexBuffer::Unbind() const

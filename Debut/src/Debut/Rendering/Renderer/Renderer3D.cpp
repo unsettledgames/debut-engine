@@ -127,8 +127,8 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION();
 
-		if (!s_Data.CameraFrustum.TestAABB(meshComponent.GetAABB(), transform))
-			return;
+		/*if (!s_Data.CameraFrustum.TestAABB(meshComponent.GetAABB(), transform))
+			return;*/
 
 		Ref<Mesh> mesh;
 		Ref<Material> material;
@@ -161,61 +161,28 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION();
 		Material materialToUse;
+		Ref<VertexArray> vertexArray;
 
 		{
 			DBT_PROFILE_SCOPE("DrawModel::SendGeometry");
-			std::vector<float>& positions = mesh.GetPositions();
-			std::vector<int>& indices = mesh.GetIndices();
+			vertexArray = mesh.GetVertexArray();
 			std::vector<int> entityIDs;
 
 			// Fill the entity IDs vector
-			entityIDs.resize(positions.size() / 3);
-			std::fill_n(entityIDs.data(), entityIDs.size(), entityID);
-
-			s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
-			s_Data.IndexBuffer->SetData(mesh.GetIndices().data(), mesh.GetIndices().size());
+			//entityIDs.resize(positions.size() / 3);
+			//std::fill_n(entityIDs.data(), entityIDs.size(), entityID);
 
 			if (s_Data.CurrentPass != RenderingPass::Shadow)
 			{
 				s_Stats.DrawCalls++;
-				s_Stats.Triangles += positions.size() / 3;
+				s_Stats.Triangles += mesh.GetNumVertices() / 3;
 
-				if (mesh.HasColors())
-				{
-					std::vector<float>& colors = mesh.GetColors();
-					s_Data.VertexBuffers["Colors"]->SetData(colors.data(), colors.size() * sizeof(float));
-				}
-
-				if (mesh.HasNormals())
-				{
-					std::vector<float>& normals = mesh.GetNormals();
-					s_Data.VertexBuffers["Normals"]->SetData(normals.data(), normals.size() * sizeof(float));
-				}
-
-				if (mesh.HasTangents())
-				{
-					std::vector<float>& tangents = mesh.GetTangents();
-					s_Data.VertexBuffers["Tangents"]->SetData(tangents.data(), tangents.size() * sizeof(float));
-				}
-
-				if (mesh.HasBitangents())
-				{
-					std::vector<float>& bitangents = mesh.GetBitangents();
-					s_Data.VertexBuffers["Bitangents"]->SetData(bitangents.data(), bitangents.size() * sizeof(float));
-				}
-
-				if (mesh.HasTexCoords(0))
-				{
-					std::vector<float>& texCoords = mesh.GetTexCoords(0);
-					s_Data.VertexBuffers["TexCoords0"]->SetData(texCoords.data(), texCoords.size() * sizeof(float));
-				}
-
-				s_Data.VertexBuffers["EntityID"]->SetData(entityIDs.data(), entityIDs.size() * sizeof(int));
+				//s_Data.VertexBuffers["EntityID"]->SetData(entityIDs.data(), entityIDs.size() * sizeof(int));
 			}
 			else
 			{
 				s_Stats.ShadowDrawCalls++;
-				s_Stats.ShadowTriangles += positions.size() / 3;
+				s_Stats.ShadowTriangles += mesh.GetNumVertices() / 3;
 			}
 		}
 
@@ -278,7 +245,7 @@ namespace Debut
 
 		{
 			DBT_PROFILE_SCOPE("DrawModel::DrawIndexed");
-			RenderCommand::DrawIndexed(s_Data.VertexArray, mesh.GetIndices().size());
+			RenderCommand::DrawIndexed(vertexArray, mesh.GetNumIndices());
 			materialToUse.Unuse();
 			if (s_Data.CurrentPass != RenderingPass::Shadow)
 				s_Data.ShadowMaps[0]->UnbindTexture(8);

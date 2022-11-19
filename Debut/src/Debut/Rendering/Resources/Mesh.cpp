@@ -1,4 +1,6 @@
 #include <Debut/dbtpch.h>
+#include <Debut/Rendering/Structures/VertexArray.h>
+#include <Debut/Rendering/Structures/Buffer.h> 
 #include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/AssetManager/AssetManager.h>
 
@@ -11,6 +13,11 @@ namespace Debut
 	Mesh::Mesh()
 	{
 		m_Valid = false;
+	}
+
+	Mesh::~Mesh()
+	{
+
 	}
 
 	template<typename T>
@@ -123,18 +130,9 @@ namespace Debut
 			m_ID = meta["ID"].as<uint64_t>();
 			m_Name = meta["Name"].as<std::string>();
 
-			uint32_t nPoints = meta["NumVertices"].as<uint32_t>();
-
-			m_Vertices.resize(nPoints);
-			m_Colors.resize(4 * (nPoints / 3));
-			std::fill(m_Colors.begin(), m_Colors.end(), 1.0f);
-			m_Normals.resize(nPoints);
-			m_Tangents.resize(nPoints);
-			m_Bitangents.resize(nPoints);
-			m_Indices.resize(meta["NumIndices"].as<uint32_t>());
-			m_TexCoords.resize(meta["NumTexCoords"].as<uint32_t>());
-			for (uint32_t i = 0; i < m_TexCoords.size(); i++)
-				m_TexCoords[i].resize(nPoints);
+			m_NumVertices = meta["NumVertices"].as<uint32_t>();
+			m_NumIndices = meta["NumIndices"].as<uint32_t>();
+			m_NumTexCoords = meta["NumTexCoords"].as<uint32_t>();
 
 			std::ifstream meshFile(m_Path, std::ios::in | std::ios::binary);
 			Load(meshFile);
@@ -222,31 +220,54 @@ namespace Debut
 
 	void Mesh::Load(std::ifstream& inFile)
 	{
-		DBT_PROFILE_FUNCTION();
+		// Load buffers from disk
+		std::vector<float> positions(m_NumVertices), colors((m_NumVertices / 3) * 4), normals(m_NumVertices),
+			tangents(m_NumVertices), bitangents(m_NumVertices), texCoords(m_NumVertices);
+		std::vector<int> indices(m_NumIndices), entityIDs(m_NumVertices / 3);
+
 		{
+			DBT_PROFILE_SCOPE("Mesh::LoadBuffers");
+
 			for (uint32_t i = 0; i < 4; i++)
 				for (uint32_t j = 0; j < 4; j++)
 					inFile >> m_Transform[i][j];
-			Log.CoreInfo("Load {0} vertices", m_Vertices.size());
-			LoadBuffer<float>(m_Vertices, inFile, m_Vertices.size());
-			Log.CoreInfo("Load {0} colors", m_Colors.size());
-			LoadBuffer<float>(m_Colors, inFile, m_Colors.size());
-			Log.CoreInfo("Load {0} normals", m_Normals.size());
-			LoadBuffer<float>(m_Normals, inFile, m_Normals.size());
-			Log.CoreInfo("Load {0} tangents", m_Tangents.size());
-			LoadBuffer<float>(m_Tangents, inFile, m_Tangents.size());
-			Log.CoreInfo("Load {0} bitangents", m_Bitangents.size());
-			LoadBuffer<float>(m_Bitangents, inFile, m_Bitangents.size());
-			Log.CoreInfo("Load {0} indices", m_Indices.size());
-			LoadBuffer<int>(m_Indices, inFile, m_Indices.size());
+			LoadBuffer<float>(positions, inFile, positions.size());
+			LoadBuffer<float>(colors, inFile, colors.size());
+			LoadBuffer<float>(normals, inFile, normals.size());
+			LoadBuffer<float>(tangents, inFile, tangents.size());
+			LoadBuffer<float>(bitangents, inFile, bitangents.size());
+			LoadBuffer<int>(indices, inFile, indices.size());
 
-			std::string texString;
-			inFile >> texString;
-			for (uint32_t i = 0; i < m_TexCoords.size(); i++)
+			if (m_NumTexCoords > 0)
 			{
-				Log.CoreInfo("Load {0} texcoord {1}", m_TexCoords.size(), i);
-				LoadBuffer<float>(m_TexCoords[i], inFile, m_TexCoords[i].size());
+				std::string texString;
+				inFile >> texString;
+				LoadBuffer<float>(texCoords, inFile, texCoords.size());
 			}
+		}
+	
+		// Create runtime structures
+		m_VertexArray = VertexArray::Create();
+		m_IndexBuffer = IndexBuffer::Create();
+
+		{
+			DBT_PROFILE_SCOPE("Mesh::CreateRuntimeBuffers");
+			// Create and attach buffers
+			ShaderDataType types[] = { ShaderDataType::Float3, ShaderDataType::Float4, ShaderDataType::Float3,
+				ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2/*, ShaderDataType::Int*/ };
+			std::string attribNames[] = { "a_Position", "a_Color", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0"/*, "a_EntityID" */ };
+			std::string names[] = { "Positions", "Colors", "Normals", "Tangents", "Bitangents", "TexCoords0" /*, "EntityID"*/ };
+			std::vector<std::vector<float>> floatBuffers = { positions, colors, normals, tangents, bitangents, texCoords };
+
+			for (uint32_t i = 0; i < floatBuffers.size(); i++)
+			{
+				m_VertexBuffers[names[i]] = VertexBuffer::Create(floatBuffers[i].data(), floatBuffers[i].size());
+				m_VertexBuffers[names[i]]->SetLayout({ {types[i], attribNames[i], false} });
+				m_VertexArray->AddVertexBuffer(m_VertexBuffers[names[i]]);
+			}
+
+			m_IndexBuffer->SetData(indices.data(), indices.size());
+			m_VertexArray->AddIndexBuffer(m_IndexBuffer);
 		}
 	}
 

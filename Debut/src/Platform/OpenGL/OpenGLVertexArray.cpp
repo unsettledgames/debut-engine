@@ -50,7 +50,7 @@ namespace Debut
 	void OpenGLVertexArray::Bind() const
 	{
 		DBT_PROFILE_FUNCTION();
-		glBindVertexArray(m_RendererID);
+		GLCall(glBindVertexArray(m_RendererID));
 		if (m_IndexBuffer != nullptr)
 			m_IndexBuffer->Bind();
 	}

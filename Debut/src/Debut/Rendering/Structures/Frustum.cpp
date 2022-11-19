@@ -51,9 +51,6 @@ namespace Debut
 			farYBounds = nearYBounds;
 			nearDistance = camera.GetOrthoBoundsZ().x;
 			farDistance = camera.GetOrthoBoundsZ().y;
-
-			/*nearHalfSize = { width / 2.0f, height / 2.0f };
-			farHalfSize = nearHalfSize;*/
 		}
 
 		// Directions

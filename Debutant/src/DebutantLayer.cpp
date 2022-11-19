@@ -29,18 +29,15 @@
 *   CURRENT: OPTIMIZATION
 *       Start:              ~58 FPS
 *       Matrix opt:         ~60 FPS
-*       Frustum culling:    
+*       Frustum culling:    ~75 FPS
+*       No reupload:        
 * 
-*       - Shadow mapping: in each shadow pass, the only thing that changes is the camera, the rest stays exactly the same...
+*       - Store vertex buffers and vertex arrays in Mesh.
+*       - When a mesh is created, save its data, but don't keep it inside of the mesh
+*       - Add back mouse picking (separate buffer, that one should probably be added dynamically by the renderer)
 * 
-*       - Frustum culling:
-*           - EditorCamera should inherit from SceneCamera. Rendering functions should take in a SceneCamera with all the necessary
-*               data, not a generic Camera.
-*           - When creating planes, check for projection type to create the right ones. The rest of the algorithm should be the same
-
         - OpenGL optimizations: https://on-demand.gputechconf.com/siggraph/2014/presentation/SG4117-OpenGL-Scene-Rendering-Techniques.pdf
         - Scene graph optimizations: https://on-demand.gputechconf.com/gtc/2013/presentations/S3032-Advanced-Scenegraph-Rendering-Pipeline.pdf
-
 *
 *   MAIN SHADOW WORKFLOW
 * 
