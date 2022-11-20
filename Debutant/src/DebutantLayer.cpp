@@ -27,13 +27,12 @@
 
 /*
 *   CURRENT: OPTIMIZATION
-*       Start:              ~58 FPS
-*       Matrix opt:         ~60 FPS
-*       Frustum culling:    ~75 FPS
-*       No reupload:        
+*       Start:              ~58 FPS -> 17.241 ms
+*       Matrix opt:         ~60 FPS -> 16.666 ms
+*       Frustum culling:    ~75 FPS -> 13.333 ms
+*       No reupload:        ~110 FPS-> 9,0909 ms
 * 
-*       - Store vertex buffers and vertex arrays in Mesh.
-*       - When a mesh is created, save its data, but don't keep it inside of the mesh
+*       - Add back AABB
 *       - Add back mouse picking (separate buffer, that one should probably be added dynamically by the renderer)
 * 
         - OpenGL optimizations: https://on-demand.gputechconf.com/siggraph/2014/presentation/SG4117-OpenGL-Scene-Rendering-Techniques.pdf

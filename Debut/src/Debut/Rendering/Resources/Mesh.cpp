@@ -244,6 +244,8 @@ namespace Debut
 				inFile >> texString;
 				LoadBuffer<float>(texCoords, inFile, texCoords.size());
 			}
+
+			GenerateAABB(positions);
 		}
 	
 		// Create runtime structures
@@ -288,5 +290,29 @@ namespace Debut
 		}
 
 		return ret;
+	}
+
+	void Mesh::GenerateAABB(const std::vector<float>& vertices)
+	{
+		DBT_PROFILE_SCOPE("GenerateAABB");
+		m_AABB.Center = glm::vec3(0.0f);
+
+		// Compute mesh bounds
+		float xBounds[2], yBounds[2], zBounds[2];
+		xBounds[0] = std::numeric_limits<float>().max(); xBounds[1] = -std::numeric_limits<float>().max();
+		yBounds[0] = xBounds[0]; yBounds[1] = xBounds[1];
+		zBounds[0] = xBounds[0]; zBounds[1] = xBounds[1];
+
+		for (uint32_t i = 0; i < vertices.size(); i += 3)
+		{
+			float x = vertices[i], y = vertices[i + 1], z = vertices[i + 2];
+			xBounds[0] = std::min(xBounds[0], x); xBounds[1] = std::max(xBounds[1], x);
+			yBounds[0] = std::min(yBounds[0], y); yBounds[1] = std::max(yBounds[1], y);
+			zBounds[0] = std::min(zBounds[0], z); zBounds[1] = std::max(zBounds[1], z);
+		}
+
+		m_AABB.MaxExtents = { xBounds[1], yBounds[1], zBounds[1] };
+		m_AABB.MinExtents = { xBounds[0], yBounds[0], zBounds[0] };
+		m_AABB.Center = m_Transform * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 }

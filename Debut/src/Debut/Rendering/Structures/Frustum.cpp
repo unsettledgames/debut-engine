@@ -94,6 +94,7 @@ namespace Debut
 
 	bool Frustum::TestAABB(const AABB& aabb, const glm::mat4& transform)
 	{
+		DBT_PROFILE_SCOPE("FrustumCulling::TestAABB");
 		std::vector<Plane*> planes = { &m_Far, &m_Near, &m_Top, &m_Bottom, &m_Left, &m_Right };
 		glm::vec3 boxRight = glm::normalize(transform * glm::vec4(1, 0, 0, 0));
 		glm::vec3 boxUp = glm::normalize(transform * glm::vec4(0, 1, 0, 0));

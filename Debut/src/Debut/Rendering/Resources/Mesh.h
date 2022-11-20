@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Debut/Core/UUID.h>
+#include <Debut/Rendering/Structures/Frustum.h>
 #include <glm/glm.hpp>
 
 #include <unordered_map>
@@ -43,6 +44,7 @@ namespace Debut
 		inline glm::mat4& GetTransform() { return m_Transform; }
 		inline uint32_t GetNumIndices() { return m_NumIndices; }
 		inline uint32_t GetNumVertices() { return m_NumVertices; }
+		inline AABB GetAABB() { return m_AABB; }
 
 		inline void SetPositions(std::vector<float>& vec) { m_Vertices = vec; }
 		inline void SetNormals(std::vector<float>& vec) { m_Normals = vec; }
@@ -66,6 +68,7 @@ namespace Debut
 
 	private:
 		void Load(std::ifstream& inFile);
+		void GenerateAABB(const std::vector<float>& vertices);
 		
 	private:
 		UUID m_ID;
@@ -91,5 +94,6 @@ namespace Debut
 		std::vector<int> m_Indices;
 
 		glm::mat4 m_Transform = glm::mat4(1.0f);
+		AABB m_AABB;
 	};
 }

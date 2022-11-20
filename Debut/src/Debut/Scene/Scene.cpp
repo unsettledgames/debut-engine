@@ -103,40 +103,11 @@ namespace Debut
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
 	
 	template<>
-	void Scene::OnComponentAdded(MeshRendererComponent& mr, Entity entity)
+	void Scene::OnComponentAdded(MeshRendererComponent& mr, Entity entity) 
 	{
-		if (mr.Mesh == 0)
-			return;
-
-		DBT_PROFILE_SCOPE("GenerateAABB");
-
 		Ref<Mesh> mesh = AssetManager::Request<Mesh>(mr.Mesh);
-		AABB toSet;
-
-		toSet.Center = glm::vec3(0.0f);
-
-		std::vector<float>& vertices = mesh->GetPositions();
-		std::vector<glm::vec3> AABB;
-
-		// Compute mesh bounds
-		float xBounds[2], yBounds[2], zBounds[2];
-		xBounds[0] = std::numeric_limits<float>().max(); xBounds[1] = -std::numeric_limits<float>().max();
-		yBounds[0] = xBounds[0]; yBounds[1] = xBounds[1];
-		zBounds[0] = xBounds[0]; zBounds[1] = xBounds[1];
-
-		for (uint32_t i=0; i<vertices.size(); i+= 3)
-		{
-			float x = vertices[i], y = vertices[i + 1], z = vertices[i + 2];
-			xBounds[0] = std::min(xBounds[0], x); xBounds[1] = std::max(xBounds[1], x);
-			yBounds[0] = std::min(yBounds[0], y); yBounds[1] = std::max(yBounds[1], y);
-			zBounds[0] = std::min(zBounds[0], z); zBounds[1] = std::max(zBounds[1], z);
-		}
-
-		toSet.MaxExtents = { xBounds[1], yBounds[1], zBounds[1] };
-		toSet.MinExtents = { xBounds[0], yBounds[0], zBounds[0] };
-		toSet.Center = mesh->GetTransform() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-
-		mr.SetAABB(toSet);
+		if (mesh != nullptr)
+			mr.SetAABB(mesh->GetAABB());
 	}
 
 	template<>
@@ -865,17 +836,17 @@ namespace Debut
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
-		float nSplits = 5;
+		float nSplits = 4;
 
 		if (m_ShadowMaps.size() == 0)
 		{
 			m_ShadowMaps.resize(nSplits);
-			float nearDistances[5] = { -1.0f, -5.0f, -10.f, -50.0f, -100.0f };
-			float farDistances[5] = { 50.0f, 100.0f, 250.0f, 500.0f, 750.0f };
-			float cameraDistances[5] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-			for (uint32_t i = 0; i < 5; i++)
+			float nearDistances[4] = { -1.0f, -5.0f, -10.f, -50.0f};
+			float farDistances[4] = { 40.0f, 80.0f, 220.0f, 600.0f};
+			float cameraDistances[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			for (uint32_t i = 0; i < 4; i++)
 			{
-				m_ShadowMaps[i] = CreateRef<ShadowMap>(m_ViewportWidth*2, m_ViewportHeight*2);
+				m_ShadowMaps[i] = CreateRef<ShadowMap>(m_ViewportWidth, m_ViewportHeight);
 				m_ShadowMaps[i]->SetIndex(i);
 				m_ShadowMaps[i]->SetNear(nearDistances[i]);
 				m_ShadowMaps[i]->SetFar(farDistances[i]);

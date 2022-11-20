@@ -41,9 +41,9 @@ namespace Debut
 
 			// Attach buffers to VertexArray
 			ShaderDataType types[] = { ShaderDataType::Float3, ShaderDataType::Float4, ShaderDataType::Float3,
-				ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2, ShaderDataType::Int };
-			std::string attribNames[] = { "a_Position", "a_Color", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0", "a_EntityID" };
-			std::string names[] = { "Positions", "Colors", "Normals", "Tangents", "Bitangents", "TexCoords0", "EntityID" };
+				ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2};
+			std::string attribNames[] = { "a_Position", "a_Color", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0"};
+			std::string names[] = { "Positions", "Colors", "Normals", "Tangents", "Bitangents", "TexCoords0"};
 
 			for (uint32_t i = 0; i < sizeof(types); i++)
 			{
@@ -127,8 +127,8 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION();
 
-		/*if (!s_Data.CameraFrustum.TestAABB(meshComponent.GetAABB(), transform))
-			return;*/
+		if (!s_Data.CameraFrustum.TestAABB(meshComponent.GetAABB(), transform))
+			return;
 
 		Ref<Mesh> mesh;
 		Ref<Material> material;
@@ -166,18 +166,11 @@ namespace Debut
 		{
 			DBT_PROFILE_SCOPE("DrawModel::SendGeometry");
 			vertexArray = mesh.GetVertexArray();
-			std::vector<int> entityIDs;
-
-			// Fill the entity IDs vector
-			//entityIDs.resize(positions.size() / 3);
-			//std::fill_n(entityIDs.data(), entityIDs.size(), entityID);
 
 			if (s_Data.CurrentPass != RenderingPass::Shadow)
 			{
 				s_Stats.DrawCalls++;
 				s_Stats.Triangles += mesh.GetNumVertices() / 3;
-
-				//s_Data.VertexBuffers["EntityID"]->SetData(entityIDs.data(), entityIDs.size() * sizeof(int));
 			}
 			else
 			{
@@ -205,6 +198,9 @@ namespace Debut
 					materialToUse = material;
 					break;
 				}
+
+				SendLights(materialToUse);
+				SendGlobals(materialToUse);
 			}
 			else
 			{
@@ -212,9 +208,6 @@ namespace Debut
 				materialToUse.SetFloat("u_NearPlane", s_Data.CameraNear);
 				materialToUse.SetFloat("u_FarPlane", s_Data.CameraFar);
 			}
-
-			SendLights(materialToUse);
-			SendGlobals(materialToUse);
 
 			if (Renderer::GetConfig().RenderingMode != RendererConfig::RenderingMode::None)
 			{
@@ -224,6 +217,8 @@ namespace Debut
 
 				materialToUse.Use();
 				materialToUse.GetRuntimeShader()->SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+				materialToUse.GetRuntimeShader()->SetInt("u_EntityID", entityID);
+
 
 				if (s_Data.CurrentPass != RenderingPass::Shadow)
 				{
