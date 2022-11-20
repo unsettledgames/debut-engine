@@ -217,6 +217,8 @@ namespace Debut
 
 				materialToUse.Use();
 				materialToUse.GetRuntimeShader()->SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+				materialToUse.GetRuntimeShader()->SetMat4("u_MVP", s_Data.CameraProjection * (s_Data.CameraView * transform));
+				materialToUse.GetRuntimeShader()->SetMat4("u_NormalMatrix", glm::inverse(glm::transpose(transform)));
 				materialToUse.GetRuntimeShader()->SetInt("u_EntityID", entityID);
 
 
@@ -246,7 +248,7 @@ namespace Debut
 				s_Data.ShadowMaps[0]->UnbindTexture(8);
 		}
 
-		if (Renderer::GetConfig().RenderWireframe)
+		if (Renderer::GetConfig().RenderWireframe && s_Data.CurrentPass == RenderingPass::Shaded)
 			RendererDebug::DrawMesh(mesh.GetID(), glm::vec3(0.0f), transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 

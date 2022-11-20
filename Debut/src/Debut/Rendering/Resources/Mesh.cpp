@@ -165,12 +165,18 @@ namespace Debut
 		}
 	}
 
-	void Mesh::SaveSettings()
+	void Mesh::SaveSettings(std::vector<float>& positions, std::vector<float>& colors, std::vector<float>& normals,
+		std::vector<float>& tangents, std::vector<float>& bitangents, std::vector<std::vector<float>>& texcoords,
+		std::vector<int>& indices)
 	{
 		std::ofstream outFile(m_Path, std::ios::out | std::ios::binary);
 		std::stringstream ss;
 		ss << AssetManager::s_MetadataDir << m_ID << ".meta";
 		std::string metaPath = ss.str();
+
+		m_NumVertices = positions.size();
+		m_NumIndices = indices.size();
+		m_NumTexCoords = texcoords.size();
 
 		{
 			DBT_PROFILE_SCOPE("SaveMesh::EmitBuffers");
@@ -181,23 +187,23 @@ namespace Debut
 			outFile << "\n";
 
 			Log.CoreInfo("Vertices");
-			outFile << "Vertices" << "\n"; EmitBuffer<float>(m_Vertices, outFile);
+			outFile << "Vertices" << "\n"; EmitBuffer<float>(positions, outFile);
 			Log.CoreInfo("Colors");
-			outFile << "\nColors\n"; EmitBuffer<float>(m_Colors, outFile);
+			outFile << "\nColors\n"; EmitBuffer<float>(colors, outFile);
 			Log.CoreInfo("Normals");
-			outFile << "\nNormals" << "\n"; EmitBuffer<float>(m_Normals, outFile);
+			outFile << "\nNormals" << "\n"; EmitBuffer<float>(normals, outFile);
 			Log.CoreInfo("Tangents");
-			outFile << "\nTangents" << "\n"; EmitBuffer<float>(m_Tangents, outFile);
+			outFile << "\nTangents" << "\n"; EmitBuffer<float>(tangents, outFile);
 			Log.CoreInfo("Bitangents");
-			outFile << "\nBitangents" << "\n"; EmitBuffer<float>(m_Bitangents, outFile);
+			outFile << "\nBitangents" << "\n"; EmitBuffer<float>(bitangents, outFile);
 			Log.CoreInfo("Indices");
-			outFile << "\nIndices" << "\n"; EmitBuffer<int>(m_Indices, outFile);
+			outFile << "\nIndices" << "\n"; EmitBuffer<int>(indices, outFile);
 			Log.CoreInfo("TexCoords");
 			outFile << "\nTexCoords" << "\n";
-			for (uint32_t i = 0; i < m_TexCoords.size(); i++)
+			for (uint32_t i = 0; i < texcoords.size(); i++)
 			{
 				outFile << "\nTexCoords" + i << "\n";
-				EmitBuffer<float>(m_TexCoords[i], outFile);
+				EmitBuffer<float>(texcoords[i], outFile);
 			}
 		}
 
@@ -210,12 +216,18 @@ namespace Debut
 			metaEmitter << YAML::BeginDoc << YAML::BeginMap;
 			metaEmitter << YAML::Key << "ID" << YAML::Value << m_ID;
 			metaEmitter << YAML::Key << "Name" << YAML::Value << m_Name;
-			metaEmitter << YAML::Key << "NumVertices" << YAML::Value << m_Vertices.size();
-			metaEmitter << YAML::Key << "NumIndices" << YAML::Value << m_Indices.size();
-			metaEmitter << YAML::Key << "NumTexCoords" << YAML::Value << m_TexCoords.size();
+			metaEmitter << YAML::Key << "NumVertices" << YAML::Value << positions.size();
+			metaEmitter << YAML::Key << "NumIndices" << YAML::Value << indices.size();
+			metaEmitter << YAML::Key << "NumTexCoords" << YAML::Value << texcoords.size();
 			metaEmitter << m_ID << YAML::EndMap << YAML::EndDoc;
 			outFile << metaEmitter.c_str();
 		}
+	}
+
+	void Mesh::Load(const std::string& path)
+	{
+		std::ifstream file(path);
+		Load(file);
 	}
 
 	void Mesh::Load(std::ifstream& inFile)
@@ -246,6 +258,9 @@ namespace Debut
 			}
 
 			GenerateAABB(positions);
+
+			m_Vertices = positions;
+			m_Indices = indices;
 		}
 	
 		// Create runtime structures
@@ -314,5 +329,10 @@ namespace Debut
 		m_AABB.MaxExtents = { xBounds[1], yBounds[1], zBounds[1] };
 		m_AABB.MinExtents = { xBounds[0], yBounds[0], zBounds[0] };
 		m_AABB.Center = m_Transform * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	void Mesh::GenerateBuffers()
+	{
+
 	}
 }

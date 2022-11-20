@@ -170,13 +170,18 @@ namespace Debut
 	{
 		ProgressPanel::SubmitTask("meshimport", "Importing mesh...");
 
+		// If the mesh already exists, don't import it
 		Ref<Mesh> mesh = CreateRef<Mesh>();
 		if (mesh->IsValid())
 			return mesh;
 
 		// Otherwise import it as usual
+		std::vector<float> positions, normals, tangents, bitangents, colors;
+		std::vector<std::vector<float>> texcoords;
+		std::vector<int> indices;
+
 		mesh->m_Transform = transform;
-		mesh->m_Vertices.resize(assimpMesh->mNumVertices * 3);
+		positions.resize(assimpMesh->mNumVertices * 3);
 		mesh->SetName(assimpMesh->mName.C_Str());
 
 		{
@@ -186,7 +191,7 @@ namespace Debut
 				for (uint32_t j = 0; j < 3; j++)
 				{
 					uint32_t index = i * 3 + j;
-					mesh->m_Vertices[index] = assimpMesh->mVertices[i][j];
+					positions[index] = assimpMesh->mVertices[i][j];
 				}
 			ProgressPanel::ProgressTask("meshimport", 0.17);
 		}
@@ -196,13 +201,15 @@ namespace Debut
 			// Vertex colors
 			if (assimpMesh->GetNumColorChannels() > 0)
 			{
-				mesh->m_Colors.resize(assimpMesh->mNumVertices * 4);
+				colors.resize(assimpMesh->mNumVertices * 4);
 				for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+				{
 					for (uint32_t j = 0; j < 4; j++)
 					{
 						uint32_t index = i * 4 + j;
-						mesh->m_Colors[index] = assimpMesh->mColors[0][i][j];
+						colors[index] = assimpMesh->mColors[0][i][j];
 					}
+				}
 			}
 		}
 		
@@ -211,13 +218,15 @@ namespace Debut
 			// Load normals
 			if (assimpMesh->HasNormals())
 			{
-				mesh->m_Normals.resize(assimpMesh->mNumVertices * 3);
+				normals.resize(assimpMesh->mNumVertices * 3);
 				for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
+				{
 					for (uint32_t j = 0; j < 3; j++)
 					{
 						uint32_t index = i * 3 + j;
-						mesh->m_Normals[index] = assimpMesh->mNormals[i][j];
+						normals[index] = assimpMesh->mNormals[i][j];
 					}
+				}
 			}
 			ProgressPanel::ProgressTask("meshimport", 0.17);
 		}
@@ -227,15 +236,15 @@ namespace Debut
 			// Load tangents / bitangents
 			if (assimpMesh->HasTangentsAndBitangents())
 			{
-				mesh->m_Tangents.resize(assimpMesh->mNumVertices * 3);
-				mesh->m_Bitangents.resize(assimpMesh->mNumVertices * 3);
+				tangents.resize(assimpMesh->mNumVertices * 3);
+				bitangents.resize(assimpMesh->mNumVertices * 3);
 
 				for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
 				{
 					for (uint32_t j = 0; j < 3; j++)
 					{
 						uint32_t index = i * 3 + j;
-						mesh->m_Tangents[index] = assimpMesh->mTangents[i][j];
+						tangents[index] = assimpMesh->mTangents[i][j];
 					}
 				}
 				ProgressPanel::ProgressTask("meshimport", 0.17);
@@ -245,7 +254,7 @@ namespace Debut
 					for (uint32_t j = 0; j < 3; j++)
 					{
 						uint32_t index = i * 3 + j;
-						mesh->m_Bitangents[index] = assimpMesh->mBitangents[i][j];
+						bitangents[index] = assimpMesh->mBitangents[i][j];
 					}
 				}
 				ProgressPanel::ProgressTask("meshimport", 0.17);
@@ -255,16 +264,16 @@ namespace Debut
 		{
 			DBT_PROFILE_SCOPE("ImportMesh::TexCoords");
 			// Load texture coordinates
-			mesh->m_TexCoords.resize(assimpMesh->GetNumUVChannels());
+			texcoords.resize(assimpMesh->GetNumUVChannels());
 			for (uint32_t i = 0; i < assimpMesh->GetNumUVChannels(); i++)
 			{
-				mesh->m_TexCoords[i].resize(assimpMesh->mNumVertices * 3);
+				texcoords[i].resize(assimpMesh->mNumVertices * 3);
 
 				for (uint32_t j = 0; j < assimpMesh->mNumVertices; j++)
 					for (uint32_t k = 0; k < 2; k++)
 					{
 						uint32_t index = j * 2 + k;
-						mesh->m_TexCoords[i][index] = assimpMesh->mTextureCoords[i][j][k];
+						texcoords[i][index] = assimpMesh->mTextureCoords[i][j][k];
 					}
 			}
 			ProgressPanel::ProgressTask("meshimport", 0.17);
@@ -273,13 +282,13 @@ namespace Debut
 		{
 			DBT_PROFILE_SCOPE("ImportMesh::Indices");
 			// Load indices
-			mesh->m_Indices.resize(assimpMesh->mNumFaces * 3);
+			indices.resize(assimpMesh->mNumFaces * 3);
 			uint32_t indexIndex = 0;
 			for (uint32_t i = 0; i < assimpMesh->mNumFaces; i++)
 			{
 				for (uint32_t j = 0; j < assimpMesh->mFaces[i].mNumIndices; j++)
 				{
-					mesh->m_Indices[indexIndex] = assimpMesh->mFaces[i].mIndices[j];
+					indices[indexIndex] = assimpMesh->mFaces[i].mIndices[j];
 					indexIndex++;
 				}
 			}
@@ -293,7 +302,10 @@ namespace Debut
 			ss << saveFolder << mesh->GetID();
 			mesh->SetPath(ss.str());
 			mesh->SetName(assimpMesh->mName.C_Str());
-			mesh->SaveSettings();
+			mesh->SetPositions(positions);
+			mesh->SetIndices(indices);
+			mesh->SaveSettings(positions, colors, normals, tangents, bitangents, texcoords, indices);
+			mesh->Load(ss.str());
 
 			ProgressPanel::CompleteTask("meshimport");
 		}
@@ -342,8 +354,7 @@ namespace Debut
 				std::string fullPath;
 				
 				assimpMaterial->Get(AI_MATKEY_TEXTURE(types[i], 0), path);
-				fullPath = inputFolder + "\\" + path.C_Str();
-				if (!std::filesystem::exists(fullPath))
+				if (!std::filesystem::exists(path.C_Str()))
 					fullPath = std::filesystem::path(inputFolder).parent_path().string() + "\\textures\\" + path.C_Str();
 
 				material->SetTexture(uniformNames[i], AssetManager::Request<Texture2D>(fullPath));

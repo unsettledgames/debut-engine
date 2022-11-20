@@ -26,14 +26,14 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
-*   CURRENT: OPTIMIZATION
-*       Start:              ~58 FPS -> 17.241 ms
-*       Matrix opt:         ~60 FPS -> 16.666 ms
-*       Frustum culling:    ~75 FPS -> 13.333 ms
-*       No reupload:        ~110 FPS-> 9,0909 ms
+*   CURRENT: OPTIMIZATION (~200K triangles)
+*       Start:                  ~58 FPS -> 17.241 ms
+*       Matrix opt:             ~60 FPS -> 16.666 ms
+*       Frustum culling:        ~75 FPS -> 13.333 ms
+*       No reupload:            ~120 FPS-> 9.3333 ms
+*       Shader optimization:    ~170 FPS-> 5.8823 ms (disabled battery saving tho :P, otherwise 130 FPS and 7.692 ms)
 * 
-*       - Add back AABB
-*       - Add back mouse picking (separate buffer, that one should probably be added dynamically by the renderer)
+*       - Fix mesh importing (save data without using the mesh class)
 * 
         - OpenGL optimizations: https://on-demand.gputechconf.com/siggraph/2014/presentation/SG4117-OpenGL-Scene-Rendering-Techniques.pdf
         - Scene graph optimizations: https://on-demand.gputechconf.com/gtc/2013/presentations/S3032-Advanced-Scenegraph-Rendering-Pipeline.pdf
@@ -76,6 +76,7 @@
 *           - Movement data
 *       - The debug renderer should probably only used in a DebugLayer since it kinda behaves as such
 *       - Implement rendering modes in 2D too
+*       - Render camera frustum
 * 
     OPTIMIZATION:
 *       - Update AssetMap only OnClose or once when this layer is attached

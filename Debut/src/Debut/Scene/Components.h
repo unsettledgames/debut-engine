@@ -14,6 +14,7 @@
 #include <Debut/Rendering/Structures/Frustum.h>
 
 #include <Debut/Core/UUID.h>
+#include <Debut/Core/Instrumentor.h>
 
 /*
 	OPTIMIZABLE:
@@ -94,6 +95,7 @@ namespace Debut
 
 		glm::mat4 GetTransform()
 		{
+			DBT_PROFILE_SCOPE("Transform::ComputeTransform");
 			// Get the parent matrix
 			glm::mat4 worldMatrix;
 			if (!Parent)
