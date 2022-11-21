@@ -42,7 +42,7 @@ namespace Debut
 		lightPos = cameraPos + glm::normalize(lightDirection) * m_DistanceFromCamera;
 
 		// Use the camera forward instead of its position
-		float zMult = 3.0f;
+		float zMult = 2.0f;
 		m_View = glm::lookAt(lightPos, cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
 
 		for (auto point : points)

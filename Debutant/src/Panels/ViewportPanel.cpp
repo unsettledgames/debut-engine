@@ -140,6 +140,7 @@ namespace Debut
             uint32_t rendererID = activeScene->GetShadowMaps()[shadowMapIndex]->GetFrameBuffer()->GetDepthAttachment();
 
             ImGui::Image((void*)rendererID, { 300, 300 }, { 0, 1 }, { 1, 0 });
+            ImGui::DragFloat("Lambda", &activeScene->lambda, 0.1f, 0.0f, 1.0f);
             ImGui::DragInt("Shadowmap index", &shadowMapIndex, 0.1f, 0, 4);
             ImGui::DragFloat("Fadeout start distance", &activeScene->fadeoutStartDistance);
             ImGui::DragFloat("Fadeout end distance", &activeScene->fadeoutEndDistance);

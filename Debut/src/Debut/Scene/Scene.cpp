@@ -17,6 +17,7 @@
 #include <Debut/Physics/PhysicsSystem3D.h>
 #include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Rendering/Structures/Frustum.h>
+#include <Debut/Utils/MathUtils.h>
 
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
@@ -479,10 +480,10 @@ namespace Debut
 					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
 					DBT_PROFILE_SCOPE("ShadowPass");
 
+					RenderCommand::CullBack();
 					for (uint32_t i = 0; i < m_ShadowMaps.size(); i++)
 					{
 						SceneCamera shadowCamera;
-
 						m_ShadowMaps[i]->SetFromCamera(camera, shadowCamera, dirLight->Direction);
 						m_ShadowMaps[i]->Bind();
 
@@ -499,6 +500,7 @@ namespace Debut
 						Renderer3D::EndShadow();
 						m_ShadowMaps[i]->Unbind();
 					}
+					RenderCommand::CullFront();
 				}
 			}
 		}
@@ -841,12 +843,12 @@ namespace Debut
 		if (m_ShadowMaps.size() == 0)
 		{
 			m_ShadowMaps.resize(nSplits);
-			float nearDistances[4] = { -1.0f, -5.0f, -10.f, -50.0f};
-			float farDistances[4] = { 40.0f, 80.0f, 220.0f, 600.0f};
+			float nearDistances[4] = { -2.0f, -6.0f, -15.f, -50.0f};
+			float farDistances[4] = { 40.0f, 100.0f, 210.0f, 450.0f };
 			float cameraDistances[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 			for (uint32_t i = 0; i < 4; i++)
 			{
-				m_ShadowMaps[i] = CreateRef<ShadowMap>(m_ViewportWidth, m_ViewportHeight);
+				m_ShadowMaps[i] = CreateRef<ShadowMap>(m_ViewportWidth*2, m_ViewportHeight*2);
 				m_ShadowMaps[i]->SetIndex(i);
 				m_ShadowMaps[i]->SetNear(nearDistances[i]);
 				m_ShadowMaps[i]->SetFar(farDistances[i]);

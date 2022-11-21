@@ -33,7 +33,7 @@
 *       No reupload:            ~120 FPS-> 9.3333 ms
 *       Shader optimization:    ~170 FPS-> 5.8823 ms (disabled battery saving tho :P, otherwise 130 FPS and 7.692 ms)
 * 
-*       - Fix mesh importing (save data without using the mesh class)
+*       - Shadow improvements: https://www.ogldev.org/www/tutorial49/tutorial49.html
 * 
         - OpenGL optimizations: https://on-demand.gputechconf.com/siggraph/2014/presentation/SG4117-OpenGL-Scene-Rendering-Techniques.pdf
         - Scene graph optimizations: https://on-demand.gputechconf.com/gtc/2013/presentations/S3032-Advanced-Scenegraph-Rendering-Pipeline.pdf
