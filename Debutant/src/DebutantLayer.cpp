@@ -33,8 +33,6 @@
 *       No reupload:            ~120 FPS-> 9.3333 ms
 *       Shader optimization:    ~170 FPS-> 5.8823 ms (disabled battery saving tho :P, otherwise 130 FPS and 7.692 ms)
 * 
-*       - Shadow improvements: https://www.ogldev.org/www/tutorial49/tutorial49.html
-* 
         - OpenGL optimizations: https://on-demand.gputechconf.com/siggraph/2014/presentation/SG4117-OpenGL-Scene-Rendering-Techniques.pdf
         - Scene graph optimizations: https://on-demand.gputechconf.com/gtc/2013/presentations/S3032-Advanced-Scenegraph-Rendering-Pipeline.pdf
 *
@@ -123,8 +121,8 @@ namespace Debut
 
     void DebutantLayer::OnUpdate(Timestep& ts)
     {
-        m_Viewport.OnUpdate(ts);
         m_ActiveScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
+        m_Viewport.OnUpdate(ts);
     }
 
     void DebutantLayer::OnImGuiRender()

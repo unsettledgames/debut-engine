@@ -137,9 +137,9 @@ namespace Debut
 	{
 		if (src.HasComponent<Component>())
 		{
-			Component& c = dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
-			if (dst.HasComponent<IDComponent>())
-				c.Owner = dst.GetComponent<IDComponent>().ID;
+			Component& sourceComponent = src.GetComponent<Component>();
+			Component& destComponent = dst.AddOrReplaceComponent<Component>(sourceComponent);
+			destComponent.Owner = sourceComponent.Owner;
 		}
 
 	}
@@ -169,27 +169,26 @@ namespace Debut
 		DBT_PROFILE_SCOPE("Editor update");
 
 		RenderingSetup(target);
-
 		// Clear frame buffer for mouse picking
 		target->ClearAttachment(1, -1);
 		
 		// Flags
 		bool renderColliders = Renderer::GetConfig().RenderColliders;
-		glm::mat4 cameraView = glm::inverse(camera.GetView());
+		glm::mat4 cameraTransform = glm::inverse(camera.GetView());
 
-		Rendering3D(camera, cameraView, target);
-		Rendering2D(camera, cameraView, target);
+		Rendering3D(camera, cameraTransform, target);
+		Rendering2D(camera, cameraTransform, target);
 
 		if (Renderer::GetConfig().RenderColliders)
-			RenderingDebug(camera, cameraView, target);
+			RenderingDebug(camera, cameraTransform, target);
 	}
 	
 
 	void Scene::OnRuntimeUpdate(Timestep ts, Ref<FrameBuffer> target)
 	{
 		RenderingSetup(target);
-
-		Renderer2D::ResetStats();
+		// Clear frame buffer for mouse picking
+		target->ClearAttachment(1, -1);
 
 		// Update scripts
 		{
@@ -263,6 +262,8 @@ namespace Debut
 				{
 					mainCamera = &(camera.Camera);
 					cameraTransform = transform.GetTransform();
+					mainCamera->SetView(glm::inverse(cameraTransform));
+
 					break;
 				}
 			}
@@ -272,6 +273,18 @@ namespace Debut
 		{
 			Rendering3D(*mainCamera, cameraTransform, target);
 			Rendering2D(*mainCamera, cameraTransform, target);
+
+			if (Renderer::GetConfig().RenderColliders)
+				RenderingDebug(*mainCamera, cameraTransform, target);
+		}
+	}
+
+	void Scene::OnEditorStart()
+	{
+		for (auto& entity : m_Registry.view<TransformComponent>())
+		{
+			Entity currEntity = { entity, this };
+			Entity::s_ExistingEntities[currEntity.ID()] = currEntity;
 		}
 	}
 
@@ -286,7 +299,7 @@ namespace Debut
 		auto rigidbodyView2D = m_Registry.view<Rigidbody2DComponent>();
 		auto rigidbodyView3D = m_Registry.view<Rigidbody3DComponent>();
 
-		// Create Rigidbodies
+		// Create 2D Rigidbodies
 		for (auto e : rigidbodyView2D)
 		{
 			Entity entity = { e, this };
@@ -442,6 +455,8 @@ namespace Debut
 
 	void Scene::Rendering2D(SceneCamera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
 	{
+		Renderer2D::ResetStats();
+
 		target->Bind();
 
 		// 2D Rendering
@@ -524,7 +539,7 @@ namespace Debut
 	{
 		target->Bind();
 
-		RendererDebug::BeginScene(camera, cameraView);
+		RendererDebug::BeginScene(camera);
 		{
 			DBT_PROFILE_SCOPE("RenderingDebug");
 			// 3D Physics colliders
@@ -650,6 +665,17 @@ namespace Debut
 
 		IDComponent id = ret.AddComponent<IDComponent>();
 		Entity::s_ExistingEntities[id.ID] = ret;
+
+		return ret;
+	}
+
+	Entity Scene::CreateEmptyEntity(UUID id)
+	{
+		Entity ret = { m_Registry.create(), this };
+
+		IDComponent idC = ret.AddComponent<IDComponent>();
+		idC.ID = id;
+		Entity::s_ExistingEntities[id] = ret;
 
 		return ret;
 	}

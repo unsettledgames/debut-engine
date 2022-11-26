@@ -120,7 +120,7 @@ namespace Debut
 		RenderCommand::CullBack();
 
 		if (Renderer::GetConfig().RenderWireframe)
-			RendererDebug::BeginScene(camera, s_Data.CameraView);
+			RendererDebug::BeginScene(camera);
 	}
 
 	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform, int entityID)
@@ -216,11 +216,13 @@ namespace Debut
 				materialToUse.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
 
 				materialToUse.Use();
-				materialToUse.GetRuntimeShader()->SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
-				materialToUse.GetRuntimeShader()->SetMat4("u_MVP", s_Data.CameraProjection * (s_Data.CameraView * transform));
-				materialToUse.GetRuntimeShader()->SetMat4("u_NormalMatrix", glm::inverse(glm::transpose(transform)));
-				materialToUse.GetRuntimeShader()->SetInt("u_EntityID", entityID);
-
+				if (materialToUse.GetRuntimeShader() != nullptr)
+				{
+					materialToUse.GetRuntimeShader()->SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+					materialToUse.GetRuntimeShader()->SetMat4("u_MVP", s_Data.CameraProjection * (s_Data.CameraView * transform));
+					materialToUse.GetRuntimeShader()->SetMat4("u_NormalMatrix", glm::inverse(glm::transpose(transform)));
+					materialToUse.GetRuntimeShader()->SetInt("u_EntityID", entityID);
+				}
 
 				if (s_Data.CurrentPass != RenderingPass::Shadow)
 				{
@@ -230,11 +232,14 @@ namespace Debut
 						std::stringstream ss;
 						ss << "u_ShadowMaps[" << i << "]";
 
-						materialToUse.GetRuntimeShader()->SetMat4(ss.str() + ".LightMatrix", s_Data.ShadowMaps[i]->GetMatrix());
-						materialToUse.GetRuntimeShader()->SetInt(ss.str() + ".Sampler", materialToUse.GetCurrentTextureSlot() + i);
-						materialToUse.GetRuntimeShader()->SetFloat(ss.str() + ".Near", s_Data.ShadowMaps[i]->GetNear());
-						materialToUse.GetRuntimeShader()->SetFloat(ss.str() + ".Far", s_Data.ShadowMaps[i]->GetFar());
-						s_Data.ShadowMaps[i]->BindAsTexture(materialToUse.GetCurrentTextureSlot() + i);
+						if (materialToUse.GetRuntimeShader() != nullptr)
+						{
+							materialToUse.GetRuntimeShader()->SetMat4(ss.str() + ".LightMatrix", s_Data.ShadowMaps[i]->GetMatrix());
+							materialToUse.GetRuntimeShader()->SetInt(ss.str() + ".Sampler", materialToUse.GetCurrentTextureSlot() + i);
+							materialToUse.GetRuntimeShader()->SetFloat(ss.str() + ".Near", s_Data.ShadowMaps[i]->GetNear());
+							materialToUse.GetRuntimeShader()->SetFloat(ss.str() + ".Far", s_Data.ShadowMaps[i]->GetFar());
+							s_Data.ShadowMaps[i]->BindAsTexture(materialToUse.GetCurrentTextureSlot() + i);
+						}
 					}
 				}
 			}

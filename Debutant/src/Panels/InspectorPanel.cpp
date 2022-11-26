@@ -166,10 +166,20 @@ namespace Debut
 						const wchar_t* path = (const wchar_t*)payload->Data;
 						std::filesystem::path pathStr(path);
 
+						std::ifstream meta;
+						std::ifstream file(pathStr.string());
+
 						if (pathStr.extension() == ".mat")
 						{
-							pathStr = pathStr.replace_extension();
-							std::ifstream meta(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
+							if (file.good())
+							{
+								meta = std::ifstream(pathStr.string() + ".meta");
+							}
+							else
+							{
+								pathStr = pathStr.replace_extension();
+								meta = std::ifstream(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
+							}
 
 							if (meta.good())
 							{

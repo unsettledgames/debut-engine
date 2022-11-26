@@ -105,7 +105,7 @@ namespace Debut
 		StartBatch();
 
 		if (Renderer::GetConfig().RenderWireframe)
-			RendererDebug::BeginScene(camera, view);
+			RendererDebug::BeginScene(camera);
 	}
 
 	void Renderer2D::EndScene()

@@ -196,13 +196,11 @@ namespace Debut
 	static void DeserializeComponent<IDComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in) return;
+
 		IDComponent& id = e.GetComponent<IDComponent>();
-		if (Entity::s_ExistingEntities.find(id.ID) != Entity::s_ExistingEntities.end())
-			Entity::s_ExistingEntities.erase(id.ID);
 
 		id.ID = in["ID"].as<uint64_t>();
 		id.Owner = in["Owner"] ? in["Owner"].as<uint64_t>() : id.ID;
-		Entity::s_ExistingEntities[id.ID] = e;
 	}
 
 	template <>
@@ -510,8 +508,8 @@ namespace Debut
 	EntitySceneNode* SceneSerializer::DeserializeEntity(YAML::Node& yamlEntity)
 	{
 		// Create a new entity, set the tag and name
-		auto tc = yamlEntity["TagComponent"];
-		Entity entity = m_Scene->CreateEmptyEntity();
+		auto idComponent = yamlEntity["IDComponent"];
+		Entity entity = m_Scene->CreateEmptyEntity(idComponent["ID"].as<uint64_t>());
 		EntitySceneNode* node = new EntitySceneNode(false, entity);
 		node->IndexInNode = yamlEntity["HierarchyOrder"].as<uint32_t>();
 

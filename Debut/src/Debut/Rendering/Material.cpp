@@ -237,6 +237,10 @@ namespace Debut
 			s_PrevShader = m_RuntimeShader->GetID();
 		}
 		*/
+		if (m_RuntimeShader == nullptr)
+			m_RuntimeShader = AssetManager::Request<Shader>(m_Shader);
+		if (m_RuntimeShader == nullptr)
+			return;
 		m_RuntimeShader->Bind();
 		uint32_t currSlot = 0;
 		

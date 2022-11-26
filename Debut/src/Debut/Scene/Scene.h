@@ -35,11 +35,12 @@ namespace Debut
 		Scene();
 		~Scene();
 
-		void OnRuntimeUpdate(Timestep ts, Ref<FrameBuffer> target);
+		void OnEditorStart();
 		void OnEditorUpdate(Timestep ts, SceneCamera& camera, Ref<FrameBuffer> target);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		void OnRuntimeStart();
+		void OnRuntimeUpdate(Timestep ts, Ref<FrameBuffer> target);
 		void OnRuntimeStop();
 		
 		void RenderingSetup(Ref<FrameBuffer> target);
@@ -48,6 +49,7 @@ namespace Debut
 		void RenderingDebug(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
 
 		Entity CreateEmptyEntity();
+		Entity CreateEmptyEntity(UUID id);
 		Entity CreateEntity(Entity parent, const std::string& name = "New Entity");
 		Entity CreateEntity(Entity parent, const UUID& id, const std::string& name = "New Entity");
 		Entity DuplicateEntity(Entity& entity, Entity& parent);

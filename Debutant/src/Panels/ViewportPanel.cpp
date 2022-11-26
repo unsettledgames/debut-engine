@@ -137,7 +137,7 @@ namespace Debut
             static int shadowMapIndex = 0;
             
             Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
-            uint32_t rendererID = activeScene->GetShadowMaps()[shadowMapIndex]->GetFrameBuffer()->GetDepthAttachment();
+            uint32_t rendererID = m_SceneFrameBuffer->GetColorAttachment();// activeScene->GetShadowMaps()[shadowMapIndex]->GetFrameBuffer()->GetDepthAttachment();
 
             ImGui::Image((void*)rendererID, { 300, 300 }, { 0, 1 }, { 1, 0 });
             ImGui::DragFloat("Lambda", &activeScene->lambda, 0.1f, 0.0f, 1.0f);
@@ -334,7 +334,7 @@ namespace Debut
             glm::mat4 transformMat = transform.GetTransform();
             glm::mat4 viewProj = m_EditorCamera.GetViewProjection();
 
-            RendererDebug::BeginScene(m_EditorCamera, m_EditorCamera.GetView());
+            RendererDebug::BeginScene(m_EditorCamera);
 
             if (currSelection.HasComponent<BoxCollider2DComponent>())
             {
