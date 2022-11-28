@@ -105,11 +105,12 @@ namespace Debut
 		if (std::find(m_BodyIDs.begin(), m_BodyIDs.end(), bodyID) == m_BodyIDs.end())
 			return;
 		BodyInterface& bi = m_PhysicsSystem->GetBodyInterface();
+		glm::mat4 inverseTransform = transform.Parent ? glm::inverse(transform.Parent.Transform().GetTransform()) : glm::mat4(1.0f);
 		Vec3 pos = bi.GetPosition(bodyID);
 		Vec3 rotation = bi.GetRotation(bodyID).GetEulerAngles();
 
-		transform.Translation = { pos.GetX(), pos.GetY(), pos.GetZ() };
-		transform.Rotation = { rotation.GetX(), rotation.GetY(), rotation.GetZ() };
+		transform.Translation = inverseTransform * glm::vec4(pos.GetX(), pos.GetY(), pos.GetZ(), 1.0f);
+		transform.Rotation = inverseTransform * glm::vec4(rotation.GetX(), rotation.GetY(), rotation.GetZ(), 0.0f);
 	}
 
 	void PhysicsSystem3D::End()
@@ -156,7 +157,7 @@ namespace Debut
 	}
 
 	BodyID* PhysicsSystem3D::CreateSphereColliderBody(const SphereCollider3DComponent& collider, const Rigidbody3DComponent& rb,
-		const TransformComponent& transform)
+		TransformComponent& transform)
 	{
 		// Necessary data
 		bool isStatic = rb.Type == Rigidbody3DComponent::BodyType::Static;
@@ -179,25 +180,29 @@ namespace Debut
 	}
 
 	BodyID* PhysicsSystem3D::CreateBoxColliderBody(const BoxCollider3DComponent& collider, const Rigidbody3DComponent& rb, 
-		const TransformComponent& transform)
+		TransformComponent& transform)
 	{
+		glm::vec3 trans, rot, scale;
+		glm::mat4 transformMat = transform.GetTransform();
+		MathUtils::DecomposeTransform(transformMat, trans, rot, scale);
+
 		// Necessary data
 		bool isStatic = rb.Type == Rigidbody3DComponent::BodyType::Static;
-		glm::vec3 halfSize = (collider.Size / 2.0f) * transform.Scale;
-		glm::vec3 offset = glm::mat4(glm::quat(transform.Rotation)) * glm::vec4(transform.Scale * collider.Offset, 1.0f);
-		glm::vec3 startPos = transform.Translation;
-		glm::vec3 startRot = transform.Rotation;
+		glm::vec3 halfSize = (collider.Size / 2.0f) * scale;
+		glm::vec3 offset = glm::mat4(glm::quat(rot)) * glm::vec4(scale * collider.Offset, 0.0f);
+		glm::vec3 startPos = trans;
+		glm::vec3 startRot = rot;
 
 		Ref<PhysicsMaterial3D> physicsMaterial = AssetManager::Request<PhysicsMaterial3D>(collider.Material);
 
 		// Compute initial transform
 		Vec3Arg pos = { startPos.x + offset.x, startPos.y + offset.y, startPos.z + offset.z };
-		QuatArg rot = Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z });
+		QuatArg quatRot = Quat::sEulerAngles({ startRot.x, startRot.y, startRot.z });
 
 		// Shape
 		BoxShape* shape = new BoxShape({ halfSize.x, halfSize.y, halfSize.z });
 
-		return CreateBody(shape, physicsMaterial, rb, pos, rot, isStatic ? EMotionType::Static : EMotionType::Dynamic,
+		return CreateBody(shape, physicsMaterial, rb, pos, quatRot, isStatic ? EMotionType::Static : EMotionType::Dynamic,
 			isStatic ? Layers::NON_MOVING : Layers::MOVING);
 	}
 
