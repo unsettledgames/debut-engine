@@ -4,6 +4,8 @@
 #include <Debut/Core/Application.h>
 #include <Debut/Core/Instrumentor.h>
 #include <Debut/Core/Window.h>
+#include <Debut/Events/KeyEvent.h>
+#include <Debut/Events/MouseEvent.h>
 #include <Debut/ImGui/ImGuiLayer.h>
 #include <Debut/ImGui/ImGuiUtils.h>
 
@@ -52,14 +54,13 @@ namespace Debut
             DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMaps()[0]->GetFrameBuffer(), RenderTextureMode::Color);
         m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
 
-        m_EditorCamera = EditorCamera(30, 16.0f / 9.0f, 0.1f, 1000.0f);
+        m_EditorCamera = EditorCamera(glm::radians(30.0f), 16.0f / 9.0f, 0.1f, 1000.0f);
     }
 
     void ViewportPanel::OnUpdate(Timestep& ts)
     {
         fps = 1.0f / ts;
         DBT_PROFILE_SCOPE("EgineUpdate");
-        //Log.CoreInfo("FPS: {0}", 1.0f / ts);
         // Update camera
         if (m_ViewportFocused)
             m_EditorCamera.OnUpdate(ts);
@@ -100,6 +101,8 @@ namespace Debut
             static int drawCallsShown = stats.DrawCalls;
             static int trianglesShown = stats.Triangles;
             static int shadowPasses = stats.NShadowPasses;
+            static int shadowDrawCalls = stats.ShadowDrawCalls;
+            static int shadowTriangles = stats.ShadowTriangles;
             static int start = 0;
 
             if (start % 100 == 0)
@@ -108,6 +111,9 @@ namespace Debut
                 drawCallsShown = stats.DrawCalls;
                 trianglesShown = stats.Triangles;
                 shadowPasses = stats.NShadowPasses;
+                shadowDrawCalls = stats.ShadowDrawCalls;
+                shadowTriangles = stats.ShadowTriangles;
+
                 fpsMean = fps;
             }
             else
@@ -116,32 +122,28 @@ namespace Debut
             ImGui::Text("FPS: %f", fpsShown);
             start++;
 
-            ImGui::Text("3D Draw calls: %d", drawCallsShown);
-            ImGui::Text("3D Triangles: %d", trianglesShown);
-            ImGui::Text("3D Shadow passes: %d", shadowPasses);
+            ImGui::Text("DEFAULT: Draw calls: %d", drawCallsShown);
+            ImGui::Text("DEFAULT: Triangles: %d", trianglesShown);
+            ImGui::Text("DEFAULT: Shadow passes: %d", shadowPasses);
+            ImGui::Text("SHADOW: Shadow draw calls: %d", shadowDrawCalls);
+            ImGui::Text("SHADOW: Shadow triangles: %d", shadowTriangles);
         }
         ImGui::End();
 
         ImGui::Begin("Debug");
         {
-            
-            
-            // 3D rendering stats
+            // Shadow map
 
-            /*
             static int shadowMapIndex = 0;
             
             Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
             uint32_t rendererID = activeScene->GetShadowMaps()[shadowMapIndex]->GetFrameBuffer()->GetDepthAttachment();
 
             ImGui::Image((void*)rendererID, { 300, 300 }, { 0, 1 }, { 1, 0 });
-            ImGui::DragInt("Shadowmap index", &shadowMapIndex);
+            ImGui::DragFloat("Lambda", &activeScene->lambda, 0.1f, 0.0f, 1.0f);
+            ImGui::DragInt("Shadowmap index", &shadowMapIndex, 0.1f, 0, 3);
             ImGui::DragFloat("Fadeout start distance", &activeScene->fadeoutStartDistance);
             ImGui::DragFloat("Fadeout end distance", &activeScene->fadeoutEndDistance);
-            ImGui::DragFloat("Lambda", &activeScene->lambda, 0.01f, 0.0f, 1.0f);
-
-            shadowMapIndex = std::min(std::max(0, shadowMapIndex), 3);
-            */
         }
         ImGui::End();
 
@@ -332,7 +334,7 @@ namespace Debut
             glm::mat4 transformMat = transform.GetTransform();
             glm::mat4 viewProj = m_EditorCamera.GetViewProjection();
 
-            RendererDebug::BeginScene(m_EditorCamera, m_EditorCamera.GetView());
+            RendererDebug::BeginScene(m_EditorCamera);
 
             if (currSelection.HasComponent<BoxCollider2DComponent>())
             {

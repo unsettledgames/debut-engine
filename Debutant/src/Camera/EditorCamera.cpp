@@ -1,31 +1,33 @@
 #include "EditorCamera.h"
 
-#include "Debut/Core/Input.h"
-#include "Debut/Core/KeyCodes.h"
-#include "Debut/Core/MouseButtonCodes.h"
+#include <Debut/Core/Input.h>
+#include <Debut/Core/KeyCodes.h>
+#include <Debut/Core/MouseButtonCodes.h>
+
+#include <Debut/Events/Event.h>
+#include <Debut/Events/MouseEvent.h>
+#include <Debut/Core/Time.h>
+#include <Debut/Core/Core.h>
 
 #include <glfw/glfw3.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
+
 namespace Debut
 {
 	EditorCamera::EditorCamera(float fov, float aspectRatio, float nearClip, float farClip)
-		: Camera(glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip))
+		: SceneCamera(ProjectionType::Perspective, nearClip, farClip, fov, aspectRatio)
 	{
 		m_ProjectionType = ProjectionType::Perspective;
-		m_FOV = fov;
-		m_AspectRatio = aspectRatio;
-		m_NearPlane = nearClip;
-		m_FarPlane = farClip;
 		UpdateView();
 	}
 
 	void EditorCamera::UpdateProjection()
 	{
 		m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
-		m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearPlane, m_FarPlane);
+		RecalculateProjection();
 	}
 
 	void EditorCamera::UpdateView()
@@ -40,10 +42,10 @@ namespace Debut
 
 	std::pair<float, float> EditorCamera::PanSpeed() const
 	{
-		float x = std::min(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
+		float x = std::min<float>(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
 		float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
 
-		float y = std::min(m_ViewportHeight / 1000.0f, 2.4f); // max = 2.4f
+		float y = std::min<float>(m_ViewportHeight / 1000.0f, 2.4f); // max = 2.4f
 		float yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
 
 		return { 0.7f, 0.7f};
@@ -63,7 +65,7 @@ namespace Debut
 		return 50.0f;
 	}
 
-	void EditorCamera::OnUpdate(Timestep ts)
+	void EditorCamera::OnUpdate(Timestep& ts)
 	{
 		const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
 		glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;

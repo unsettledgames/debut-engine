@@ -13,7 +13,7 @@ namespace Debut
 
 	class Shader;
 	class UUID;
-	class Camera;
+	class SceneCamera;
 
 	struct LineVertex
 	{
@@ -58,7 +58,7 @@ namespace Debut
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(Camera& camera, const glm::mat4& transform);
+		static void BeginScene(SceneCamera& camera);
 		static void EndScene();
 		
 		static void DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, bool highlightVertices = false);

@@ -1,18 +1,23 @@
 #pragma once
-#include <Debut.h>
+#include <Debut/Scene/SceneCamera.h>
 
-using namespace Debut;
+#include <utility>
 
 namespace Debut
 {
-	class EditorCamera : public Camera
+	class Event;
+	class MouseScrolledEvent;
+	class Timestep;
+
+	class EditorCamera : public SceneCamera
 	{
 	public:
-		EditorCamera() { m_ViewMatrix = glm::mat4(1.0f); m_ProjectionType = ProjectionType::Perspective; }
+		EditorCamera() : SceneCamera() {}
 		EditorCamera(float fov, float aspectRatio, float nearClip, float farClip);
+		~EditorCamera() = default;
 
-		void OnUpdate(Timestep ts);
-		void OnEvent(Event & e);
+		void OnUpdate(Timestep& ts);
+		void OnEvent(Event& e);
 
 		inline void SetDistance(float distance) { m_Distance = distance; UpdateView();}
 		inline void SetFocalPoint(const glm::vec3& focalPoint) { m_FocalPoint = focalPoint; UpdateView(); }
@@ -21,9 +26,6 @@ namespace Debut
 		inline void SetYaw(const float yaw) { m_Yaw = yaw; UpdateView(); }
 
 		inline void SetViewportSize(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; UpdateProjection(); }
-
-		const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
-		glm::mat4 GetViewProjection() const { return m_ProjectionMatrix * m_ViewMatrix; }
 
 		glm::vec3 GetUpDirection() const;
 		glm::vec3 GetRightDirection() const;
@@ -40,10 +42,10 @@ namespace Debut
 		void UpdateProjection();
 		void UpdateView();
 
-		bool OnMouseScroll(MouseScrolledEvent & e);
+		bool OnMouseScroll(MouseScrolledEvent& e);
 
-		void MousePan(const glm::vec2 & delta);
-		void MouseRotate(const glm::vec2 & delta);
+		void MousePan(const glm::vec2& delta);
+		void MouseRotate(const glm::vec2& delta);
 		void MouseZoom(float delta);
 		void WasdMove(const glm::vec2& mousePos);
 

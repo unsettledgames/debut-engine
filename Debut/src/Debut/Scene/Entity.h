@@ -7,6 +7,30 @@
 #include <vector>
 #include <xhash>
 
+/*
+		- Store transform tree?
+*           - Create association between existing tree and transform tree?
+*           - Directly use TransformComponents? No, probably a struct of <TransformComponent, glm::mat4>
+*           - Wait wait wait, requirements:
+*               - Translation, rotation, scale-> Really? Can't I just save the entity id and retrieve them only when necessary? In
+*                   that way I'd avoid some redundancies
+*               - NeedsUpdate
+*               - TransformMatrix
+*           - How does it work? Whenever you set one of the first 3 components, NeedsUpdate is set. Whenever the matrix is
+*               required, before getting it, check if it NeedsUpdate. If so, recalculate it, cache it and send it to the
+*               requester.
+*           - That's great. Now, how do I easily access the data from the tree? Ideally it'd be neat to access it in O(1). What
+				if std::unordered_map<EntityID, TransformNode>? Every time I need a transform matrix, I get it from
+				the TransformNode by accessing the map using the entity ID should I use the entt id? In the end it's just a
+				uint32_t, the rest of the engine doesn't need to know about entt.
+			- Where do I save that map? Static member of TransformComponent? In that way it wouldn't take up space in each
+				component while still being easily accessible from every point in which a TransformComponent is needed.
+				The fact is that, once a transform matrix is updated, the children need an update too. The TransformNode should
+				probably contain them as well, in order to propagate the transformations.
+			- Cool idea, recycle and expand the EntitySceneNode. Make it so that it belongs to a scene and not to the
+				SceneHierarchyPanel.
+*/
+
 namespace Debut
 {
 	struct TransformComponent;

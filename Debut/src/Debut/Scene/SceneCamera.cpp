@@ -5,15 +5,24 @@
 
 namespace Debut
 {
-	SceneCamera::SceneCamera()
+	SceneCamera::SceneCamera() : Camera()
 	{
 		m_ProjectionType = ProjectionType::Orthographic;
 		RecalculateProjection();
 	}
 
-	SceneCamera::~SceneCamera()
+	SceneCamera::SceneCamera(ProjectionType type, float nearClip, float farClip, float size, float aspectRatio) : 
+		Camera()
 	{
+		m_ProjectionType = type;
+		m_NearPlane = nearClip;
+		m_FarPlane = farClip;
+		m_AspectRatio = aspectRatio;
 
+		if (m_ProjectionType == ProjectionType::Orthographic)
+			m_OrthographicSize = size;
+		else
+			m_FOV = size;
 	}
 
 	void SceneCamera::SetProjectionType(ProjectionType type)
@@ -29,8 +38,8 @@ namespace Debut
 		m_ProjectionType = ProjectionType::Orthographic;
 
 		m_OrthographicSize = size;
-		m_NearPlane = farPlane;
-		m_FarPlane = nearPlane;
+		m_NearPlane = nearPlane;
+		m_FarPlane = farPlane;
 		
 		RecalculateProjection();
 	}

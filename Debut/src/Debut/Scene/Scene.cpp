@@ -1,9 +1,10 @@
 #include "Debut/dbtpch.h"
 #include "Scene.h"
 #include <glm/glm.hpp>
-#include "Debut/Scene/Entity.h"
-#include "Debut/Scene/Components.h"
-#include "Debut/Rendering/Shader.h"
+#include <Debut/Scene/Entity.h>
+#include <Debut/Scene/Components.h>
+#include <Debut/Scene/SceneCamera.h>
+#include <Debut/Rendering/Shader.h>
 #include <Debut/Rendering/Structures/FrameBuffer.h>
 #include <Debut/Rendering/Structures/ShadowMap.h>
 #include <Debut/Rendering/Renderer/RenderCommand.h>
@@ -16,6 +17,7 @@
 #include <Debut/Physics/PhysicsSystem3D.h>
 #include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Rendering/Structures/Frustum.h>
+#include <Debut/Utils/MathUtils.h>
 
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
@@ -102,47 +104,11 @@ namespace Debut
 	void Scene::OnComponentAdded(IDComponent& bc2d, Entity entity) { }
 	
 	template<>
-	void Scene::OnComponentAdded(MeshRendererComponent& mr, Entity entity)
+	void Scene::OnComponentAdded(MeshRendererComponent& mr, Entity entity) 
 	{
-		if (mr.Mesh == 0)
-			return;
-
-		DBT_PROFILE_SCOPE("GenerateAABB");
-
 		Ref<Mesh> mesh = AssetManager::Request<Mesh>(mr.Mesh);
-		std::vector<float>& vertices = mesh->GetPositions();
-		std::vector<glm::vec3> AABB;
-
-		// Compute mesh bounds
-		float xBounds[2], yBounds[2], zBounds[2];
-		xBounds[0] = std::numeric_limits<float>().max(); xBounds[1] = -std::numeric_limits<float>().max();
-		yBounds[0] = xBounds[0]; yBounds[1] = xBounds[1];
-		zBounds[0] = xBounds[0]; zBounds[1] = xBounds[1];
-
-		for (uint32_t i=0; i<vertices.size(); i+= 3)
-		{
-			float x = vertices[i], y = vertices[i + 1], z = vertices[i + 2];
-			xBounds[0] = std::min(xBounds[0], x); xBounds[1] = std::max(xBounds[1], x);
-			yBounds[0] = std::min(yBounds[0], y); yBounds[1] = std::max(yBounds[1], y);
-			zBounds[0] = std::min(zBounds[0], x); zBounds[1] = std::max(zBounds[1], z);
-		}
-
-		// Compute AABB points
-		AABB.resize(8);
-		uint32_t pointIdx = 0;
-		for (uint32_t i = 0; i < 2; i++)
-		{
-			for (uint32_t j = 0; j < 2; j++)
-			{
-				for (uint32_t k = 0; k < 2; k++)
-				{
-					AABB[pointIdx] = { xBounds[i], yBounds[j], zBounds[k] };
-					pointIdx++;
-				}
-			}
-		}
-
-		mr.SetAABB(AABB.data());
+		if (mesh != nullptr)
+			mr.SetAABB(mesh->GetAABB());
 	}
 
 	template<>
@@ -171,9 +137,9 @@ namespace Debut
 	{
 		if (src.HasComponent<Component>())
 		{
-			Component& c = dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
-			if (dst.HasComponent<IDComponent>())
-				c.Owner = dst.GetComponent<IDComponent>().ID;
+			Component& sourceComponent = src.GetComponent<Component>();
+			Component& destComponent = dst.AddOrReplaceComponent<Component>(sourceComponent);
+			destComponent.Owner = sourceComponent.Owner;
 		}
 
 	}
@@ -198,32 +164,31 @@ namespace Debut
 		return {};
 	}
 
-	void Scene::OnEditorUpdate(Timestep ts, Camera& camera, Ref<FrameBuffer> target)
+	void Scene::OnEditorUpdate(Timestep ts, SceneCamera& camera, Ref<FrameBuffer> target)
 	{
 		DBT_PROFILE_SCOPE("Editor update");
 
 		RenderingSetup(target);
-
 		// Clear frame buffer for mouse picking
 		target->ClearAttachment(1, -1);
 		
 		// Flags
 		bool renderColliders = Renderer::GetConfig().RenderColliders;
-		glm::mat4 cameraView = camera.GetView();
+		glm::mat4 cameraTransform = glm::inverse(camera.GetView());
 
-		Rendering3D(camera, cameraView, target);
-		Rendering2D(camera, cameraView, target);
+		Rendering3D(camera, cameraTransform, target);
+		Rendering2D(camera, cameraTransform, target);
 
 		if (Renderer::GetConfig().RenderColliders)
-			RenderingDebug(camera, cameraView, target);
+			RenderingDebug(camera, cameraTransform, target);
 	}
 	
 
 	void Scene::OnRuntimeUpdate(Timestep ts, Ref<FrameBuffer> target)
 	{
 		RenderingSetup(target);
-
-		Renderer2D::ResetStats();
+		// Clear frame buffer for mouse picking
+		target->ClearAttachment(1, -1);
 
 		// Update scripts
 		{
@@ -285,9 +250,8 @@ namespace Debut
 		}
 
 		// Render sprites
-
 		// Find the main camera of the scene
-		Camera* mainCamera = nullptr;
+		SceneCamera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		{
 			auto view = m_Registry.view<CameraComponent, TransformComponent>();
@@ -298,6 +262,8 @@ namespace Debut
 				{
 					mainCamera = &(camera.Camera);
 					cameraTransform = transform.GetTransform();
+					mainCamera->SetView(glm::inverse(cameraTransform));
+
 					break;
 				}
 			}
@@ -307,6 +273,18 @@ namespace Debut
 		{
 			Rendering3D(*mainCamera, cameraTransform, target);
 			Rendering2D(*mainCamera, cameraTransform, target);
+
+			if (Renderer::GetConfig().RenderColliders)
+				RenderingDebug(*mainCamera, cameraTransform, target);
+		}
+	}
+
+	void Scene::OnEditorStart()
+	{
+		for (auto& entity : m_Registry.view<TransformComponent>())
+		{
+			Entity currEntity = { entity, this };
+			Entity::s_ExistingEntities[currEntity.ID()] = currEntity;
 		}
 	}
 
@@ -321,7 +299,7 @@ namespace Debut
 		auto rigidbodyView2D = m_Registry.view<Rigidbody2DComponent>();
 		auto rigidbodyView3D = m_Registry.view<Rigidbody3DComponent>();
 
-		// Create Rigidbodies
+		// Create 2D Rigidbodies
 		for (auto e : rigidbodyView2D)
 		{
 			Entity entity = { e, this };
@@ -475,8 +453,10 @@ namespace Debut
 		m_PhysicsSystem3D->Begin();
 	}
 
-	void Scene::Rendering2D(Camera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
+	void Scene::Rendering2D(SceneCamera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
 	{
+		Renderer2D::ResetStats();
+
 		target->Bind();
 
 		// 2D Rendering
@@ -497,7 +477,7 @@ namespace Debut
 		target->Unbind();
 	}
 
-	void Scene::Rendering3D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target)
+	void Scene::Rendering3D(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target)
 	{
 		// Global variables
 		std::vector<ShaderUniform> globalUniforms = GetGlobalUniforms(cameraTransform[3]);
@@ -515,12 +495,14 @@ namespace Debut
 					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
 					DBT_PROFILE_SCOPE("ShadowPass");
 
+					RenderCommand::CullFront();
 					for (uint32_t i = 0; i < m_ShadowMaps.size(); i++)
 					{
-						m_ShadowMaps[i]->SetFromCamera(camera, dirLight->Direction);
+						SceneCamera shadowCamera;
+						m_ShadowMaps[i]->SetFromCamera(camera, shadowCamera, dirLight->Direction);
 						m_ShadowMaps[i]->Bind();
 
-						Renderer3D::BeginShadow(m_ShadowMaps[i]);
+						Renderer3D::BeginShadow(m_ShadowMaps[i], shadowCamera);
 						{
 							// Can I recycle this group to render stuff later on?
 							auto group3D = m_Registry.view<TransformComponent, MeshRendererComponent>();
@@ -533,6 +515,7 @@ namespace Debut
 						Renderer3D::EndShadow();
 						m_ShadowMaps[i]->Unbind();
 					}
+					RenderCommand::CullBack();
 				}
 			}
 		}
@@ -552,11 +535,11 @@ namespace Debut
 		target->Unbind();
 	}
 
-	void Scene::RenderingDebug(Camera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
+	void Scene::RenderingDebug(SceneCamera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
 	{
 		target->Bind();
 
-		RendererDebug::BeginScene(camera, cameraView);
+		RendererDebug::BeginScene(camera);
 		{
 			DBT_PROFILE_SCOPE("RenderingDebug");
 			// 3D Physics colliders
@@ -682,6 +665,17 @@ namespace Debut
 
 		IDComponent id = ret.AddComponent<IDComponent>();
 		Entity::s_ExistingEntities[id.ID] = ret;
+
+		return ret;
+	}
+
+	Entity Scene::CreateEmptyEntity(UUID id)
+	{
+		Entity ret = { m_Registry.create(), this };
+
+		IDComponent idC = ret.AddComponent<IDComponent>();
+		idC.ID = id;
+		Entity::s_ExistingEntities[id] = ret;
 
 		return ret;
 	}
@@ -870,15 +864,15 @@ namespace Debut
 		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
-		float nSplits = 5;
+		float nSplits = 4;
 
 		if (m_ShadowMaps.size() == 0)
 		{
 			m_ShadowMaps.resize(nSplits);
-			float nearDistances[5] = { -1.0f, -5.0f, -10.f, -50.0f, -100.0f };
-			float farDistances[5] = { 20.0f, 75.0f, 200.0f, 500.0f, 750.0f };
-			float cameraDistances[5] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
-			for (uint32_t i = 0; i < 5; i++)
+			float nearDistances[4] = { -2.0f, -6.0f, -15.f, -50.0f};
+			float farDistances[4] = { 40.0f, 100.0f, 210.0f, 450.0f };
+			float cameraDistances[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			for (uint32_t i = 0; i < 4; i++)
 			{
 				m_ShadowMaps[i] = CreateRef<ShadowMap>(m_ViewportWidth*2, m_ViewportHeight*2);
 				m_ShadowMaps[i]->SetIndex(i);

@@ -13,7 +13,7 @@ namespace YAML
 
 namespace Debut
 {
-	struct Event;
+	class Event;
 	struct EntitySceneNode;
 	
 	class  Timestep;

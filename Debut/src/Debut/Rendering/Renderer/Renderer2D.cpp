@@ -88,7 +88,7 @@ namespace Debut
 		delete[] s_Data.QuadVertexBufferBase;
 	}
 
-	void Renderer2D::BeginScene(Camera& camera, const glm::mat4& view)
+	void Renderer2D::BeginScene(SceneCamera& camera, const glm::mat4& view)
 	{
 		DBT_PROFILE_FUNCTION();
 		RenderCommand::DisableCulling();
@@ -105,7 +105,7 @@ namespace Debut
 		StartBatch();
 
 		if (Renderer::GetConfig().RenderWireframe)
-			RendererDebug::BeginScene(camera, view);
+			RendererDebug::BeginScene(camera);
 	}
 
 	void Renderer2D::EndScene()

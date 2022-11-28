@@ -16,7 +16,7 @@ namespace Debut
 	struct LightComponent;
 	struct ShaderUniform;
 
-	class Camera;
+	class SceneCamera;
 	class FrameBuffer;
 	class Skybox;
 	class PhysicsSystem3D;
@@ -35,19 +35,21 @@ namespace Debut
 		Scene();
 		~Scene();
 
-		void OnRuntimeUpdate(Timestep ts, Ref<FrameBuffer> target);
-		void OnEditorUpdate(Timestep ts, Camera& camera, Ref<FrameBuffer> target);
+		void OnEditorStart();
+		void OnEditorUpdate(Timestep ts, SceneCamera& camera, Ref<FrameBuffer> target);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		void OnRuntimeStart();
+		void OnRuntimeUpdate(Timestep ts, Ref<FrameBuffer> target);
 		void OnRuntimeStop();
 		
 		void RenderingSetup(Ref<FrameBuffer> target);
-		void Rendering2D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
-		void Rendering3D(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
-		void RenderingDebug(Camera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
+		void Rendering2D(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
+		void Rendering3D(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
+		void RenderingDebug(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
 
 		Entity CreateEmptyEntity();
+		Entity CreateEmptyEntity(UUID id);
 		Entity CreateEntity(Entity parent, const std::string& name = "New Entity");
 		Entity CreateEntity(Entity parent, const UUID& id, const std::string& name = "New Entity");
 		Entity DuplicateEntity(Entity& entity, Entity& parent);
@@ -90,7 +92,7 @@ namespace Debut
 
 		std::vector<Ref<ShadowMap>> m_ShadowMaps;
 		// TEMPORARY
-		float lambda = 1.0f;
+		float lambda = 0.5f;
 		float fadeoutStartDistance = 300;
 		float fadeoutEndDistance = 400;
 	};

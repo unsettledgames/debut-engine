@@ -26,19 +26,15 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
-*   CURRENT: OPTIMIZATION
-*       Start:              ~58 FPS
-*       Matrix opt:         ~60 FPS
-*       Frustum culling:    
+*   CURRENT: OPTIMIZATION (~200K triangles)
+*       Start:                  ~58 FPS -> 17.241 ms
+*       Matrix opt:             ~60 FPS -> 16.666 ms
+*       Frustum culling:        ~75 FPS -> 13.333 ms
+*       No reupload:            ~120 FPS-> 9.3333 ms
+*       Shader optimization:    ~170 FPS-> 5.8823 ms (disabled battery saving tho :P, otherwise 130 FPS and 7.692 ms)
 * 
-*       - Shadow mapping: in each shadow pass, the only thing that changes is the camera, the rest stays exactly the same...
-* 
-*       - Frustum culling:
-            - Test for AABB before sending vertices https://gdbooks.gitbooks.io/3dcollisions/content/Chapter2/static_aabb_plane.html
-
         - OpenGL optimizations: https://on-demand.gputechconf.com/siggraph/2014/presentation/SG4117-OpenGL-Scene-Rendering-Techniques.pdf
         - Scene graph optimizations: https://on-demand.gputechconf.com/gtc/2013/presentations/S3032-Advanced-Scenegraph-Rendering-Pipeline.pdf
-
 *
 *   MAIN SHADOW WORKFLOW
 * 
@@ -78,6 +74,7 @@
 *           - Movement data
 *       - The debug renderer should probably only used in a DebugLayer since it kinda behaves as such
 *       - Implement rendering modes in 2D too
+*       - Render camera frustum
 * 
     OPTIMIZATION:
 *       - Update AssetMap only OnClose or once when this layer is attached
@@ -124,8 +121,8 @@ namespace Debut
 
     void DebutantLayer::OnUpdate(Timestep& ts)
     {
-        m_Viewport.OnUpdate(ts);
         m_ActiveScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
+        m_Viewport.OnUpdate(ts);
     }
 
     void DebutantLayer::OnImGuiRender()

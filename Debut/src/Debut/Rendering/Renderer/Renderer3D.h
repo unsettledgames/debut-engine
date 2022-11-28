@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Debut/Rendering/Structures/Frustum.h>
 
 namespace Debut
 {
@@ -11,7 +12,7 @@ namespace Debut
 	class Material;
 	class Skybox;
 	class Texture2D;
-	class Camera;
+	class SceneCamera;
 	class Mesh;
 
 	struct MeshRendererComponent;
@@ -32,9 +33,11 @@ namespace Debut
 
 	struct Renderer3DStats
 	{
-		uint32_t NShadowPasses;
-		uint32_t DrawCalls;
-		uint32_t Triangles;
+		uint32_t NShadowPasses = 0;
+		uint32_t DrawCalls = 0;
+		uint32_t Triangles = 0;
+		uint32_t ShadowTriangles = 0;
+		uint32_t ShadowDrawCalls = 0;
 	};
 
 	struct Renderer3DStorage
@@ -59,6 +62,7 @@ namespace Debut
 		glm::mat4 CameraProjection;
 		float CameraNear;
 		float CameraFar;
+		Frustum CameraFrustum;
 
 		std::vector<LightComponent*> Lights;
 		std::vector<ShaderUniform> GlobalUniforms;
@@ -80,12 +84,12 @@ namespace Debut
 		static void Init();
 		static void Shutdown();
 
-		static void BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& transform, 
+		static void BeginScene(SceneCamera& camera, Ref<Skybox> skybox, const glm::mat4& transform,
 			std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, std::vector<Ref<ShadowMap>> shadowMaps);
 		static void EndScene();
 		static void Flush();
 
-		static void BeginShadow(Ref<ShadowMap> shadowMap);
+		static void BeginShadow(Ref<ShadowMap> shadowMap, SceneCamera& camera);
 		static void EndShadow();
 
 		static void DrawModel(const MeshRendererComponent& model, const glm::mat4& transform, int entityID);

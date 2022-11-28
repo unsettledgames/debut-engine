@@ -90,7 +90,7 @@ namespace Debut
 		out << YAML::Key << "PerspNear" << YAML::Value << c.Camera.GetNearPlane();
 		out << YAML::Key << "PerspFar" << YAML::Value << c.Camera.GetFarPlane();
 		out << YAML::Key << "OrthoSize" << YAML::Value << c.Camera.GetOrthoSize();
-		out << YAML::Key << "PerspFOV" << YAML::Value << c.Camera.GetPerspFOV();
+		out << YAML::Key << "PerspFOV" << YAML::Value << c.Camera.GetFOV();
 
 		out << YAML::EndMap;
 	}
@@ -196,13 +196,11 @@ namespace Debut
 	static void DeserializeComponent<IDComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
 	{
 		if (!in) return;
+
 		IDComponent& id = e.GetComponent<IDComponent>();
-		if (Entity::s_ExistingEntities.find(id.ID) != Entity::s_ExistingEntities.end())
-			Entity::s_ExistingEntities.erase(id.ID);
 
 		id.ID = in["ID"].as<uint64_t>();
 		id.Owner = in["Owner"] ? in["Owner"].as<uint64_t>() : id.ID;
-		Entity::s_ExistingEntities[id.ID] = e;
 	}
 
 	template <>
@@ -250,7 +248,7 @@ namespace Debut
 		cc.Camera.SetNearPlane(in["CameraData"]["OrthoNear"].as<float>());
 		cc.Camera.SetFarPlane(in["CameraData"]["OrthoFar"].as<float>());
 
-		cc.Camera.SetPerspFOV(in["CameraData"]["PerspFOV"].as<float>());
+		cc.Camera.SetFOV(in["CameraData"]["PerspFOV"].as<float>());
 		cc.Camera.SetNearPlane(in["CameraData"]["PerspNear"].as<float>());
 		cc.Camera.SetFarPlane(in["CameraData"]["PerspFar"].as<float>());
 		cc.Camera.SetViewportSize(scene->GetViewportSize().x, scene->GetViewportSize().y);
@@ -510,8 +508,8 @@ namespace Debut
 	EntitySceneNode* SceneSerializer::DeserializeEntity(YAML::Node& yamlEntity)
 	{
 		// Create a new entity, set the tag and name
-		auto tc = yamlEntity["TagComponent"];
-		Entity entity = m_Scene->CreateEmptyEntity();
+		auto idComponent = yamlEntity["IDComponent"];
+		Entity entity = m_Scene->CreateEmptyEntity(idComponent["ID"].as<uint64_t>());
 		EntitySceneNode* node = new EntitySceneNode(false, entity);
 		node->IndexInNode = yamlEntity["HierarchyOrder"].as<uint32_t>();
 

@@ -59,7 +59,8 @@ namespace Debut
 		GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, DbtToGLParameter(config.WrapMode)));
 		GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, DbtToGLParameter(config.WrapMode)));
 
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_Format, GL_UNSIGNED_BYTE, data);
+		GLCall(glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_Format, GL_UNSIGNED_BYTE, data));
+		GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 
 		stbi_image_free(data);
 	}

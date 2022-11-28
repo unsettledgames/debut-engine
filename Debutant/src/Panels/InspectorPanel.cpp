@@ -79,9 +79,9 @@ namespace Debut
 
 				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 				{
-					float perspFOV = glm::degrees(camera.GetPerspFOV());
+					float perspFOV = glm::degrees(camera.GetFOV());
 					if (ImGuiUtils::DragFloat("Vertical FOV", &perspFOV, 0.15f))
-						camera.SetPerspFOV(glm::radians(perspFOV));
+						camera.SetFOV(glm::radians(perspFOV));
 
 					float perspNear = camera.GetNearPlane();
 					if (ImGuiUtils::DragFloat("Near clip", &perspNear, 0.15f))
@@ -166,10 +166,20 @@ namespace Debut
 						const wchar_t* path = (const wchar_t*)payload->Data;
 						std::filesystem::path pathStr(path);
 
+						std::ifstream meta;
+						std::ifstream file(pathStr.string());
+
 						if (pathStr.extension() == ".mat")
 						{
-							pathStr = pathStr.replace_extension();
-							std::ifstream meta(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
+							if (file.good())
+							{
+								meta = std::ifstream(pathStr.string() + ".meta");
+							}
+							else
+							{
+								pathStr = pathStr.replace_extension();
+								meta = std::ifstream(AssetManager::s_MetadataDir + pathStr.string() + ".meta");
+							}
 
 							if (meta.good())
 							{

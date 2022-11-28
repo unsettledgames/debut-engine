@@ -154,9 +154,9 @@ namespace Debut
 		void UpdateBody(TransformComponent& transform, Rigidbody3DComponent& body, BodyID bodyID);
 
 		BodyID* CreateBoxColliderBody(const BoxCollider3DComponent& collider, const Rigidbody3DComponent& rb,
-			const TransformComponent& transform);
+			TransformComponent& transform);
 		BodyID* CreateSphereColliderBody(const SphereCollider3DComponent& collider, const Rigidbody3DComponent& rb,
-			const TransformComponent& transform);
+			TransformComponent& transform);
 		BodyID* CreateMeshColliderBody(const MeshCollider3DComponent& collider, const Rigidbody3DComponent& rb,
 			TransformComponent& transform);
 		

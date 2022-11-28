@@ -2,7 +2,7 @@
 
 
 #include <Debut/Rendering/Texture.h>
-#include <Debut/Rendering/Camera.h>
+#include <Debut/Scene/SceneCamera.h>
 
 #include <Debut/Rendering/Material.h>
 #include <Debut/Rendering/Resources/Skybox.h>
@@ -41,9 +41,9 @@ namespace Debut
 
 			// Attach buffers to VertexArray
 			ShaderDataType types[] = { ShaderDataType::Float3, ShaderDataType::Float4, ShaderDataType::Float3,
-				ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2, ShaderDataType::Int };
-			std::string attribNames[] = { "a_Position", "a_Color", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0", "a_EntityID" };
-			std::string names[] = { "Positions", "Colors", "Normals", "Tangents", "Bitangents", "TexCoords0", "EntityID" };
+				ShaderDataType::Float3, ShaderDataType::Float3, ShaderDataType::Float2};
+			std::string attribNames[] = { "a_Position", "a_Color", "a_Normal", "a_Tangent", "a_Bitangent", "a_TexCoords0"};
+			std::string names[] = { "Positions", "Colors", "Normals", "Tangents", "Bitangents", "TexCoords0"};
 
 			for (uint32_t i = 0; i < sizeof(types); i++)
 			{
@@ -54,7 +54,6 @@ namespace Debut
 		}
 		
 		s_Data.VertexArray->AddIndexBuffer(s_Data.IndexBuffer);
-
 		{
 			DBT_PROFILE_SCOPE("Renderer3D::Init::SetupDefaultMaterials");
 
@@ -74,16 +73,16 @@ namespace Debut
 		}
 	}
 
-	void Renderer3D::BeginScene(Camera& camera, Ref<Skybox> skybox, const glm::mat4& cameraView, 
+	void Renderer3D::BeginScene(SceneCamera& camera, Ref<Skybox> skybox, const glm::mat4& cameraView,
 		std::vector<LightComponent*>& lights, std::vector<ShaderUniform>& globalUniforms, 
 		std::vector<Ref<ShadowMap>> shadowMaps)
 	{
 		// Reset storage
-		s_Data.CameraView = cameraView;
+		s_Data.CameraView = camera.GetView();
 		s_Data.CameraProjection = camera.GetProjection();
-		s_Data.CameraTransform = s_Data.CameraProjection * s_Data.CameraView;
 		s_Data.CameraNear = camera.GetNearPlane();
 		s_Data.CameraFar = camera.GetFarPlane();
+		s_Data.CameraFrustum = Frustum(camera);
 		
 		s_Data.Lights = lights;
 		s_Data.GlobalUniforms = globalUniforms;
@@ -121,13 +120,15 @@ namespace Debut
 		RenderCommand::CullBack();
 
 		if (Renderer::GetConfig().RenderWireframe)
-			RendererDebug::BeginScene(camera, cameraView);
-
+			RendererDebug::BeginScene(camera);
 	}
 
 	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform, int entityID)
 	{
 		DBT_PROFILE_FUNCTION();
+
+		if (!s_Data.CameraFrustum.TestAABB(meshComponent.GetAABB(), transform))
+			return;
 
 		Ref<Mesh> mesh;
 		Ref<Material> material;
@@ -160,56 +161,21 @@ namespace Debut
 	{
 		DBT_PROFILE_FUNCTION();
 		Material materialToUse;
+		Ref<VertexArray> vertexArray;
 
 		{
 			DBT_PROFILE_SCOPE("DrawModel::SendGeometry");
-			std::vector<float>& positions = mesh.GetPositions();
-			std::vector<int>& indices = mesh.GetIndices();
-			std::vector<int> entityIDs;
-
-			// Fill the entity IDs vector
-			entityIDs.resize(positions.size() / 3);
-			std::fill_n(entityIDs.data(), entityIDs.size(), entityID);
-
-			s_Data.VertexBuffers["Positions"]->SetData(positions.data(), positions.size() * sizeof(float));
-			s_Data.IndexBuffer->SetData(mesh.GetIndices().data(), mesh.GetIndices().size());
+			vertexArray = mesh.GetVertexArray();
 
 			if (s_Data.CurrentPass != RenderingPass::Shadow)
 			{
 				s_Stats.DrawCalls++;
-				s_Stats.Triangles += positions.size() / 3;
-
-				if (mesh.HasColors())
-				{
-					std::vector<float>& colors = mesh.GetColors();
-					s_Data.VertexBuffers["Colors"]->SetData(colors.data(), colors.size() * sizeof(float));
-				}
-
-				if (mesh.HasNormals())
-				{
-					std::vector<float>& normals = mesh.GetNormals();
-					s_Data.VertexBuffers["Normals"]->SetData(normals.data(), normals.size() * sizeof(float));
-				}
-
-				if (mesh.HasTangents())
-				{
-					std::vector<float>& tangents = mesh.GetTangents();
-					s_Data.VertexBuffers["Tangents"]->SetData(tangents.data(), tangents.size() * sizeof(float));
-				}
-
-				if (mesh.HasBitangents())
-				{
-					std::vector<float>& bitangents = mesh.GetBitangents();
-					s_Data.VertexBuffers["Bitangents"]->SetData(bitangents.data(), bitangents.size() * sizeof(float));
-				}
-
-				if (mesh.HasTexCoords(0))
-				{
-					std::vector<float>& texCoords = mesh.GetTexCoords(0);
-					s_Data.VertexBuffers["TexCoords0"]->SetData(texCoords.data(), texCoords.size() * sizeof(float));
-				}
-
-				s_Data.VertexBuffers["EntityID"]->SetData(entityIDs.data(), entityIDs.size() * sizeof(int));
+				s_Stats.Triangles += mesh.GetNumVertices() / 3;
+			}
+			else
+			{
+				s_Stats.ShadowDrawCalls++;
+				s_Stats.ShadowTriangles += mesh.GetNumVertices() / 3;
 			}
 		}
 
@@ -232,6 +198,9 @@ namespace Debut
 					materialToUse = material;
 					break;
 				}
+
+				SendLights(materialToUse);
+				SendGlobals(materialToUse);
 			}
 			else
 			{
@@ -240,9 +209,6 @@ namespace Debut
 				materialToUse.SetFloat("u_FarPlane", s_Data.CameraFar);
 			}
 
-			SendLights(materialToUse);
-			SendGlobals(materialToUse);
-
 			if (Renderer::GetConfig().RenderingMode != RendererConfig::RenderingMode::None)
 			{
 				materialToUse.SetMat4("u_Transform", transform * mesh.GetTransform());
@@ -250,8 +216,13 @@ namespace Debut
 				materialToUse.SetMat4("u_ProjectionMatrix", s_Data.CameraProjection);
 
 				materialToUse.Use();
-				// STABILIZE
-				materialToUse.GetRuntimeShader()->SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+				if (materialToUse.GetRuntimeShader() != nullptr)
+				{
+					materialToUse.GetRuntimeShader()->SetMat4("u_ViewProjection", s_Data.CameraProjection * s_Data.CameraView);
+					materialToUse.GetRuntimeShader()->SetMat4("u_MVP", s_Data.CameraProjection * (s_Data.CameraView * transform));
+					materialToUse.GetRuntimeShader()->SetMat4("u_NormalMatrix", glm::inverse(glm::transpose(transform)));
+					materialToUse.GetRuntimeShader()->SetInt("u_EntityID", entityID);
+				}
 
 				if (s_Data.CurrentPass != RenderingPass::Shadow)
 				{
@@ -261,11 +232,14 @@ namespace Debut
 						std::stringstream ss;
 						ss << "u_ShadowMaps[" << i << "]";
 
-						materialToUse.GetRuntimeShader()->SetMat4(ss.str() + ".LightMatrix", s_Data.ShadowMaps[i]->GetMatrix());
-						materialToUse.GetRuntimeShader()->SetInt(ss.str() + ".Sampler", materialToUse.GetCurrentTextureSlot() + i);
-						materialToUse.GetRuntimeShader()->SetFloat(ss.str() + ".Near", s_Data.ShadowMaps[i]->GetNear());
-						materialToUse.GetRuntimeShader()->SetFloat(ss.str() + ".Far", s_Data.ShadowMaps[i]->GetFar());
-						s_Data.ShadowMaps[i]->BindAsTexture(materialToUse.GetCurrentTextureSlot() + i);
+						if (materialToUse.GetRuntimeShader() != nullptr)
+						{
+							materialToUse.GetRuntimeShader()->SetMat4(ss.str() + ".LightMatrix", s_Data.ShadowMaps[i]->GetMatrix());
+							materialToUse.GetRuntimeShader()->SetInt(ss.str() + ".Sampler", materialToUse.GetCurrentTextureSlot() + i);
+							materialToUse.GetRuntimeShader()->SetFloat(ss.str() + ".Near", s_Data.ShadowMaps[i]->GetNear());
+							materialToUse.GetRuntimeShader()->SetFloat(ss.str() + ".Far", s_Data.ShadowMaps[i]->GetFar());
+							s_Data.ShadowMaps[i]->BindAsTexture(materialToUse.GetCurrentTextureSlot() + i);
+						}
 					}
 				}
 			}
@@ -273,13 +247,13 @@ namespace Debut
 
 		{
 			DBT_PROFILE_SCOPE("DrawModel::DrawIndexed");
-			RenderCommand::DrawIndexed(s_Data.VertexArray, mesh.GetIndices().size());
+			RenderCommand::DrawIndexed(vertexArray, mesh.GetNumIndices());
 			materialToUse.Unuse();
 			if (s_Data.CurrentPass != RenderingPass::Shadow)
 				s_Data.ShadowMaps[0]->UnbindTexture(8);
 		}
 
-		if (Renderer::GetConfig().RenderWireframe)
+		if (Renderer::GetConfig().RenderWireframe && s_Data.CurrentPass == RenderingPass::Shaded)
 			RendererDebug::DrawMesh(mesh.GetID(), glm::vec3(0.0f), transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
@@ -291,13 +265,14 @@ namespace Debut
 			RendererDebug::EndScene();
 	}
 
-	void Renderer3D::BeginShadow(Ref<ShadowMap> shadowMap)
+	void Renderer3D::BeginShadow(Ref<ShadowMap> shadowMap, SceneCamera& camera)
 	{
 		s_Data.CameraView = shadowMap->GetView();
 		s_Data.CameraProjection = shadowMap->GetProjection();
 		s_Data.CurrentPass = RenderingPass::Shadow;
 		s_Data.CameraNear = shadowMap->GetNear();
 		s_Data.CameraFar = shadowMap->GetFar();
+		s_Data.CameraFrustum = Frustum(camera);
 
 		s_Stats.NShadowPasses++;
 
@@ -456,5 +431,7 @@ namespace Debut
 		s_Stats.DrawCalls = 0;
 		s_Stats.NShadowPasses = 0;
 		s_Stats.Triangles = 0;
+		s_Stats.ShadowDrawCalls = 0;
+		s_Stats.ShadowTriangles = 0;
 	}
 }

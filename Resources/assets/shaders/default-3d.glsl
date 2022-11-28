@@ -1,7 +1,7 @@
 #type vertex
 #version 410
 
-#define N_SHADOW_MAPS	5
+#define N_SHADOW_MAPS	4
 			
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec4 a_Color;
@@ -9,7 +9,6 @@ layout(location = 2) in vec3 a_Normal;
 layout(location = 3) in vec3 a_Tangent;
 layout(location = 4) in vec3 a_Bitangent;
 layout(location = 5) in vec2 a_TexCoords0;
-layout(location = 6) in int a_EntityID;
 
 struct Texture2D
 {
@@ -36,7 +35,8 @@ uniform ShadowMap u_ShadowMaps[N_SHADOW_MAPS];
 
 uniform mat4 u_ViewProjection;
 uniform mat4 u_ViewMatrix;
-uniform mat4 u_ProjectionMatrix;
+uniform mat4 u_NormalMatrix;
+uniform mat4 u_MVP;
 uniform vec3 u_CameraPosition;
 uniform mat4 u_Transform;
 
@@ -51,23 +51,19 @@ out vec3 v_FragPosTangent;
 out vec3 v_FragPosView;
 out vec4 v_FragPosLight[N_SHADOW_MAPS];
 
-flat out int v_EntityID;
-
 void main()
-{
-	mat4 mvp = u_ViewProjection * u_Transform;
-	
-	// TODO: send the matrix via CPU
-	mat4 normalMatrix = transpose(inverse(u_Transform));
-	vec3 normal = normalize(normalMatrix * vec4(a_Normal, 1.0)).xyz;
-	vec4 position = mvp * vec4(a_Position, 1.0);
+{	
+	mat3 inverseTangentSpace = mat3(1.0);
+	vec3 normal = normalize(u_NormalMatrix * vec4(a_Normal, 1.0)).xyz;
+	vec4 position = u_MVP * vec4(a_Position, 1.0);
 	
 	if (u_NormalMap.Use)
 	{
-		vec4 tangent = normalize(normalMatrix * vec4(a_Tangent, 1.0));
-		vec4 bitangent = normalize(normalMatrix * vec4(a_Bitangent, 1.0));
+		vec4 tangent = normalize(u_NormalMatrix * vec4(a_Tangent, 1.0));
+		vec4 bitangent = normalize(u_NormalMatrix * vec4(a_Bitangent, 1.0));
 		
 		v_TangentSpace = mat3(tangent.xyz, bitangent.xyz, normal);
+		inverseTangentSpace = transpose(v_TangentSpace);
 	}
 	else
 	{
@@ -75,15 +71,12 @@ void main()
 		v_TangentSpace = mat3(1.0);
 	}
 	
-	mat3 inverseTangentSpace = transpose(v_TangentSpace);
-	
 	v_Color = a_Color;
 	v_TexCoords = a_TexCoords0;
 	v_FragPos = vec3(u_Transform * vec4(a_Position, 1.0));
 	v_FragPosView = vec3(u_ViewMatrix * vec4(v_FragPos, 1.0));
 	v_CameraPosTangent = inverseTangentSpace * u_CameraPosition;
 	v_FragPosTangent = inverseTangentSpace * v_FragPos;
-	v_EntityID = a_EntityID;
 	
 	for (int i=0; i<N_SHADOW_MAPS; i++)
 		v_FragPosLight[i] = u_ShadowMaps[i].LightMatrix * u_Transform * vec4(a_Position, 1.0);
@@ -95,7 +88,7 @@ void main()
 #version 410
 
 #define N_MAX_LIGHTS	16
-#define N_SHADOW_MAPS	5
+#define N_SHADOW_MAPS	4
 
 struct PointLight
 {
@@ -130,7 +123,6 @@ in vec4 v_Color;
 in vec3 v_Normal;
 in vec2 v_TexCoords;
 in vec3 v_FragPos;
-flat in int v_EntityID;
 
 in mat3 v_TangentSpace;
 in vec3 v_CameraPosTangent;
@@ -141,6 +133,7 @@ in vec4 v_FragPosLight[N_SHADOW_MAPS];
 layout(location = 0) out vec4 color;
 layout(location = 1) out int id;
 
+uniform int u_EntityID;
 uniform vec3 u_CameraPosition;
 
 uniform vec3 u_DirectionalLightDir;
@@ -171,8 +164,6 @@ uniform sampler2D u_RoughnessMap;
 uniform sampler2D u_MetalnessMap;
 uniform sampler2D u_DisplacementMap;
 
-
-// TODO: use specular maps
 vec3 DirectionalPhong(vec3 normal, vec3 lightDir, vec3 viewDir, vec2 texCoords)
 {
     // Diffuse component
@@ -274,15 +265,15 @@ float GetShadows(vec3 normal, vec3 lightDir)
 	projFragLight = projFragLight * 0.5 + 0.5;
 	currDepth = projFragLight.z;
 	if (currDepth  > 1.0)
-		return 0.0;
+		return 1.0;
 	
 	float cameraDistance = length(v_FragPos - u_CameraPosition);
 	float attenuation = max(1.0 - ((mix(u_ShadowFadeoutStart, u_ShadowFadeoutEnd, (cameraDistance - u_ShadowFadeoutStart) / (u_ShadowFadeoutEnd - u_ShadowFadeoutStart))) - u_ShadowFadeoutStart)
 		/ (u_ShadowFadeoutEnd - u_ShadowFadeoutStart), 0.0);
-	float bias = max(0.01 * (1.0 - dot(normal, lightDir)), 0.001);
+	float bias = max(0.03 * (1.0 - dot(normal, lightDir)), 0.001);
 	
 	if (projFragLight.x >= 1.0 || projFragLight.x <= 0.0 || projFragLight.y >= 1.0 || projFragLight.y <= 0.0)
-		return 1.0 - attenuation;
+		return 1.0;
 
 	vec2 texelSize = 1.0 / textureSize(u_ShadowMaps[layer].Sampler, 0);
 	for(int x = -1; x <= 1; ++x)
@@ -294,7 +285,7 @@ float GetShadows(vec3 normal, vec3 lightDir)
 		}
 	}
 	
-	return (1.0 - (shadow / 9.0) * attenuation);
+	return (1.0 - (shadow / 9.0) * min(attenuation, 1.0));
 }
 
 void main()
@@ -337,7 +328,7 @@ void main()
 	
 	// Get point lights color
 	for (int i=0; i<u_NPointLights; i++)
-		color += texColor * vec4(shadow * PointPhong(normal, u_PointLights[i], fragToCamera, u_PointLights[i].Position - v_FragPos, texCoords), 1.0);
+		color += texColor * vec4(PointPhong(normal, u_PointLights[i], fragToCamera, u_PointLights[i].Position - v_FragPos, texCoords), 1.0);
 	
 	// Occlusion
 	if (u_OcclusionMap.Use)
@@ -357,6 +348,5 @@ void main()
 			return;
 		}
 	}
-	
-	id = v_EntityID;
+	id = u_EntityID;
 }

@@ -20,10 +20,11 @@ namespace Debut
     void SceneManager::OnScenePlay()
     {
         m_SceneState = SceneState::Play;
-
+  
+        m_EditorScene = m_ActiveScene;
         m_RuntimeScene = Scene::Copy(m_ActiveScene);
-        m_RuntimeScene->OnRuntimeStart();
 
+        m_RuntimeScene->OnRuntimeStart();
         m_ActiveScene = m_RuntimeScene;
     }
 
@@ -34,6 +35,7 @@ namespace Debut
 
         m_RuntimeScene = nullptr;
         m_ActiveScene = m_EditorScene;
+        m_ActiveScene->OnEditorStart();
     }
 
     void SceneManager::NewScene(const glm::vec2& viewportSize)
@@ -47,7 +49,7 @@ namespace Debut
         Entity camera = m_EditorScene->CreateEntity({}, "Camera");
         CameraComponent& cameraComp = camera.AddComponent<CameraComponent>();
         cameraComp.Camera.SetPerspective(30, 0.1f, 1000.0f);
-        cameraComp.Camera.SetPerspFOV(40);
+        cameraComp.Camera.SetFOV(glm::radians(40.0f));
         camera.Transform().Translation = glm::vec3(0.0f, 5.0f, 10.0f);
 
         Entity directionalLight = m_EditorScene->CreateEntity({}, "Directional light");
@@ -61,6 +63,7 @@ namespace Debut
 
     EntitySceneNode* SceneManager::OpenScene(const std::filesystem::path& path, YAML::Node& additionalData)
     {
+        Entity::s_ExistingEntities.clear();
         additionalData["Valid"] = false;
 
         if (m_SceneState != SceneState::Edit)
