@@ -60,6 +60,13 @@ namespace Debut
 	template<>
 	void Scene::OnComponentAdded(TransformComponent& component, Entity entity) {}
 	template<>
+	void Scene::OnComponentAdded(CameraComponent& camera, Entity entity)
+	{
+		camera.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+		if (camera.Primary && !m_Playing)
+			m_PostProcessingStack = AssetManager::Request<PostProcessingStack>(camera.PostProcessingStack);
+	}
+	template<>
 	void Scene::OnComponentAdded(SpriteRendererComponent& sr, Entity entity) { }
 	template<>
 	void Scene::OnComponentAdded(TagComponent& tc, Entity entity) { }
@@ -145,12 +152,6 @@ namespace Debut
 	}
 
 	//TODO: OnComponentRemove, delete bodies
-
-	template<>
-	void Scene::OnComponentAdded(CameraComponent& camera, Entity entity)
-	{
-		camera.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
-	}
 
 	Entity Scene::GetPrimaryCameraEntity()
 	{
@@ -290,6 +291,8 @@ namespace Debut
 
 	void Scene::OnRuntimeStart()
 	{
+		m_Playing = true;
+
 		// SETUP PHYSICS!
 		Physics3DSettings defaultSettings;
 		// TODO: physics settings
@@ -619,6 +622,8 @@ namespace Debut
 
 	void Scene::OnRuntimeStop()
 	{
+		m_Playing = false;
+
 		delete m_PhysicsWorld2D;
 		m_PhysicsWorld2D = nullptr;
 

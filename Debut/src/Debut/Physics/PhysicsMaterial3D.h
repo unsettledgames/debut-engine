@@ -28,10 +28,10 @@ namespace Debut
 
 		void Reload();
 
-		std::string GetPath() { return m_Path; }
-		float GetFriction() { return m_Friction; }
-		float GetRestitution() { return m_Restitution; }
-		UUID GetID() { return m_ID; }
+		inline std::string GetPath() { return m_Path; }
+		inline float GetFriction() { return m_Friction; }
+		inline float GetRestitution() { return m_Restitution; }
+		inline UUID GetID() { return m_ID; }
 
 		void SetConfig(const PhysicsMaterial3DConfig & config);
 

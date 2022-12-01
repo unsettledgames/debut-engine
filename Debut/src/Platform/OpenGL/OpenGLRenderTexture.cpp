@@ -36,7 +36,7 @@ namespace Debut
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 	}
 
-	void OpenGLRenderTexture::Draw(Ref<Shader> shader)
+	void OpenGLRenderTexture::Draw(Ref<Shader> shader, Ref<PostProcessingStack> postProcessingStack)
 	{
 		m_VertexArray->Bind();
 		shader->Bind();

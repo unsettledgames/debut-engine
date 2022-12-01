@@ -26,26 +26,23 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
-*   CURRENT: OPTIMIZATION (~200K triangles)
-*       Start:                  ~58 FPS -> 17.241 ms
-*       Matrix opt:             ~60 FPS -> 16.666 ms
-*       Frustum culling:        ~75 FPS -> 13.333 ms
-*       No reupload:            ~120 FPS-> 9.3333 ms
-*       Shader optimization:    ~170 FPS-> 5.8823 ms (disabled battery saving tho :P, otherwise 130 FPS and 7.692 ms)
+*   CURRENT: POST PROCESSING
+*   
+*   - Post processing is stuff that happens on the final screen quad when everything's been rendered. There could be many effects,
+*       they're usually organized in a stack, whose order is used to determine the order in which effect are applied.
+*       A post-processing effect is usually a full-screen shader that is applied in a pass. Sometimes, post-processing effects
+*       can be a bit more complex (bloom, motion-blur), but apparently it still looks like it's possible to have them in a single
+*       pass without additional architecture.
+*   - Each volume is basically a shader with some parameters, which is a Material. That means I can let users create their own
+*       shader + Material and use it as a post processing volume. In addition, I can provide some default volumes they can use
+*       (bloom, color correction, chromatic aberration etc)
 * 
-        - OpenGL optimizations: https://on-demand.gputechconf.com/siggraph/2014/presentation/SG4117-OpenGL-Scene-Rendering-Techniques.pdf
-        - Scene graph optimizations: https://on-demand.gputechconf.com/gtc/2013/presentations/S3032-Advanced-Scenegraph-Rendering-Pipeline.pdf
+*   - A user could create many stacks and swap them, even at runtime, depending on their needs. Each camera can have its 
+        own stack: when in edit mode, the stack that belongs to the last selected camera is the one that is previewed.
+* 
+*   - Simple effects: depth of field, blur, channel mixer, fog, white balance, ssao?, antialiasing?
 *
-*   MAIN SHADOW WORKFLOW
-* 
-*   - Point shadow mapping
-*       - Well, start by implementing the base workflow with a single light. Cubemaps are needed, which means 6 * shadowMapRes
-*           pixels of stuff per light. Doom 2016 apparently uses an 8K shadow map atlas, which means you only have to bind
-*           a single texture and then pass the right UVs. 8000x8000 leaves room for 64 1000x1000 shadow maps, which is pretty
-*           nice? See optimization section about that
-* 
 *   OPTIMIZATION AND IMPROVEMENTS
-*   - Configurable PCSS for soft shadows
 *   - Important lights: find the lights that, at the moment, are important. The nearest to the camera? Always consider the 
 *       directional light(s?), I wonder if there's some cheap way to check if the shadows produced by a light will be visible 
 *       in the scnee without actually rendering the scene. I don't think so.
@@ -55,6 +52,9 @@
 *   -  Gaussian blur on the shadow maps?
 * 
 *   QOL:
+*       - Review AssetManager and its data flow. Add a proper Asset class from which stuff inherits, establish a flow used
+*           for ALL assets.
+*       - Render camera frustum
 *       - Find a better way to update entity selection: if it's selected or destroyed somewhere, it must be selected 
 *           or destroyed everywhere
 *       - Highlight selected entity in scene hierarchy when it's selected in the viewport
@@ -74,22 +74,20 @@
 *           - Movement data
 *       - The debug renderer should probably only used in a DebugLayer since it kinda behaves as such
 *       - Implement rendering modes in 2D too
-*       - Render camera frustum
+        - Mesh properties in properties panel?
+*
 * 
     OPTIMIZATION:
+     - OpenGL: https://on-demand.gputechconf.com/siggraph/2014/presentation/SG4117-OpenGL-Scene-Rendering-Techniques.pdf
+        - Scene graph optimizations: https://on-demand.gputechconf.com/gtc/2013/presentations/S3032-Advanced-Scenegraph-Rendering-Pipeline.pdf
+    *   - Configurable PCSS for soft shadows
 *       - Update AssetMap only OnClose or once when this layer is attached
-        - Remove as many DecomposeTransform as possible
-        - Optimize transformation in physics
         - Maybe remove indices from PolygonCollider? The concept is similar to creating a transform matrix every time it's 
           required. Profile both approaches
         - MeshColliders load a whole mesh when only vertices and triangles are needed. Specify flags to know what parts
             to load
         - Materials: Probably time to get rid of YAML and use a binary, compressed format instead
 
-    - Roughness maps (PBR)
-    - Reflection maps (PBR)
-    
-    - Mesh properties in properties panel?
     - Add inspector / properties panel locking
     - Make editor robust to association file deletion / editing
     - Asset renaming

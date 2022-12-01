@@ -12,6 +12,7 @@ namespace Debut
 	class VertexArray;
 
 	class Shader;
+	class PostProcessingStack;
 
 	enum class RenderTextureMode {Color = 0, Depth};
 
@@ -21,7 +22,7 @@ namespace Debut
 		static Ref<RenderTexture> Create(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode);
 		~RenderTexture() = default;
 
-		virtual void Draw(Ref<Shader> shader) = 0;
+		virtual void Draw(Ref<Shader> shader, Ref< PostProcessingStack> postProcessingStack = nullptr) = 0;
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 

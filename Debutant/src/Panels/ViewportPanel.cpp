@@ -86,7 +86,7 @@ namespace Debut
         // The scene frame buffer now contains the whole scene. Render the frame buffer to a texture.
         m_TextureFrameBuffer->Bind();
         m_RenderTexture->SetFrameBuffer(m_SceneFrameBuffer);
-        m_RenderTexture->Draw(m_FullscreenShader);
+        m_RenderTexture->Draw(m_FullscreenShader, activeScene->GetPostProcessingStack());
         m_TextureFrameBuffer->Unbind();
     }
 
