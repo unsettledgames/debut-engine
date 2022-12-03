@@ -52,6 +52,7 @@ namespace Debut
 
 			out << YAML::Key << "Name" << YAML::Value << volume.Name;
 			out << YAML::Key << "Shader" << YAML::Value << volume.Shader;
+			out << YAML::Key << "Enabled" << YAML::Value << volume.Enabled;
 			
 			out << YAML::Key << "Properties" << YAML::Value << YAML::BeginSeq;
 			for (auto& prop : volume.Properties)
@@ -98,11 +99,14 @@ namespace Debut
 
 			for (auto& volume : in["Volumes"])
 			{
-				PostProcessingVolume volume;
-				YAML::Node properties;
+				PostProcessingVolume volumeStruct;
+				YAML::Node properties = volume["Properties"];
 
-				volume.Shader = in["Shader"].as<uint64_t>();
-				properties = in["Properties"];
+				volumeStruct.Name = volume["Name"].as<std::string>();
+				volumeStruct.Shader = volume["Shader"].as<uint64_t>();
+				volumeStruct.Enabled = volume["Enabled"].as<bool>();
+
+				properties = volume["Properties"];
 
 				for (auto& prop : properties)
 				{
@@ -123,10 +127,10 @@ namespace Debut
 					default: break;
 					}
 
-					volume.Properties[uniform.Name] = uniform;
+					volumeStruct.Properties[uniform.Name] = uniform;
 				}
 
-				config.Volumes.push_back(volume);
+				config.Volumes.push_back(volumeStruct);
 			}
 
 			file.close();

@@ -66,6 +66,34 @@ namespace Debut
 		return ret;
 	}
 
+	bool ImGuiUtils::DragInt(const std::string& label, int* value, float power, float min, float max, uint32_t columnWidth)
+	{
+		bool ret = false;
+
+		ImGui::PushID(label.c_str());
+
+		ImGuiUtils::ResetColumns();
+		ImGuiUtils::StartColumns(2, { (uint32_t)columnWidth, 200 });
+
+		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
+
+		ImGui::Text(label.c_str());
+		ImGui::PopItemWidth();
+		ImGui::NextColumn();
+
+		ret = ImGui::DragInt(("##" + label).c_str(), value, power, min, max);
+		ImGui::NextColumn();
+
+		ImGui::PopItemWidth();
+		ImGui::PopStyleVar();
+		ImGui::PopID();
+
+		ImGuiUtils::ResetColumns();
+
+		return ret;
+	}
+
 	bool ImGuiUtils::Color3(const std::string& label, std::vector<float*> values)
 	{
 		bool ret = false;

@@ -498,7 +498,7 @@ namespace Debut
 					DirectionalLightComponent* dirLight = (DirectionalLightComponent*)light;
 					DBT_PROFILE_SCOPE("ShadowPass");
 
-					RenderCommand::CullFront();
+					RenderCommand::DisableCulling();
 					for (uint32_t i = 0; i < m_ShadowMaps.size(); i++)
 					{
 						SceneCamera shadowCamera;
@@ -518,7 +518,7 @@ namespace Debut
 						Renderer3D::EndShadow();
 						m_ShadowMaps[i]->Unbind();
 					}
-					RenderCommand::CullBack();
+					RenderCommand::EnableCulling();
 				}
 			}
 		}

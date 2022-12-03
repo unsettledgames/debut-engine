@@ -7,19 +7,26 @@
 
 namespace Debut
 {
+	class Shader;
+
 	struct PostProcessingVolume
 	{
 		std::string Name;
 		UUID Shader;
+		bool Enabled = true;
 		std::unordered_map<std::string, ShaderUniform> Properties;
 
 		PostProcessingVolume() = default;
-		PostProcessingVolume(UUID shader) : Shader(shader) {}
+		PostProcessingVolume(UUID shader) : Shader(shader) 
+		{
+			if (shader == 0)
+				Name = "New Volume";
+		}
 	};
 
 	struct PostProcessingStackConfig
 	{
-		UUID ID;
+		UUID ID = 0;
 		std::vector<PostProcessingVolume> Volumes;
 		PostProcessingStackConfig() = default;
 	};
@@ -41,6 +48,7 @@ namespace Debut
 
 		inline std::string GetPath() { return m_Path; }
 		inline UUID GetID() { return m_ID; }
+		inline std::vector<PostProcessingVolume>& GetVolumes() { return m_Volumes; }
 
 		void SetConfig(const PostProcessingStackConfig& config);
 
