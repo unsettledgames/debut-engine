@@ -65,12 +65,12 @@ namespace Debut
 				switch (prop.second.Type)
 				{
 				case ShaderDataType::Bool: out << prop.second.Data.Bool;break;
-				case ShaderDataType::Float: out << prop.second.Data.Bool;break;
-				case ShaderDataType::Float2: out << prop.second.Data.Bool;break;
-				case ShaderDataType::Float3: out << prop.second.Data.Bool;break;
-				case ShaderDataType::Float4: out << prop.second.Data.Bool;break;
-				case ShaderDataType::Int: out << prop.second.Data.Bool;break;
-				case ShaderDataType::Sampler2D: out << prop.second.Data.Bool;break;
+				case ShaderDataType::Float: out << prop.second.Data.Float;break;
+				case ShaderDataType::Float2: out << prop.second.Data.Vec2;break;
+				case ShaderDataType::Float3: out << prop.second.Data.Vec3;break;
+				case ShaderDataType::Float4: out << prop.second.Data.Vec4;break;
+				case ShaderDataType::Int: out << prop.second.Data.Int;break;
+				case ShaderDataType::Sampler2D: out << prop.second.Data.Texture;break;
 				default: out << 0; break;
 				}
 
@@ -117,13 +117,13 @@ namespace Debut
 					uniform.Name = prop["Name"].as<std::string>();
 					switch (type)
 					{
-					case ShaderDataType::Bool: uniform.Data.Bool = prop["Value"].as<bool>(); break;
-					case ShaderDataType::Float: uniform.Data.Float = prop["Value"].as<float>(); break;
-					case ShaderDataType::Float2: uniform.Data.Vec2 = prop["Value"].as<glm::vec2>(); break;
-					case ShaderDataType::Float3: uniform.Data.Vec3 = prop["Value"].as<glm::vec3>(); break;
-					case ShaderDataType::Float4: uniform.Data.Vec4 = prop["Value"].as<glm::vec4>(); break;
-					case ShaderDataType::Int: uniform.Data.Int = prop["Value"].as<int>(); break;
-					case ShaderDataType::Sampler2D: uniform.Data.Texture = prop["Value"].as<uint64_t>(); break;
+					case ShaderDataType::Bool: uniform.Data.Bool = prop["Data"].as<bool>(); break;
+					case ShaderDataType::Float: uniform.Data.Float = prop["Data"].as<float>(); break;
+					case ShaderDataType::Float2: uniform.Data.Vec2 = prop["Data"].as<glm::vec2>(); break;
+					case ShaderDataType::Float3: uniform.Data.Vec3 = prop["Data"].as<glm::vec3>(); break;
+					case ShaderDataType::Float4: uniform.Data.Vec4 = prop["Data"].as<glm::vec4>(); break;
+					case ShaderDataType::Int: uniform.Data.Int = prop["Data"].as<int>(); break;
+					case ShaderDataType::Sampler2D: uniform.Data.Texture = prop["Data"].as<uint64_t>(); break;
 					default: break;
 					}
 

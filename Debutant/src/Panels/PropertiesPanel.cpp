@@ -675,6 +675,9 @@ namespace Debut
 			{
 				auto& uniforms = AssetManager::Request<Shader>(shader)->GetUniforms();
 				volume.Shader = shader;
+
+				volume.Properties.clear();
+
 				for (auto& uniform : uniforms)
 					volume.Properties[uniform.Name] = uniform;
 				config.Volumes[i].Shader = volume.Shader;
