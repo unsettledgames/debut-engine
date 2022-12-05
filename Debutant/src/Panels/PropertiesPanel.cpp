@@ -672,17 +672,19 @@ namespace Debut
 			volume.Name = std::string(buffer);
 			config.Volumes[i].Name = volume.Name;
 
-			UUID shader = ImGuiUtils::DragDestination("Shader", ".glsl", volume.Shader);
+			UUID shader = ImGuiUtils::DragDestination("Shader", ".glsl", volume.ShaderID);
 			if (shader != 0)
 			{
-				auto& uniforms = AssetManager::Request<Shader>(shader)->GetUniforms();
-				volume.Shader = shader;
+				std::vector<ShaderUniform> uniforms;
+				volume.RuntimeShader = AssetManager::Request<Shader>(shader);
+				volume.ShaderID = volume.RuntimeShader->GetID();
+				uniforms = volume.RuntimeShader->GetUniforms();
 
 				volume.Properties.clear();
 
 				for (auto& uniform : uniforms)
 					volume.Properties[uniform.Name] = uniform;
-				config.Volumes[i].Shader = volume.Shader;
+				config.Volumes[i].ShaderID = volume.ShaderID;
 				config.Volumes[i].Properties = volume.Properties;
 			}
 

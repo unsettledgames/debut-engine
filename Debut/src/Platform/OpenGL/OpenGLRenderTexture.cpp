@@ -1,9 +1,7 @@
 #include <Platform/OpenGL/OpenGLRenderTexture.h>
+#include <Debut/Rendering/Shader.h>
 #include <Debut/Rendering/Structures/VertexArray.h>
 #include <Debut/Rendering/Structures/Buffer.h>
-#include <Debut/Rendering/Shader.h>
-#include <Debut/Rendering/Renderer/RenderCommand.h>
-
 #include <Platform/OpenGL/OpenGLError.h>
 #include <glad/glad.h>
 
@@ -34,20 +32,6 @@ namespace Debut
 
 		m_VertexArray->AddIndexBuffer(m_IndexBuffer);
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
-	}
-
-	void OpenGLRenderTexture::Draw(Ref<Shader> shader, Ref<PostProcessingStack> postProcessingStack)
-	{
-		m_VertexArray->Bind();
-		shader->Bind();
-		shader->SetInt("u_Texture", 0);
-		Bind();
-
-		RenderCommand::DrawIndexed(m_VertexArray, m_VertexArray->GetIndexBuffer()->GetCount());
-		
-		Unbind();
-		shader->Unbind();
-		m_VertexArray->Unbind();
 	}
 
 	void OpenGLRenderTexture::Bind()

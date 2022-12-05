@@ -11,6 +11,7 @@
 
 #include <Debut/Scene/Scene.h>
 #include <Debut/Rendering/RenderTexture.h>
+#include <Debut/Rendering/Resources/PostProcessing.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
 #include <Debut/Rendering/Structures/FrameBuffer.h>
 #include <Debut/Rendering/Structures/ShadowMap.h>
@@ -83,10 +84,21 @@ namespace Debut
         }
         m_SceneFrameBuffer->Unbind();
 
+        Ref<PostProcessingStack> postProcessing = activeScene->GetPostProcessingStack();
+
         // The scene frame buffer now contains the whole scene. Render the frame buffer to a texture.
         m_TextureFrameBuffer->Bind();
         m_RenderTexture->SetFrameBuffer(m_SceneFrameBuffer);
-        m_RenderTexture->Draw(m_FullscreenShader, activeScene->GetPostProcessingStack());
+        m_RenderTexture->Draw(m_FullscreenShader, {});
+        
+        // Apply post processing
+        if (postProcessing != nullptr)
+        {
+            for (auto& volume : postProcessing->GetVolumes())
+                if (volume.Enabled && volume.RuntimeShader != nullptr)
+                    m_RenderTexture->Draw(volume.RuntimeShader, volume.Properties);
+        }
+
         m_TextureFrameBuffer->Unbind();
     }
 

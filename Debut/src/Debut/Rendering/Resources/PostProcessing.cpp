@@ -1,4 +1,6 @@
 #include <Debut/dbtpch.h>
+#include <Debut/AssetManager/AssetManager.h>
+#include <Debut/Rendering/Shader.h>
 #include <Debut/Rendering/Resources/PostProcessing.h>
 #include <yaml-cpp/yaml.h>
 #include <Debut/Utils/YamlUtils.h>
@@ -51,7 +53,7 @@ namespace Debut
 			out << YAML::BeginMap;
 
 			out << YAML::Key << "Name" << YAML::Value << volume.Name;
-			out << YAML::Key << "Shader" << YAML::Value << volume.Shader;
+			out << YAML::Key << "Shader" << YAML::Value << volume.ShaderID;
 			out << YAML::Key << "Enabled" << YAML::Value << volume.Enabled;
 			
 			out << YAML::Key << "Properties" << YAML::Value << YAML::BeginSeq;
@@ -103,7 +105,7 @@ namespace Debut
 				YAML::Node properties = volume["Properties"];
 
 				volumeStruct.Name = volume["Name"].as<std::string>();
-				volumeStruct.Shader = volume["Shader"].as<uint64_t>();
+				volumeStruct.ShaderID = volume["Shader"].as<uint64_t>();
 				volumeStruct.Enabled = volume["Enabled"].as<bool>();
 
 				properties = volume["Properties"];
@@ -155,5 +157,8 @@ namespace Debut
 	{
 		m_Volumes = config.Volumes;
 		m_ID = config.ID;
+
+		for (auto& volume : m_Volumes)
+			volume.RuntimeShader = AssetManager::Request<Shader>(volume.ShaderID);
 	}
 }

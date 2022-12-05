@@ -1,4 +1,5 @@
 #include <Debut/Core/UUID.h>
+#include <Debut/Core/Core.h>
 #include <Debut/Rendering/Shader.h>
 
 #include <unordered_map>
@@ -12,12 +13,14 @@ namespace Debut
 	struct PostProcessingVolume
 	{
 		std::string Name;
-		UUID Shader;
+		UUID ShaderID;
 		bool Enabled = true;
 		std::unordered_map<std::string, ShaderUniform> Properties;
 
+		Ref<Shader> RuntimeShader = nullptr;
+
 		PostProcessingVolume() = default;
-		PostProcessingVolume(UUID shader) : Shader(shader) 
+		PostProcessingVolume(UUID shader) : ShaderID(shader) 
 		{
 			if (shader == 0)
 				Name = "New Volume";

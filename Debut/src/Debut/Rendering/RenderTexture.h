@@ -2,7 +2,9 @@
 
 #include <Debut/Core/Core.h>
 #include <Debut/Rendering/Structures/FrameBuffer.h>
+#include <Debut/Rendering/Shader.h>
 
+#include <unordered_map>
 
 namespace Debut
 {
@@ -22,7 +24,7 @@ namespace Debut
 		static Ref<RenderTexture> Create(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode);
 		~RenderTexture() = default;
 
-		virtual void Draw(Ref<Shader> shader, Ref< PostProcessingStack> postProcessingStack = nullptr) = 0;
+		void Draw(Ref<Shader> shader, std::unordered_map<std::string, ShaderUniform> params);
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 
