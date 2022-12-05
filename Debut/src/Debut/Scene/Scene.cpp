@@ -64,7 +64,7 @@ namespace Debut
 	{
 		camera.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
 		if (camera.Primary && !m_Playing)
-			m_PostProcessingStack = AssetManager::Request<PostProcessingStack>(camera.PostProcessingStack);
+			m_PostProcessingStack = AssetManager::Request<PostProcessingStack>(camera.PostProcessing);
 	}
 	template<>
 	void Scene::OnComponentAdded(SpriteRendererComponent& sr, Entity entity) { }
@@ -169,6 +169,9 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Editor update");
 
+		m_PostProcessingStack = AssetManager::Request<PostProcessingStack>(
+			GetPrimaryCameraEntity().GetComponent<CameraComponent>().PostProcessing);
+
 		RenderingSetup(target);
 		// Clear frame buffer for mouse picking
 		target->ClearAttachment(1, -1);
@@ -252,26 +255,19 @@ namespace Debut
 
 		// Render sprites
 		// Find the main camera of the scene
-		SceneCamera* mainCamera = nullptr;
-		glm::mat4 cameraTransform;
-		{
-			auto view = m_Registry.view<CameraComponent, TransformComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
-				if (camera.Primary)
-				{
-					mainCamera = &(camera.Camera);
-					cameraTransform = transform.GetTransform();
-					mainCamera->SetView(glm::inverse(cameraTransform));
+		Entity cameraEntity = GetPrimaryCameraEntity();
 
-					break;
-				}
-			}
-		}
-
-		if (mainCamera)
+		if (cameraEntity)
 		{
+			CameraComponent& cameraComp = cameraEntity.GetComponent<CameraComponent>();
+			SceneCamera* mainCamera = &cameraComp.Camera;
+			TransformComponent& transform = cameraEntity.Transform();
+			glm::mat4 cameraTransform;
+
+			cameraTransform = transform.GetTransform();
+			mainCamera->SetView(glm::inverse(cameraTransform));
+
+			m_PostProcessingStack = AssetManager::Request<PostProcessingStack>(cameraComp.PostProcessing);
 			Rendering3D(*mainCamera, cameraTransform, target);
 			Rendering2D(*mainCamera, cameraTransform, target);
 

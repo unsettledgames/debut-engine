@@ -158,7 +158,7 @@ namespace Debut
 	struct CameraComponent
 	{
 		UUID Owner;
-		UUID PostProcessingStack;
+		UUID PostProcessing;
 
 		Debut::SceneCamera Camera;
 		bool Primary = true;

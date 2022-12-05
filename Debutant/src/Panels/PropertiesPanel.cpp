@@ -652,6 +652,8 @@ namespace Debut
 		}
 
 		uint32_t i = 0;
+		int toDelete = -1;
+
 		for (auto& volume : stack->GetVolumes())
 		{
 			std::stringstream ss;
@@ -747,12 +749,15 @@ namespace Debut
 			}
 
 			if (ImGui::Button("Delete volume", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
-			{
-				stack->RemoveVolume(i);
-				config.Volumes.erase(config.Volumes.begin() + i);
-			}
+				toDelete = i;
 			i++;
 			ImGuiUtils::Separator();
+		}
+
+		if (toDelete >= 0)
+		{
+			stack->RemoveVolume(toDelete);
+			config.Volumes.erase(config.Volumes.begin() + toDelete);
 		}
 
 		if (ImGui::Button("Apply settings", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
