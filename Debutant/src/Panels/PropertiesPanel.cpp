@@ -646,9 +646,88 @@ namespace Debut
 			ImGui::Text("Click on \"Add Volume\" to select a post-processing effect");
 
 		if (ImGui::Button("Add volume", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
+			ImGui::OpenPopup("AddVolumeMenu");			
+
+		if (ImGui::BeginPopup("AddVolumeMenu"))
 		{
-			stack->PushVolume(PostProcessingVolume(0));
-			config.Volumes.push_back(PostProcessingVolume(0));
+			bool addedVolume = false;
+			std::string volumeName;
+			PostProcessingEffect effectType;
+			Ref<Shader> shader;
+
+			if (ImGui::MenuItem("Anti Aliasing"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\antialiasing.glsl");
+				volumeName = "Anti Aliasing";
+				effectType = PostProcessingEffect::AntiAliasing;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Bloom"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\bloom.glsl");
+				volumeName = "Bloom";
+				effectType = PostProcessingEffect::Bloom;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Blur"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\blur.glsl");
+				volumeName = "Blur";
+				effectType = PostProcessingEffect::Blur;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Depth of field"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\depthoffield.glsl");
+				volumeName = "Depth of field";
+				effectType = PostProcessingEffect::DepthOfField;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("White balance"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\whitebalance.glsl");
+				volumeName = "White balance";
+				effectType = PostProcessingEffect::WhiteBalance;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Fog"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\fog.glsl");
+				volumeName = "Fog";
+				effectType = PostProcessingEffect::Fog;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Ambient Occlusion"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\ambientocclusion.glsl");
+				volumeName = "Ambient Occlusion";
+				effectType = PostProcessingEffect::AmbientOcclusion;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Custom"))
+			{
+				stack->PushVolume(PostProcessingVolume(0));
+				config.Volumes.push_back(PostProcessingVolume(0));
+			}
+
+			if (addedVolume)
+			{
+				PostProcessingVolume toAdd;
+				toAdd.Enabled = true;
+				toAdd.Name = volumeName;
+				toAdd.RuntimeShader = shader;
+				if (shader != nullptr)
+				{
+					toAdd.ShaderID = shader->GetID();
+					for (auto& uniform : shader->GetUniforms())
+						toAdd.Properties[uniform.Name] = uniform;
+				}
+				toAdd.Type = effectType;
+				
+				stack->PushVolume(toAdd);
+				config.Volumes.push_back(toAdd);
+			}
+			ImGui::EndPopup();
 		}
 
 		uint32_t i = 0;
@@ -672,28 +751,33 @@ namespace Debut
 			volume.Name = std::string(buffer);
 			config.Volumes[i].Name = volume.Name;
 
-			UUID shader = ImGuiUtils::DragDestination("Shader", ".glsl", volume.ShaderID);
-			if (shader != 0)
+			if (volume.Type != PostProcessingEffect::Custom)
 			{
-				std::vector<ShaderUniform> uniforms;
-				volume.RuntimeShader = AssetManager::Request<Shader>(shader);
-				volume.ShaderID = volume.RuntimeShader->GetID();
-				uniforms = volume.RuntimeShader->GetUniforms();
+				UUID shader = ImGuiUtils::DragDestination("Shader", ".glsl", volume.ShaderID);
+				if (shader != 0)
+				{
+					std::vector<ShaderUniform> uniforms;
+					volume.RuntimeShader = AssetManager::Request<Shader>(shader);
+					volume.ShaderID = volume.RuntimeShader->GetID();
+					uniforms = volume.RuntimeShader->GetUniforms();
 
-				volume.Properties.clear();
+					volume.Properties.clear();
 
-				for (auto& uniform : uniforms)
-					volume.Properties[uniform.Name] = uniform;
-				config.Volumes[i].ShaderID = volume.ShaderID;
-				config.Volumes[i].Properties = volume.Properties;
+					for (auto& uniform : uniforms)
+						volume.Properties[uniform.Name] = uniform;
+					config.Volumes[i].ShaderID = volume.ShaderID;
+					config.Volumes[i].Properties = volume.Properties;
+				}
 			}
 
 			for (auto& prop : volume.Properties)
 			{
+				if (prop.second.Name.compare("u_Texture") == 0)
+					continue;
 				switch (prop.second.Type)
 				{
 				case ShaderDataType::Float:
-					ImGuiUtils::DragFloat(prop.second.Name, &prop.second.Data.Float, 0.1f);
+					ImGuiUtils::DragFloat(prop.second.Name, &prop.second.Data.Float, 0.02f);
 					config.Volumes[i].Properties[prop.second.Name].Data.Float = prop.second.Data.Float;
 					break;
 				case ShaderDataType::Float2:

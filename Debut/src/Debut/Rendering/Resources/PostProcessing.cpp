@@ -55,6 +55,7 @@ namespace Debut
 			out << YAML::Key << "Name" << YAML::Value << volume.Name;
 			out << YAML::Key << "Shader" << YAML::Value << volume.ShaderID;
 			out << YAML::Key << "Enabled" << YAML::Value << volume.Enabled;
+			out << YAML::Key << "Type" << YAML::Value << (int)volume.Type;
 			
 			out << YAML::Key << "Properties" << YAML::Value << YAML::BeginSeq;
 			for (auto& prop : volume.Properties)
@@ -107,6 +108,7 @@ namespace Debut
 				volumeStruct.Name = volume["Name"].as<std::string>();
 				volumeStruct.ShaderID = volume["Shader"].as<uint64_t>();
 				volumeStruct.Enabled = volume["Enabled"].as<bool>();
+				volumeStruct.Type = volume["Type"] ? (PostProcessingEffect)volume["Type"].as<int>() : PostProcessingEffect::Custom;
 
 				properties = volume["Properties"];
 

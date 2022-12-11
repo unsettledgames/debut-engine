@@ -10,11 +10,17 @@ namespace Debut
 {
 	class Shader;
 
+	enum PostProcessingEffect
+	{
+		AntiAliasing = 0, Bloom, Blur, DepthOfField, Fog, WhiteBalance, AmbientOcclusion, Custom
+	};
+
 	struct PostProcessingVolume
 	{
 		std::string Name;
 		UUID ShaderID;
 		bool Enabled = true;
+		PostProcessingEffect Type = PostProcessingEffect::Custom;
 		std::unordered_map<std::string, ShaderUniform> Properties;
 
 		Ref<Shader> RuntimeShader = nullptr;

@@ -36,12 +36,11 @@
 *   - Each volume is basically a shader with some parameters, which is a Material. That means I can let users create their own
 *       shader + Material and use it as a post processing volume. In addition, I can provide some default volumes they can use
 *       (bloom, color correction, chromatic aberration etc)
-* 
-*   - A user could create many stacks and swap them, even at runtime, depending on their needs. Each camera can have its 
-        own stack: when in edit mode, the stack that belongs to the last selected camera is the one that is previewed.
-* 
-*   - Simple effects: depth of field, blur, channel mixer, fog, white balance, ssao?, antialiasing?
-*
+*   
+*   POST PROCESSING POLISH
+*   - Drawing the render texture and applying post processing should be done by the engine, not by the viewport. The user should
+*       just say RenderTexture.Draw(buffer, PostProcessing) and get away with it
+*   
 *   OPTIMIZATION AND IMPROVEMENTS
 *   - Important lights: find the lights that, at the moment, are important. The nearest to the camera? Always consider the 
 *       directional light(s?), I wonder if there's some cheap way to check if the shadows produced by a light will be visible 
