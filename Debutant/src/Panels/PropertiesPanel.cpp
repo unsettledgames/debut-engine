@@ -436,45 +436,48 @@ namespace Debut
 						break;
 					}
 				}
-				
+
 				if (draw)
 				{
 					ImGui::PushID(uniform.second.Name.c_str());
 					switch (uniform.second.Type)
 					{
 					case ShaderDataType::Bool:
-						if (ImGui::Checkbox(uniform.second.Name.c_str(), &uniform.second.Data.Bool))
-							config.Uniforms[uniform.second.Name].Data.Bool = uniform.second.Data.Bool;
+						if (ImGui::Checkbox(uniform.second.Name.c_str(), &std::get<bool>(uniform.second.Data)))
+							config.Uniforms[uniform.second.Name].Data = uniform.second.Data;
 						break;
 
 					case ShaderDataType::Float:
 					{
-						float value = uniform.second.Data.Float;
+						float value = std::get<float>(uniform.second.Data);
 						if (ImGuiUtils::DragFloat(uniform.second.Name, &value, 0.15f))
-							config.Uniforms[uniform.second.Name].Data.Float = value;
+							config.Uniforms[uniform.second.Name].Data = value;
 						break;
 					}
 					case ShaderDataType::Float2:
 					{
-						float a = uniform.second.Data.Vec2.x, b = uniform.second.Data.Vec2.y;
+						glm::vec2 vec = std::get<glm::vec2>(uniform.second.Data);
+						float a = vec.x, b = vec.y;
 						ImGuiUtils::RGBVec2(uniform.second.Name.c_str(), { "A","B" }, { &a, &b });
-						config.Uniforms[uniform.second.Name].Data.Vec2 = { a, b };
+						config.Uniforms[uniform.second.Name].Data = glm::vec2(a, b);
 
 						break;
 					}
 					case ShaderDataType::Float3:
 					{
-						float a = uniform.second.Data.Vec3.x, b = uniform.second.Data.Vec3.y, c = uniform.second.Data.Vec3.z;
+						glm::vec3 vec = std::get<glm::vec3>(uniform.second.Data);
+						float a = vec.x, b = vec.y, c = vec.z;
 						ImGuiUtils::RGBVec3(uniform.second.Name.c_str(), { "A","B","C" }, { &a, &b, &c });
-						config.Uniforms[uniform.second.Name].Data.Vec3 = { a, b, c };
+						config.Uniforms[uniform.second.Name].Data = glm::vec3(a, b, c);
 
 						break;
 					}
 					case ShaderDataType::Float4:
 					{
-						float a = uniform.second.Data.Vec3.x, b = uniform.second.Data.Vec3.y, c = uniform.second.Data.Vec3.z, d = uniform.second.Data.Vec4.w;
+						glm::vec4 vec = std::get<glm::vec4>(uniform.second.Data);
+						float a = vec.x, b = vec.y, c = vec.z, d = vec.w;
 						ImGuiUtils::RGBVec4(uniform.second.Name.c_str(), { "A","B","C","D" }, { &a, &b, &c, &d });
-						config.Uniforms[uniform.second.Name].Data.Vec4 = { a, b, c, d };
+						config.Uniforms[uniform.second.Name].Data = glm::vec4(a, b, c, d);
 
 						break;
 					}
@@ -485,7 +488,7 @@ namespace Debut
 							ImGuiUtils::StartColumns(2, { 90, (uint32_t)ImGui::GetContentRegionAvail().x - 90 });
 							// Load the texture: if it doesn't exist, just use a white default texture
 							uint32_t rendererID;
-							Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
+							Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(std::get<UUID>(uniform.second.Data));
 							if (currTexture == nullptr)
 								rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
 							else
@@ -496,7 +499,7 @@ namespace Debut
 							ss << "Texture" << rendererID << uniform.second.Name;
 							Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 80, 80 }, ss.str().c_str());
 							if (newTexture != nullptr)
-								config.Uniforms[uniform.second.Name].Data.Texture = newTexture->GetID();
+								config.Uniforms[uniform.second.Name].Data = newTexture->GetID();
 
 							ImGui::NextColumn();
 
@@ -510,7 +513,7 @@ namespace Debut
 							ImGuiUtils::StartColumns(2, { 110, (uint32_t)ImGui::GetContentRegionAvail().x - 100 });
 							// Load the texture: if it doesn't exist, just use a white default texture
 							uint32_t rendererID;
-							Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
+							Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(std::get<UUID>(uniform.second.Data));
 							if (currTexture == nullptr)
 								rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
 							else
@@ -521,31 +524,37 @@ namespace Debut
 							ss << "Texture" << rendererID << uniform.second.Name;
 							Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 90, 90 }, ss.str().c_str());
 							if (newTexture != nullptr)
-								config.Uniforms[uniform.second.Name].Data.Texture = newTexture->GetID();
+								config.Uniforms[uniform.second.Name].Data = newTexture->GetID();
 
 							ImGui::NextColumn();
 
 							ImGui::BeginChild("Next data", {ImGui::GetContentRegionAvail().x, 100});
 
 							// Texture title and use button
-							bool val = config.Uniforms[textureName + ".Use"].Data.Bool;
+							if (config.Uniforms.find(textureName + ".Use") == config.Uniforms.end())
+								config.Uniforms[textureName + ".Use"].Data = false;
+							bool val = std::get<bool>(config.Uniforms[textureName + ".Use"].Data);
 							if (ImGui::Checkbox(("Texture " + uniform.second.Name).c_str(), &val))
-								config.Uniforms[textureName + ".Use"].Data.Bool = val;
+								config.Uniforms[textureName + ".Use"].Data = val;
 
 							
 							// Tiling
-							glm::vec2 tiling = config.Uniforms[textureName + ".Tiling"].Data.Vec2;
+							if (config.Uniforms.find(textureName + ".Tiling") == config.Uniforms.end())
+								config.Uniforms[textureName + ".Tiling"].Data = glm::vec2(1, 1);
+							glm::vec2 tiling = std::get<glm::vec2>(config.Uniforms[textureName + ".Tiling"].Data);
 							ImGuiUtils::RGBVec2("Tiling", { "X","Y" }, { &tiling.x, &tiling.y }, 0.0f, 80);
-							config.Uniforms[textureName + ".Tiling"].Data.Vec2 = tiling;
+							config.Uniforms[textureName + ".Tiling"].Data = tiling;
 
 
 							// Offset
-							glm::vec2 offset = config.Uniforms[textureName + ".Offset"].Data.Vec2;
+							if (config.Uniforms.find(textureName + ".Offset") == config.Uniforms.end())
+								config.Uniforms[textureName + ".Offset"].Data = glm::vec2(0, 0);
+							glm::vec2 offset = std::get<glm::vec2>(config.Uniforms[textureName + ".Offset"].Data);
 							ImGuiUtils::RGBVec2("Offset", { "X","Y" }, { &offset.x, &offset.y }, 0.0f, 80);
-							config.Uniforms[textureName + ".Offset"].Data.Vec2 = offset;
+							config.Uniforms[textureName + ".Offset"].Data = offset;
 
 							// Intensity
-							ImGuiUtils::DragFloat("Intensity", &config.Uniforms[textureName + ".Intensity"].Data.Float, 0.1f, -1000, 1000, 80);
+							ImGuiUtils::DragFloat("Intensity", &std::get<float>(config.Uniforms[textureName + ".Intensity"].Data), 0.1f, -1000, 1000, 80);
 							
 							ImGui::EndChild();
 							ImGuiUtils::ResetColumns();
@@ -777,33 +786,40 @@ namespace Debut
 				switch (prop.second.Type)
 				{
 				case ShaderDataType::Float:
-					ImGuiUtils::DragFloat(prop.second.Name, &prop.second.Data.Float, 0.02f);
-					config.Volumes[i].Properties[prop.second.Name].Data.Float = prop.second.Data.Float;
+					ImGuiUtils::DragFloat(prop.second.Name, &std::get<float>(prop.second.Data), 0.02f);
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
 				case ShaderDataType::Float2:
-					ImGuiUtils::RGBVec2(prop.second.Name.c_str(), { "X", "Y" }, { &prop.second.Data.Vec2.x, &prop.second.Data.Vec2.y });
-					config.Volumes[i].Properties[prop.second.Name].Data.Vec2 = prop.second.Data.Vec2;
+				{
+					glm::vec2& vec = std::get<glm::vec2>(prop.second.Data);
+					ImGuiUtils::RGBVec2(prop.second.Name.c_str(), { "X", "Y" }, { &vec.x, &vec.y });
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
+				}
 				case ShaderDataType::Float3:
-					ImGuiUtils::RGBVec3(prop.second.Name.c_str(), { "X", "Y", "Z"}, {&prop.second.Data.Vec3.x,
-						&prop.second.Data.Vec3.y, &prop.second.Data.Vec3.z });
-					config.Volumes[i].Properties[prop.second.Name].Data.Vec3 = prop.second.Data.Vec3;
+				{
+					glm::vec3& vec = std::get<glm::vec3>(prop.second.Data);
+					ImGuiUtils::RGBVec3(prop.second.Name.c_str(), { "X", "Y", "Z" }, { &vec.x, &vec.y, &vec.z });
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
+				}
 				case ShaderDataType::Float4:
-					ImGuiUtils::RGBVec3(prop.second.Name.c_str(), { "X", "Y", "Z", "W"}, {&prop.second.Data.Vec4.x,
-						&prop.second.Data.Vec4.y, &prop.second.Data.Vec4.z, &prop.second.Data.Vec4.w });
-					config.Volumes[i].Properties[prop.second.Name].Data.Vec4 = prop.second.Data.Vec4;
+				{
+					glm::vec4& vec = std::get<glm::vec4>(prop.second.Data);
+					ImGuiUtils::RGBVec4(prop.second.Name.c_str(), { "X", "Y", "Z", "W" }, { &vec.x, &vec.y, &vec.z, &vec.w });
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
+				}
 				case ShaderDataType::Bool:
-					ImGui::Checkbox(prop.second.Name.c_str(), &prop.second.Data.Bool);
-					config.Volumes[i].Properties[prop.second.Name].Data.Bool = prop.second.Data.Bool;
+					ImGui::Checkbox(prop.second.Name.c_str(), &std::get<bool>(prop.second.Data));
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
 				case ShaderDataType::Sampler2D:
 				{
 					ImGuiUtils::StartColumns(2, { 90, (uint32_t)ImGui::GetContentRegionAvail().x - 90 });
 					// Load the texture: if it doesn't exist, just use a white default texture
 					uint32_t rendererID;
-					Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(prop.second.Data.Texture);
+					Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(std::get<UUID>(prop.second.Data));
 					if (currTexture == nullptr)
 						rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
 					else
@@ -815,8 +831,8 @@ namespace Debut
 					Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 80, 80 }, ss.str().c_str());
 					if (newTexture != nullptr)
 					{
-						prop.second.Data.Texture = newTexture->GetID();
-						config.Volumes[i].Properties[prop.second.Name].Data.Texture = prop.second.Data.Texture;
+						prop.second.Data = newTexture->GetID();
+						config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					}
 
 					ImGui::NextColumn();
@@ -828,8 +844,8 @@ namespace Debut
 					break;
 				}
 				case ShaderDataType::Int:
-					ImGuiUtils::DragInt(prop.second.Name, &prop.second.Data.Int, 0.1f);
-					config.Volumes[i].Properties[prop.second.Name].Data.Int = prop.second.Data.Int;
+					ImGuiUtils::DragInt(prop.second.Name, &std::get<int>(prop.second.Data), 0.1f);
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
 				}
 			}

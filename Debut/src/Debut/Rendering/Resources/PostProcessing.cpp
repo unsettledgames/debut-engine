@@ -67,13 +67,22 @@ namespace Debut
 
 				switch (prop.second.Type)
 				{
-				case ShaderDataType::Bool: out << prop.second.Data.Bool;break;
-				case ShaderDataType::Float: out << prop.second.Data.Float;break;
-				case ShaderDataType::Float2: out << prop.second.Data.Vec2;break;
-				case ShaderDataType::Float3: out << prop.second.Data.Vec3;break;
-				case ShaderDataType::Float4: out << prop.second.Data.Vec4;break;
-				case ShaderDataType::Int: out << prop.second.Data.Int;break;
-				case ShaderDataType::Sampler2D: out << prop.second.Data.Texture;break;
+				case ShaderDataType::Bool: out << std::get<bool>(prop.second.Data);break;
+				case ShaderDataType::Float: out << std::get<float>(prop.second.Data);break;
+				case ShaderDataType::Float2: out << std::get<glm::vec2>(prop.second.Data);break;
+				case ShaderDataType::Float3: out << std::get<glm::vec3>(prop.second.Data);break;
+				case ShaderDataType::Float4: out << std::get<glm::vec4>(prop.second.Data);break;
+				case ShaderDataType::Int: out << std::get<int>(prop.second.Data);break;
+				case ShaderDataType::IntArray:
+				{
+					out << YAML::BeginSeq;
+					std::vector<int> vec = std::get<std::vector<int>>(prop.second.Data);
+					for (uint32_t i = 0; i < vec.size(); i++)
+						out << vec[i];
+					out << YAML::EndSeq;
+					break;
+				}
+				case ShaderDataType::Sampler2D: out << std::get<UUID>(prop.second.Data);break;
 				default: out << 0; break;
 				}
 
@@ -121,13 +130,22 @@ namespace Debut
 					uniform.Name = prop["Name"].as<std::string>();
 					switch (type)
 					{
-					case ShaderDataType::Bool: uniform.Data.Bool = prop["Data"].as<bool>(); break;
-					case ShaderDataType::Float: uniform.Data.Float = prop["Data"].as<float>(); break;
-					case ShaderDataType::Float2: uniform.Data.Vec2 = prop["Data"].as<glm::vec2>(); break;
-					case ShaderDataType::Float3: uniform.Data.Vec3 = prop["Data"].as<glm::vec3>(); break;
-					case ShaderDataType::Float4: uniform.Data.Vec4 = prop["Data"].as<glm::vec4>(); break;
-					case ShaderDataType::Int: uniform.Data.Int = prop["Data"].as<int>(); break;
-					case ShaderDataType::Sampler2D: uniform.Data.Texture = prop["Data"].as<uint64_t>(); break;
+					case ShaderDataType::Bool: uniform.Data = prop["Data"].as<bool>(); break;
+					case ShaderDataType::Float: uniform.Data = prop["Data"].as<float>(); break;
+					case ShaderDataType::Float2: uniform.Data = prop["Data"].as<glm::vec2>(); break;
+					case ShaderDataType::Float3: uniform.Data = prop["Data"].as<glm::vec3>(); break;
+					case ShaderDataType::Float4: uniform.Data = prop["Data"].as<glm::vec4>(); break;
+					case ShaderDataType::Int: uniform.Data = prop["Data"].as<int>(); break;
+					case ShaderDataType::IntArray:
+					{
+						YAML::Node arrayStart = prop["Data"];
+						std::vector<int> vec;
+						for (auto& data : arrayStart)
+							vec.push_back(data.as<int>());
+						uniform.Data = vec;
+						break;
+					}
+					case ShaderDataType::Sampler2D: uniform.Data = (UUID)prop["Data"].as<uint64_t>(); break;
 					default: break;
 					}
 

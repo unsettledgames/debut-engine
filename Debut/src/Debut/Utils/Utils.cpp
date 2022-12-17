@@ -107,4 +107,15 @@ namespace Debut
 			* glm::scale(glm::mat4(1.0f), scale));
 	}
 
+	std::vector<float> MathUtils::ComputeGaussianKernel(int size, float sigma, float mu)
+	{
+		std::vector<float> ret(size * 2 + 1);
+		for (uint32_t i = 0; i < size * 2 + 1; i++)
+		{
+			ret[i] = (1.0f / (sigma * 2.0f * glm::pi<float>())) * 
+				glm::exp(-glm::pow(((i - size) - mu), 2.0f) / (2.0f * glm::pow(sigma, 2)));
+		}
+
+		return ret;
+	}
 }

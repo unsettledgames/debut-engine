@@ -797,20 +797,20 @@ namespace Debut
 		ShaderUniform::UniformData data;
 
 		// Vectors and transforms
-		data.Vec3 = cameraPos;
+		data = cameraPos;
 		ret.push_back(ShaderUniform("u_CameraPosition", ShaderDataType::Float3, data));
 
 		// Ambient light
-		data.Vec3 = m_AmbientLight;
+		data = m_AmbientLight;
 		ret.push_back(ShaderUniform("u_AmbientLightColor", ShaderDataType::Float3, data));
 		// Ambient light intensity
-		data.Float = m_AmbientLightIntensity;
+		data = m_AmbientLightIntensity;
 		ret.push_back(ShaderUniform("u_AmbientLightIntensity", ShaderDataType::Float, data));
 
 		// Shadow fading
-		data.Float = fadeoutStartDistance;
+		data = fadeoutStartDistance;
 		ret.push_back(ShaderUniform("u_ShadowFadeoutStart", ShaderDataType::Float, data));
-		data.Float = fadeoutEndDistance;
+		data = fadeoutEndDistance;
 		ret.push_back(ShaderUniform("u_ShadowFadeoutEnd", ShaderDataType::Float, data));
 
 		return ret;

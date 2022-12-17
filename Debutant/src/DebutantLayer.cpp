@@ -26,6 +26,11 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
+    VARIANT CHANGES:
+        - Bad variant access when clicking on material
+*/
+
+/*
 *   CURRENT: POST PROCESSING
 *   
 *   - Post processing is stuff that happens on the final screen quad when everything's been rendered. There could be many effects,

@@ -24,7 +24,8 @@ namespace Debut
 		static Ref<RenderTexture> Create(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode);
 		~RenderTexture() = default;
 
-		void Draw(Ref<Shader> shader, std::unordered_map<std::string, ShaderUniform> params);
+		void Draw(Ref<Shader> shader, std::unordered_map<std::string, ShaderUniform>& properties);
+		void Draw(Ref<Shader> shader, Ref<PostProcessingStack> postProcessingStack);
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 

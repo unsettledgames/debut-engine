@@ -105,26 +105,26 @@ namespace Debut
 				switch (uniform.Type)
 				{
 				case ShaderDataType::Float:
-					m_Uniforms[uniform.Name].Data.Float = matParams[uniform.Name].as<float>();
+					m_Uniforms[uniform.Name].Data = matParams[uniform.Name].as<float>();
 					break;
 				case ShaderDataType::Float2:
-					m_Uniforms[uniform.Name].Data.Vec2 = matParams[uniform.Name].as<glm::vec2>();
+					m_Uniforms[uniform.Name].Data = matParams[uniform.Name].as<glm::vec2>();
 					break;
 				case ShaderDataType::Float3:
-					m_Uniforms[uniform.Name].Data.Vec3 = matParams[uniform.Name].as<glm::vec3>();
+					m_Uniforms[uniform.Name].Data = matParams[uniform.Name].as<glm::vec3>();
 					break;
 				case ShaderDataType::Float4:
-					m_Uniforms[uniform.Name].Data.Vec4 = matParams[uniform.Name].as<glm::vec4>();
+					m_Uniforms[uniform.Name].Data = matParams[uniform.Name].as<glm::vec4>();
 					break;
 				case ShaderDataType::Mat4:
-					m_Uniforms[uniform.Name].Data.Mat4 = matParams[uniform.Name].as<glm::mat4>();
+					m_Uniforms[uniform.Name].Data = matParams[uniform.Name].as<glm::mat4>();
 					break;
 
 				case ShaderDataType::Int:
-					m_Uniforms[uniform.Name].Data.Int = matParams[uniform.Name].as<int>();
+					m_Uniforms[uniform.Name].Data = matParams[uniform.Name].as<int>();
 					break;
 				case ShaderDataType::Bool:
-					m_Uniforms[uniform.Name].Data.Bool = matParams[uniform.Name].as<bool>();
+					m_Uniforms[uniform.Name].Data = matParams[uniform.Name].as<bool>();
 					break;
 				case ShaderDataType::Sampler2D:
 				{
@@ -134,7 +134,7 @@ namespace Debut
 					UUID texID = textureNode["ID"].as<uint64_t>();
 					Ref<Texture2D> texture = AssetManager::Request<Texture2D>(texID);
 
-					m_Uniforms[uniform.Name].Data.Texture = texID;
+					m_Uniforms[uniform.Name].Data = texID;
 				}
 				break;
 
@@ -201,18 +201,18 @@ namespace Debut
 		{
 			switch (uniform.second.Type)
 			{
-			case ShaderDataType::Float: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Float; break;
-			case ShaderDataType::Float2: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Vec2; break;
-			case ShaderDataType::Float3: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Vec3; break;
-			case ShaderDataType::Float4: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Vec4; break;
+			case ShaderDataType::Float: emitter << YAML::Key << uniform.second.Name << YAML::Value << std::get<float>(uniform.second.Data); break;
+			case ShaderDataType::Float2: emitter << YAML::Key << uniform.second.Name << YAML::Value << std::get<glm::vec2>(uniform.second.Data); break;
+			case ShaderDataType::Float3: emitter << YAML::Key << uniform.second.Name << YAML::Value << std::get<glm::vec3>(uniform.second.Data); break;
+			case ShaderDataType::Float4: emitter << YAML::Key << uniform.second.Name << YAML::Value << std::get<glm::vec4>(uniform.second.Data); break;
 
-			case ShaderDataType::Mat4: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Mat4; break;
-			case ShaderDataType::Bool: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Bool; break;
-			case ShaderDataType::Int: emitter << YAML::Key << uniform.second.Name << YAML::Value << uniform.second.Data.Int; break;
+			case ShaderDataType::Mat4: emitter << YAML::Key << uniform.second.Name << YAML::Value << std::get<glm::mat4>(uniform.second.Data); break;
+			case ShaderDataType::Bool: emitter << YAML::Key << uniform.second.Name << YAML::Value << std::get<bool>(uniform.second.Data); break;
+			case ShaderDataType::Int: emitter << YAML::Key << uniform.second.Name << YAML::Value << std::get<int>(uniform.second.Data); break;
 			case ShaderDataType::Sampler2D:
 			{
 				emitter << YAML::Key << uniform.second.Name << YAML::Value << YAML::BeginMap;
-				emitter << YAML::Key << "ID" << YAML::Value << uniform.second.Data.Texture;
+				emitter << YAML::Key << "ID" << YAML::Value << std::get<UUID>(uniform.second.Data);
 				emitter << YAML::EndMap;
 				break;
 			}
@@ -249,55 +249,56 @@ namespace Debut
 			switch (uniform.second.Type)
 			{
 			case ShaderDataType::Int:
-				m_RuntimeShader->SetInt(uniform.second.Name, uniform.second.Data.Int);
+				m_RuntimeShader->SetInt(uniform.second.Name, std::get<int>(uniform.second.Data));
 				break;
 			case ShaderDataType::Bool:
 			{
 				//DBT_PROFILE_SCOPE("Material::SetBool");
-				m_RuntimeShader->SetBool(uniform.second.Name, uniform.second.Data.Bool);
+				m_RuntimeShader->SetBool(uniform.second.Name, std::get<bool>(uniform.second.Data));
 				break;
 			}
 			case ShaderDataType::Float:
 			{
 				//DBT_PROFILE_SCOPE("Material::SetFloat");
-				m_RuntimeShader->SetFloat(uniform.second.Name, uniform.second.Data.Float);
+				m_RuntimeShader->SetFloat(uniform.second.Name, std::get<float>(uniform.second.Data));
 				break;
 			}
 			case ShaderDataType::Float2:
 			{
 				//DBT_PROFILE_SCOPE("Material::SetFloat2");
-				m_RuntimeShader->SetFloat2(uniform.second.Name, uniform.second.Data.Vec2);
+				m_RuntimeShader->SetFloat2(uniform.second.Name, std::get<glm::vec2>(uniform.second.Data));
 				break;
 			}
 			case ShaderDataType::Float3:
 			{
 				//DBT_PROFILE_SCOPE("Material::SetFloat3");
-				m_RuntimeShader->SetFloat3(uniform.second.Name, uniform.second.Data.Vec3);
+				m_RuntimeShader->SetFloat3(uniform.second.Name, std::get<glm::vec3>(uniform.second.Data));
 				break;
 			}
 			case ShaderDataType::Float4:
 			{
 				//DBT_PROFILE_SCOPE("Material::SetFloat4");
-				m_RuntimeShader->SetFloat4(uniform.second.Name, uniform.second.Data.Vec4);
+				m_RuntimeShader->SetFloat4(uniform.second.Name, std::get<glm::vec4>(uniform.second.Data));
 				break;
 			}
 			case ShaderDataType::Mat4:
 			{
 				//DBT_PROFILE_SCOPE("Material::SetMat4");
-				m_RuntimeShader->SetMat4(uniform.second.Name, uniform.second.Data.Mat4);
+				m_RuntimeShader->SetMat4(uniform.second.Name, std::get<glm::mat4>(uniform.second.Data));
 				break;
 			}
 			case ShaderDataType::Sampler2D:
 			{
 				//DBT_PROFILE_SCOPE("Material::SetTexture");
 				Ref<Texture2D> texture;
-				if (m_RuntimeTextures.find(uniform.second.Data.Texture) == m_RuntimeTextures.end())
-					if (uniform.second.Data.Texture != 0)
-						m_RuntimeTextures[uniform.second.Data.Texture] = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
+				UUID texID = std::get<UUID>(uniform.second.Data);
+				if (m_RuntimeTextures.find(texID) == m_RuntimeTextures.end())
+					if (texID != 0)
+						m_RuntimeTextures[texID] = AssetManager::Request<Texture2D>(texID);
 					else
-						m_RuntimeTextures[uniform.second.Data.Texture] = AssetManager::Request<Texture2D>(DBT_WHITE_TEXTURE_UUID);
+						m_RuntimeTextures[texID] = AssetManager::Request<Texture2D>(DBT_WHITE_TEXTURE_UUID);
 
-				texture = m_RuntimeTextures[uniform.second.Data.Texture];
+				texture = m_RuntimeTextures[texID];
 
 				m_RuntimeShader->SetInt(uniform.second.Name, currSlot);
 				texture->Bind(currSlot);
@@ -305,7 +306,7 @@ namespace Debut
 				break;
 			}
 			case ShaderDataType::SamplerCube:
-				m_RuntimeShader->SetInt(uniform.second.Name, uniform.second.Data.Cubemap);
+				m_RuntimeShader->SetInt(uniform.second.Name, std::get<UUID>(uniform.second.Data));
 				break;
 			case ShaderDataType::None:
 				break;
@@ -345,63 +346,64 @@ namespace Debut
 	{
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::Float);
-		m_Uniforms[name].Data.Float = val;
+		m_Uniforms[name].Data = val;
 	}
 
 	void Material::SetVec2(const std::string& name, const glm::vec2& vec)
 	{
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::Float2);
-		m_Uniforms[name].Data.Vec2 = vec;
+		m_Uniforms[name].Data = vec;
 	}
 
 	void Material::SetVec3(const std::string& name, const glm::vec3& vec)
 	{
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::Float3);
-		m_Uniforms[name].Data.Vec3 = vec;
+		m_Uniforms[name].Data = vec;
 	}
 
 	void Material::SetVec4(const std::string& name, const glm::vec4& vec)
 	{
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::Float4);
-		m_Uniforms[name].Data.Vec4 = vec;
+		m_Uniforms[name].Data = vec;
 	}
 
 	void Material::SetMat4(const std::string& name, const glm::mat4& mat)
 	{
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::Mat4);
-		m_Uniforms[name].Data.Mat4 = mat;
+		m_Uniforms[name].Data = mat;
 	}
 
 	void Material::SetInt(const std::string& name, int val)
 	{
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::Int);
-		m_Uniforms[name].Data.Int = val;
+		m_Uniforms[name].Data = val;
 	}
 
 	void Material::SetBool(const std::string& name, bool val)
 	{
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::Bool);
-		m_Uniforms[name].Data.Bool = val;
+		m_Uniforms[name].Data = val;
 	}
 
 	void Material::SetTexture(const std::string& name, const Ref<Texture2D> texture)
 	{
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::Sampler2D);
-		m_Uniforms[name].Data.Texture = texture->GetID();
+		m_Uniforms[name].Data = texture->GetID();
 	}
 
 	void Material::SetCubemap(const std::string& name, const Ref<Skybox> cubemap)
 	{
 		FIND_UNIFORM(name);
 		CHECK_TYPE(name, ShaderDataType::SamplerCube);
-		m_Uniforms[name].Data.Cubemap = cubemap->GetRendererID();
+		// ISSUE: don't use UUID, use uint32_t
+		m_Uniforms[name].Data = (UUID)cubemap->GetRendererID();
 	}
 
 	void Material::Reload()

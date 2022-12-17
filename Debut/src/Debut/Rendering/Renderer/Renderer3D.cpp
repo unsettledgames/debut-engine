@@ -326,15 +326,15 @@ namespace Debut
 			{
 				DirectionalLightComponent* dirLight = static_cast<DirectionalLightComponent*>(light);
 
-				data.Vec3 = dirLight->Direction;
+				data = dirLight->Direction;
 				material.m_Uniforms["u_DirectionalLightDir"] = {
 					ShaderUniform("u_DirectionalLightDir", ShaderDataType::Float3, data) };
 
-				data.Vec3 = dirLight->Color;
+				data = dirLight->Color;
 				material.m_Uniforms["u_DirectionalLightCol"] = {
 					ShaderUniform("u_DirectionalLightCol", ShaderDataType::Float3, data) };
 
-				data.Float = dirLight->Intensity;
+				data = dirLight->Intensity;
 				material.m_Uniforms["u_DirectionalLightIntensity"] = {
 					ShaderUniform("u_DirectionalLightIntensity", ShaderDataType::Float, data) };
 				break;
@@ -354,18 +354,18 @@ namespace Debut
 			std::stringstream lightName;
 			lightName << "u_PointLights[" << i << "]";
 
-			data.Vec3 = pointLights[i].Color;
+			data = pointLights[i].Color;
 			material.m_Uniforms[lightName.str() + ".Color"] = { ShaderUniform(lightName.str() + ".Color", ShaderDataType::Float3, data) };
-			data.Vec3 = pointLights[i].Position;
+			data = pointLights[i].Position;
 			material.m_Uniforms[lightName.str() + ".Position"] = { ShaderUniform(lightName.str() + ".Position", ShaderDataType::Float3, data) };
 
-			data.Float = pointLights[i].Intensity;
+			data = pointLights[i].Intensity;
 			material.m_Uniforms[lightName.str() + ".Intensity"] = { ShaderUniform(lightName.str() + ".Intensity", ShaderDataType::Float, data) };
-			data.Float = pointLights[i].Radius;
+			data = pointLights[i].Radius;
 			material.m_Uniforms[lightName.str() + ".Radius"] = { ShaderUniform(lightName.str() + ".Radius", ShaderDataType::Float, data) };
 		}
 
-		data.Int = pointLights.size();
+		data = (int)pointLights.size();
 		material.m_Uniforms["u_NPointLights"] = { ShaderUniform("u_NPointLights", ShaderDataType::Int, data) };
 	}
 
