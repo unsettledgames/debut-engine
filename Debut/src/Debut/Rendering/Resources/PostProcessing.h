@@ -17,6 +17,7 @@ namespace Debut
 
 	struct PostProcessingVolume
 	{
+		UUID RuntimeID;
 		std::string Name;
 		UUID ShaderID;
 		bool Enabled = true;
@@ -26,6 +27,7 @@ namespace Debut
 		Ref<Shader> RuntimeShader = nullptr;
 
 		PostProcessingVolume() = default;
+		PostProcessingVolume(const PostProcessingVolume&) = default;
 		PostProcessingVolume(UUID shader) : ShaderID(shader) 
 		{
 			if (shader == 0)

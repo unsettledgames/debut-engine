@@ -110,11 +110,16 @@ namespace Debut
 	std::vector<float> MathUtils::ComputeGaussianKernel(int size, float sigma, float mu)
 	{
 		std::vector<float> ret(size * 2 + 1);
+		float sum = 0;
 		for (uint32_t i = 0; i < size * 2 + 1; i++)
 		{
-			ret[i] = (1.0f / (sigma * 2.0f * glm::pi<float>())) * 
-				glm::exp(-glm::pow(((i - size) - mu), 2.0f) / (2.0f * glm::pow(sigma, 2)));
+			ret[i] = (1.0f / (sigma * std::sqrt(2.0f * glm::pi<float>()))) * 
+				glm::exp(-glm::pow(((i - (float)size) - mu), 2.0f) / (2.0f * glm::pow(sigma, 2)));
+			sum += ret[i];
 		}
+
+		for (uint32_t i = 0; i < ret.size(); i++)
+			ret[i] /= sum;
 
 		return ret;
 	}

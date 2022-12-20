@@ -760,7 +760,7 @@ namespace Debut
 			volume.Name = std::string(buffer);
 			config.Volumes[i].Name = volume.Name;
 
-			if (volume.Type != PostProcessingEffect::Custom)
+			if (volume.Type == PostProcessingEffect::Custom)
 			{
 				UUID shader = ImGuiUtils::DragDestination("Shader", ".glsl", volume.ShaderID);
 				if (shader != 0)

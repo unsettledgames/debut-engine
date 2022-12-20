@@ -26,8 +26,16 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
-    VARIANT CHANGES:
-        - Bad variant access when clicking on material
+*   POST PROCESSING
+*   TODO
+*   - Change volume order
+* 
+*   BUGS
+*   - Only top of the stack is applied
+*   - Blur properties aren't updated (color grading ones are though)
+* 
+    GENERAL BUGS:
+    - 2D rendering's fucked up again
 */
 
 /*

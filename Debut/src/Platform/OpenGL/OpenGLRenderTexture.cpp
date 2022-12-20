@@ -7,7 +7,8 @@
 
 namespace Debut
 {
-	OpenGLRenderTexture::OpenGLRenderTexture(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode)
+	OpenGLRenderTexture::OpenGLRenderTexture(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode) :
+		RenderTexture(buffer != nullptr ? buffer->GetSpecs() : FrameBufferSpecifications(false))
 	{
 		m_Width = width;
 		m_Height = height;
@@ -34,7 +35,7 @@ namespace Debut
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 	}
 
-	void OpenGLRenderTexture::Bind()
+	void OpenGLRenderTexture::BindTexture()
 	{
 		uint32_t attachment = 0;
 
@@ -51,7 +52,7 @@ namespace Debut
 		GLCall(glBindTextureUnit(0, attachment));
 	}
 
-	void OpenGLRenderTexture::Unbind()
+	void OpenGLRenderTexture::UnbindTexture()
 	{
 		GLCall(glBindTextureUnit(0, 0));
 	}

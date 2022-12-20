@@ -60,6 +60,15 @@ namespace Debut
 
     void ViewportPanel::OnUpdate(Timestep& ts)
     {
+        /*
+            - We start from the scene frame buffer (1). We render it inside a Bind() Unbind() of a different framebuffer(2) using
+                a render texture: at that point, said framebuffer will contain the scene
+            - We apply another effect: we need another framebuffer(3): inside its Bind() / Unbind(), we render a texture
+                using framebuffer(2) as the source
+            - In the end we only need 2 framebuffers! Poggers!
+
+            - Only a renderer ID will be rendered on screen: the one of the lastly applied frame buffer
+        */
         fps = 1.0f / ts;
         DBT_PROFILE_SCOPE("EgineUpdate");
         // Update camera
@@ -87,11 +96,7 @@ namespace Debut
         Ref<PostProcessingStack> postProcessing = activeScene->GetPostProcessingStack();
 
         // The scene frame buffer now contains the whole scene. Render the frame buffer to a texture.
-        m_TextureFrameBuffer->Bind();
-        m_RenderTexture->SetFrameBuffer(m_SceneFrameBuffer);
-        m_RenderTexture->Draw(m_FullscreenShader, postProcessing);
-
-        m_TextureFrameBuffer->Unbind();
+        m_RenderTexture->Draw(m_SceneFrameBuffer, m_FullscreenShader, postProcessing);
     }
 
 	void ViewportPanel::OnImGuiRender()
@@ -173,7 +178,7 @@ namespace Debut
             m_TopMenuSize.y += ImGui::GetTextLineHeight() * 1.5f;
 
             // Draw scene
-            uint32_t texId = m_TextureFrameBuffer->GetColorAttachment();
+            uint32_t texId = m_RenderTexture->GetTopFrameBuffer()->GetColorAttachment();
             ImGui::Image((void*)texId, ImVec2(viewportSize.x, viewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
 
             // Accept scene loading

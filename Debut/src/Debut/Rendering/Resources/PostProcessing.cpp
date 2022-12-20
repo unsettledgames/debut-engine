@@ -7,6 +7,26 @@
 
 namespace Debut
 {
+	template<typename T>
+	static void SerializeArray(YAML::Emitter& out, ShaderUniform::UniformData arrayUniform)
+	{
+		out << YAML::BeginSeq;
+		std::vector<T> vec = std::get<std::vector<T>>(arrayUniform);
+		for (uint32_t i = 0; i < vec.size(); i++)
+			out << vec[i];
+		out << YAML::EndSeq;
+	}
+
+	template<typename T>
+	static std::vector<T> DeserializeArray(YAML::Node& in)
+	{
+		YAML::Node arrayStart = in;
+		std::vector<T> vec;
+		for (auto& data : arrayStart)
+			vec.push_back(data.as<T>());
+		return vec;
+	}
+
 	PostProcessingStack::PostProcessingStack(const std::string& path, const std::string& metaFile)
 	{
 		PostProcessingStackConfig config = GetConfig(path);
@@ -73,15 +93,8 @@ namespace Debut
 				case ShaderDataType::Float3: out << std::get<glm::vec3>(prop.second.Data);break;
 				case ShaderDataType::Float4: out << std::get<glm::vec4>(prop.second.Data);break;
 				case ShaderDataType::Int: out << std::get<int>(prop.second.Data);break;
-				case ShaderDataType::IntArray:
-				{
-					out << YAML::BeginSeq;
-					std::vector<int> vec = std::get<std::vector<int>>(prop.second.Data);
-					for (uint32_t i = 0; i < vec.size(); i++)
-						out << vec[i];
-					out << YAML::EndSeq;
-					break;
-				}
+				case ShaderDataType::IntArray: SerializeArray<int>(out, prop.second.Data); break;
+				case ShaderDataType::FloatArray: SerializeArray<float>(out, prop.second.Data); break;
 				case ShaderDataType::Sampler2D: out << std::get<UUID>(prop.second.Data);break;
 				default: out << 0; break;
 				}
@@ -136,15 +149,8 @@ namespace Debut
 					case ShaderDataType::Float3: uniform.Data = prop["Data"].as<glm::vec3>(); break;
 					case ShaderDataType::Float4: uniform.Data = prop["Data"].as<glm::vec4>(); break;
 					case ShaderDataType::Int: uniform.Data = prop["Data"].as<int>(); break;
-					case ShaderDataType::IntArray:
-					{
-						YAML::Node arrayStart = prop["Data"];
-						std::vector<int> vec;
-						for (auto& data : arrayStart)
-							vec.push_back(data.as<int>());
-						uniform.Data = vec;
-						break;
-					}
+					case ShaderDataType::IntArray: uniform.Data = DeserializeArray<int>(prop["Data"]); break;
+					case ShaderDataType::FloatArray: uniform.Data = DeserializeArray<float>(prop["Data"]); break;
 					case ShaderDataType::Sampler2D: uniform.Data = (UUID)prop["Data"].as<uint64_t>(); break;
 					default: break;
 					}

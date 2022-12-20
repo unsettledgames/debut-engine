@@ -13,10 +13,11 @@ namespace Debut
 	{
 		None = 0,
 		Float, Float2, Float3, Float4,
-		Int, Int2, Int3, Int4, IntArray,
+		Int, Int2, Int3, Int4, 
 		Bool,
 		Mat3, Mat4, Struct,
-		Sampler2D, SamplerCube
+		Sampler2D, SamplerCube,
+		IntArray, FloatArray
 	};
 
 	struct ShaderUniform
@@ -47,6 +48,7 @@ namespace Debut
 		case ShaderDataType::Mat3: return "Mat3";
 		case ShaderDataType::Mat4: return "Mat4";
 		case ShaderDataType::IntArray: return "IntArray";
+		case ShaderDataType::FloatArray: return "FloatArray";
 		case ShaderDataType::Sampler2D: return "Texture";
 		case ShaderDataType::SamplerCube: return "Skybox";
 		}
@@ -68,6 +70,7 @@ namespace Debut
 		virtual void SetInt(const std::string& name, int value) = 0;
 		virtual void SetBool(const std::string& name, bool value) = 0;
 		virtual void SetIntArray(const std::string& name, int* data, uint32_t count) = 0;
+		virtual void SetFloatArray(const std::string& name, float* data, uint32_t count) = 0;
 		
 		virtual void SetFloat(const std::string& name, float uniform) = 0;
 		virtual void SetFloat2(const std::string& name, const glm::vec2& uniform) = 0;

@@ -22,15 +22,23 @@ namespace Debut
 	{
 	public:
 		static Ref<RenderTexture> Create(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode);
+		RenderTexture(FrameBufferSpecifications bufferSpecs);
 		~RenderTexture() = default;
 
-		void Draw(Ref<Shader> shader, std::unordered_map<std::string, ShaderUniform>& properties);
-		void Draw(Ref<Shader> shader, Ref<PostProcessingStack> postProcessingStack);
-		virtual void Bind() = 0;
-		virtual void Unbind() = 0;
+		void Draw(Ref<Shader> shader, std::unordered_map<std::string, 
+			ShaderUniform>& properties = std::unordered_map<std::string, ShaderUniform>());
+		void Draw(Ref<FrameBuffer> startBuffer, Ref<Shader> startShader, Ref<PostProcessingStack> postProcessing);
 
+		virtual void BindTexture() = 0;
+		virtual void UnbindTexture() = 0;
+
+		void Begin(Ref<FrameBuffer> originalScene, Ref<Shader> startShader);
+		void End();
+
+		inline Ref<FrameBuffer> GetTopFrameBuffer() { return m_PrevBuffer; }
 		inline void SetFrameBuffer(Ref<FrameBuffer> buffer) { m_FrameBuffer = buffer; }
 
+		inline Ref<FrameBuffer> GetFrameBuffer() { return m_FrameBuffer; }
 		inline uint32_t GetRendererID() { return m_RendererID; }
 		inline float GetWidth() { return m_Width; }
 		inline float GetHeight() { return m_Height; }
@@ -46,5 +54,9 @@ namespace Debut
 		float m_Width;
 		float m_Height;
 		RenderTextureMode m_Mode;
+		Ref<RenderTexture> m_Target;
+
+		Ref<FrameBuffer> m_PrevBuffer;
+		Ref<FrameBuffer> m_NextBuffer;
 	};
 }

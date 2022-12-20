@@ -25,6 +25,81 @@ namespace Debut
 		}
 	}
 
+	RenderTexture::RenderTexture(FrameBufferSpecifications specs)
+	{
+		if (!specs.Valid)
+			return;
+		specs.Attachments = { {FrameBufferTextureFormat::Color} };
+
+		m_PrevBuffer = FrameBuffer::Create(specs);
+		m_NextBuffer = FrameBuffer::Create(specs);
+
+		m_Target = RenderTexture::Create(specs.Width, specs.Height, nullptr, RenderTextureMode::Color);
+		m_Width = specs.Width;
+		m_Height = specs.Height;
+	}
+
+	void RenderTexture::Draw(Ref<FrameBuffer> startBuffer, Ref<Shader> startShader, Ref<PostProcessingStack> postProcessing)
+	{
+		DBT_PROFILE_SCOPE("Fullscreen::Draw");
+
+		m_Target->SetFrameBuffer(startBuffer);
+
+		m_NextBuffer->Bind();
+		m_Target->Draw(startShader);
+		m_NextBuffer->Unbind();
+
+		Ref<FrameBuffer> tmp = m_NextBuffer;
+		m_NextBuffer = m_PrevBuffer;
+		m_PrevBuffer = tmp;
+
+		if (postProcessing == nullptr)
+			return;
+
+		std::unordered_map<std::string, ShaderUniform> props;
+
+		for (auto& volume : postProcessing->GetVolumes())
+		{
+			if (volume.RuntimeShader == nullptr)
+				continue;
+			props.clear();
+			props = volume.Properties;
+
+			m_Target->SetFrameBuffer(m_PrevBuffer);
+			m_NextBuffer->Bind();
+			{
+				switch (volume.Type)
+				{
+				case PostProcessingEffect::Custom:
+					m_Target->Draw(volume.RuntimeShader, volume.Properties);
+					break;
+				case PostProcessingEffect::Blur:
+					// Build kernel
+					int kernelSize = 20;// std::get<int>(props["u_Size"].Data);
+					props["u_Size"].Data = kernelSize;
+					std::vector<float> kernel = MathUtils::ComputeGaussianKernel(20, 4.0f, 0.0f);
+
+					// Set horizontal, draw
+					props["u_Kernel"] = ShaderUniform("u_Kernel", ShaderDataType::FloatArray, kernel);
+
+					ShaderUniform::UniformData data = 0;
+					props["u_Vertical"] = ShaderUniform("u_Vertical", ShaderDataType::Int, data);
+					m_Target->Draw(volume.RuntimeShader, props);
+					// Set vertical, draw
+					props["u_Vertical"].Data = 1;
+					m_Target->Draw(volume.RuntimeShader, props);
+					break;
+				}
+			}
+			
+			m_NextBuffer->Unbind();
+
+			tmp = m_NextBuffer;
+			m_NextBuffer = m_PrevBuffer;
+			m_PrevBuffer = tmp;
+		}
+	}
+
 	void RenderTexture::Draw(Ref<Shader> shader, std::unordered_map<std::string, ShaderUniform>& properties)
 	{
 		uint32_t texIndex = 0;
@@ -44,6 +119,12 @@ namespace Debut
 			case ShaderDataType::Float4:	shader->SetFloat4(param.second.Name, std::get<glm::vec4>(param.second.Data)); break;
 			case ShaderDataType::Int:		shader->SetInt(param.second.Name, std::get<int>(param.second.Data)); break;
 			case ShaderDataType::Bool:		shader->SetBool(param.second.Name, std::get<bool>(param.second.Data)); break;
+			case ShaderDataType::FloatArray:
+			{
+				auto& vec = std::get<std::vector<float>>(param.second.Data);
+				shader->SetFloatArray(param.second.Name, vec.data(), vec.size()); 
+				break;
+			}
 			case ShaderDataType::Sampler2D:
 			{
 				if (std::get<UUID>(param.second.Data) != 0)
@@ -59,46 +140,19 @@ namespace Debut
 			}
 		}
 
-		Bind();
+		if (m_Target != nullptr)
+			m_Target->BindTexture();
+		else
+			BindTexture();
 
 		RenderCommand::DrawIndexed(m_VertexArray, m_VertexArray->GetIndexBuffer()->GetCount());
 
-		Unbind();
+		if (m_Target != nullptr)
+			m_Target->UnbindTexture();
+		else
+			UnbindTexture();
+
 		shader->Unbind();
-
 		m_VertexArray->Unbind();
-	}
-
-	void RenderTexture::Draw(Ref<Shader> shader, Ref<PostProcessingStack> postProcessingStack)
-	{
-		std::unordered_map<std::string, ShaderUniform> props;
-		Draw(shader, props);
-
-		if (postProcessingStack == nullptr)
-			return;
-
-		for (auto& volume : postProcessingStack->GetVolumes())
-		{
-			switch (volume.Type)
-			{
-			case PostProcessingEffect::Custom:
-				Draw(volume.RuntimeShader, volume.Properties);
-				break;
-			case PostProcessingEffect::Blur:
-				// Build kernel
-				int kernelSize = std::get<int>(props["u_KernelSize"].Data);
-				std::vector<float> kernel = MathUtils::ComputeGaussianKernel(kernelSize, 1.0f, (kernelSize * 2 + 1) / 2.0f);
-
-				// Set horizontal, draw
-				auto props = volume.Properties;
-				ShaderUniform::UniformData data = false;
-				props["u_Vertical"] = ShaderUniform("u_Vertical", ShaderDataType::Bool, data);
-				Draw(volume.RuntimeShader, props);
-				// Set vertical, draw
-				props["u_Vertical"].Data = true;
-				Draw(volume.RuntimeShader, props);
-				break;
-			}
-		}
 	}
 }
