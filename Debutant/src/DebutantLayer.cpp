@@ -28,12 +28,15 @@
 /*
 *   POST PROCESSING
 *   TODO
+*   - Change framebuffer size. Actually, don't chage framebuffer size. Instead, create log2(height) buffers, each of size
+*       prevWidth / 2. In that way, depending on the level of blur, we can use a downscaled buffer instead of a huge kernel.
+*       Ideally, I'd like to keep the number of passes fixed to a certain amount, say 16 samplings per pixel. 
+*       This will also come handy in the future when I'll need to add Bloom and HDR
 *   - Change volume order
+*   - Add support to screen resizing
 * 
 *   BUGS
-*   - Only top of the stack is applied
-*   - Blur properties aren't updated (color grading ones are though)
-* 
+*   - Don't apply post processing to debug layer
     GENERAL BUGS:
     - 2D rendering's fucked up again
 */
@@ -49,10 +52,6 @@
 *   - Each volume is basically a shader with some parameters, which is a Material. That means I can let users create their own
 *       shader + Material and use it as a post processing volume. In addition, I can provide some default volumes they can use
 *       (bloom, color correction, chromatic aberration etc)
-*   
-*   POST PROCESSING POLISH
-*   - Drawing the render texture and applying post processing should be done by the engine, not by the viewport. The user should
-*       just say RenderTexture.Draw(buffer, PostProcessing) and get away with it
 *   
 *   OPTIMIZATION AND IMPROVEMENTS
 *   - Important lights: find the lights that, at the moment, are important. The nearest to the camera? Always consider the 

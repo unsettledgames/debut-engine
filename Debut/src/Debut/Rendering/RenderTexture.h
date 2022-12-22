@@ -32,16 +32,11 @@ namespace Debut
 		virtual void BindTexture() = 0;
 		virtual void UnbindTexture() = 0;
 
-		void Begin(Ref<FrameBuffer> originalScene, Ref<Shader> startShader);
-		void End();
-
 		inline Ref<FrameBuffer> GetTopFrameBuffer() { return m_PrevBuffer; }
 		inline void SetFrameBuffer(Ref<FrameBuffer> buffer) { m_FrameBuffer = buffer; }
 
 		inline Ref<FrameBuffer> GetFrameBuffer() { return m_FrameBuffer; }
 		inline uint32_t GetRendererID() { return m_RendererID; }
-		inline float GetWidth() { return m_Width; }
-		inline float GetHeight() { return m_Height; }
 
 	protected:
 		Ref<VertexBuffer> m_VertexBuffer;
@@ -51,12 +46,11 @@ namespace Debut
 
 		uint32_t m_RendererID;
 
-		float m_Width;
-		float m_Height;
 		RenderTextureMode m_Mode;
 		Ref<RenderTexture> m_Target;
 
 		Ref<FrameBuffer> m_PrevBuffer;
 		Ref<FrameBuffer> m_NextBuffer;
+		std::unordered_map<uint32_t, Ref<FrameBuffer>> m_DownscaledBuffers;
 	};
 }

@@ -10,8 +10,6 @@ namespace Debut
 	OpenGLRenderTexture::OpenGLRenderTexture(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode) :
 		RenderTexture(buffer != nullptr ? buffer->GetSpecs() : FrameBufferSpecifications(false))
 	{
-		m_Width = width;
-		m_Height = height;
 		m_Mode = mode;
 
 		float vertices[16] = { 

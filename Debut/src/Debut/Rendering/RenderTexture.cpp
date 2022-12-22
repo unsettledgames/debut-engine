@@ -35,8 +35,27 @@ namespace Debut
 		m_NextBuffer = FrameBuffer::Create(specs);
 
 		m_Target = RenderTexture::Create(specs.Width, specs.Height, nullptr, RenderTextureMode::Color);
-		m_Width = specs.Width;
-		m_Height = specs.Height;
+
+		uint32_t currHeight = specs.Height / 2;
+		uint32_t currWidth = specs.Width / 2;
+		uint32_t flag = std::min<uint32_t>(currHeight, currWidth);
+
+		uint32_t i = 1;
+		while (flag > 0)
+		{
+			FrameBufferSpecifications specs;
+
+			specs.Width = currWidth;
+			specs.Height = currHeight;
+			specs.Attachments = { {FrameBufferTextureFormat::Color} };
+
+			m_DownscaledBuffers[i] = FrameBuffer::Create(specs);
+			i++;
+
+			currWidth /= 2;
+			currHeight /= 2;
+			flag /= 2;
+		}
 	}
 
 	void RenderTexture::Draw(Ref<FrameBuffer> startBuffer, Ref<Shader> startShader, Ref<PostProcessingStack> postProcessing)
@@ -65,34 +84,51 @@ namespace Debut
 			props.clear();
 			props = volume.Properties;
 
-			m_Target->SetFrameBuffer(m_PrevBuffer);
-			m_NextBuffer->Bind();
-			{
-				switch (volume.Type)
-				{
-				case PostProcessingEffect::Custom:
-					m_Target->Draw(volume.RuntimeShader, volume.Properties);
-					break;
-				case PostProcessingEffect::Blur:
-					// Build kernel
-					int kernelSize = 20;// std::get<int>(props["u_Size"].Data);
-					props["u_Size"].Data = kernelSize;
-					std::vector<float> kernel = MathUtils::ComputeGaussianKernel(20, 4.0f, 0.0f);
-
-					// Set horizontal, draw
-					props["u_Kernel"] = ShaderUniform("u_Kernel", ShaderDataType::FloatArray, kernel);
-
-					ShaderUniform::UniformData data = 0;
-					props["u_Vertical"] = ShaderUniform("u_Vertical", ShaderDataType::Int, data);
-					m_Target->Draw(volume.RuntimeShader, props);
-					// Set vertical, draw
-					props["u_Vertical"].Data = 1;
-					m_Target->Draw(volume.RuntimeShader, props);
-					break;
-				}
-			}
 			
-			m_NextBuffer->Unbind();
+			switch (volume.Type)
+			{
+			case PostProcessingEffect::Custom:
+				m_Target->SetFrameBuffer(m_PrevBuffer);
+				m_NextBuffer->Bind();
+				m_Target->Draw(volume.RuntimeShader, volume.Properties);
+				m_NextBuffer->Unbind();
+				break;
+			case PostProcessingEffect::Blur:
+				// Build kernel
+				int kernelSize = std::get<int>(props["u_Size"].Data);
+				if (kernelSize < 1)
+				{
+					kernelSize = 1;
+					volume.Properties["u_Size"].Data = kernelSize;
+				}
+
+				uint32_t i = 1;
+				while (kernelSize > 0)
+				{
+					m_DownscaledBuffers[i]->Bind();
+					{
+						// Generate kernel
+						std::vector<float> kernel = MathUtils::ComputeGaussianKernel(kernelSize / 1.5f, kernelSize / 8.0f, 0.0f);
+						// Set horizontal, draw
+						props["u_Kernel"] = ShaderUniform("u_Kernel", ShaderDataType::FloatArray, kernel);
+
+						m_Target->SetFrameBuffer(m_NextBuffer);
+
+						ShaderUniform::UniformData data = 0;
+						props["u_Vertical"] = ShaderUniform("u_Vertical", ShaderDataType::Int, data);
+						m_Target->Draw(volume.RuntimeShader, props);
+						// Set vertical, draw
+						props["u_Vertical"].Data = 1;
+						m_Target->Draw(volume.RuntimeShader, props);
+					}
+					m_DownscaledBuffers[i]->Unbind();
+					m_NextBuffer = m_DownscaledBuffers[i];
+					kernelSize /= 2;
+					i++;
+				}
+					
+				break;
+			}
 
 			tmp = m_NextBuffer;
 			m_NextBuffer = m_PrevBuffer;
@@ -107,7 +143,7 @@ namespace Debut
 		m_VertexArray->Bind();
 		shader->Bind();
 		shader->SetInt("u_Texture", texIndex);
-		shader->SetFloat2("u_TextureSize", { m_Width, m_Height });
+		shader->SetFloat2("u_TextureSize", { m_FrameBuffer->GetSpecs().Width, m_FrameBuffer->GetSpecs().Height });
 
 		for (auto& param : properties)
 		{

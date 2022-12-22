@@ -51,8 +51,7 @@ namespace Debut
         m_SceneFrameBuffer = FrameBuffer::Create(sceneFbSpecs);
         m_TextureFrameBuffer = FrameBuffer::Create(textureFbSpecs);
 
-        m_RenderTexture = RenderTexture::Create(sceneFbSpecs.Width, sceneFbSpecs.Height, 
-            DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMaps()[0]->GetFrameBuffer(), RenderTextureMode::Color);
+        m_RenderTexture = RenderTexture::Create(sceneFbSpecs.Width, sceneFbSpecs.Height, m_SceneFrameBuffer, RenderTextureMode::Color);
         m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
 
         m_EditorCamera = EditorCamera(glm::radians(30.0f), 16.0f / 9.0f, 0.1f, 1000.0f);
