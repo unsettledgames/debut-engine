@@ -33,14 +33,15 @@ namespace Debut
 
 		m_PrevBuffer = FrameBuffer::Create(specs);
 		m_NextBuffer = FrameBuffer::Create(specs);
+		m_BasicFullScreen = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
 
 		m_Target = RenderTexture::Create(specs.Width, specs.Height, nullptr, RenderTextureMode::Color);
 
-		uint32_t currHeight = specs.Height / 2;
-		uint32_t currWidth = specs.Width / 2;
+		uint32_t currHeight = specs.Height;
+		uint32_t currWidth = specs.Width;
 		uint32_t flag = std::min<uint32_t>(currHeight, currWidth);
 
-		uint32_t i = 1;
+		uint32_t i = 0;
 		while (flag > 0)
 		{
 			FrameBufferSpecifications specs;
@@ -48,10 +49,12 @@ namespace Debut
 			specs.Width = currWidth;
 			specs.Height = currHeight;
 			specs.Attachments = { {FrameBufferTextureFormat::Color} };
+			
+			m_DownscaledBuffers[i].resize(2);
+			m_DownscaledBuffers[i][0] = FrameBuffer::Create(specs);
+			m_DownscaledBuffers[i][1] = FrameBuffer::Create(specs);
 
-			m_DownscaledBuffers[i] = FrameBuffer::Create(specs);
 			i++;
-
 			currWidth /= 2;
 			currHeight /= 2;
 			flag /= 2;
@@ -62,7 +65,7 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Fullscreen::Draw");
 
-		m_Target->SetFrameBuffer(startBuffer);
+		m_Target->SetSourceBuffer(startBuffer);
 
 		m_NextBuffer->Bind();
 		m_Target->Draw(startShader);
@@ -88,10 +91,14 @@ namespace Debut
 			switch (volume.Type)
 			{
 			case PostProcessingEffect::Custom:
-				m_Target->SetFrameBuffer(m_PrevBuffer);
+				m_Target->SetSourceBuffer(m_PrevBuffer);
 				m_NextBuffer->Bind();
 				m_Target->Draw(volume.RuntimeShader, volume.Properties);
 				m_NextBuffer->Unbind();
+
+				tmp = m_NextBuffer;
+				m_NextBuffer = m_PrevBuffer;
+				m_PrevBuffer = tmp;
 				break;
 			case PostProcessingEffect::Blur:
 				// Build kernel
@@ -102,37 +109,46 @@ namespace Debut
 					volume.Properties["u_Size"].Data = kernelSize;
 				}
 
-				uint32_t i = 1;
-				while (kernelSize > 0)
+				uint32_t i = 0;
+				while (i < std::log2(kernelSize))
 				{
-					m_DownscaledBuffers[i]->Bind();
-					{
-						// Generate kernel
-						std::vector<float> kernel = MathUtils::ComputeGaussianKernel(kernelSize / 1.5f, kernelSize / 8.0f, 0.0f);
-						// Set horizontal, draw
-						props["u_Kernel"] = ShaderUniform("u_Kernel", ShaderDataType::FloatArray, kernel);
+					// Generate kernel
+					std::vector<float> kernel = MathUtils::ComputeGaussianKernel(kernelSize, kernelSize / (i + 1), 0.0f);
+					// Set horizontal, draw
+					props["u_Size"].Data = (int)kernelSize;
+					props["u_Kernel"] = ShaderUniform("u_Kernel", ShaderDataType::FloatArray, kernel);
 
-						m_Target->SetFrameBuffer(m_NextBuffer);
-
-						ShaderUniform::UniformData data = 0;
+					m_Target->SetSourceBuffer(m_PrevBuffer);
+					ShaderUniform::UniformData data = (int)0;
+					m_DownscaledBuffers[i][0]->Bind();
 						props["u_Vertical"] = ShaderUniform("u_Vertical", ShaderDataType::Int, data);
 						m_Target->Draw(volume.RuntimeShader, props);
-						// Set vertical, draw
-						props["u_Vertical"].Data = 1;
+					m_DownscaledBuffers[i][0]->Unbind();
+
+					// Set vertical, draw
+					m_Target->SetSourceBuffer(m_DownscaledBuffers[i][0]);
+					m_DownscaledBuffers[i][1]->Bind();
+						props["u_Vertical"].Data = (int)1;
 						m_Target->Draw(volume.RuntimeShader, props);
-					}
-					m_DownscaledBuffers[i]->Unbind();
-					m_NextBuffer = m_DownscaledBuffers[i];
-					kernelSize /= 2;
+					m_DownscaledBuffers[i][1]->Unbind();
+
+					m_PrevBuffer = m_DownscaledBuffers[i][1];
+					kernelSize /= 2.0f;
 					i++;
 				}
-					
+
+				// Draw on big buffer
+				m_Target->SetSourceBuffer(m_PrevBuffer);
+				m_NextBuffer->Bind();
+				m_Target->Draw(m_BasicFullScreen, props);
+				m_NextBuffer->Unbind();
+
+				m_PrevBuffer = m_NextBuffer;
+				m_NextBuffer = m_DownscaledBuffers[0][0];
 				break;
 			}
 
-			tmp = m_NextBuffer;
-			m_NextBuffer = m_PrevBuffer;
-			m_PrevBuffer = tmp;
+			
 		}
 	}
 

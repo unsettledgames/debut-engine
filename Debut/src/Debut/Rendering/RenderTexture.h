@@ -33,7 +33,7 @@ namespace Debut
 		virtual void UnbindTexture() = 0;
 
 		inline Ref<FrameBuffer> GetTopFrameBuffer() { return m_PrevBuffer; }
-		inline void SetFrameBuffer(Ref<FrameBuffer> buffer) { m_FrameBuffer = buffer; }
+		inline void SetSourceBuffer(Ref<FrameBuffer> buffer) { m_FrameBuffer = buffer; }
 
 		inline Ref<FrameBuffer> GetFrameBuffer() { return m_FrameBuffer; }
 		inline uint32_t GetRendererID() { return m_RendererID; }
@@ -47,10 +47,11 @@ namespace Debut
 		uint32_t m_RendererID;
 
 		RenderTextureMode m_Mode;
+		Ref<Shader> m_BasicFullScreen;
 		Ref<RenderTexture> m_Target;
 
 		Ref<FrameBuffer> m_PrevBuffer;
 		Ref<FrameBuffer> m_NextBuffer;
-		std::unordered_map<uint32_t, Ref<FrameBuffer>> m_DownscaledBuffers;
+		std::unordered_map<uint32_t, std::vector<Ref<FrameBuffer>>> m_DownscaledBuffers;
 	};
 }
