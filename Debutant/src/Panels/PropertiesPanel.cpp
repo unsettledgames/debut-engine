@@ -741,6 +741,9 @@ namespace Debut
 
 		uint32_t i = 0;
 		int toDelete = -1;
+		int toMove = -1;
+		bool moveUp = false;
+		std::stringstream widgetID;
 
 		for (auto& volume : stack->GetVolumes())
 		{
@@ -850,7 +853,21 @@ namespace Debut
 				}
 			}
 
-			if (ImGui::Button("Delete volume", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
+			widgetID.str();
+			widgetID << "##" << volume.Name << i;
+			if (ImGui::Button(("Move up" + widgetID.str()).c_str(), {ImGui::GetContentRegionAvail().x / 2.0f - 1, ImGui::GetTextLineHeight() * 1.5f}))
+			{
+				toMove = i;
+				moveUp = true;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button(("Move down" + widgetID.str()).c_str(), { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
+			{
+				toMove = i;
+				moveUp = false;
+			}
+
+			if (ImGui::Button(("Delete volume" + widgetID.str()).c_str(), { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
 				toDelete = i;
 			i++;
 			ImGuiUtils::Separator();
@@ -861,6 +878,9 @@ namespace Debut
 			stack->RemoveVolume(toDelete);
 			config.Volumes.erase(config.Volumes.begin() + toDelete);
 		}
+
+		if (toMove >= 0)
+			stack->MoveVolume(toMove, moveUp);
 
 		if (ImGui::Button("Apply settings", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
 			stack->SaveSettings(m_AssetPath.string(), config);

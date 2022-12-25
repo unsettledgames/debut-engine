@@ -56,6 +56,7 @@ namespace Debut
 		inline void PushVolume(const PostProcessingVolume& volume) { m_Volumes.push_back(volume); }
 		inline void PopVolume(const PostProcessingVolume& volume) { m_Volumes.pop_back(); }
 		inline void RemoveVolume(uint32_t idx)  { m_Volumes.erase(m_Volumes.begin() + idx); }
+		void MoveVolume(uint32_t i, bool up);
 
 		inline std::string GetPath() { return m_Path; }
 		inline UUID GetID() { return m_ID; }

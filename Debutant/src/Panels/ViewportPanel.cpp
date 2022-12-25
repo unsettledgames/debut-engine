@@ -206,7 +206,7 @@ namespace Debut
             {
                 m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
 
-                m_SceneFrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+                m_RenderTexture->Resize(m_ViewportSize.x, m_ViewportSize.y);
                 m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
                 DebutantApp::Get().GetSceneManager().GetActiveScene()->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             }

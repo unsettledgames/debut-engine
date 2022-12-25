@@ -187,4 +187,20 @@ namespace Debut
 		for (auto& volume : m_Volumes)
 			volume.RuntimeShader = AssetManager::Request<Shader>(volume.ShaderID);
 	}
+
+	void PostProcessingStack::MoveVolume(uint32_t idx, bool up)
+	{
+		if (idx == 0 && up)
+			return;
+		if (idx == m_Volumes.size() - 1 && !up)
+			return;
+
+		PostProcessingVolume volume = m_Volumes[idx];
+		m_Volumes.erase(m_Volumes.begin() + idx);
+
+		if (up)
+			m_Volumes.insert(m_Volumes.begin() + idx - 1, volume);
+		else
+			m_Volumes.insert(m_Volumes.begin() + idx + 1, volume);
+	}
 }

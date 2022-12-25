@@ -61,6 +61,17 @@ namespace Debut
 		}
 	}
 
+	void RenderTexture::Resize(uint32_t x, uint32_t y)
+	{
+		m_FrameBuffer->Resize(x, y);
+
+		for (uint32_t i = 0; i < m_DownscaledBuffers.size(); i++)
+		{
+			m_DownscaledBuffers[i][0]->Resize(x, y);
+			m_DownscaledBuffers[i][1]->Resize(x, y);
+		}
+	}
+
 	void RenderTexture::Draw(Ref<FrameBuffer> startBuffer, Ref<Shader> startShader, Ref<PostProcessingStack> postProcessing)
 	{
 		DBT_PROFILE_SCOPE("Fullscreen::Draw");

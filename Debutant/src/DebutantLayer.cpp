@@ -27,18 +27,12 @@
 
 /*
 *   POST PROCESSING
-*   TODO
-*   - Change framebuffer size. Actually, don't chage framebuffer size. Instead, create log2(height) buffers, each of size
-*       prevWidth / 2. In that way, depending on the level of blur, we can use a downscaled buffer instead of a huge kernel.
-*       Ideally, I'd like to keep the number of passes fixed to a certain amount, say 16 samplings per pixel. 
-*       This will also come handy in the future when I'll need to add Bloom and HDR
-*   - Change volume order
-*   - Add support to screen resizing
+*   - Editing parameters for hydenthical effects edits all of them at once
 * 
 *   BUGS
 *   - Don't apply post processing to debug layer
     GENERAL BUGS:
-    - 2D rendering's fucked up again
+    - 2D rendering's fucked up again, probably something about inverse view matrix
 */
 
 /*

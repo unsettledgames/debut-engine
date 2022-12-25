@@ -28,6 +28,7 @@ namespace Debut
 		void Draw(Ref<Shader> shader, std::unordered_map<std::string, 
 			ShaderUniform>& properties = std::unordered_map<std::string, ShaderUniform>());
 		void Draw(Ref<FrameBuffer> startBuffer, Ref<Shader> startShader, Ref<PostProcessingStack> postProcessing);
+		void Resize(uint32_t x, uint32_t y);
 
 		virtual void BindTexture() = 0;
 		virtual void UnbindTexture() = 0;
