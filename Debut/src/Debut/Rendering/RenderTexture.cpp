@@ -217,14 +217,14 @@ namespace Debut
 		m_VertexArray->Unbind();
 	}
 
-	void RenderTexture::DrawOverlay(Ref<FrameBuffer> under, Ref<FrameBuffer> above, Ref<Shader> shader)
+	void RenderTexture::DrawOverlay(Ref<FrameBuffer> above, Ref<Shader> shader)
 	{
 		DBT_PROFILE_SCOPE("Fullscreen::Draw");
 
 		m_Target->SetSourceBuffer(above);
 
-		under->Bind();
+		m_PrevBuffer->Bind();
 		m_Target->Draw(shader);
-		under->Unbind();
+		m_PrevBuffer->Unbind();
 	}
 }

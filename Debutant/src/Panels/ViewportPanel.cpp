@@ -112,7 +112,7 @@ namespace Debut
         // The scene frame buffer now contains the whole scene. Render the frame buffer to a texture.
         m_RenderTexture->Draw(m_SceneFrameBuffer, m_FullscreenShader, postProcessing);
         // Render debug data
-        m_RenderTexture->DrawOverlay(m_RenderTexture->GetTopFrameBuffer(), m_DebugFrameBuffer, m_FullscreenShader);
+        m_RenderTexture->DrawOverlay(m_DebugFrameBuffer, m_FullscreenShader);
     }
 
 	void ViewportPanel::OnImGuiRender()
