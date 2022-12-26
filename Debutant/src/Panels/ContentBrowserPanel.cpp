@@ -5,6 +5,7 @@
 #include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/Physics/PhysicsMaterial3D.h>
+#include <Debut/Rendering/Resources/PostProcessing.h>
 #include <Debut/AssetManager/AssetManager.h>
 #include "Utils/EditorCache.h"
 #include <Debut/Utils/CppUtils.h>
@@ -33,19 +34,7 @@ namespace Debut
 		EditorCache::Textures().Put("cb-search", Texture2D::Create("assets/icons/search.png"));
 		m_SelectedDir = "assets";
 
-		// Get contents: this is used to show folder first and then files
-		for (auto& dirEntry : std::filesystem::directory_iterator(s_AssetsPath))
-		{
-			// Don't show meta files
-			if (dirEntry.path().extension() == ".meta")
-				continue;
-
-			// Sort the entry
-			if (dirEntry.is_directory())
-				m_Dirs.push_back(dirEntry);
-			else
-				m_Files.push_back(dirEntry);
-		}
+		CBReloadFileSystem();
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
@@ -108,6 +97,11 @@ namespace Debut
 					assetType = "Skybox";
 					defaultName = "New Skybox";
 				}
+				if (ImGui::MenuItem("Post Processing Stack"))
+				{
+					assetType = "PostProcessingStack";
+					defaultName = "New Post Processing Stack";
+				}
 
 				ImGui::EndMenu();
 			}
@@ -141,8 +135,11 @@ namespace Debut
 				AssetManager::CreateAsset<Material>(m_SelectedDir + "\\" + assetName + ".mat");
 			else if (assetType.compare("Skybox") == 0)
 				AssetManager::CreateAsset<Skybox>(m_SelectedDir + "\\" + assetName + ".skybox");
+			else if (assetType.compare("PostProcessingStack") == 0)
+				AssetManager::CreateAsset<PostProcessingStack>(m_SelectedDir + "\\" + assetName + ".postps");
 
 			assetType = "";
+			CBReloadFileSystem();
 		}
 
 		ImGui::End();
@@ -430,6 +427,28 @@ namespace Debut
 				ImGui::CloseCurrentPopup();
 
 			ImGui::EndPopup();
+		}
+
+		CBReloadFileSystem();
+	}
+
+	void ContentBrowserPanel::CBReloadFileSystem()
+	{
+		m_Dirs.resize(0);
+		m_Files.resize(0);
+
+		// Get contents: this is used to show folder first and then files
+		for (auto& dirEntry : std::filesystem::directory_iterator(s_AssetsPath))
+		{
+			// Don't show meta files
+			if (dirEntry.path().extension() == ".meta")
+				continue;
+
+			// Sort the entry
+			if (dirEntry.is_directory())
+				m_Dirs.push_back(dirEntry);
+			else
+				m_Files.push_back(dirEntry);
 		}
 	}
 

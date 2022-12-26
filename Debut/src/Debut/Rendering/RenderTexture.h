@@ -2,7 +2,9 @@
 
 #include <Debut/Core/Core.h>
 #include <Debut/Rendering/Structures/FrameBuffer.h>
+#include <Debut/Rendering/Shader.h>
 
+#include <unordered_map>
 
 namespace Debut
 {
@@ -12,6 +14,7 @@ namespace Debut
 	class VertexArray;
 
 	class Shader;
+	class PostProcessingStack;
 
 	enum class RenderTextureMode {Color = 0, Depth};
 
@@ -19,17 +22,23 @@ namespace Debut
 	{
 	public:
 		static Ref<RenderTexture> Create(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode);
+		RenderTexture(FrameBufferSpecifications bufferSpecs);
 		~RenderTexture() = default;
 
-		virtual void Draw(Ref<Shader> shader) = 0;
-		virtual void Bind() = 0;
-		virtual void Unbind() = 0;
+		void Draw(Ref<Shader> shader, std::unordered_map<std::string, 
+			ShaderUniform>& properties = std::unordered_map<std::string, ShaderUniform>());
+		void Draw(Ref<FrameBuffer> startBuffer, Ref<Shader> startShader, Ref<PostProcessingStack> postProcessing);
+		void DrawOverlay(Ref<FrameBuffer> topBuffer, Ref<Shader> shader);
+		void Resize(uint32_t x, uint32_t y);
 
-		inline void SetFrameBuffer(Ref<FrameBuffer> buffer) { m_FrameBuffer = buffer; }
+		virtual void BindTexture() = 0;
+		virtual void UnbindTexture() = 0;
 
+		inline Ref<FrameBuffer> GetTopFrameBuffer() { return m_PrevBuffer; }
+		inline void SetSourceBuffer(Ref<FrameBuffer> buffer) { m_FrameBuffer = buffer; }
+
+		inline Ref<FrameBuffer> GetFrameBuffer() { return m_FrameBuffer; }
 		inline uint32_t GetRendererID() { return m_RendererID; }
-		inline float GetWidth() { return m_Width; }
-		inline float GetHeight() { return m_Height; }
 
 	protected:
 		Ref<VertexBuffer> m_VertexBuffer;
@@ -39,8 +48,12 @@ namespace Debut
 
 		uint32_t m_RendererID;
 
-		float m_Width;
-		float m_Height;
 		RenderTextureMode m_Mode;
+		Ref<Shader> m_BasicFullScreen;
+		Ref<RenderTexture> m_Target;
+
+		Ref<FrameBuffer> m_PrevBuffer;
+		Ref<FrameBuffer> m_NextBuffer;
+		std::unordered_map<uint32_t, std::vector<Ref<FrameBuffer>>> m_DownscaledBuffers;
 	};
 }

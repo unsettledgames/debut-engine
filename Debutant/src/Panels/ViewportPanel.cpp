@@ -11,6 +11,7 @@
 
 #include <Debut/Scene/Scene.h>
 #include <Debut/Rendering/RenderTexture.h>
+#include <Debut/Rendering/Resources/PostProcessing.h>
 #include <Debut/Rendering/Renderer/Renderer3D.h>
 #include <Debut/Rendering/Structures/FrameBuffer.h>
 #include <Debut/Rendering/Structures/ShadowMap.h>
@@ -32,26 +33,26 @@ namespace Debut
     ViewportPanel::ViewportPanel(DebutantLayer* layer) : m_ParentLayer(layer)
     {
         FrameBufferSpecifications sceneFbSpecs;
-        FrameBufferSpecifications textureFbSpecs;
+        FrameBufferSpecifications debugFbSpecs;
 
         sceneFbSpecs.Attachments = {
             FrameBufferTextureFormat::Color, FrameBufferTextureFormat::Depth,
             FrameBufferTextureFormat::RED_INTEGER
         };
 
-        textureFbSpecs.Attachments = { FrameBufferTextureFormat::Color };
+        debugFbSpecs.Attachments = { FrameBufferTextureFormat::Color };
 
         sceneFbSpecs.Width = DebutantApp::Get().GetWindow().GetWidth();
         sceneFbSpecs.Height = DebutantApp::Get().GetWindow().GetHeight();
 
-        textureFbSpecs.Width = sceneFbSpecs.Width;
-        textureFbSpecs.Height = sceneFbSpecs.Height;
+        debugFbSpecs.Width = sceneFbSpecs.Width;
+        debugFbSpecs.Height = sceneFbSpecs.Height;
 
         m_SceneFrameBuffer = FrameBuffer::Create(sceneFbSpecs);
-        m_TextureFrameBuffer = FrameBuffer::Create(textureFbSpecs);
+        m_DebugFrameBuffer = FrameBuffer::Create(debugFbSpecs);
 
-        m_RenderTexture = RenderTexture::Create(sceneFbSpecs.Width, sceneFbSpecs.Height, 
-            DebutantApp::Get().GetSceneManager().GetActiveScene()->GetShadowMaps()[0]->GetFrameBuffer(), RenderTextureMode::Color);
+        m_RenderTexture = RenderTexture::Create(sceneFbSpecs.Width, sceneFbSpecs.Height, m_SceneFrameBuffer, RenderTextureMode::Color);
+        m_DebugTexture = RenderTexture::Create(debugFbSpecs.Width, debugFbSpecs.Height, m_DebugFrameBuffer, RenderTextureMode::Color);
         m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
 
         m_EditorCamera = EditorCamera(glm::radians(30.0f), 16.0f / 9.0f, 0.1f, 1000.0f);
@@ -67,6 +68,12 @@ namespace Debut
 
         SceneManager::SceneState sceneState = DebutantApp::Get().GetSceneManager().GetState();
         Ref<Scene> activeScene = DebutantApp::Get().GetSceneManager().GetActiveScene();
+        SceneCamera& activeCamera = sceneState == SceneManager::SceneState::Play ?
+            activeScene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().Camera : m_EditorCamera;
+        
+        // The editor takes care of the debug renderer, so we call its begin and ends here
+        RendererDebug::BeginScene(activeCamera);
+
         // Update the scene
         switch (sceneState)
         {
@@ -75,19 +82,37 @@ namespace Debut
             break;
         case SceneManager::SceneState::Edit:
             activeScene->OnEditorUpdate(ts, m_EditorCamera, m_SceneFrameBuffer);
-
-            m_SceneFrameBuffer->Bind();
-            // Render debug
-            DrawCollider();
             break;
         }
-        m_SceneFrameBuffer->Unbind();
+
+        // Collider selection data
+        std::vector<glm::vec3> points;
+        std::vector<std::string> labels;
+
+        // Render debug on a different buffer so it isn't affected by post processing
+        m_DebugFrameBuffer->Bind();
+        {
+            RenderCommand::SetClearColor(glm::vec4(0, 0, 0, 0));
+            RenderCommand::Clear();
+
+            if (sceneState == SceneManager::SceneState::Edit)
+                DrawCollider(points, labels);
+            if (Renderer::GetConfig().RenderColliders)
+                activeScene->RenderColliders(activeCamera, glm::inverse(activeCamera.GetView()));
+
+            RendererDebug::EndScene();
+
+            if (sceneState == SceneManager::SceneState::Edit)
+                SelectCollider(points, labels);
+        }
+        m_DebugFrameBuffer->Unbind();
+
+        Ref<PostProcessingStack> postProcessing = activeScene->GetPostProcessingStack();
 
         // The scene frame buffer now contains the whole scene. Render the frame buffer to a texture.
-        m_TextureFrameBuffer->Bind();
-        m_RenderTexture->SetFrameBuffer(m_SceneFrameBuffer);
-        m_RenderTexture->Draw(m_FullscreenShader);
-        m_TextureFrameBuffer->Unbind();
+        m_RenderTexture->Draw(m_SceneFrameBuffer, m_FullscreenShader, postProcessing);
+        // Render debug data
+        m_RenderTexture->DrawOverlay(m_DebugFrameBuffer, m_FullscreenShader);
     }
 
 	void ViewportPanel::OnImGuiRender()
@@ -169,7 +194,7 @@ namespace Debut
             m_TopMenuSize.y += ImGui::GetTextLineHeight() * 1.5f;
 
             // Draw scene
-            uint32_t texId = m_TextureFrameBuffer->GetColorAttachment();
+            uint32_t texId = m_RenderTexture->GetTopFrameBuffer()->GetColorAttachment();
             ImGui::Image((void*)texId, ImVec2(viewportSize.x, viewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
 
             // Accept scene loading
@@ -198,7 +223,12 @@ namespace Debut
             {
                 m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
 
+                m_RenderTexture->Resize(m_ViewportSize.x, m_ViewportSize.y);
+                m_DebugTexture->Resize(m_ViewportSize.x, m_ViewportSize.y);
+
                 m_SceneFrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+                m_DebugFrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+
                 m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
                 DebutantApp::Get().GetSceneManager().GetActiveScene()->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             }
@@ -316,25 +346,19 @@ namespace Debut
         ImGui::PopStyleVar();
 	}
 
-    void ViewportPanel::DrawCollider()
+    void ViewportPanel::DrawCollider(std::vector<glm::vec3>& points, std::vector<std::string>& labels)
     {
         DBT_PROFILE_FUNCTION();
         glm::vec2* viewportBounds = GetViewportBounds();
 
         Entity currSelection = m_Selection;
         glm::vec4 viewport = glm::vec4(0.0f, 0.0f, viewportBounds[1].x - viewportBounds[0].x, viewportBounds[1].y - viewportBounds[0].y);
-        // Points
-        std::vector<glm::vec3> points;
-        // Labels
-        std::vector<std::string> labels;
 
         if (currSelection)
         {
             TransformComponent& transform = currSelection.Transform();
             glm::mat4 transformMat = transform.GetTransform();
             glm::mat4 viewProj = m_EditorCamera.GetViewProjection();
-
-            RendererDebug::BeginScene(m_EditorCamera);
 
             if (currSelection.HasComponent<BoxCollider2DComponent>())
             {
@@ -464,43 +488,49 @@ namespace Debut
                 MeshCollider3DComponent& collider = currSelection.GetComponent<MeshCollider3DComponent>();
                 RendererDebug::DrawMesh(collider.Mesh, collider.Offset, transformMat, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
             }
+        }
+    }
 
-            // Render points
-            RendererDebug::EndScene();
+    void ViewportPanel::SelectCollider(std::vector<glm::vec3> points, std::vector<std::string> labels)
+    {
+        if (!m_Selection) return;
 
-            // IMPLEMENT LOGIC
-            // Selection and dragging
-            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+        glm::vec2* viewportBounds = GetViewportBounds();
+        glm::vec4 viewport = glm::vec4(0.0f, 0.0f, viewportBounds[1].x - viewportBounds[0].x, viewportBounds[1].y - viewportBounds[0].y);
+        glm::mat4 transformMat = m_Selection.Transform().GetTransform();
+        glm::mat4 viewProj = m_EditorCamera.GetViewProjection();
+
+         // Selection and dragging
+        if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+        {
+            // Don't edit the selection if the user is dragging a vertex
+            if (ImGuizmo::IsUsing())
+                return;
+
+            // Get hovered color
+            glm::vec2 coords = GetFrameBufferCoords();
+            glm::vec4 pixel = m_DebugFrameBuffer->ReadPixel(0, coords.x, coords.y);
+
+            // Check that the distance is far from the selected point before disabling TODO
+            if (!(pixel.r == 0.0 && pixel.g == 255.0 && pixel.b == 0.0 && pixel.a == 255) &&
+                glm::distance(TransformationUtils::WorldToScreenPos(m_ColliderSelection.SelectedPoint,
+                    m_EditorCamera.GetViewProjection(), m_ColliderSelection.PointTransform, viewport),
+                    glm::vec3(coords, m_ColliderSelection.SelectedPoint.z)) > 6.0f)
             {
-                // Don't edit the selection if the user is dragging a vertex
-                if (ImGuizmo::IsUsing())
-                    return;
+                m_ColliderSelection.Valid = false;
+                m_ColliderSelection.SelectedName = "";
+                return;
+            }
 
-                // Get hovered color
-                glm::vec2 coords = GetFrameBufferCoords();
-                glm::vec4 pixel = m_SceneFrameBuffer->ReadPixel(0, coords.x, coords.y);
-
-                // Check that the distance is far from the selected point before disabling TODO
-                if (!(pixel.r == 0.0 && pixel.g == 255.0 && pixel.b == 0.0 && pixel.a == 255) &&
-                    glm::distance(TransformationUtils::WorldToScreenPos(m_ColliderSelection.SelectedPoint,
-                        m_EditorCamera.GetViewProjection(), m_ColliderSelection.PointTransform, viewport),
-                        glm::vec3(coords, m_ColliderSelection.SelectedPoint.z)) > 6.0f)
+            for (uint32_t i = 0; i < points.size(); i++)
+            {
+                glm::vec3 screenPoint = TransformationUtils::WorldToScreenPos(points[i], viewProj, m_ColliderSelection.PointTransform, viewport);
+                if (glm::distance(screenPoint, glm::vec3(coords, screenPoint.z)) < 6.0f)
                 {
-                    m_ColliderSelection.Valid = false;
-                    m_ColliderSelection.SelectedName = "";
-                    return;
-                }
-
-                for (uint32_t i = 0; i < points.size(); i++)
-                {
-                    glm::vec3 screenPoint = TransformationUtils::WorldToScreenPos(points[i], viewProj, m_ColliderSelection.PointTransform, viewport);
-                    if (glm::distance(screenPoint, glm::vec3(coords, screenPoint.z)) < 6.0f)
-                    {
-                        m_ColliderSelection.Valid = true;
-                        m_ColliderSelection.SelectedName = labels[i];
-                        m_ColliderSelection.SelectedPoint = points[i];
-                        m_ColliderSelection.SelectedEntity = currSelection;
-                    }
+                    m_ColliderSelection.Valid = true;
+                    m_ColliderSelection.SelectedName = labels[i];
+                    m_ColliderSelection.SelectedPoint = points[i];
+                    m_ColliderSelection.SelectedEntity = m_Selection;
                 }
             }
         }

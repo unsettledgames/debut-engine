@@ -80,6 +80,7 @@ namespace Debut
 	{
 		out << YAML::Key << "FixedAspectRatio" << YAML::Value << c.FixedAspectRatio;
 		out << YAML::Key << "Primary" << YAML::Value << c.Primary;
+		out << YAML::Key << "PostProcessingStack" << YAML::Value << c.PostProcessing;
 
 		out << YAML::Key << "CameraData" << YAML::Value;
 		out << YAML::BeginMap;
@@ -243,6 +244,7 @@ namespace Debut
 		CameraComponent& cc = e.AddComponent<CameraComponent>();
 		cc.FixedAspectRatio = in["FixedAspectRatio"].as<bool>();
 		cc.Primary = in["Primary"].as<bool>();
+		cc.PostProcessing = in["PostProcessingStack"] ? in["PostProcessingStack"].as<uint64_t>() : 0;
 
 		cc.Camera.SetOrthoSize(in["CameraData"]["OrthoSize"].as<float>());
 		cc.Camera.SetNearPlane(in["CameraData"]["OrthoNear"].as<float>());

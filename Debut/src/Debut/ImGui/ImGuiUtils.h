@@ -56,6 +56,7 @@ namespace Debut
 		static void Separator();
 
 		static bool DragFloat(const std::string& label, float* value, float power, float min = -100000.0f, float max = 100000.0f, uint32_t columnWidth = 130);
+		static bool DragInt(const std::string& label, int* value, float power, float min = -100000.0f, float max = 100000.0f, uint32_t columnWidth = 130);
 		static bool Color3(const std::string& label, std::vector<float*> values);
 		static bool Color4(const std::string& label, std::vector<float*> values);
 

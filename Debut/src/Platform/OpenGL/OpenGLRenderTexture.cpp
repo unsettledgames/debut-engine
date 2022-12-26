@@ -1,18 +1,15 @@
 #include <Platform/OpenGL/OpenGLRenderTexture.h>
+#include <Debut/Rendering/Shader.h>
 #include <Debut/Rendering/Structures/VertexArray.h>
 #include <Debut/Rendering/Structures/Buffer.h>
-#include <Debut/Rendering/Shader.h>
-#include <Debut/Rendering/Renderer/RenderCommand.h>
-
 #include <Platform/OpenGL/OpenGLError.h>
 #include <glad/glad.h>
 
 namespace Debut
 {
-	OpenGLRenderTexture::OpenGLRenderTexture(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode)
+	OpenGLRenderTexture::OpenGLRenderTexture(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode) :
+		RenderTexture(buffer != nullptr ? buffer->GetSpecs() : FrameBufferSpecifications(false))
 	{
-		m_Width = width;
-		m_Height = height;
 		m_Mode = mode;
 
 		float vertices[16] = { 
@@ -36,21 +33,7 @@ namespace Debut
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 	}
 
-	void OpenGLRenderTexture::Draw(Ref<Shader> shader)
-	{
-		m_VertexArray->Bind();
-		shader->Bind();
-		shader->SetInt("u_Texture", 0);
-		Bind();
-
-		RenderCommand::DrawIndexed(m_VertexArray, m_VertexArray->GetIndexBuffer()->GetCount());
-		
-		Unbind();
-		shader->Unbind();
-		m_VertexArray->Unbind();
-	}
-
-	void OpenGLRenderTexture::Bind()
+	void OpenGLRenderTexture::BindTexture()
 	{
 		uint32_t attachment = 0;
 
@@ -67,7 +50,7 @@ namespace Debut
 		GLCall(glBindTextureUnit(0, attachment));
 	}
 
-	void OpenGLRenderTexture::Unbind()
+	void OpenGLRenderTexture::UnbindTexture()
 	{
 		GLCall(glBindTextureUnit(0, 0));
 	}
