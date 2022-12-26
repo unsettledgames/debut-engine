@@ -8,9 +8,7 @@ namespace Debut
 	public:
 		OpenGLRenderTexture(float width, float height, Ref<FrameBuffer> buffer, RenderTextureMode mode);
 
-		virtual void Draw(Ref<Shader> shader) override;
-
-		virtual void Bind() override;
-		virtual void Unbind() override;
+		virtual void BindTexture() override;
+		virtual void UnbindTexture() override;
 	};
 }

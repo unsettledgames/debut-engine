@@ -11,6 +11,7 @@
 #include <Debut/AssetManager/AssetManager.h>
 
 #include <Debut/Rendering/Resources/Skybox.h>
+#include <Debut/Rendering/Resources/PostProcessing.h>
 #include <Debut/Rendering/Material.h>
 #include <Debut/Rendering/Shader.h>
 #include <Debut/Physics/PhysicsMaterial3D.h>
@@ -24,7 +25,8 @@
 
 namespace Debut
 {
-	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d", ".physmat3d", ".glsl", ".mat", ".model"};
+	static std::vector<std::string> s_SupportedExtensions = { ".png", ".physmat2d", ".physmat3d", ".glsl", ".mat", ".model", 
+		".skybox", ".postps", ".jpg", ".tga"};
 	static std::vector<std::string> s_ModelExtensions = { ".obj", ".fbx", ".dae", ".gltf", ".glb", ".blend", ".3ds", ".ase",
 		".ifc", ".xgl", ".zgl", ".ply", ".dxf", ".lwo", ".lws", ".lxo", ".stl", ".x", ".ac", ".ms3d", ".cob", ".scn" };
 
@@ -54,6 +56,10 @@ namespace Debut
 			else if (m_AssetType == AssetType::Skybox)
 			{
 				DrawSkyboxProperties();
+			}
+			else if (m_AssetType == AssetType::PostProcessingStack)
+			{
+				DrawPostProcessingStackProperties();
 			}
 			else if (m_AssetType == AssetType::PhysicsMaterial2D)
 			{
@@ -106,7 +112,7 @@ namespace Debut
 
 		if (ImGui::InputText("##", renameName, 128, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
-			// Set name and edit it in the asset manager
+			// TODO: Set name and edit it in the asset manager
 		}
 
 		ImGui::PopItemWidth();
@@ -430,45 +436,48 @@ namespace Debut
 						break;
 					}
 				}
-				
+
 				if (draw)
 				{
 					ImGui::PushID(uniform.second.Name.c_str());
 					switch (uniform.second.Type)
 					{
 					case ShaderDataType::Bool:
-						if (ImGui::Checkbox(uniform.second.Name.c_str(), &uniform.second.Data.Bool))
-							config.Uniforms[uniform.second.Name].Data.Bool = uniform.second.Data.Bool;
+						if (ImGui::Checkbox(uniform.second.Name.c_str(), &std::get<bool>(uniform.second.Data)))
+							config.Uniforms[uniform.second.Name].Data = uniform.second.Data;
 						break;
 
 					case ShaderDataType::Float:
 					{
-						float value = uniform.second.Data.Float;
+						float value = std::get<float>(uniform.second.Data);
 						if (ImGuiUtils::DragFloat(uniform.second.Name, &value, 0.15f))
-							config.Uniforms[uniform.second.Name].Data.Float = value;
+							config.Uniforms[uniform.second.Name].Data = value;
 						break;
 					}
 					case ShaderDataType::Float2:
 					{
-						float a = uniform.second.Data.Vec2.x, b = uniform.second.Data.Vec2.y;
+						glm::vec2 vec = std::get<glm::vec2>(uniform.second.Data);
+						float a = vec.x, b = vec.y;
 						ImGuiUtils::RGBVec2(uniform.second.Name.c_str(), { "A","B" }, { &a, &b });
-						config.Uniforms[uniform.second.Name].Data.Vec2 = { a, b };
+						config.Uniforms[uniform.second.Name].Data = glm::vec2(a, b);
 
 						break;
 					}
 					case ShaderDataType::Float3:
 					{
-						float a = uniform.second.Data.Vec3.x, b = uniform.second.Data.Vec3.y, c = uniform.second.Data.Vec3.z;
+						glm::vec3 vec = std::get<glm::vec3>(uniform.second.Data);
+						float a = vec.x, b = vec.y, c = vec.z;
 						ImGuiUtils::RGBVec3(uniform.second.Name.c_str(), { "A","B","C" }, { &a, &b, &c });
-						config.Uniforms[uniform.second.Name].Data.Vec3 = { a, b, c };
+						config.Uniforms[uniform.second.Name].Data = glm::vec3(a, b, c);
 
 						break;
 					}
 					case ShaderDataType::Float4:
 					{
-						float a = uniform.second.Data.Vec3.x, b = uniform.second.Data.Vec3.y, c = uniform.second.Data.Vec3.z, d = uniform.second.Data.Vec4.w;
+						glm::vec4 vec = std::get<glm::vec4>(uniform.second.Data);
+						float a = vec.x, b = vec.y, c = vec.z, d = vec.w;
 						ImGuiUtils::RGBVec4(uniform.second.Name.c_str(), { "A","B","C","D" }, { &a, &b, &c, &d });
-						config.Uniforms[uniform.second.Name].Data.Vec4 = { a, b, c, d };
+						config.Uniforms[uniform.second.Name].Data = glm::vec4(a, b, c, d);
 
 						break;
 					}
@@ -479,7 +488,7 @@ namespace Debut
 							ImGuiUtils::StartColumns(2, { 90, (uint32_t)ImGui::GetContentRegionAvail().x - 90 });
 							// Load the texture: if it doesn't exist, just use a white default texture
 							uint32_t rendererID;
-							Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
+							Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(std::get<UUID>(uniform.second.Data));
 							if (currTexture == nullptr)
 								rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
 							else
@@ -490,7 +499,7 @@ namespace Debut
 							ss << "Texture" << rendererID << uniform.second.Name;
 							Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 80, 80 }, ss.str().c_str());
 							if (newTexture != nullptr)
-								config.Uniforms[uniform.second.Name].Data.Texture = newTexture->GetID();
+								config.Uniforms[uniform.second.Name].Data = newTexture->GetID();
 
 							ImGui::NextColumn();
 
@@ -504,7 +513,7 @@ namespace Debut
 							ImGuiUtils::StartColumns(2, { 110, (uint32_t)ImGui::GetContentRegionAvail().x - 100 });
 							// Load the texture: if it doesn't exist, just use a white default texture
 							uint32_t rendererID;
-							Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(uniform.second.Data.Texture);
+							Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(std::get<UUID>(uniform.second.Data));
 							if (currTexture == nullptr)
 								rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
 							else
@@ -515,31 +524,37 @@ namespace Debut
 							ss << "Texture" << rendererID << uniform.second.Name;
 							Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 90, 90 }, ss.str().c_str());
 							if (newTexture != nullptr)
-								config.Uniforms[uniform.second.Name].Data.Texture = newTexture->GetID();
+								config.Uniforms[uniform.second.Name].Data = newTexture->GetID();
 
 							ImGui::NextColumn();
 
 							ImGui::BeginChild("Next data", {ImGui::GetContentRegionAvail().x, 100});
 
 							// Texture title and use button
-							bool val = config.Uniforms[textureName + ".Use"].Data.Bool;
+							if (config.Uniforms.find(textureName + ".Use") == config.Uniforms.end())
+								config.Uniforms[textureName + ".Use"].Data = false;
+							bool val = std::get<bool>(config.Uniforms[textureName + ".Use"].Data);
 							if (ImGui::Checkbox(("Texture " + uniform.second.Name).c_str(), &val))
-								config.Uniforms[textureName + ".Use"].Data.Bool = val;
+								config.Uniforms[textureName + ".Use"].Data = val;
 
 							
 							// Tiling
-							glm::vec2 tiling = config.Uniforms[textureName + ".Tiling"].Data.Vec2;
+							if (config.Uniforms.find(textureName + ".Tiling") == config.Uniforms.end())
+								config.Uniforms[textureName + ".Tiling"].Data = glm::vec2(1, 1);
+							glm::vec2 tiling = std::get<glm::vec2>(config.Uniforms[textureName + ".Tiling"].Data);
 							ImGuiUtils::RGBVec2("Tiling", { "X","Y" }, { &tiling.x, &tiling.y }, 0.0f, 80);
-							config.Uniforms[textureName + ".Tiling"].Data.Vec2 = tiling;
+							config.Uniforms[textureName + ".Tiling"].Data = tiling;
 
 
 							// Offset
-							glm::vec2 offset = config.Uniforms[textureName + ".Offset"].Data.Vec2;
+							if (config.Uniforms.find(textureName + ".Offset") == config.Uniforms.end())
+								config.Uniforms[textureName + ".Offset"].Data = glm::vec2(0, 0);
+							glm::vec2 offset = std::get<glm::vec2>(config.Uniforms[textureName + ".Offset"].Data);
 							ImGuiUtils::RGBVec2("Offset", { "X","Y" }, { &offset.x, &offset.y }, 0.0f, 80);
-							config.Uniforms[textureName + ".Offset"].Data.Vec2 = offset;
+							config.Uniforms[textureName + ".Offset"].Data = offset;
 
 							// Intensity
-							ImGuiUtils::DragFloat("Intensity", &config.Uniforms[textureName + ".Intensity"].Data.Float, 0.1f, -1000, 1000, 80);
+							ImGuiUtils::DragFloat("Intensity", &std::get<float>(config.Uniforms[textureName + ".Intensity"].Data), 0.1f, -1000, 1000, 80);
 							
 							ImGui::EndChild();
 							ImGuiUtils::ResetColumns();
@@ -628,6 +643,253 @@ namespace Debut
 		}
 	}
 
+	void PropertiesPanel::DrawPostProcessingStackProperties()
+	{
+		Ref<PostProcessingStack> stack = AssetManager::Request<PostProcessingStack>(m_AssetPath.string());
+		static PostProcessingStackConfig config = {0};
+
+		if (config.ID == 0)
+			config = stack->GetConfig(m_AssetPath.string());
+
+		if (stack->GetVolumes().size() == 0)
+			ImGui::Text("Click on \"Add Volume\" to select a post-processing effect");
+
+		if (ImGui::Button("Add volume", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
+			ImGui::OpenPopup("AddVolumeMenu");			
+
+		if (ImGui::BeginPopup("AddVolumeMenu"))
+		{
+			bool addedVolume = false;
+			std::string volumeName;
+			PostProcessingEffect effectType;
+			Ref<Shader> shader;
+
+			if (ImGui::MenuItem("Anti Aliasing"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\antialiasing.glsl");
+				volumeName = "Anti Aliasing";
+				effectType = PostProcessingEffect::AntiAliasing;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Bloom"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\bloom.glsl");
+				volumeName = "Bloom";
+				effectType = PostProcessingEffect::Bloom;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Blur"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\blur.glsl");
+				volumeName = "Blur";
+				effectType = PostProcessingEffect::Blur;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Depth of field"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\depthoffield.glsl");
+				volumeName = "Depth of field";
+				effectType = PostProcessingEffect::DepthOfField;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("White balance"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\whitebalance.glsl");
+				volumeName = "White balance";
+				effectType = PostProcessingEffect::WhiteBalance;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Fog"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\fog.glsl");
+				volumeName = "Fog";
+				effectType = PostProcessingEffect::Fog;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Ambient Occlusion"))
+			{
+				shader = AssetManager::Request<Shader>("assets\\shaders\\PostProcessing\\ambientocclusion.glsl");
+				volumeName = "Ambient Occlusion";
+				effectType = PostProcessingEffect::AmbientOcclusion;
+				addedVolume = true;
+			}
+			else if (ImGui::MenuItem("Custom"))
+			{
+				stack->PushVolume(PostProcessingVolume(0));
+				config.Volumes.push_back(PostProcessingVolume(0));
+			}
+
+			if (addedVolume)
+			{
+				PostProcessingVolume toAdd;
+				toAdd.Enabled = true;
+				toAdd.Name = volumeName;
+				toAdd.RuntimeShader = shader;
+				if (shader != nullptr)
+				{
+					toAdd.ShaderID = shader->GetID();
+					for (auto& uniform : shader->GetUniforms())
+						toAdd.Properties[uniform.Name] = uniform;
+				}
+				toAdd.Type = effectType;
+				
+				stack->PushVolume(toAdd);
+				config.Volumes.push_back(toAdd);
+			}
+			ImGui::EndPopup();
+		}
+
+		uint32_t i = 0;
+		int toDelete = -1;
+		int toMove = -1;
+		bool moveUp = false;
+		std::stringstream widgetID;
+
+		for (auto& volume : stack->GetVolumes())
+		{
+			std::stringstream ss;
+			ss << "##" <<volume.Name << i;
+			if (ImGui::Checkbox(ss.str().c_str(), &volume.Enabled))
+				config.Volumes[i].Enabled = volume.Enabled;
+
+			ImGui::SameLine();
+
+			static char buffer[256];
+			ss.str("");
+			ss << "###" << i;
+			memset(buffer, 0, 256);
+			memcpy(buffer, volume.Name.c_str(), volume.Name.length());
+			ImGui::InputText(ss.str().c_str(), buffer, 256);
+			volume.Name = std::string(buffer);
+			config.Volumes[i].Name = volume.Name;
+
+			if (volume.Type == PostProcessingEffect::Custom)
+			{
+				UUID shader = ImGuiUtils::DragDestination("Shader", ".glsl", volume.ShaderID);
+				if (shader != 0)
+				{
+					std::vector<ShaderUniform> uniforms;
+					volume.RuntimeShader = AssetManager::Request<Shader>(shader);
+					volume.ShaderID = volume.RuntimeShader->GetID();
+					uniforms = volume.RuntimeShader->GetUniforms();
+
+					volume.Properties.clear();
+
+					for (auto& uniform : uniforms)
+						volume.Properties[uniform.Name] = uniform;
+					config.Volumes[i].ShaderID = volume.ShaderID;
+					config.Volumes[i].Properties = volume.Properties;
+				}
+			}
+
+			for (auto& prop : volume.Properties)
+			{
+				if (prop.second.Name.compare("u_Texture") == 0)
+					continue;
+				ss.str("");
+				ss << "##" << i;
+				std::string name = prop.second.Name + ss.str();
+
+				switch (prop.second.Type)
+				{
+				case ShaderDataType::Float:
+					ImGuiUtils::DragFloat(name, &std::get<float>(prop.second.Data), 0.02f);
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
+					break;
+				case ShaderDataType::Float2:
+				{
+					glm::vec2& vec = std::get<glm::vec2>(prop.second.Data);
+					ImGuiUtils::RGBVec2(name.c_str(), {"X", "Y"}, {&vec.x, &vec.y});
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
+					break;
+				}
+				case ShaderDataType::Float3:
+				{
+					glm::vec3& vec = std::get<glm::vec3>(prop.second.Data);
+					ImGuiUtils::RGBVec3(name.c_str(), {"X", "Y", "Z"}, {&vec.x, &vec.y, &vec.z});
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
+					break;
+				}
+				case ShaderDataType::Float4:
+				{
+					glm::vec4& vec = std::get<glm::vec4>(prop.second.Data);
+					ImGuiUtils::RGBVec4(name.c_str(), { "X", "Y", "Z", "W" }, { &vec.x, &vec.y, &vec.z, &vec.w });
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
+					break;
+				}
+				case ShaderDataType::Bool:
+					ImGui::Checkbox(name.c_str(), &std::get<bool>(prop.second.Data));
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
+					break;
+				case ShaderDataType::Sampler2D:
+				{
+					ImGuiUtils::StartColumns(2, { 90, (uint32_t)ImGui::GetContentRegionAvail().x - 90 });
+					// Load the texture: if it doesn't exist, just use a white default texture
+					uint32_t rendererID;
+					Ref<Texture2D> currTexture = AssetManager::Request<Texture2D>(std::get<UUID>(prop.second.Data));
+					if (currTexture == nullptr)
+						rendererID = EditorCache::Textures().Get("assets\\textures\\empty_texture.png")->GetRendererID();
+					else
+						rendererID = currTexture->GetRendererID();
+
+					// Texture preview button
+					std::stringstream ss;
+					ss << "Texture" << rendererID << name;
+					Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 80, 80 }, ss.str().c_str());
+					if (newTexture != nullptr)
+					{
+						prop.second.Data = newTexture->GetID();
+						config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
+					}
+
+					ImGui::NextColumn();
+
+					// Texture title
+					ImGui::Text(("Texture " + prop.second.Name).c_str());
+
+					ImGuiUtils::ResetColumns();
+					break;
+				}
+				case ShaderDataType::Int:
+					ImGuiUtils::DragInt(name, &std::get<int>(prop.second.Data), 0.1f);
+					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
+					break;
+				}
+			}
+
+			widgetID.str();
+			widgetID << "##" << volume.Name << i;
+			if (ImGui::Button(("Move up" + widgetID.str()).c_str(), {ImGui::GetContentRegionAvail().x / 2.0f - 1, ImGui::GetTextLineHeight() * 1.5f}))
+			{
+				toMove = i;
+				moveUp = true;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button(("Move down" + widgetID.str()).c_str(), { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
+			{
+				toMove = i;
+				moveUp = false;
+			}
+
+			if (ImGui::Button(("Delete volume" + widgetID.str()).c_str(), { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
+				toDelete = i;
+			i++;
+			ImGuiUtils::Separator();
+		}
+
+		if (toDelete >= 0)
+		{
+			stack->RemoveVolume(toDelete);
+			config.Volumes.erase(config.Volumes.begin() + toDelete);
+		}
+
+		if (toMove >= 0)
+			stack->MoveVolume(toMove, moveUp);
+
+		if (ImGui::Button("Apply settings", { ImGui::GetContentRegionAvail().x, ImGui::GetTextLineHeight() * 1.5f }))
+			stack->SaveSettings(m_AssetPath.string(), config);
+	}
+
 	void PropertiesPanel::SetAsset(std::filesystem::path path, std::filesystem::path metaPath, AssetType assetType)
 	{
 		if (std::filesystem::is_directory(path))
@@ -653,5 +915,7 @@ namespace Debut
 			m_AssetType = AssetType::Mesh;
 		else if (path.extension() == ".skybox")
 			m_AssetType = AssetType::Skybox;
+		else if (path.extension() == ".postps")
+			m_AssetType = AssetType::PostProcessingStack;
 	}
 }
