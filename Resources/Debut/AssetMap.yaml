@@ -1,2688 +1,1480 @@
 Associations:
-  - ID: 6660544467496847897
-    Path: .\Lib\Assets\6660544467496847897
-  - ID: 2089522927998719932
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
+  - ID: 866493263408281929
+    Path: assets\icons\play.png
+  - ID: 18274904538340531305
+    Path: assets\icons\back.png
+  - ID: 185029471185975704
+    Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 3560159633365139825
+    Path: assets\models\cube\untitled.obj.model
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 17546517671823756921
+    Path: assets\models\house\source\domik2\bakpho.png
+  - ID: 15138046311618176639
+    Path: .\Lib\Assets\15138046311618176639
+  - ID: 15928308089835389155
+    Path: assets\models\crypt\source\map_3_castle.tga
   - ID: 5358015539333961059
     Path: assets\icons\sample_icon.png
-  - ID: 13607760988714905102
-    Path: assets\textures\akita.png
-  - ID: 9137436767197161751
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 6569130914204904123
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 509981780089462213
-    Path: assets\icons\back.png
-  - ID: 11157412299242596915
+  - ID: 8432368841643557507
+    Path: assets\icons\material.png
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
+  - ID: 4761211768748361879
     Path: assets\icons\directory.png
+  - ID: 5463946255154873774
+    Path: assets\icons\stop.png
+  - ID: 13871393827905602219
+    Path: assets\akita.skybox
+  - ID: 7814648692656951235
+    Path: assets\models\cube\BlankCube.obj.model
+  - ID: 6602497616341718374
+    Path: assets\HqSkybox.skybox
+  - ID: 18122673040023425321
+    Path: assets\icons\file.png
+  - ID: 1747995656076413226
+    Path: assets\materials\Skybox.mat
+  - ID: 1005468329897413198
+    Path: assets\icons\GizmoGlobal.png
+  - ID: 12788841987205897858
+    Path: assets\models\house\source\domik2\domik2.obj.model
+  - ID: 11702330347514272614
+    Path: assets\icons\GizmoLocal.png
+  - ID: 11573776353066831937
+    Path: assets\icons\menu.png
+  - ID: 1456671278171792054
+    Path: assets\icons\mesh.png
   - ID: 2364765643580215604
     Path: assets\shaders\point.glsl
   - ID: 9742944028868952397
     Path: assets\models\fire-greatsword\textures\Greatsword_Textures.jpg
-  - ID: 15845720391556833847
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 6989039394482446116
-    Path: assets\icons\search.png
-  - ID: 330883934568764279
-    Path: assets\icons\file.png
-  - ID: 10062654297757624695
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 7341766252568961677
-    Path: assets\icons\material.png
-  - ID: 13838293785227438369
-    Path: assets\textures\brickwall_normal.png
-  - ID: 8653149696889396285
-    Path: assets\shaders\texture.glsl
-  - ID: 11181189206938698485
-    Path: assets\shaders\skybox.glsl
-  - ID: 11978741451810236537
-    Path: assets\textures\brickwall.jpg
-  - ID: 12326487339579780293
-    Path: .\Lib\Assets\12326487339579780293
-  - ID: 8172962406618386249
-    Path: assets\models\cone\RootNode.model
-  - ID: 14739538030489593235
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 12742834648474320585
-    Path: assets\icons\model.png
-  - ID: 6200042631025989068
-    Path: assets\icons\menu.png
-  - ID: 6154583896295416476
-    Path: .\Lib\Assets\6154583896295416476
-  - ID: 15022988404336776979
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 5825200471377077168
-    Path: assets\icons\mesh.png
-  - ID: 1186819839682580350
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 2421915490094419824
-    Path: assets\models\pyramid\textures\1.png
-  - ID: 9828398193754875208
-    Path: assets\textures\Icons.png
-  - ID: 2817101069178506648
-    Path: assets\icons\play.png
-  - ID: 11315034060306294172
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 10384758533891281340
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 15270155261650687889
-    Path: .\Lib\Assets\15270155261650687889
-  - ID: 1619658718523619808
-    Path: assets\models\rock\textures\rock_texture_occlusion.png
-  - ID: 9787023099490006894
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 11765279437213816736
-    Path: assets\icons\stop.png
-  - ID: 8983391379497963090
-    Path: assets\textures\Skybox\bottom.png
-  - ID: 5750222283053926791
-    Path: assets\models\steampunk-pistol\textures\steampunk_pistol_Base_Color.jpeg
-  - ID: 12633106670147314148
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 18364337540135797738
-    Path: assets\textures\penguins.png
-  - ID: 13465371598127657861
-    Path: assets\textures\brick_normals.png
-  - ID: 366586767067093058
-    Path: potcrab.fbx.model
-  - ID: 17546517671823756921
-    Path: assets\models\house\source\domik2\bakpho.png
-  - ID: 315960883365560232
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 5478880988778211712
+  - ID: 12237306214787587077
+    Path: .\Lib\Assets\12237306214787587077
+  - ID: 9187024985367500208
     Path: assets\icons\unimported_model.png
-  - ID: 6602497616341718374
-    Path: assets\HqSkybox.skybox
-  - ID: 5673183547549805736
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 11965128317319471170
-    Path: .\Lib\Assets\11965128317319471170
-  - ID: 3783102316066835285
-    Path: assets\textures\brickwall.jpg
-  - ID: 2938159329337987758
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 8062737941872910722
-    Path: assets\models\crypt\textures\1_map_3_castle.png
-  - ID: 16775874381677145436
-    Path: assets\shaders\default-3d.glsl
-  - ID: 6225563645503148339
-    Path: assets\textures\Skybox\down.png
-  - ID: 3980985276479593213
-    Path: .\Lib\Assets\3980985276479593213
-  - ID: 5104789370988663901
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 11265617226424827983
-    Path: assets\models\tree\textures\WaterPlane_Tex_OPACITY.png
-  - ID: 2926542659444568073
-    Path: assets\textures\brickwall.jpg
-  - ID: 13534503281884501872
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 7034169328369129652
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 6992967764417543385
-    Path: assets\models\tree\source\WaterPlane_Tex_OPACITY.png
-  - ID: 4927446696682513260
-    Path: assets\textures\brickwall.jpg
-  - ID: 8831543769636242346
-    Path: assets\models\steampunk-pistol\textures\steampunk_pistol_Base_Color.jpeg
-  - ID: 16042514667033753809
-    Path: .\Lib\Assets\16042514667033753809
-  - ID: 6983606267478850555
-    Path: assets\models\crypt\textures\1_initialShadingGroup.png
-  - ID: 15506330793687446551
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 12145514199707699992
-    Path: assets\textures\brick_normals.png
-  - ID: 16161946277406227187
-    Path: assets\textures\Skybox\front.png
-  - ID: 8987360132596487935
-    Path: .\Lib\Assets\8987360132596487935
-  - ID: 16159296930488248006
-    Path: assets\models\crypt\textures\map_3_terrain.tga
-  - ID: 2667175530554083545
-    Path: assets\models\pyramid\source\1.png
-  - ID: 9178870157828285733
-    Path: assets\textures\brickwall.jpg
-  - ID: 13988698676214415431
-    Path: assets\models\free-metal-snake\textures\Hammare_sNAKE_BaseColor.png
-  - ID: 4009817718386055433
-    Path: assets\textures\penguins.png
-  - ID: 13532617821507232414
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 7306195545097283145
-    Path: assets\NewPhysicsMaterial2D-copy.physmat2d
-  - ID: 3784415675860486334
-    Path: assets\textures\brickwall_normal.png
-  - ID: 481858647925578241
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 10627846506600207461
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 11587864260767165539
-    Path: assets\models\sands-location\source\sands-location\map_terrain.tga
-  - ID: 1496836227447428244
-    Path: assets\models\crypt\textures\map_2_fire.png
-  - ID: 7848742645266738104
-    Path: assets\textures\Banner2.png
-  - ID: 13580004515384864828
-    Path: assets\textures\Skybox\NewSkybox.skybox
-  - ID: 4320707546600485926
-    Path: assets\models\crypt\source\12.obj.model
-  - ID: 6620885174084287217
-    Path: .\Lib\Assets\6620885174084287217
-  - ID: 2290441045770949820
-    Path: assets\models\house\source\domik2\HouseDiffuseWithPadding.tga.png
-  - ID: 10063214878580233599
-    Path: assets\models\house\textures\bakpho.png
-  - ID: 16408341511911183803
-    Path: assets\models\crypt\textures\1_initialShadingGroup.png
-  - ID: 12157534753583906862
-    Path: assets\shaders\unlit.glsl
-  - ID: 4828538092107330917
-    Path: assets\models\house\textures\HouseDiffuseWithPadding.tga.png
-  - ID: 5309011165480151126
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
-  - ID: 7587298459034673770
-    Path: assets\textures\penguin.png
-  - ID: 12960942012691071675
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 5479918735226014170
-    Path: assets\textures\akita.png
-  - ID: 13176089378558113518
-    Path: assets\NewPhysicsMaterial2D-copy-copy.physmat2d
-  - ID: 16705776351659923448
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 6951542353216384381
-    Path: assets\models\sands-location\source\sands-location\map_terrain.tga
-  - ID: 17551256913702040032
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 11731884570579735675
-    Path: assets\models\sands-location\source\sands-location\map_terrain.tga\map_terrain.tga
-  - ID: 11964801237634747550
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 6331583443537816612
-    Path: assets\models\tree\source\LeavesOP_OP.png
-  - ID: 7092460958445725147
-    Path: assets\models\tree\textures\LeavesOP_OP.png
-  - ID: 8031805403873121805
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 17434486806553253939
-    Path: assets\NewPhysicsMaterial2D-copy-copy-copy.physmat2d
-  - ID: 10281094548920544784
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 13030341039562043998
-    Path: assets\textures\Skybox\penguin.png
-  - ID: 5421040676474789243
-    Path: assets\NewPhysicsMaterial2D.physmat2d
-  - ID: 16151118103032596159
-    Path: assets\textures\checkerboard.png
-  - ID: 1613540950041657364
-    Path: .\Lib\Assets\1613540950041657364
-  - ID: 3631445193184675391
-    Path: assets\textures\brickwall_normal.png
-  - ID: 6802134631384993882
-    Path: assets\textures\penguins.png
-  - ID: 15153767678451750426
-    Path: assets\textures\brickwall.jpg
-  - ID: 11087668505068895031
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 14782759418488697461
-    Path: assets\shaders\line.glsl
-  - ID: 15214754124257556944
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 2322057360066817412
-    Path: assets\textures\checkerboard.png
-  - ID: 14237776725632045443
-    Path: .\Lib\Assets\14237776725632045443
-  - ID: 8589927704512064956
-    Path: assets\textures\WholeSketch.png
-  - ID: 3133057341532145780
-    Path: assets\models\crypt\source\TexturedCrypt.model
-  - ID: 8814415976500604345
-    Path: assets\models\crypt\textures\map_3_terrain.tga
-  - ID: 1047074544457932094
-    Path: assets\textures\penguin.png
-  - ID: 2539260636486802519
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 12755579250371982529
-    Path: assets\NewSkybox.skybox
-  - ID: 1985384308592728031
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 5465946454924381502
-    Path: assets\textures\brickwall.jpg
-  - ID: 2248465260613176009
-    Path: assets\models\crypt\textures\1_map_3_terrain1.png
-  - ID: 13562356483974966658
-    Path: assets\textures\Skybox\front.png
-  - ID: 14946849011822746332
-    Path: assets\textures\Skybox\left.png
-  - ID: 1314624067093583233
-    Path: assets\textures\brickwall_normal.png
-  - ID: 9641445013691029584
-    Path: assets\textures\Skybox\right.png
-  - ID: 14770776201715964801
-    Path: .\Lib\Assets\14770776201715964801
-  - ID: 17448910839167487138
-    Path: assets\models\sands-location\source\sands-location\map_2_fire.TGA
-  - ID: 9581583335151974542
-    Path: assets\textures\penguins.png
-  - ID: 4934736558412219012
-    Path: assets\textures\penguin.png
-  - ID: 1620812254163444377
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 14555436149183398938
-    Path: assets\textures\Skybox\up.png
-  - ID: 16561616235634181792
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 8208545082458552778
-    Path: assets\textures\Penguins\penguin2.png
-  - ID: 11819736729571273128
-    Path: assets\textures\Skybox\bottom.png
-  - ID: 1872304613168417791
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 5278968887692662132
-    Path: assets\textures\Skybox\down.png
-  - ID: 13776891784607224946
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 954042991584058393
-    Path: assets\models\crypt\textures\1_map_3_objects1.png
-  - ID: 6963972306599269214
-    Path: assets\textures\Skybox\left.png
-  - ID: 1132426019389602584
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 13254638953758142890
-    Path: .\Lib\Assets\13254638953758142890
-  - ID: 7217483432193069447
-    Path: assets\textures\Skybox\right.png
-  - ID: 5878686287117988321
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 5386395199063075642
-    Path: assets\textures\Skybox\up.png
-  - ID: 8002756279759353151
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 405481852526309297
-    Path: 12.obj.model
-  - ID: 8373003301469266890
-    Path: assets\models\cube\untitled.obj.model
-  - ID: 7919878121613906945
-    Path: assets\textures\brickwall.jpg
-  - ID: 4993522094463792482
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 17229889868651551825
-    Path: assets\textures\akita.png
-  - ID: 17263308769706613274
-    Path: assets\textures\penguins.png
-  - ID: 10741216299101391285
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_eyes_NormalOpenGL.png
-  - ID: 2994758654193817905
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 7505567880320595863
-    Path: assets\textures\akita.png
-  - ID: 13056964601202845957
-    Path: assets\textures\Banner2.png
-  - ID: 2234808135164298906
-    Path: assets\textures\penguins.png
-  - ID: 14030399132150542550
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 4315768808964055204
-    Path: assets\textures\akita.png
-  - ID: 15597075337608564408
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 6017549440802613789
-    Path: assets\models\sands-location\source\sands-location\map_objects.tga
-  - ID: 18135787110070487581
-    Path: assets\textures\Icons.png
-  - ID: 15497128086234682238
-    Path: assets\textures\Icons.png
-  - ID: 8473882687246500875
-    Path: assets\textures\Icons.png
-  - ID: 2476641010161789670
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 3688679230506998638
-    Path: assets\textures\Icons.png
-  - ID: 5255530326338000047
-    Path: assets\textures\penguin.png
-  - ID: 10527155267705445874
-    Path: assets\textures\akita.png
-  - ID: 1362424475177055249
-    Path: assets\textures\Icons.png
-  - ID: 7725797169056867541
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_sNAKE_BaseColor.png
-  - ID: 8180571382487675707
-    Path: assets\textures\checkerboard.png
-  - ID: 10749995492974098991
-    Path: assets\textures\Icons.png
-  - ID: 537206344599464795
-    Path: assets\akita.skybox
-  - ID: 12871066923900627534
-    Path: assets\akita.skybox
-  - ID: 15236277758887962815
-    Path: assets\textures\brickwall_normal.png
-  - ID: 17223410447606070564
-    Path: assets\akita.skybox
-  - ID: 14918580212484777289
-    Path: assets\textures\brickwall.jpg
-  - ID: 5149539377041923515
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 16497627164106645225
-    Path: assets\akita.skybox
-  - ID: 1758079093056665552
-    Path: assets\textures\brickwall_normal.png
-  - ID: 13871393827905602219
-    Path: assets\akita.skybox
-  - ID: 3675583522431289682
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 12442648472861687286
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 11693833156430491664
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 3090763563331469130
-    Path: assets\materials\Prova.mat
-  - ID: 1747995656076413226
-    Path: assets\materials\Skybox.mat
-  - ID: 7516133265342531461
-    Path: assets\textures\Skybox hq\Bottom.png
-  - ID: 6424862962828973931
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 8333690582045390542
-    Path: assets\textures\Skybox hq\Front.png
-  - ID: 5837276799956872465
-    Path: assets\textures\brickwall_normal.png
-  - ID: 1722689414441202701
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 6833387253705383495
-    Path: assets\textures\Skybox hq\Left.png
-  - ID: 15401656041968384818
-    Path: assets\models\sands-location\source\sands-location\map_island.tga
-  - ID: 5951189314172612957
-    Path: assets\textures\HqSkybox\front.jpg
-  - ID: 8024388086190907450
-    Path: assets\textures\Skybox hq\Right.png
-  - ID: 9430746249542370903
-    Path: assets\textures\Skybox hq\Top.png
-  - ID: 5197601393253376258
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 4741712884909093759
-    Path: assets\textures\Skybox hq\Down.png
-  - ID: 14111436088010648796
-    Path: assets\textures\HqSkybox\back.jpg
-  - ID: 13633659718298298
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 7505474093536566365
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 4691988597897883329
-    Path: assets\textures\brickwall_normal.jpg
-  - ID: 11078801700310037829
-    Path: .\Lib\Assets\11078801700310037829
-  - ID: 8832926628906678256
-    Path: assets\textures\HqSkybox\front.jpg
-  - ID: 2433880129176333811
-    Path: assets\textures\HqSkybox\left.jpg
-  - ID: 1057774980528284581
-    Path: TexturedCrypt.model
-  - ID: 10763203028662864067
-    Path: assets\textures\HqSkybox\right.jpg
-  - ID: 6009069308370819313
-    Path: assets\textures\brickwall.jpg
-  - ID: 14760036465950135340
-    Path: assets\textures\HqSkybox\top.jpg
-  - ID: 9038622143519185467
-    Path: assets\textures\HqSkybox\bottom.jpg
-  - ID: 14385039712260147543
-    Path: assets\textures\brickwall.jpg
-  - ID: 7334046597587244197
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 16492507911881279046
-    Path: assets\models\sands-location\source\sands-location\map_2_fire.TGA
-  - ID: 15581116657773999373
-    Path: assets\models\sands-location\source\sands-location\assets\models\sands-location\source\sands-location\map_terrain.tga
-  - ID: 8985297040350523946
-    Path: 12.obj.model
-  - ID: 16284340623155264214
-    Path: assets\textures\akita.png
-  - ID: 9030861870079506868
-    Path: assets\models\pot\source\12.obj.model
-  - ID: 8478426945964507138
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 10734784240907855966
-    Path: assets\textures\Penguins\penguin.jpg
-  - ID: 8727717703273611711
-    Path: .\Lib\Assets\8727717703273611711
-  - ID: 13105544383506402713
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 3355953525694686086
-    Path: .\Lib\Assets\3355953525694686086
-  - ID: 1497038868546401509
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 15253034410164498396
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 3140200324752624462
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 11455305468741703044
-    Path: assets\models\pot\source\potcrab.fbx.model
-  - ID: 2305649701334928421
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 2379408598715950332
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 1425530757998658906
-    Path: .\Lib\Assets\1425530757998658906
-  - ID: 15894985184936974900
-    Path: assets\models\crypt\textures\map_3_object.tga
-  - ID: 4086015692948835856
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 14406967578416466616
-    Path: potcrab.fbx.model
-  - ID: 8284645123241592798
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 9692092371200718306
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_eyes_BaseColor.png
-  - ID: 13181538801038879880
-    Path: assets\models\rock\source\rock.model
-  - ID: 13078806249491461043
-    Path: .\Lib\Assets\13078806249491461043
-  - ID: 1849558421588353018
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 6440745637447426980
-    Path: .\Lib\Assets\6440745637447426980
-  - ID: 16432542877339333375
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 1984966512182754765
-    Path: assets\textures\brickwall.jpg
-  - ID: 4964372507739464730
-    Path: assets\textures\brickwall_normal.png
-  - ID: 1256725994748723075
-    Path: assets\models\sphere\spher.obj.model
-  - ID: 6071031804359898668
-    Path: assets\textures\brickwall.jpg
-  - ID: 18143502886565724911
-    Path: 12.obj.model
-  - ID: 14869632234288869889
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 17006358160095570088
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 11991673747119074763
-    Path: assets\models\cylinder\cylinder.obj.model
-  - ID: 1
-    Path: white_texture
-  - ID: 11783167958700026567
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 15115107934579073676
-    Path: assets\textures\brickwall.jpg
-  - ID: 14709557656244421086
-    Path: assets\models\rock\source\rock.obj.model
-  - ID: 3431924949263660318
-    Path: assets\models\pyramid\source\1.obj.model
-  - ID: 14723056094489202467
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 13867917321154358116
-    Path: .\Lib\Assets\13867917321154358116
-  - ID: 7814648692656951235
-    Path: assets\models\cube\BlankCube.obj.model
-  - ID: 3774299101985491
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 17175036086231779232
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 6305572206173454821
-    Path: .\Lib\Assets\6305572206173454821
-  - ID: 5466004678159062249
-    Path: rock.model
-  - ID: 15064759714349032019
-    Path: assets\textures\brickwall.jpg
-  - ID: 2126455392707318283
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 508308155579382350
-    Path: assets\models\crypt\textures\1_map_3_objects1.png
-  - ID: 3401605941564612151
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 13493598359333310756
-    Path: assets\models\crypt\textures\1_map_3_castle.png
-  - ID: 8393925351512146033
-    Path: assets\models\crypt\textures\1_map_3_terrain1.png
-  - ID: 7976745778681102681
-    Path: assets\models\sands-location\source\sands-location\map_island.tga\map_island.tga
-  - ID: 5184361064329199120
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 2413467931280478410
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 2766814386403205802
-    Path: assets\models\crypt\textures\1_map_3_objects1.png
-  - ID: 5578105148680491352
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 13641661761904067039
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 13223067902751322441
-    Path: assets\models\crypt\source\assets\models\crypt\source.model
-  - ID: 10991399883267190259
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 3394691452003943224
-    Path: assets\textures\brickwall.jpg
-  - ID: 10727688086644625112
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 13825854653081194563
-    Path: assets\models\crypt\source\assets\models\crypt\source.model
-  - ID: 13244802996716988329
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 12276303207677216317
-    Path: SNAKE.fbx.model
-  - ID: 5750686647264815501
-    Path: assets\textures\brickwall.jpg
-  - ID: 9875041898726573045
-    Path: TexturedCrypt.model
-  - ID: 18421858923012561834
-    Path: 12.obj\map_3_terrain.tga
-  - ID: 7528197476625185066
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 4276992020406500695
-    Path: assets\models\crypt\source\assets\models\crypt\source.model
-  - ID: 287474549828098060
-    Path: assets\models\crypt\source\map_3_object.tga
-  - ID: 1321593847699821793
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 4559901962760650668
-    Path: assets\models\crypt\source\map_3_terrain.tga
-  - ID: 13086537763140883852
-    Path: assets\models\crypt\textures\1_map_3_terrain1.png
-  - ID: 18066940254713921773
-    Path: assets\models\textures\C:\dev\Debut\Build\Debutant\Build\assets\models\pot\textures\pot_enamel_01_diff_4k.jpg
-  - ID: 755297699824222160
-    Path: assets\models\crypt\textures\1_initialShadingGroup.png
-  - ID: 1540001693546378290
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 308514441287316499
-    Path: assets\models\crypt\textures\1_map_3_castle.png
-  - ID: 1098698731816740336
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 9268856829888650321
-    Path: .\Lib\Assets\9268856829888650321
-  - ID: 10969952433464626947
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 1498946699845261743
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_sNAKE_NormalOpenGL.png
-  - ID: 270035814703477102
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 8174796228148156887
-    Path: .\Lib\Assets\8174796228148156887
-  - ID: 16261802292019949206
-    Path: .\Lib\Assets\16261802292019949206
-  - ID: 16321546103680457473
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 51568806588511096
-    Path: assets\models\crypt\textures\1_map_3_objects1.png
-  - ID: 751823955432672452
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 13477428301689710826
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 18021937715246743953
-    Path: assets\models\crypt\textures\1_map_3_terrain1.png
-  - ID: 9192682753207874078
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 13972811256864094723
-    Path: assets\models\crypt\textures\1_initialShadingGroup.png
-  - ID: 18063848597932233975
-    Path: TexturedCrypt.model
-  - ID: 2172188542675550929
-    Path: assets\models\crypt\textures\1_map_3_castle.png
-  - ID: 750782998047202661
-    Path: assets\textures\ParallaxMappingTest\toy_box_normal.png
-  - ID: 14109756748910589104
-    Path: assets\textures\brickwall.jpg
-  - ID: 14412564267496858417
-    Path: assets\models\crypt\textures\1_map_3_objects1.png
-  - ID: 9291278493145663849
-    Path: assets\models\sands-location\source\sands-location\map_island.tga
-  - ID: 15905360889214108977
-    Path: assets\models\sands-location\source\sands-location\assets\models\sands-location\source\sands-location\map_objects.tga
-  - ID: 7184083666995717001
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 10201850823975809900
-    Path: assets\models\sands-location\source\sands-location\assets\models\sands-location\source\sands-location\map_island.tga
-  - ID: 16633401511482498124
-    Path: assets\models\crypt\source\initialShadingGroup.tga
-  - ID: 11340640613334995868
-    Path: assets\models\sands-location\source\sands-location\assets\models\sands-location\source\sands-location\map_2_fire.TGA
-  - ID: 9619042429584226519
-    Path: assets\textures\brickwall.jpg
-  - ID: 13533665288588787582
-    Path: assets\models\sands-location\source\sands-location\map_objects.tga\map_objects.tga
-  - ID: 13388120765877642902
-    Path: assets\models\sands-location\source\sands-location\map_2_fire.TGA\map_2_fire.TGA
-  - ID: 14706111790575509044
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 15690709307722966098
-    Path: assets\models\sands-location\source\sands-location\map_terrain.tga
-  - ID: 12338691005014033072
-    Path: assets\models\sands-location\source\sands-location\map_objects.tga
-  - ID: 9265048712726290550
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 2920512642135403899
-    Path: assets\models\sands-location\source\sands-location\map_island.tga
-  - ID: 5792914940101487230
-    Path: .\Lib\Assets\5792914940101487230
-  - ID: 13378764912225118187
-    Path: assets\textures\brick_normals.png
-  - ID: 12233844874677821243
-    Path: assets\textures\brickwall.jpg
-  - ID: 11046810954536934775
-    Path: assets\textures\brickwall_normal.png
-  - ID: 13998116013644660153
-    Path: assets\models\sands-location\source\sands-location\map_2_fire.TGA
-  - ID: 1813801028392180388
-    Path: assets\models\crypt\textures\1_map_3_terrain1.png
-  - ID: 17992322794258261263
-    Path: assets\models\steampunk-pistol\source\steampunk pistol.fbx.model
-  - ID: 15861227219580099462
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 16449286853934814843
-    Path: assets\textures\brickwall.jpg
-  - ID: 16296667570289089391
-    Path: assets\textures\brickwall.jpg
-  - ID: 10036487218635902323
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 15343160930985069750
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 2534852683331114837
-    Path: .\Lib\Assets\2534852683331114837
-  - ID: 2660068793228829303
-    Path: .\Lib\Assets\2660068793228829303
-  - ID: 2263929691760504179
-    Path: assets\models\steampunk-pistol\textures\steampunk_pistol_Base_Color.jpeg
-  - ID: 15240056703387121139
-    Path: assets\models\steampunk-pistol\source\steampunk pistol2.fbx.model
-  - ID: 7043650301101872945
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
-  - ID: 5782517007516531919
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 10468925653892098171
-    Path: .\Lib\Assets\10468925653892098171
-  - ID: 12993581778775464256
-    Path: assets\textures\brickwall.jpg
-  - ID: 6600386956465976739
-    Path: assets\models\crypt\textures\1_map_3_castle.png
-  - ID: 3106829892322953229
-    Path: assets\models\crypt\textures\1_map_3_objects1.png
-  - ID: 10961902135485944294
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 11299083572860115948
-    Path: .\Lib\Assets\11299083572860115948
-  - ID: 8960971078065146704
-    Path: assets\models\sands-location\source\sands-location\map_objects.tga
-  - ID: 11333035799848862702
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
-  - ID: 8610235279974697029
-    Path: assets\models\sands-location\source\sands-location\map_island.tga
-  - ID: 13911689998535363036
-    Path: assets\textures\brickwall.jpg
-  - ID: 9911171668777384199
-    Path: assets\textures\HqSkybox\back.jpg
-  - ID: 11340651968565670346
-    Path: assets\textures\brickwall.jpg
-  - ID: 9613133522610725571
-    Path: assets\textures\HqSkybox\left.jpg
-  - ID: 16578320633513533984
-    Path: assets\models\crypt\textures\map_3_object.tga
-  - ID: 5340808290333311997
-    Path: assets\textures\brickwall.jpg
-  - ID: 17816843077709050341
-    Path: assets\textures\HqSkybox\right.jpg
-  - ID: 9123013808419962101
-    Path: assets\models\free-metal-snake\source\.
-  - ID: 4196432856261294964
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 2083421331964978554
-    Path: assets\textures\HqSkybox\top.jpg
-  - ID: 2900974077740336962
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 70865587286220384
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 8129721320370741649
-    Path: assets\textures\HqSkybox\bottom.jpg
-  - ID: 5550640036583263076
-    Path: assets\textures\akita.png
-  - ID: 18326491930998488027
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 11184256477192238917
-    Path: assets\models\crypt\textures\1_map_3_terrain1.png
-  - ID: 18023037431017681255
-    Path: assets\models\crypt\source\initialShadingGroup.tga
-  - ID: 4296593215545975224
-    Path: assets\models\crypt\textures\1_initialShadingGroup.png
-  - ID: 12165106653362456796
-    Path: assets\models\crypt\textures\1_initialShadingGroup.png
-  - ID: 9561012628197870106
-    Path: assets\models\crypt\textures\1_map_3_castle.png
-  - ID: 14063141230207927227
-    Path: assets\models\crypt\textures\1_map_3_objects1.png
-  - ID: 15494643878785794778
-    Path: assets\models\crypt\textures\1_map_3_terrain1.png
-  - ID: 13479120970423017088
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 18283101352945646619
-    Path: assets\models\crypt\textures\1_initialShadingGroup.png
-  - ID: 4655673609362420751
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 16995446910649747181
-    Path: assets\models\crypt\textures\1_map_3_castle.png
-  - ID: 12625404942040202839
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 12554713315960677311
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 2272486344054272307
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 5122667079930505411
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 13256054126300869818
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 8031739445171812921
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 14228663827315929103
-    Path: assets\models\crypt\source\initialShadingGroup.tga
-  - ID: 9783099972173237701
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 5286307114493197490
-    Path: assets\models\steampunk-pistol\textures\steampunk_pistol_Base_Color.jpeg
-  - ID: 2154283866999729825
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 5749015959413238836
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 7431942966913849314
-    Path: assets\models\crypt\source\initialShadingGroup.tga
-  - ID: 6071438547009599040
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 2175834530596209708
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 10962431333827447376
-    Path: assets\models\crypt\source\initialShadingGroup.tga
-  - ID: 8153023435678361516
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 9899515986810811222
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 3220335835570649389
-    Path: assets\textures\akita.png
-  - ID: 12086143877599841330
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 10844971806348272083
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 2534971851710200630
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 7484183097664411654
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 1596986274774940349
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 259194631554984797
-    Path: assets\models\crypt\textures\map_3_object.tga
-  - ID: 11067372720266226294
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 14700423782093651100
-    Path: assets\textures\brickwall.jpg
-  - ID: 9050688704095944959
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 11293621402857016042
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 17314757891654079855
-    Path: .\Lib\Assets\17314757891654079855
-  - ID: 9558071203546321128
-    Path: assets\textures\checkerboard.png
-  - ID: 15180933235038053127
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 10963705380392894176
-    Path: .\Lib\Assets\10963705380392894176
-  - ID: 5357588206388185146
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 9018545847508596985
-    Path: .\Lib\Assets\9018545847508596985
-  - ID: 9514351186501337453
-    Path: .\Lib\Assets\9514351186501337453
-  - ID: 15095485723289655903
-    Path: assets\textures\brickwall_normal.png
-  - ID: 7520678473109147498
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 8091443654547448414
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 6942702704344974321
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 934977014409149497
-    Path: .\Lib\Assets\934977014409149497
-  - ID: 18353504744405760034
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 18310130298589720837
-    Path: .\Lib\Assets\18310130298589720837
-  - ID: 18295268872339887972
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 10165479544217883271
-    Path: assets\textures\brickwall_normal.png
-  - ID: 5254943363781197530
-    Path: .\Lib\Assets\5254943363781197530
-  - ID: 1662389917942950644
-    Path: assets\textures\brickwall.jpg
-  - ID: 7462140196578155323
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 18188679635949781246
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 7533243245425291304
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 18277936634310274950
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 9113172815792028573
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 7781838477964943296
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 14423344486711854301
-    Path: assets\models\crypt\textures\1_map_3_castle2.TGA.png
-  - ID: 5885446815946424967
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 4304269535787388538
-    Path: assets\textures\brickwall.jpg
-  - ID: 2667882182913964982
-    Path: assets\textures\brickwall_normal.png
-  - ID: 17877861255960955513
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 15998641063038748845
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
-  - ID: 18147267910554521621
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 6216936954159291170
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 7400900367242271316
-    Path: assets\models\plane\parallax_plane.model
-  - ID: 6282674495892740000
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 17257002156840858224
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 14513491180147005082
-    Path: assets\textures\brickwall.jpg
-  - ID: 15434173211650008318
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 18261077118291471068
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 12017017314334943581
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 11825029197471199274
-    Path: assets\textures\brickwall.jpg
-  - ID: 14492567805674166346
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 2277909874223126860
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 1736700865663738000
-    Path: assets\models\crypt\source\map_3_terrain.tga
-  - ID: 13200727616702326811
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 957396269743876309
-    Path: assets\models\fire-greatsword\textures\Emission Greatsword.jpg
-  - ID: 11125840787577950930
-    Path: assets\textures\brickwall.jpg
-  - ID: 10868523649629460618
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 16457017829492464717
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 4215603074846739042
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 10827959717504831296
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 13010521832865027613
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 930461170057508231
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 15927870992933195161
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 9324156161278884954
-    Path: assets\models\sands-location\source\sands-location\map_2_fire.TGA
-  - ID: 2416682289891282704
-    Path: assets\models\sands-location\source\sands-location\map_objects.tga
-  - ID: 11318075133982465027
-    Path: .\Lib\Assets\11318075133982465027
-  - ID: 16855006585371146888
-    Path: assets\models\sands-location\source\sands-location\map_terrain.tga
-  - ID: 3697496726445197896
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 10417032972314332955
-    Path: assets\materials\RedCube.mat
-  - ID: 3642892159212930029
-    Path: assets\models\sands-location\source\sands-location\sands location.obj.model
-  - ID: 2588625468283765729
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 9955249043470402883
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 12592327792483119185
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 8920127581372102544
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 13936635394321344374
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 4322540558846119074
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 5144680519972448511
-    Path: assets\textures\brickwall_normal.png
-  - ID: 5264144094036457687
-    Path: .\Lib\Assets\5264144094036457687
-  - ID: 9175768478356884226
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 8639471445380244010
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 18425230074294972643
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 12378711746405999369
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 5447561742265191625
-    Path: assets\textures\brickwall.jpg
-  - ID: 16000075077076137374
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 19658005569047114
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 16418970667473152681
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 1389077213120314728
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 809541623087535026
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 5473858056777530610
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 14558660127249958824
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 14305563925973995451
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 5076390933388020924
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 12378412849711552921
-    Path: assets\models\rock\textures\rock_texture_occlusion.png
-  - ID: 10170238787139678103
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 3324822386692371151
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 18088575123081312725
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 16883424877025203424
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 4119293953971394691
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 9745845881119024301
-    Path: assets\textures\brickwall_normal.png
-  - ID: 8554312336383065469
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 14707806768484970420
-    Path: assets\models\crypt\textures\map_3_terrain.tga
-  - ID: 9382301657346639220
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 8171618379381436572
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 10656527782766522272
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 2639737504696404258
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
-  - ID: 187660130681768257
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 9423209543035769583
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 14101800917052565427
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 14398870188543884828
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 8517823749329097538
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 8560755183421344672
-    Path: assets\textures\brickwall_normal.png
-  - ID: 5362399081429794561
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 10967015138126777915
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 10203452858280690580
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 9123314344138913789
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 17434299944855295013
-    Path: assets\textures\brickwall.jpg
-  - ID: 5235020533688991535
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 11648963702940542842
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 17663074581187777616
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 8531207657242950744
-    Path: assets\models\pot-export\normals.png
-  - ID: 16853161794242842464
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 8348122830305026345
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 2408928168285355884
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 17432145445735718562
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 10597798699818057041
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 3480360699195747540
-    Path: assets\models\crypt\textures\map_3_terrain.tga
-  - ID: 17038647733416681668
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 7404259638715069494
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 6286728218701037626
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 17728597839287331413
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 1711829246806760844
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 6664769307623936593
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 17966038925386836586
-    Path: assets\textures\brickwall.jpg
-  - ID: 5733789209582996312
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 11387599114985253376
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 18280777782241389534
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
-  - ID: 3292822551475479434
-    Path: assets\textures\brickwall.jpg
-  - ID: 10814562036274750473
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 15989195720193867330
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 5408311035215258517
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 15657808772951390237
-    Path: assets\textures\brickwall_normal.jpg
-  - ID: 5424318860299677604
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 9562418873270503638
-    Path: .\Lib\Assets\9562418873270503638
-  - ID: 380807576351976535
-    Path: assets\textures\brickwall.jpg
-  - ID: 14052015640745949029
-    Path: .\Lib\Assets\14052015640745949029
-  - ID: 11780244239306741719
-    Path: .\Lib\Assets\11780244239306741719
-  - ID: 13218065586859167202
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 5578726943562959621
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 13324056805413078855
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 7914080308684120168
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 9032920023369020597
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 1561661885552957738
-    Path: assets\models\textures\C:\dev\Debut\Build\Debutant\Build\assets\models\pot\textures\pot_enamel_01_metal_4k.exr
-  - ID: 8776647862987858608
-    Path: .\Lib\Assets\8776647862987858608
-  - ID: 14184556609963599454
-    Path: assets\models\steampunk-pistol\textures\steampunk_pistol_Base_Color.jpeg
-  - ID: 108585959030924506
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 14718627500637567830
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 615807823560887925
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 6196646533480992002
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 2693647606645758369
-    Path: assets\models\pot\source\potcrab.fbx.model
-  - ID: 935263680729710654
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 4024851437617662968
-    Path: assets\textures\brickwall.jpg
-  - ID: 8283647944231456521
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 17281753942959521765
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 5111512931591591426
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 6939110402054183244
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 14756169129110116166
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 8676827731879491902
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 4555775566152174572
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 14711484146688517482
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 13733420026926606231
-    Path: assets\textures\brickwall.jpg
-  - ID: 568201964939252856
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 7783894371445777697
-    Path: assets\textures\akita.png
-  - ID: 8555160754084762170
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 6200329324251520461
-    Path: assets\textures\brickwall_normal.jpg
-  - ID: 15323639200951374085
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 1959083062638729648
-    Path: assets\textures\akita.png
-  - ID: 14264735618497841708
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 11008940502836127835
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 8381185670343949170
-    Path: assets\textures\brickwall_normal.png
-  - ID: 7525174053293753484
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 11482370651148612477
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 8852681548014447748
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 9453788967153916325
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 2306124919418526155
-    Path: assets\textures\brickwall.jpg
-  - ID: 726696841843099818
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 7148931465766132619
-    Path: assets\textures\brickwall_normal.jpg
-  - ID: 1505465521993417993
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 18231244509453791610
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 17209130370897902041
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 10714713594994886002
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 1078724111513845762
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 4167650504159883071
-    Path: assets\textures\brickwall.jpg
-  - ID: 3130711409792987902
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 13998798539824449042
-    Path: .\Lib\Assets\13998798539824449042
-  - ID: 1363400801279676915
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 11835432147145887159
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 12118536153815018694
-    Path: assets\textures\brickwall.jpg
-  - ID: 15762023084684141877
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 915417624119052207
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 17023575168735300130
-    Path: .\Lib\Assets\17023575168735300130
-  - ID: 11806064238585039199
-    Path: assets\models\crypt\source\map_3_object.tga
-  - ID: 4571345474878188655
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 16238834356139717808
-    Path: assets\models\crypt\textures\map_3_terrain.tga
-  - ID: 12250838678143793795
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 6249980384536875550
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 18372088897833200011
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 13166669208835901291
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 18365587787597728122
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 4541808263123146271
-    Path: assets\textures\brickwall_normal.png
-  - ID: 17469582824985725973
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 3223391643875768568
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 2766733862044266346
-    Path: assets\models\crypt\textures\map_3_object.tga
-  - ID: 9374250163376868505
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 2055312638205034148
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 10467909109107637398
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 4995879526974478990
-    Path: .\Lib\Assets\4995879526974478990
-  - ID: 9304448543085870565
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 8462128334642127754
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 14253667752770208663
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 37277222461729597
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 9101449649742503671
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 3561127514587266320
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 17294154249718769342
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 9187830670903479480
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 9243803998975773632
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 9681551156678461773
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 14704409613391038486
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 7573744256883624178
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 11026430311490202860
-    Path: assets\textures\brickwall.jpg
-  - ID: 14991966989981059181
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 2556797887889443210
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 3687590887889316607
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 15275214476697059350
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 10570891598642682285
-    Path: assets\models\crypt\textures\map_3_object.tga
-  - ID: 1849341335564715632
-    Path: assets\models\crypt\textures\map_3_terrain.tga
-  - ID: 4947586757112367877
-    Path: assets\models\crypt\textures\map_3_object.tga
-  - ID: 8285398998108070779
-    Path: assets\models\crypt\source\Unnamed model.model
-  - ID: 12617398186281356551
-    Path: .\Lib\Assets\12617398186281356551
-  - ID: 5139464580720970169
-    Path: .\Lib\Assets\5139464580720970169
-  - ID: 13404470076717818793
-    Path: .\Lib\Assets\13404470076717818793
-  - ID: 16971192894155479952
-    Path: .\Lib\Assets\16971192894155479952
-  - ID: 13961505396810846656
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 2035308998887752245
-    Path: .\Lib\Assets\2035308998887752245
-  - ID: 3019328515098947542
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 15838141833373749606
-    Path: assets\textures\brickwall.jpg
-  - ID: 2793793966011286240
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 15928308089835389155
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 9201650636111415912
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 11634685029522343345
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 6274900503343940874
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 6400260343843573701
-    Path: assets\textures\brickwall.jpg
-  - ID: 4289730521082737813
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 6348797762231415599
-    Path: assets\textures\brick_normals.png
-  - ID: 370459542369252606
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 14926624653016929100
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
-  - ID: 1866385707688455219
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 10566036100193126397
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 1728250924978021220
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 5346163244797636739
-    Path: assets\models\crypt\source\map_3_castle.tga
-  - ID: 15886793689043372015
-    Path: assets\textures\brickwall_normal.png
-  - ID: 3486973701982587950
-    Path: assets\models\crypt\source\1_map_3_terrain1.tga
-  - ID: 4595232860506762533
-    Path: assets\textures\brickwall.jpg
-  - ID: 14295075977152658439
-    Path: assets\models\crypt\source\map_3_objects.tga
-  - ID: 3513363070932774565
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 12370156500554244315
-    Path: assets\textures\brickwall.jpg
-  - ID: 4111946782380954262
-    Path: assets\textures\brick_normals.png
-  - ID: 8077027829765634913
-    Path: assets\textures\brickwall.jpg
-  - ID: 13815335424739965593
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 15858533830387851146
-    Path: assets\textures\brickwall.jpg
-  - ID: 13987153642540634882
-    Path: assets\textures\brickwall.jpg
-  - ID: 16331054017069609512
-    Path: assets\textures\akita.png
-  - ID: 18437080161362658161
-    Path: assets\textures\brickwall.jpg
-  - ID: 10628986151434741208
-    Path: assets\textures\brickwall_normal.png
-  - ID: 10823028606668687118
-    Path: assets\models\crypt\source\map_2_fire.TGA
-  - ID: 11437546120588301976
-    Path: .\Lib\Assets\17314757891654079855
-  - ID: 12390770547143609265
-    Path: .\Lib\Assets\12390770547143609265
-  - ID: 7379592619529415984
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 8147317819077798042
-    Path: .\Lib\Assets\1613540950041657364
-  - ID: 8850644997088550257
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 12419006516607510591
-    Path: assets\textures\brickwall_normal.png
-  - ID: 6712031356561351126
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
-  - ID: 2475147272549134294
-    Path: assets\textures\brickwall.jpg
-  - ID: 5776276403693436545
-    Path: .\Lib\Assets\\Sphere.model
-  - ID: 3734444441391077455
-    Path: assets\textures\brickwall.jpg
-  - ID: 3446896272368023474
-    Path: .\Lib\Assets\3446896272368023474
-  - ID: 5101127161618476258
-    Path: assets\textures\brickwall.jpg
-  - ID: 11889398625705555526
-    Path: assets\textures\brickwall_normal.png
-  - ID: 6254972914357561864
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
-  - ID: 16566861497733996234
-    Path: assets\textures\brickwall.jpg
-  - ID: 9621297026147763044
-    Path: assets\textures\brickwall.jpg
-  - ID: 2902972510035535287
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 4756322413536081928
-    Path: assets\textures\brickwall.jpg
-  - ID: 8463724024506371282
-    Path: assets\textures\brickwall.jpg
-  - ID: 18203483412937777056
-    Path: assets\textures\brickwall.jpg
-  - ID: 17971520888001330166
-    Path: assets\textures\brickwall.jpg
-  - ID: 6861040127990061510
-    Path: assets\textures\brickwall.jpg
-  - ID: 17362250505125153789
-    Path: assets\textures\brickwall.jpg
-  - ID: 16569585536936294597
-    Path: assets\textures\brickwall.jpg
-  - ID: 14918045624159195428
-    Path: assets\textures\brickwall.jpg
-  - ID: 15163937868994945310
-    Path: assets\textures\brickwall.jpg
-  - ID: 5720779836988063346
-    Path: assets\textures\brickwall.jpg
-  - ID: 15082114026947334957
-    Path: assets\textures\brickwall.jpg
-  - ID: 1340613698111741861
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 12536528697535675780
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 6601654715353007295
-    Path: assets\textures\brickwall.jpg
-  - ID: 9462885629871416279
-    Path: assets\textures\brickwall.jpg
-  - ID: 11984454516560102948
-    Path: assets\textures\brickwall.jpg
-  - ID: 7527482115228005493
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 3400003113425523658
-    Path: assets\textures\brickwall.jpg
-  - ID: 1893750187239731884
-    Path: assets\textures\brickwall.jpg
-  - ID: 5398227382735390084
-    Path: assets\textures\brickwall_normal.png
-  - ID: 14803287956921231774
-    Path: assets\textures\brickwall.jpg
-  - ID: 1458738439407673364
-    Path: assets\textures\brickwall.jpg
-  - ID: 14878708968761390123
-    Path: assets\textures\brickwall.jpg
-  - ID: 5792772072151505858
-    Path: assets\textures\brickwall.jpg
-  - ID: 8907230010732005967
-    Path: assets\textures\brickwall.jpg
-  - ID: 4070483428414846504
-    Path: assets\textures\brickwall.jpg
-  - ID: 4515743786243599530
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 831586032095824339
-    Path: assets\textures\brickwall.jpg
-  - ID: 3438564768517141091
-    Path: assets\textures\brickwall.jpg
-  - ID: 1804792224829035641
-    Path: assets\textures\brickwall.jpg
-  - ID: 17729546900638659412
-    Path: assets\textures\brickwall.jpg
-  - ID: 3290252504253764444
-    Path: assets\textures\brickwall.jpg
-  - ID: 4729647458435371058
-    Path: assets\textures\brickwall.jpg
-  - ID: 3546132014751780959
-    Path: assets\textures\brickwall.jpg
-  - ID: 8587764299294855554
-    Path: assets\textures\brickwall.jpg
-  - ID: 11828188906118361340
-    Path: assets\textures\ParallaxMappingTest\bricks2_disp.jpg
-  - ID: 16758047024414170900
-    Path: assets\textures\brickwall.jpg
-  - ID: 2808040821363814186
-    Path: assets\textures\brickwall.jpg
-  - ID: 12477571469687088054
-    Path: assets\textures\brickwall.jpg
-  - ID: 7048840249721522763
-    Path: assets\textures\brickwall.jpg
-  - ID: 1181223003147737260
-    Path: assets\models\cube\SpecularTest.model
-  - ID: 8237277551320715107
-    Path: assets\textures\brickwall.jpg
-  - ID: 12300044853491357120
-    Path: assets\textures\brickwall.jpg
-  - ID: 8754809446085725648
-    Path: assets\textures\brickwall.jpg
-  - ID: 5323150241791032649
-    Path: assets\textures\brickwall.jpg
-  - ID: 17866315084408808472
-    Path: assets\textures\brickwall.jpg
-  - ID: 7040058046905041483
-    Path: assets\textures\brickwall.jpg
-  - ID: 2306275932646611706
-    Path: assets\textures\brickwall.jpg
-  - ID: 6517308524734566973
-    Path: assets\textures\brickwall.jpg
-  - ID: 8119653406421792816
-    Path: assets\textures\brickwall.jpg
-  - ID: 14086087397809239948
-    Path: assets\textures\brickwall.jpg
-  - ID: 445715230506678722
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 8090027183337841544
-    Path: assets\textures\brick_normals.png
-  - ID: 13127814273559181346
-    Path: assets\textures\brickwall_normal.png
-  - ID: 4049894241692467370
-    Path: assets\textures\brickwall.jpg
-  - ID: 11769735019323442916
-    Path: .\Lib\Assets\11769735019323442916
-  - ID: 10619871447855530994
-    Path: assets\textures\brick_normals.png
-  - ID: 5497715216231255623
-    Path: assets\textures\brick_normals.png
-  - ID: 7357402182606797143
-    Path: assets\textures\brickwall.jpg
-  - ID: 8167387896285196615
-    Path: assets\textures\brickwall.jpg
-  - ID: 4125918917028677294
-    Path: assets\textures\brickwall_normal.png
-  - ID: 13773864361395150190
-    Path: Unnamed model.model
-  - ID: 16376036602279816710
-    Path: assets\textures\brickwall.jpg
-  - ID: 14829421689221700242
-    Path: assets\textures\brick_normals.png
-  - ID: 11128893099858208993
-    Path: assets\textures\brickwall_normal.png
-  - ID: 2735198614200493250
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 14628370371327566477
-    Path: assets\textures\brickwall_normal.jpg
-  - ID: 2335989685038499361
-    Path: assets\textures\brickwall.jpg
-  - ID: 5964088861556028317
-    Path: assets\textures\brickwall.jpg
-  - ID: 1424971647329537967
-    Path: assets\textures\brickwall.jpg
-  - ID: 18004291785102158258
-    Path: assets\textures\brickwall_normal.png
-  - ID: 12653706769385569228
-    Path: .\Lib\Assets\12653706769385569228
-  - ID: 15242143720654962304
-    Path: assets\textures\brickwall_normal.png
-  - ID: 8508949441924688808
-    Path: assets\textures\brickwall_normal.png
-  - ID: 1792692555229190671
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 3774988346483770553
-    Path: assets\textures\brickwall_normal.png
-  - ID: 7700678701181482666
-    Path: assets\textures\brickwall.jpg
-  - ID: 2972376702202184261
-    Path: assets\textures\brickwall_normal.png
-  - ID: 8419669069805899976
-    Path: assets\textures\brickwall_normal.png
-  - ID: 13670476237366666088
-    Path: assets\textures\WholeSketch.png
-  - ID: 13332654945324956628
-    Path: assets\textures\brickwall_normal.png
-  - ID: 16009086391526800593
-    Path: assets\textures\brickwall_normal.jpg
-  - ID: 3735481657713192254
-    Path: assets\models\rock\textures\rock_heightmap.png
-  - ID: 3221629854271778310
-    Path: assets\textures\brick_normals.png
-  - ID: 9250712575893636882
-    Path: assets\textures\checkerboard.png
-  - ID: 12883982998772194022
-    Path: assets\textures\brickwall.jpg
-  - ID: 17544642207441827810
-    Path: assets\textures\brickwall_normal.png
-  - ID: 93274382301896432
-    Path: .\Lib\Assets\93274382301896432
-  - ID: 13695285973080144260
-    Path: assets\textures\brickwall_normal.png
-  - ID: 7951957840409595592
-    Path: assets\textures\brickwall_normal.png
-  - ID: 11878606560476491622
-    Path: assets\textures\brickwall.jpg
-  - ID: 17850435416800243294
-    Path: assets\textures\brickwall_normal.png
-  - ID: 4433209268492493806
-    Path: assets\textures\brickwall_normal.png
-  - ID: 15851506323574215192
-    Path: assets\textures\brickwall.jpg
-  - ID: 15254750481854404876
-    Path: assets\textures\brickwall.jpg
-  - ID: 12041939173573384742
-    Path: assets\models\fire-greatsword\textures\Greatsword Textures.jpg
-  - ID: 9754256646280937607
-    Path: assets\textures\brickwall_normal.png
-  - ID: 11009345434730768253
-    Path: assets\textures\brickwall_normal.png
-  - ID: 1128353244723937248
-    Path: assets\textures\brickwall.jpg
-  - ID: 11491752217699187221
-    Path: assets\textures\brickwall_normal.png
-  - ID: 6807603036084455785
-    Path: assets\textures\brickwall.jpg
-  - ID: 13457495050048698468
-    Path: assets\textures\brickwall.jpg
-  - ID: 1420164544645635477
-    Path: .\Lib\Assets\1420164544645635477
-  - ID: 8933204498938687601
-    Path: assets\textures\brickwall_normal.png
-  - ID: 15169147561476744218
-    Path: assets\textures\brickwall.jpg
-  - ID: 18331311107789574419
-    Path: assets\textures\brickwall_normal.png
-  - ID: 10847126449945428764
-    Path: assets\textures\brickwall.jpg
-  - ID: 6551513311833099195
-    Path: assets\textures\brickwall.jpg
-  - ID: 3607830552762089154
-    Path: assets\textures\brickwall_normal.png
-  - ID: 11563114607417130890
-    Path: assets\textures\brickwall.jpg
-  - ID: 8694046892050160570
-    Path: assets\textures\brickwall_normal.png
-  - ID: 15283827100263222064
-    Path: assets\textures\brickwall.jpg
-  - ID: 1031171567482304628
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 3582727914549782687
-    Path: assets\textures\brickwall_normal.png
-  - ID: 16930731588402921659
-    Path: assets\textures\brickwall.jpg
-  - ID: 7935781012036981934
-    Path: assets\textures\brickwall_normal.png
-  - ID: 13874040379656028890
-    Path: assets\textures\brickwall.jpg
-  - ID: 11950470179863257847
-    Path: assets\textures\brickwall.jpg
-  - ID: 4245674545830626065
-    Path: assets\models\pot-export\pot_enamel_01_4k.fbx.model
-  - ID: 9613981348856163575
-    Path: assets\textures\brickwall.jpg
-  - ID: 13085622121682750048
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 16915074401850309510
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 443851640934162667
-    Path: assets\models\rock\textures\rock_texture_occlusion.png
-  - ID: 11767568846534945921
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 10498126451162556812
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 12636245551524715909
-    Path: assets\textures\brickwall_normal.png
-  - ID: 14983540670861633521
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 15490497594953729230
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 6735334598987258597
-    Path: assets\textures\brickwall_normal.jpg
-  - ID: 9460342153806437870
-    Path: assets\textures\brickwall_normal.png
-  - ID: 13002067147581967016
-    Path: assets\models\fire-greatsword\textures\Emission_Greatsword.jpg
-  - ID: 9394252327407604115
-    Path: assets\textures\brickwall_normal.png
-  - ID: 8668153100258453762
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 15615826079689066806
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 10577776236088606335
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 5827430793577755804
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 3653923696244488528
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 1632477329121860986
-    Path: assets\textures\brickwall.jpg
-  - ID: 14894801660212503434
-    Path: assets\textures\brickwall_normal.png
-  - ID: 16404029469312148662
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_eyes_BaseColor.png
-  - ID: 11340929897729006751
-    Path: assets\models\free-metal-snake\source\SNAKE.fbx.model
-  - ID: 6665999300223635059
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_eyes_Emissive.png
-  - ID: 1519560688404035012
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_sNAKE_BaseColor.png
-  - ID: 7927124979901825069
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_eyes_NormalOpenGL.png
-  - ID: 5819630446472828195
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_sNAKE_BaseColor.png
-  - ID: 249367537377937490
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_sNAKE_NormalOpenGL.png
-  - ID: 4187341773101635470
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_eyes_BaseColor.png
-  - ID: 14620695197191492817
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_eyes_NormalOpenGL.png
-  - ID: 11770216134700470080
-    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_sNAKE_NormalOpenGL.png
-  - ID: 6436309741427403517
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 12933586628829830652
-    Path: assets\textures\brickwall.jpg
-  - ID: 17958761196823254952
-    Path: assets\textures\brickwall_normal.png
-  - ID: 16727371885023895683
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 14465440846783980101
-    Path: .\Lib\Assets\14465440846783980101
-  - ID: 991741143404470695
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 444893970891682537
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 9553889746735046601
-    Path: assets\textures\brickwall.jpg
-  - ID: 14433999550212183494
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 18295171059388580054
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 3126474297590872139
-    Path: assets\textures\brickwall.jpg
-  - ID: 17998396980338919315
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 1582588500889271148
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 7685905743602188344
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 2403995251084563190
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 7489932000950732957
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 8589194912322205000
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 16482739148065941977
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 18080337945055654811
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 9026545534823396268
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 15640518430964346735
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 14864718705249494902
-    Path: assets\models\rock\textures\rock_texture_occlusion.png
-  - ID: 12931801436226987336
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 6128774717411703954
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 7959349103577310213
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 11398349308556872052
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 11793568121378291108
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 16239926761251288759
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 18326471430508098500
-    Path: .\Lib\Assets\18326471430508098500
-  - ID: 10048771861235756640
-    Path: .\Lib\Assets\10048771861235756640
-  - ID: 15692553777971818927
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 16816321477981587762
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 7127667479840926351
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 12853468581113193403
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 16127828778912889130
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 17844925850514175225
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 10555700445162955503
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 10382585311737868858
-    Path: RootNode.model
-  - ID: 8748931071908439881
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 11569198964577590172
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 15941924426567246104
-    Path: .\Lib\Assets\15941924426567246104
-  - ID: 15457100751264779947
-    Path: assets\textures\Penguins\penguin2.png
-  - ID: 4075647621872926833
-    Path: assets\models\fire-greatsword\textures\Greatsword_Specular.jpg
-  - ID: 7784274777875186998
-    Path: assets\textures\akita.png
-  - ID: 4105343900727531526
-    Path: assets\textures\checkerboard.png
-  - ID: 8575016493320453415
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 8906391613211996965
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 13271661352161628776
-    Path: assets\models\cube\Unnamed model.model
-  - ID: 545206812573334877
-    Path: assets\textures\brickwall_normal.png
-  - ID: 17093472917168225206
-    Path: assets\textures\brickwall.jpg
-  - ID: 912056706783302016
-    Path: .\Lib\Assets\912056706783302016
-  - ID: 4321646254359830704
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 14873138687998915625
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 11994677312771320875
-    Path: assets\textures\brickwall.jpg
-  - ID: 9214157706496584784
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 8441445832930645499
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 5280730974132519524
-    Path: assets\models\rock\textures\New_Graph_normal.tga.png
-  - ID: 1856110390837846094
-    Path: assets\textures\brickwall.jpg
-  - ID: 17029691978290539042
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 15422536543893212915
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 4596119592625345067
-    Path: assets\textures\ParallaxMappingTest\bricks2.jpg
-  - ID: 6321637187019122074
-    Path: .\Lib\Assets\6321637187019122074
-  - ID: 14115346093503847392
-    Path: assets\textures\brickwall_normal.jpg
-  - ID: 15018284743161705623
-    Path: assets\textures\brickwall.jpg
-  - ID: 3378632771608757897
-    Path: assets\models\rock\textures\Rock_Albedo.tga.png
-  - ID: 9079583462859590027
-    Path: assets\textures\brickwall_normal.jpg
-  - ID: 3373557645294609640
-    Path: assets\models\free-metal-snake\source\snek.model
-  - ID: 1373584121715980567
-    Path: assets\models\pot\source\pot.model
-  - ID: 9768739219645784563
-    Path: Unnamed model.model
-  - ID: 16205743667516716716
-    Path: assets\models\rock\source\rock.obj.model
-  - ID: 17999010168799005388
-    Path: .\Lib\Assets\17999010168799005388
-  - ID: 17261087108844721765
-    Path: .\Lib\Assets\17261087108844721765
-  - ID: 4106612002206563598
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
-  - ID: 491339027427448426
-    Path: assets\textures\SpecularMapTest\diffuse.png
-  - ID: 1441466519126844282
-    Path: assets\textures\SpecularMapTest\normal.png
-  - ID: 16980861315537821727
-    Path: assets\textures\SpecularMapTest\specular.png
-  - ID: 10957701890646707626
-    Path: assets\models\textures\C:\dev\Debut\Build\Debutant\Build\assets\models\pot\textures\pot_enamel_01_nor_gl_4k.exr
-  - ID: 12619757729011571434
-    Path: assets\models\pot-export\diffuse.jpg
-  - ID: 9683473178817963546
-    Path: .\Lib\Assets\9683473178817963546
-  - ID: 8453054500141706143
-    Path: 12.obj.model
-  - ID: 3466315924723883873
-    Path: assets\models\fire-greatsword\source\Magmarion.fbx.model
-  - ID: 9461433953195561840
-    Path: assets\models\plane\plane.obj.model
-  - ID: 7317632190844075748
-    Path: assets\textures\ParallaxMappingTest\wood.png
-  - ID: 15824291623381072347
-    Path: assets\textures\ParallaxMappingTest\toy_box_disp.png
-  - ID: 14473289118525795991
-    Path: assets\models\plane\plane_bricks.model
-  - ID: 2181145312930488737
-    Path: assets\textures\ParallaxMappingTest\bricks2_normal.jpg
-  - ID: 16238352811152569358
-    Path: .\Lib\Assets\16238352811152569358
-  - ID: 1418662701905176250
-    Path: assets\models\plane\coinplane.model
-  - ID: 5977369063083290551
-    Path: assets\textures\Coin\plane_0.jpg
-  - ID: 10730754667949693981
-    Path: assets\textures\Coin\normals.png
-  - ID: 15208097360668704190
-    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
-  - ID: 15138046311618176639
-    Path: .\Lib\Assets\15138046311618176639
-  - ID: 1028703064176906114
-    Path: .\Lib\Assets\1028703064176906114
-  - ID: 11216845012748853521
-    Path: assets\testPhysmat3D.physmat3d
-  - ID: 11341896402037837687
-    Path: 12.obj.model
-  - ID: 12491863777754502555
-    Path: .\Lib\Assets\12491863777754502555
-  - ID: 17109705724441798053
-    Path: .\Lib\Assets\17109705724441798053
-  - ID: 7664153071317264184
-    Path: .\Lib\Assets\7664153071317264184
-  - ID: 15684960583102189672
-    Path: .\Lib\Assets\15684960583102189672
-  - ID: 17633833199026252842
-    Path: assets\materials\Gimmi.mat
-  - ID: 10544280689734176182
-    Path: assets\models\pyramid\source\1.obj.model
-  - ID: 1005468329897413198
-    Path: assets\icons\GizmoGlobal.png
-  - ID: 11702330347514272614
-    Path: assets\icons\GizmoLocal.png
+  - ID: 2009068860129519551
+    Path: assets\icons\model.png
   - ID: 18252685388525648135
     Path: assets\icons\move.png
-  - ID: 866493263408281929
-    Path: assets\icons\play.png
   - ID: 1895115298079699324
     Path: assets\icons\rotate.png
   - ID: 13224244642193558106
     Path: assets\icons\scale.png
+  - ID: 15270155261650687889
+    Path: .\Lib\Assets\15270155261650687889
+  - ID: 11315034060306294172
+    Path: assets\models\crypt\source\map_3_objects.tga
+  - ID: 4342250630930977794
+    Path: assets\icons\search.png
+  - ID: 17633833199026252842
+    Path: assets\materials\Gimmi.mat
+  - ID: 16980861315537821727
+    Path: assets\textures\SpecularMapTest\specular.png
+  - ID: 3090763563331469130
+    Path: assets\materials\Prova.mat
+  - ID: 6133885084988176387
+    Path: .\Lib\Assets\6133885084988176387
+  - ID: 3642892159212930029
+    Path: assets\models\sands-location\source\sands-location\sands location.obj.model
+  - ID: 10417032972314332955
+    Path: assets\materials\RedCube.mat
+  - ID: 15684960583102189672
+    Path: .\Lib\Assets\15684960583102189672
+  - ID: 4320707546600485926
+    Path: assets\models\crypt\source\12.obj.model
+  - ID: 2290441045770949820
+    Path: assets\models\house\source\domik2\HouseDiffuseWithPadding.tga.png
+  - ID: 11770216134700470080
+    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_sNAKE_NormalOpenGL.png
+  - ID: 8171618379381436572
+    Path: assets\models\crypt\source\1_map_3_terrain1.tga
+  - ID: 10962431333827447376
+    Path: assets\models\crypt\source\initialShadingGroup.tga
+  - ID: 10823028606668687118
+    Path: assets\models\crypt\source\map_2_fire.TGA
+  - ID: 15494643878785794778
+    Path: assets\models\crypt\textures\1_map_3_terrain1.png
+  - ID: 8285398998108070779
+    Path: assets\models\crypt\source\Unnamed model.model
+  - ID: 18283101352945646619
+    Path: assets\models\crypt\textures\1_initialShadingGroup.png
+  - ID: 16995446910649747181
+    Path: assets\models\crypt\textures\1_map_3_castle.png
+  - ID: 5977369063083290551
+    Path: assets\textures\Coin\plane_0.jpg
+  - ID: 14423344486711854301
+    Path: assets\models\crypt\textures\1_map_3_castle2.TGA.png
+  - ID: 6331583443537816612
+    Path: assets\models\tree\source\LeavesOP_OP.png
+  - ID: 3373557645294609640
+    Path: assets\models\free-metal-snake\source\snek.model
+  - ID: 2766814386403205802
+    Path: assets\models\crypt\textures\1_map_3_objects1.png
+  - ID: 12041939173573384742
+    Path: assets\models\fire-greatsword\textures\Greatsword Textures.jpg
+  - ID: 17752990116608217758
+    Path: assets\models\crypt\textures\1_map_3_objects12.TGA.png
+  - ID: 4718806404170537198
+    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
+  - ID: 13988698676214415431
+    Path: assets\models\free-metal-snake\textures\Hammare_sNAKE_BaseColor.png
+  - ID: 1496836227447428244
+    Path: assets\models\crypt\textures\map_2_fire.png
+  - ID: 1181223003147737260
+    Path: assets\models\cube\SpecularTest.model
+  - ID: 1
+    Path: white_texture
+  - ID: 11991673747119074763
+    Path: assets\models\cylinder\cylinder.obj.model
+  - ID: 13002067147581967016
+    Path: assets\models\fire-greatsword\textures\Emission_Greatsword.jpg
+  - ID: 4075647621872926833
+    Path: assets\models\fire-greatsword\textures\Greatsword_Specular.jpg
+  - ID: 7784274777875186998
+    Path: assets\textures\akita.png
+  - ID: 11340929897729006751
+    Path: assets\models\free-metal-snake\source\SNAKE.fbx.model
+  - ID: 1418662701905176250
+    Path: assets\models\plane\coinplane.model
+  - ID: 4187341773101635470
+    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_eyes_BaseColor.png
+  - ID: 6665999300223635059
+    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_eyes_Emissive.png
+  - ID: 7400900367242271316
+    Path: assets\models\plane\parallax_plane.model
+  - ID: 14620695197191492817
+    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_eyes_NormalOpenGL.png
+  - ID: 7725797169056867541
+    Path: assets\models\free-metal-snake\source\Hammare.fbm\Hammare_sNAKE_BaseColor.png
+  - ID: 10063214878580233599
+    Path: assets\models\house\textures\bakpho.png
+  - ID: 4828538092107330917
+    Path: assets\models\house\textures\HouseDiffuseWithPadding.tga.png
+  - ID: 9461433953195561840
+    Path: assets\models\plane\plane.obj.model
+  - ID: 14473289118525795991
+    Path: assets\models\plane\plane_bricks.model
+  - ID: 12619757729011571434
+    Path: assets\models\pot-export\diffuse.jpg
+  - ID: 8531207657242950744
+    Path: assets\models\pot-export\normals.png
+  - ID: 4245674545830626065
+    Path: assets\models\pot-export\pot_enamel_01_4k.fbx.model
+  - ID: 3244084005127501254
+    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
+  - ID: 10544280689734176182
+    Path: assets\models\pyramid\source\1.obj.model
+  - ID: 2667175530554083545
+    Path: assets\models\pyramid\source\1.png
+  - ID: 2421915490094419824
+    Path: assets\models\pyramid\textures\1.png
+  - ID: 16205743667516716716
+    Path: assets\models\rock\source\rock.obj.model
+  - ID: 1078724111513845762
+    Path: assets\models\rock\textures\New_Graph_normal.tga.png
+  - ID: 3378632771608757897
+    Path: assets\models\rock\textures\Rock_Albedo.tga.png
+  - ID: 3735481657713192254
+    Path: assets\models\rock\textures\rock_heightmap.png
+  - ID: 8397782774593691835
+    Path: .\Lib\Assets\8397782774593691835
+  - ID: 14864718705249494902
+    Path: assets\models\rock\textures\rock_texture_occlusion.png
+  - ID: 16492507911881279046
+    Path: assets\models\sands-location\source\sands-location\map_2_fire.TGA
+  - ID: 9291278493145663849
+    Path: assets\models\sands-location\source\sands-location\map_island.tga
+  - ID: 6017549440802613789
+    Path: assets\models\sands-location\source\sands-location\map_objects.tga
+  - ID: 6951542353216384381
+    Path: assets\models\sands-location\source\sands-location\map_terrain.tga
+  - ID: 1256725994748723075
+    Path: assets\models\sphere\spher.obj.model
+  - ID: 17992322794258261263
+    Path: assets\models\steampunk-pistol\source\steampunk pistol.fbx.model
+  - ID: 15240056703387121139
+    Path: assets\models\steampunk-pistol\source\steampunk pistol2.fbx.model
+  - ID: 5750222283053926791
+    Path: assets\models\steampunk-pistol\textures\steampunk_pistol_Base_Color.jpeg
+  - ID: 6992967764417543385
+    Path: assets\models\tree\source\WaterPlane_Tex_OPACITY.png
+  - ID: 7092460958445725147
+    Path: assets\models\tree\textures\LeavesOP_OP.png
+  - ID: 11265617226424827983
+    Path: assets\models\tree\textures\WaterPlane_Tex_OPACITY.png
+  - ID: 17434486806553253939
+    Path: assets\NewPhysicsMaterial2D-copy-copy-copy.physmat2d
+  - ID: 13176089378558113518
+    Path: assets\NewPhysicsMaterial2D-copy-copy.physmat2d
+  - ID: 7306195545097283145
+    Path: assets\NewPhysicsMaterial2D-copy.physmat2d
+  - ID: 13030341039562043998
+    Path: assets\textures\Skybox\penguin.png
+  - ID: 5421040676474789243
+    Path: assets\NewPhysicsMaterial2D.physmat2d
+  - ID: 12755579250371982529
+    Path: assets\NewSkybox.skybox
+  - ID: 16775874381677145436
+    Path: assets\shaders\default-3d.glsl
+  - ID: 14782759418488697461
+    Path: assets\shaders\line.glsl
+  - ID: 11181189206938698485
+    Path: assets\shaders\skybox.glsl
+  - ID: 12390770547143609265
+    Path: .\Lib\Assets\12390770547143609265
+  - ID: 8653149696889396285
+    Path: assets\shaders\texture.glsl
+  - ID: 12157534753583906862
+    Path: assets\shaders\unlit.glsl
+  - ID: 11216845012748853521
+    Path: assets\testPhysmat3D.physmat3d
+  - ID: 13056964601202845957
+    Path: assets\textures\Banner2.png
+  - ID: 12054836138613870822
+    Path: .\Lib\Assets\12054836138613870822
+  - ID: 9619042429584226519
+    Path: assets\textures\brickwall.jpg
+  - ID: 9079583462859590027
+    Path: assets\textures\brickwall_normal.jpg
+  - ID: 5144680519972448511
+    Path: assets\textures\brickwall_normal.png
+  - ID: 13378764912225118187
+    Path: assets\textures\brick_normals.png
+  - ID: 4105343900727531526
+    Path: assets\textures\checkerboard.png
+  - ID: 10730754667949693981
+    Path: assets\textures\Coin\normals.png
+  - ID: 9911171668777384199
+    Path: assets\textures\HqSkybox\back.jpg
+  - ID: 8129721320370741649
+    Path: assets\textures\HqSkybox\bottom.jpg
+  - ID: 5951189314172612957
+    Path: assets\textures\HqSkybox\front.jpg
+  - ID: 9613133522610725571
+    Path: assets\textures\HqSkybox\left.jpg
+  - ID: 17816843077709050341
+    Path: assets\textures\HqSkybox\right.jpg
+  - ID: 2083421331964978554
+    Path: assets\textures\HqSkybox\top.jpg
+  - ID: 10749995492974098991
+    Path: assets\textures\Icons.png
+  - ID: 4596119592625345067
+    Path: assets\textures\ParallaxMappingTest\bricks2.jpg
+  - ID: 11828188906118361340
+    Path: assets\textures\ParallaxMappingTest\bricks2_disp.jpg
+  - ID: 2181145312930488737
+    Path: assets\textures\ParallaxMappingTest\bricks2_normal.jpg
+  - ID: 15824291623381072347
+    Path: assets\textures\ParallaxMappingTest\toy_box_disp.png
+  - ID: 750782998047202661
+    Path: assets\textures\ParallaxMappingTest\toy_box_normal.png
+  - ID: 7317632190844075748
+    Path: assets\textures\ParallaxMappingTest\wood.png
+  - ID: 5255530326338000047
+    Path: assets\textures\penguin.png
+  - ID: 10734784240907855966
+    Path: assets\textures\Penguins\penguin.jpg
+  - ID: 15457100751264779947
+    Path: assets\textures\Penguins\penguin2.png
+  - ID: 15941924426567246104
+    Path: .\Lib\Assets\15941924426567246104
+  - ID: 2234808135164298906
+    Path: assets\textures\penguins.png
+  - ID: 11819736729571273128
+    Path: assets\textures\Skybox\bottom.png
+  - ID: 16161946277406227187
+    Path: assets\textures\Skybox\front.png
+  - ID: 6963972306599269214
+    Path: assets\textures\Skybox\left.png
+  - ID: 13580004515384864828
+    Path: assets\textures\Skybox\NewSkybox.skybox
+  - ID: 7217483432193069447
+    Path: assets\textures\Skybox\right.png
+  - ID: 5386395199063075642
+    Path: assets\textures\Skybox\up.png
+  - ID: 491339027427448426
+    Path: assets\textures\SpecularMapTest\diffuse.png
+  - ID: 1441466519126844282
+    Path: assets\textures\SpecularMapTest\normal.png
+  - ID: 13670476237366666088
+    Path: assets\textures\WholeSketch.png
+  - ID: 1028703064176906114
+    Path: .\Lib\Assets\1028703064176906114
+  - ID: 18326471430508098500
+    Path: .\Lib\Assets\18326471430508098500
+  - ID: 8624683402893657289
+    Path: .\Lib\Assets\8624683402893657289
+  - ID: 12491863777754502555
+    Path: .\Lib\Assets\12491863777754502555
+  - ID: 16261802292019949206
+    Path: .\Lib\Assets\16261802292019949206
+  - ID: 17109705724441798053
+    Path: .\Lib\Assets\17109705724441798053
+  - ID: 7664153071317264184
+    Path: .\Lib\Assets\7664153071317264184
+  - ID: 17023575168735300130
+    Path: .\Lib\Assets\17023575168735300130
+  - ID: 12459867779700525508
+    Path: .\Lib\Assets\12459867779700525508
+  - ID: 10146832290897932691
+    Path: .\Lib\Assets\10146832290897932691
+  - ID: 957396269743876309
+    Path: assets\models\fire-greatsword\textures\Emission Greatsword.jpg
+  - ID: 17849755392032676265
+    Path: assets\models\fire-greatsword\source\Magmarion.fbx.model
+  - ID: 11707540296954562796
+    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
+  - ID: 5833058750324400505
+    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
+  - ID: 15314768346918901759
+    Path: assets\models\cube\untitled.obj.model
+  - ID: 795357086994780985
+    Path: assets\models\cube\untitled.obj.model
+  - ID: 13472739562672670783
+    Path: assets\models\cube\Unnamed model.model
+  - ID: 16648798815429533587
+    Path: assets\models\cube\sas.model
+  - ID: 8209307127635872431
+    Path: assets\models\textures\C:\\dev\\Debut\\Build\\Debutant\\Build\\assets\\textures\\brickwall.jpg
+  - ID: 16124200196036764163
+    Path: assets\models\cube\sas.model
+  - ID: 14129150377579782280
+    Path: assets\models\cube\untitled.obj.model
+  - ID: 15248540615371571573
+    Path: assets\models\cube\untitled.obj.model
+  - ID: 3586912761882474954
+    Path: assets\models\cube\untitled.obj.model
+  - ID: 3376896121910915866
+    Path: .\Lib\Assets\3376896121910915866
+  - ID: 3222776673339570516
+    Path: assets\materials\RedCube.mat
+  - ID: 18343059058984476513
+    Path: assets\pp.pps
+  - ID: 9415660326472782608
+    Path: assets\pps.postps
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
-  - ID: 185029471185975704
-    Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
+  - ID: 10018967626877327364
+    Path: assets\shaders\PostProcessing\redfilter.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
+  - ID: 17802237416394450003
+    Path: assets\shaders\PostProcessing\colorcalibration.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
+  - ID: 12566908515496758623
+    Path: assets\shaders\PostProcessing\blur.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
-  - ID: 15626095132042939384
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
+  - ID: 14435706810766333409
+    Path: .\Lib\Assets\14435706810766333409
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -2969,8 +1761,6 @@ Associations:
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
-  - ID: 10831654421873374582
-    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -3193,6 +1983,8 @@ Associations:
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -3223,32 +2015,24 @@ Associations:
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
-  - ID: 10831654421873374582
-    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
-  - ID: 10831654421873374582
-    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
-  - ID: 10831654421873374582
-    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
-  - ID: 10831654421873374582
-    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -3279,24 +2063,18 @@ Associations:
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
-  - ID: 10831654421873374582
-    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
-  - ID: 10831654421873374582
-    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
-  - ID: 10831654421873374582
-    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -3375,6 +2153,8 @@ Associations:
     Path: assets\shaders\depthvisualizer.glsl
   - ID: 13286852514676055666
     Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -3583,6 +2363,12 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 185029471185975704
+    Path: assets\shaders\untextured.glsl
+  - ID: 16771361181252771261
+    Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -3651,6 +2437,10 @@ Associations:
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -3703,6 +2493,10 @@ Associations:
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -3915,6 +2709,10 @@ Associations:
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
     Path: assets\shaders\depthvisualizer.glsl
+  - ID: 13286852514676055666
+    Path: assets\shaders\depth.glsl
+  - ID: 10831654421873374582
+    Path: assets\shaders\fullscreenquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4363,6 +3161,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 11407835938620649483
+    Path: assets\shaders\PostProcessing\blur.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4379,6 +3179,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 11801895309816367009
+    Path: assets\shaders\PostProcessing\blur.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4587,6 +3389,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4595,6 +3399,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4603,6 +3409,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4611,6 +3419,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4619,6 +3429,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4627,6 +3439,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4635,6 +3449,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4643,6 +3459,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4651,6 +3469,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4659,6 +3479,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4667,6 +3489,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4675,6 +3499,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4683,6 +3509,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4691,6 +3519,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4699,6 +3529,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4707,6 +3539,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4715,6 +3549,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4723,6 +3559,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4731,6 +3569,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4739,6 +3579,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4747,6 +3589,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4755,6 +3599,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4763,6 +3609,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4771,6 +3619,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4779,6 +3629,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4787,6 +3639,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4795,6 +3649,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4803,6 +3659,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4811,6 +3669,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4819,6 +3679,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4827,6 +3689,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4835,6 +3699,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4843,6 +3709,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4851,6 +3719,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4859,6 +3729,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4867,6 +3739,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4875,6 +3749,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4883,6 +3759,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4891,6 +3769,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4899,6 +3779,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261
@@ -4907,6 +3789,8 @@ Associations:
     Path: assets\shaders\depth.glsl
   - ID: 10831654421873374582
     Path: assets\shaders\fullscreenquad.glsl
+  - ID: 13211959263973576949
+    Path: assets\shaders\transparentquad.glsl
   - ID: 185029471185975704
     Path: assets\shaders\untextured.glsl
   - ID: 16771361181252771261

@@ -1,0 +1,191 @@
+Scene: Untitled scene
+AdditionalData:
+  EditorCameraPitch: 0.566402435
+  EditorCameraYaw: 4.07520866
+  EditorCameraFocalPoint: [-12.3298569, 66.5161743, -2.98832488]
+  EditorCameraDistance: 70
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+  Skybox: 0
+Entities:
+  - "Entity: ": 13156208443337351994
+    HierarchyOrder: 0
+    IDComponent:
+      Owner: 13156208443337351994
+      ID: 13156208443337351994
+    TagComponent:
+      Owner: 13156208443337351994
+      Name: Directional light
+      Tag: Untagged
+    TransformComponent:
+      Owner: 13156208443337351994
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 0.0469663143]
+      Parent: 0
+      Children:
+        []
+    DirectionalLightComponent:
+      Owner: 13156208443337351994
+      Direction: [0.5, 0.5, 0.5]
+      EnableShadows: true
+      Color: [1, 1, 1]
+      Intensity: 1
+    Children:
+      []
+  - "Entity: ": 8436073711377304182
+    HierarchyOrder: 1
+    IDComponent:
+      Owner: 8436073711377304182
+      ID: 8436073711377304182
+    TagComponent:
+      Owner: 8436073711377304182
+      Name: Camera
+      Tag: Untagged
+    TransformComponent:
+      Owner: 8436073711377304182
+      Translation: [-19.4356575, 109.156746, 127.3451]
+      Rotation: [-0.460833281, -0.231100649, 0.113233373]
+      Scale: [1, 0.999999881, 1]
+      Parent: 0
+      Children:
+        []
+    CameraComponent:
+      Owner: 8436073711377304182
+      FixedAspectRatio: false
+      Primary: true
+      PostProcessingStack: 9415660326472782608
+      CameraData:
+        ProjectionType: 0
+        OrthoNear: 0.00999999978
+        OrthoFar: 1000
+        PerspNear: 0.00999999978
+        PerspFar: 1000
+        OrthoSize: 10
+        PerspFOV: 0.69813168
+    Children:
+      []
+  - "Entity: ": 12877615527115598962
+    HierarchyOrder: 2
+    IDComponent:
+      Owner: 12877615527115598962
+      ID: 12877615527115598962
+    TagComponent:
+      Owner: 12877615527115598962
+      Name: Ground
+      Tag: Untagged
+    TransformComponent:
+      Owner: 12877615527115598962
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+      Children:
+        - 1484806622785434083
+    Children:
+      - "Entity: ": 1484806622785434083
+        HierarchyOrder: 0
+        IDComponent:
+          Owner: 1484806622785434083
+          ID: 1484806622785434083
+        TagComponent:
+          Owner: 1484806622785434083
+          Name: untitled.obj.
+          Tag: Untagged
+        TransformComponent:
+          Owner: 1484806622785434083
+          Translation: [0, 4.76837158e-07, 0]
+          Rotation: [0, 0, 0]
+          Scale: [29.3460007, 1, 24.5259991]
+          Parent: 12877615527115598962
+          Children:
+            []
+        MeshRendererComponent:
+          Owner: 1484806622785434083
+          Mesh: 3376896121910915866
+          Material: 12237306214787587077
+          Instanced: false
+        Rigidbody3DComponent:
+          Owner: 1484806622785434083
+          Type: Static
+          GravityFactor: 1
+          Mass: 1
+        BoxCollider3DComponent:
+          Owner: 1484806622785434083
+          Size: [8, 8, 8]
+          Offset: [0, 0, 0]
+          Material: 0
+        Children:
+          []
+  - "Entity: ": 13756401835669839973
+    HierarchyOrder: 3
+    IDComponent:
+      Owner: 13756401835669839973
+      ID: 13756401835669839973
+    TagComponent:
+      Owner: 13756401835669839973
+      Name: New Entity
+      Tag: Untagged
+    TransformComponent:
+      Owner: 13756401835669839973
+      Translation: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+      Children:
+        []
+    Children:
+      []
+  - "Entity: ": 545340145532515999
+    HierarchyOrder: 4
+    IDComponent:
+      Owner: 545340145532515999
+      ID: 545340145532515999
+    TagComponent:
+      Owner: 545340145532515999
+      Name: Above
+      Tag: Untagged
+    TransformComponent:
+      Owner: 545340145532515999
+      Translation: [0, 20.8714523, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+      Children:
+        - 1971998531817252000
+    Children:
+      - "Entity: ": 1971998531817252000
+        HierarchyOrder: 0
+        IDComponent:
+          Owner: 1971998531817252000
+          ID: 1971998531817252000
+        TagComponent:
+          Owner: 1971998531817252000
+          Name: untitled.obj.
+          Tag: Untagged
+        TransformComponent:
+          Owner: 1971998531817252000
+          Translation: [-11.1117878, 56.8679733, -4.06630373]
+          Rotation: [-0.460521072, 0.675167739, -1.46463072]
+          Scale: [1.00000012, 0.999999762, 0.999999642]
+          Parent: 545340145532515999
+          Children:
+            []
+        MeshRendererComponent:
+          Owner: 1971998531817252000
+          Mesh: 3376896121910915866
+          Material: 3090763563331469130
+          Instanced: false
+        Rigidbody3DComponent:
+          Owner: 1971998531817252000
+          Type: Dynamic
+          GravityFactor: 1
+          Mass: 1
+        BoxCollider3DComponent:
+          Owner: 1971998531817252000
+          Size: [7.99988174, 8.02970886, 8.00059891]
+          Offset: [1.90734863e-06, 0.0148525238, 0.000352859497]
+          Material: 0
+        Children:
+          []

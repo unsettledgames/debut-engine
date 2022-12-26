@@ -1,0 +1,39 @@
+---
+Asset: PostProcessingStack
+Volumes:
+  - Name: Blur
+    Shader: 12566908515496758623
+    Enabled: true
+    Type: 2
+    Properties:
+      - Name: u_Kernel[0]
+        Type: 16
+        Data:
+          []
+      - Name: u_Texture
+        Type: 13
+        Data: 0
+      - Name: u_Size
+        Type: 5
+        Data: 1
+      - Name: u_Vertical
+        Type: 5
+        Data: 0
+  - Name: New Volume
+    Shader: 17802237416394450003
+    Enabled: true
+    Type: 7
+    Properties:
+      - Name: u_BlueIntensity
+        Type: 1
+        Data: 1.67999995
+      - Name: u_GreenIntensity
+        Type: 1
+        Data: 0.639999986
+      - Name: u_RedIntensity
+        Type: 1
+        Data: 1.27999997
+      - Name: u_Texture
+        Type: 13
+        Data: 0
+...

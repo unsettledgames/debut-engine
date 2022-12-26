@@ -1,0 +1,109 @@
+Scene: Untitled scene
+AdditionalData:
+  EditorCameraPitch: 0
+  EditorCameraYaw: 0
+  EditorCameraFocalPoint: [0, 0, 0]
+  EditorCameraDistance: 10
+Lighting:
+  AmbientLightColor: [0, 0, 0]
+  AmbientLightIntensity: 1
+  Skybox: 0
+Entities:
+  - "Entity: ": 3644262873758738819
+    HierarchyOrder: 0
+    IDComponent:
+      Owner: 3644262873758738819
+      ID: 3644262873758738819
+    TagComponent:
+      Owner: 3644262873758738819
+      Name: Directional light
+      Tag: Untagged
+    TransformComponent:
+      Owner: 3644262873758738819
+      Translation: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+      Children:
+        []
+    DirectionalLightComponent:
+      Owner: 3644262873758738819
+      Direction: [0.5, 0.5, 0.5]
+      EnableShadows: false
+      Color: [1, 1, 1]
+      Intensity: 1
+    Children:
+      []
+  - "Entity: ": 3505466775140961887
+    HierarchyOrder: 1
+    IDComponent:
+      Owner: 3505466775140961887
+      ID: 3505466775140961887
+    TagComponent:
+      Owner: 3505466775140961887
+      Name: Camera
+      Tag: Untagged
+    TransformComponent:
+      Owner: 3505466775140961887
+      Translation: [0, 5, 10]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+      Children:
+        []
+    CameraComponent:
+      Owner: 3505466775140961887
+      FixedAspectRatio: false
+      Primary: true
+      CameraData:
+        ProjectionType: 0
+        OrthoNear: 0.100000001
+        OrthoFar: 1000
+        PerspNear: 0.100000001
+        PerspFar: 1000
+        OrthoSize: 10
+        PerspFOV: 0.69813168
+    Children:
+      []
+  - "Entity: ": 16372846390690070822
+    HierarchyOrder: 2
+    IDComponent:
+      Owner: 16372846390690070822
+      ID: 16372846390690070822
+    TagComponent:
+      Owner: 16372846390690070822
+      Name: BlankCube.obj.model
+      Tag: Untagged
+    TransformComponent:
+      Owner: 16372846390690070822
+      Translation: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      Parent: 0
+      Children:
+        - 1499206490542783258
+    Children:
+      - "Entity: ": 1499206490542783258
+        HierarchyOrder: 0
+        IDComponent:
+          Owner: 1499206490542783258
+          ID: 1499206490542783258
+        TagComponent:
+          Owner: 1499206490542783258
+          Name: BlankCube.obj.
+          Tag: Untagged
+        TransformComponent:
+          Owner: 1499206490542783258
+          Translation: [0, 0, 0]
+          Rotation: [0, -0, 0]
+          Scale: [1, 1, 1]
+          Parent: 16372846390690070822
+          Children:
+            []
+        MeshRendererComponent:
+          Owner: 1499206490542783258
+          Mesh: 15138046311618176639
+          Material: 1028703064176906114
+          Instanced: false
+        Children:
+          []

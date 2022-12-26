@@ -270,7 +270,7 @@ float GetShadows(vec3 normal, vec3 lightDir)
 	float cameraDistance = length(v_FragPos - u_CameraPosition);
 	float attenuation = max(1.0 - ((mix(u_ShadowFadeoutStart, u_ShadowFadeoutEnd, (cameraDistance - u_ShadowFadeoutStart) / (u_ShadowFadeoutEnd - u_ShadowFadeoutStart))) - u_ShadowFadeoutStart)
 		/ (u_ShadowFadeoutEnd - u_ShadowFadeoutStart), 0.0);
-	float bias = max(0.03 * (1.0 - dot(normal, lightDir)), 0.001);
+	float bias = max(0.002 * (1.0 - dot(normal, lightDir)), 0.001);
 	
 	if (projFragLight.x >= 1.0 || projFragLight.x <= 0.0 || projFragLight.y >= 1.0 || projFragLight.y <= 0.0)
 		return 1.0;

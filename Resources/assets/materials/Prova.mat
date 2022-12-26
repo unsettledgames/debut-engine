@@ -6,24 +6,18 @@ Parameters:
   u_DirectionalLightDir: [0, 0, 0]
   u_AmbientLightColor: [0, 0, 0]
   u_PointLights[12].Position: [0, 0, 0]
-  u_AmbientLightIntensity: 0
   u_PointLights[11].Radius: 0
-  u_CameraPosition: [0, 0, 0]
+  u_AmbientLightIntensity: 0
   u_PointLights[2].Position: [0, 0, 0]
-  u_PointLights[2].Radius: 0
-  u_NormalMap:
-    ID: 0
-  u_NPointLights: 0
-  u_PointLights[5].Intensity: 0
-  u_DiffuseTexture:
-    ID: 0
+  u_CameraPosition: [0, 0, 0]
   u_PointLights[0].Intensity: 0
   u_DirectionalLightCol: [0, 0, 0]
-  u_PointLights[15].Radius: 0
   u_PointLights[7].Intensity: 0
+  u_PointLights[15].Radius: 0
   u_DirectionalLightIntensity: 0
+  u_PointLights[2].Radius: 0
+  u_NPointLights: 0
   u_PointLights[0].Color: [0, 0, 0]
-  u_UseNormalMap: false
   u_PointLights[0].Position: [0, 0, 0]
   u_PointLights[12].Intensity: 0
   u_PointLights[3].Position: [0, 0, 0]
@@ -46,11 +40,12 @@ Parameters:
   u_PointLights[4].Position: [0, 0, 0]
   u_PointLights[4].Radius: 0
   u_PointLights[5].Color: [0, 0, 0]
+  u_PointLights[5].Intensity: 0
   u_PointLights[5].Position: [0, 0, 0]
   u_PointLights[6].Color: [0, 0, 0]
   u_PointLights[5].Radius: 0
-  u_Transform: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
   u_PointLights[11].Color: [0, 0, 0]
+  u_Transform: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
   u_PointLights[6].Intensity: 0
   u_PointLights[6].Position: [0, 0, 0]
   u_PointLights[6].Radius: 0
@@ -61,8 +56,8 @@ Parameters:
   u_PointLights[8].Position: [0, 0, 0]
   u_PointLights[10].Color: [0, 0, 0]
   u_PointLights[8].Radius: 0
-  u_PointLights[9].Intensity: 0
   u_PointLights[12].Color: [0, 0, 0]
+  u_PointLights[9].Intensity: 0
   u_PointLights[9].Radius: 0
   u_PointLights[10].Position: [0, 0, 0]
   u_PointLights[13].Color: [0, 0, 0]
@@ -71,8 +66,8 @@ Parameters:
   u_PointLights[11].Position: [0, 0, 0]
   u_PointLights[13].Intensity: 0
   u_PointLights[13].Position: [0, 0, 0]
-  u_SpecularShininess: 0
   u_PointLights[13].Radius: 0
+  u_SpecularShininess: 1
   u_PointLights[14].Color: [0, 0, 0]
   u_PointLights[14].Intensity: 0
   u_PointLights[14].Position: [0, 0, 0]
@@ -80,8 +75,5 @@ Parameters:
   u_PointLights[15].Color: [0, 0, 0]
   u_PointLights[15].Intensity: 0
   u_PointLights[15].Position: [0, 0, 0]
-  u_ProjectionMatrix: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-  u_SpecularStrength: 0
-  u_TestTexture.Sampler:
-    ID: 0
+  u_SpecularStrength: 1
   u_ViewMatrix: [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
