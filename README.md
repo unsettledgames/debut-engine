@@ -38,12 +38,11 @@ TODO List:
 - VFX
   - Particle systems
 - Rendering
-  - Culling
   - PBR rendering
-  - Post processing
+  - Post processing effects
     - Anti aliasing
     - Bloom
-    - Blur / depth of field
+    - Depth of field
     - Motion blur
     - Cromatic aberration
     - HDR
