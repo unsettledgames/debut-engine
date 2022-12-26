@@ -105,10 +105,6 @@ namespace Debut
 					if (ImGuiUtils::DragFloat("Far clip", &orthoFar, 0.15f))
 						camera.SetFarPlane(orthoFar);
 				}
-
-				UUID pps = ImGuiUtils::DragDestination("Post processing stack", ".postps", component.PostProcessing);
-				if (pps != 0)
-					component.PostProcessing = pps;
 			});
 
 

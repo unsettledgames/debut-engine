@@ -93,7 +93,7 @@ namespace Debut
 		DBT_PROFILE_FUNCTION();
 		RenderCommand::DisableCulling();
 
-		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(view);
+		glm::mat4 viewProj = camera.GetProjection() * view;
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
 		s_Data.TextureShader->SetMat4("u_ViewMatrix", view);
@@ -103,6 +103,9 @@ namespace Debut
 		s_Data.TextureShader->Unbind();
 
 		StartBatch();
+
+		if (Renderer::GetConfig().RenderWireframe)
+			RendererDebug::BeginScene(camera);
 	}
 
 	void Renderer2D::EndScene()
@@ -120,6 +123,7 @@ namespace Debut
 				s_Data.TextureShader->Unbind();
 		}
 
+		RendererDebug::EndScene();
 		RenderCommand::EnableCulling();
 	}
 
@@ -214,6 +218,7 @@ namespace Debut
 		s_Data.Stats.QuadCount++;
 
 		RendererDebug::DrawQuad(transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
 	}
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& src, int entityID)

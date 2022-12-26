@@ -11,7 +11,6 @@
 #include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Rendering/Resources/Model.h>
 #include <Debut/Rendering/Resources/Skybox.h>
-#include <Debut/Rendering/Resources/PostProcessing.h>
 
 /*
 	TODO:
@@ -35,7 +34,6 @@ namespace Debut
 	AssetCache<std::string, Ref<Skybox>> AssetManager::s_SkyboxCache;
 	AssetCache<std::string, Ref<PhysicsMaterial2D>> AssetManager::s_PhysicsMaterial2DCache;
 	AssetCache<std::string, Ref<PhysicsMaterial3D>> AssetManager::s_PhysicsMaterial3DCache;
-	AssetCache<std::string, Ref<PostProcessingStack>> AssetManager::s_PostProcessingStackCache;
 
 	// Declare the template types, used to enable forward declaring in the .h file
 	template Ref<Mesh> AssetManager::Request<Mesh>(UUID id);
@@ -47,7 +45,11 @@ namespace Debut
 	template Ref<Skybox> AssetManager::Request<Skybox>(UUID id);
 	template Ref<PhysicsMaterial2D> AssetManager::Request<PhysicsMaterial2D>(UUID id);
 	template Ref<PhysicsMaterial3D> AssetManager::Request<PhysicsMaterial3D>(UUID id);
-	template Ref<PostProcessingStack> AssetManager::Request<PostProcessingStack>(UUID id);
+
+	template void AssetManager::CreateAsset<PhysicsMaterial2D>(const std::string& path);
+	template void AssetManager::CreateAsset<PhysicsMaterial3D>(const std::string& path);
+	template void AssetManager::CreateAsset<Material>(const std::string& path);
+	template void AssetManager::CreateAsset<Skybox>(const std::string& path);
 
 	void AssetManager::Init(const std::string& projectDir)
 	{
@@ -374,25 +376,6 @@ namespace Debut
 
 		// Update the asset map if the entry wasn't there
 		s_SkyboxCache.Put(id, toAdd);
-		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
-		{
-			s_AssetMap[toAdd->GetID()] = id;
-			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
-		}
-
-		return toAdd;
-	}
-
-	template<>
-	Ref<PostProcessingStack> AssetManager::Request<PostProcessingStack>(const std::string& id, const std::string& metaFile)
-	{
-		if (s_PostProcessingStackCache.Has(id))
-			return s_PostProcessingStackCache.Get(id);
-
-		Ref<PostProcessingStack> toAdd = CreateRef<PostProcessingStack>(id, metaFile);
-
-		// Update the asset map if the entry wasn't there
-		s_PostProcessingStackCache.Put(id, toAdd);
 		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
 		{
 			s_AssetMap[toAdd->GetID()] = id;

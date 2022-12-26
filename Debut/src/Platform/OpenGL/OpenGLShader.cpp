@@ -183,10 +183,9 @@ namespace Debut
 		GLCall(glUseProgram(0));
 	}
 
-	// TODO: CACHE THE UNIFORMS!!!
 	std::vector<ShaderUniform> OpenGLShader::GetUniforms() const
 	{
-		DBT_PROFILE_SCOPE("GetUniforms");
+		DBT_PROFILE_FUNCTION();
 		std::vector<ShaderUniform> ret;
 
 		GLint i;
@@ -207,37 +206,7 @@ namespace Debut
 			ShaderUniform::UniformData placeHolder;
 
 			GLCall(glGetActiveUniform(m_ProgramID, (GLuint)i, bufSize, &length, &size, &type, name));
-			std::string nameStr = std::string(name);
-			ShaderDataType dbtType = GLToDbtUniformType(type);
-
-			// TODO: check that there isn't also a .
-			if (nameStr.find('[') != std::string::npos && nameStr.find('.') == std::string::npos)
-				if (dbtType == ShaderDataType::Float)
-					dbtType = ShaderDataType::FloatArray;
-				else if (dbtType == ShaderDataType::Int)
-					dbtType = ShaderDataType::IntArray;
-
-			switch (dbtType)
-			{
-			case ShaderDataType::Bool: placeHolder = true; break;
-			case ShaderDataType::Float: placeHolder = 0.0f; break;
-			case ShaderDataType::Float2: placeHolder = glm::vec2(0.0f); break;
-			case ShaderDataType::Float3: placeHolder = glm::vec3(0.0f); break;
-			case ShaderDataType::Float4: placeHolder = glm::vec4(0.0f); break;
-			case ShaderDataType::FloatArray: placeHolder = std::vector<float>(); break;
-			case ShaderDataType::IntArray: placeHolder = std::vector<int>(); break;
-			case ShaderDataType::Int: placeHolder = 0; break;
-			case ShaderDataType::Int2: placeHolder = glm::vec2(0); break;
-			case ShaderDataType::Int3: placeHolder = glm::vec3(0); break;
-			case ShaderDataType::Int4: placeHolder = glm::vec4(0); break;
-			case ShaderDataType::Mat3: placeHolder = glm::mat3(1.0f); break;
-			case ShaderDataType::Mat4: placeHolder = glm::mat4(1.0f); break;
-			case ShaderDataType::Sampler2D: placeHolder = (UUID)0; break;
-			case ShaderDataType::SamplerCube: placeHolder = (UUID)0; break;
-			default:break;
-			}
-
-			ret[i] = { name, dbtType, placeHolder };
+			ret[i] = { name, GLToDbtUniformType(type), placeHolder };
 		}
 
 		return ret;
@@ -256,11 +225,6 @@ namespace Debut
 	void OpenGLShader::SetIntArray(const std::string& name, int* data, uint32_t count)
 	{
 		UploadUniformIntArray(name, data, count);
-	}
-
-	void OpenGLShader::SetFloatArray(const std::string& name, float* data, uint32_t count)
-	{
-		UploadUniformFloatArray(name, data, count);
 	}
 
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& uniform)
@@ -360,12 +324,6 @@ namespace Debut
 	{
 		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
 		GLCall(glUniform1iv(location, count, data));
-	}
-
-	void OpenGLShader::UploadUniformFloatArray(const std::string& name, float* data, uint32_t count)
-	{
-		GLCall(GLuint location = glGetUniformLocation(m_ProgramID, name.c_str()));
-		GLCall(glUniform1fv(location, count, data));
 	}
 
 	void OpenGLShader::CheckCompileError(unsigned int shader)

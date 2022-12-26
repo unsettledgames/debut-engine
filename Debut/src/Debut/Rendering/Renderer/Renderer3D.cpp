@@ -118,6 +118,9 @@ namespace Debut
 
 		RenderCommand::EnableCulling();
 		RenderCommand::CullBack();
+
+		if (Renderer::GetConfig().RenderWireframe)
+			RendererDebug::BeginScene(camera);
 	}
 
 	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform, int entityID)
@@ -257,6 +260,9 @@ namespace Debut
 	void Renderer3D::EndScene()
 	{
 		Flush();
+
+		if (Renderer::GetConfig().RenderWireframe)
+			RendererDebug::EndScene();
 	}
 
 	void Renderer3D::BeginShadow(Ref<ShadowMap> shadowMap, SceneCamera& camera)
@@ -320,15 +326,15 @@ namespace Debut
 			{
 				DirectionalLightComponent* dirLight = static_cast<DirectionalLightComponent*>(light);
 
-				data = dirLight->Direction;
+				data.Vec3 = dirLight->Direction;
 				material.m_Uniforms["u_DirectionalLightDir"] = {
 					ShaderUniform("u_DirectionalLightDir", ShaderDataType::Float3, data) };
 
-				data = dirLight->Color;
+				data.Vec3 = dirLight->Color;
 				material.m_Uniforms["u_DirectionalLightCol"] = {
 					ShaderUniform("u_DirectionalLightCol", ShaderDataType::Float3, data) };
 
-				data = dirLight->Intensity;
+				data.Float = dirLight->Intensity;
 				material.m_Uniforms["u_DirectionalLightIntensity"] = {
 					ShaderUniform("u_DirectionalLightIntensity", ShaderDataType::Float, data) };
 				break;
@@ -348,18 +354,18 @@ namespace Debut
 			std::stringstream lightName;
 			lightName << "u_PointLights[" << i << "]";
 
-			data = pointLights[i].Color;
+			data.Vec3 = pointLights[i].Color;
 			material.m_Uniforms[lightName.str() + ".Color"] = { ShaderUniform(lightName.str() + ".Color", ShaderDataType::Float3, data) };
-			data = pointLights[i].Position;
+			data.Vec3 = pointLights[i].Position;
 			material.m_Uniforms[lightName.str() + ".Position"] = { ShaderUniform(lightName.str() + ".Position", ShaderDataType::Float3, data) };
 
-			data = pointLights[i].Intensity;
+			data.Float = pointLights[i].Intensity;
 			material.m_Uniforms[lightName.str() + ".Intensity"] = { ShaderUniform(lightName.str() + ".Intensity", ShaderDataType::Float, data) };
-			data = pointLights[i].Radius;
+			data.Float = pointLights[i].Radius;
 			material.m_Uniforms[lightName.str() + ".Radius"] = { ShaderUniform(lightName.str() + ".Radius", ShaderDataType::Float, data) };
 		}
 
-		data = (int)pointLights.size();
+		data.Int = pointLights.size();
 		material.m_Uniforms["u_NPointLights"] = { ShaderUniform("u_NPointLights", ShaderDataType::Int, data) };
 	}
 

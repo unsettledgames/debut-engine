@@ -4,34 +4,42 @@
 #include <Debut/Core/UUID.h>
 #include <glm/glm.hpp>
 
-#include <vector>
-#include <variant>
-
 namespace Debut
 {
 	enum class ShaderDataType : uint8_t
 	{
 		None = 0,
 		Float, Float2, Float3, Float4,
-		Int, Int2, Int3, Int4, 
+		Int, Int2, Int3, Int4,
 		Bool,
 		Mat3, Mat4, Struct,
-		Sampler2D, SamplerCube,
-		IntArray, FloatArray
+		Sampler2D, SamplerCube
 	};
 
 	struct ShaderUniform
 	{
-		typedef std::variant<
-			float, int, bool,
-			glm::vec2, glm::vec3, glm::vec4, glm::mat4,
-			std::vector<int>, std::vector<float>, UUID> UniformData;
-
 		std::string Name;
 		ShaderDataType Type = ShaderDataType::None;
-		UniformData Data;
+		union UniformData
+		{
+			float Float;
+			int Int;
+			bool Bool;
 
-		ShaderUniform() = default;
+			glm::vec2 Vec2;
+			glm::vec3 Vec3;
+			glm::vec4 Vec4;
+
+			glm::mat4 Mat4;
+
+			UUID Texture;
+			UUID Cubemap;
+
+			UniformData() : Float(0), Int(0), Bool(true), Vec2(glm::vec2(1.0f)), Vec3(glm::vec3(1.0f)),
+				Vec4(glm::vec4(1.0f)), Mat4(glm::mat4(1.0f)), Texture(0), Cubemap(0) {}
+		} Data;
+
+		ShaderUniform() {}
 		ShaderUniform(const std::string& name, ShaderDataType type, UniformData data) : Name(name), Type(type), Data(data) {}
 	};
 
@@ -47,8 +55,6 @@ namespace Debut
 		case ShaderDataType::Int: return "Int";
 		case ShaderDataType::Mat3: return "Mat3";
 		case ShaderDataType::Mat4: return "Mat4";
-		case ShaderDataType::IntArray: return "IntArray";
-		case ShaderDataType::FloatArray: return "FloatArray";
 		case ShaderDataType::Sampler2D: return "Texture";
 		case ShaderDataType::SamplerCube: return "Skybox";
 		}
@@ -70,7 +76,6 @@ namespace Debut
 		virtual void SetInt(const std::string& name, int value) = 0;
 		virtual void SetBool(const std::string& name, bool value) = 0;
 		virtual void SetIntArray(const std::string& name, int* data, uint32_t count) = 0;
-		virtual void SetFloatArray(const std::string& name, float* data, uint32_t count) = 0;
 		
 		virtual void SetFloat(const std::string& name, float uniform) = 0;
 		virtual void SetFloat2(const std::string& name, const glm::vec2& uniform) = 0;

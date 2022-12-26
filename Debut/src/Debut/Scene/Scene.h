@@ -21,7 +21,6 @@ namespace Debut
 	class Skybox;
 	class PhysicsSystem3D;
 	class ShadowMap;
-	class PostProcessingStack;
 
 	class Scene
 	{
@@ -47,7 +46,7 @@ namespace Debut
 		void RenderingSetup(Ref<FrameBuffer> target);
 		void Rendering2D(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
 		void Rendering3D(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
-		void RenderColliders(SceneCamera& camera, const glm::mat4& cameraTransform);
+		void RenderingDebug(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
 
 		Entity CreateEmptyEntity();
 		Entity CreateEmptyEntity(UUID id);
@@ -59,7 +58,6 @@ namespace Debut
 		Entity GetPrimaryCameraEntity();
 		Entity GetEntityByID(uint64_t id);
 		inline Ref<Skybox> GetSkybox() { return m_Skybox; }
-		inline Ref<PostProcessingStack> GetPostProcessingStack() { return m_PostProcessingStack; }
 		inline glm::vec3 GetAmbientLight() { return m_AmbientLight; }
 		inline float GetAmbientLightIntensity() { return m_AmbientLightIntensity; }
 		inline glm::vec2 GetViewportSize() { return { m_ViewportWidth, m_ViewportHeight }; }
@@ -82,7 +80,6 @@ namespace Debut
 
 		uint32_t m_ViewportWidth = 0;
 		uint32_t m_ViewportHeight = 0;
-		bool m_Playing = false;
 
 		// Physics
 		b2World* m_PhysicsWorld2D = nullptr;		
@@ -92,15 +89,12 @@ namespace Debut
 		Ref<Skybox> m_Skybox;
 		glm::vec3 m_AmbientLight = glm::vec3(0.0f);
 		float m_AmbientLightIntensity = 1.0f;
+
 		std::vector<Ref<ShadowMap>> m_ShadowMaps;
-
-		// Other
-		Ref<PostProcessingStack> m_PostProcessingStack;
-
 		// TEMPORARY
 		float lambda = 0.5f;
-		float fadeoutStartDistance = 400;
-		float fadeoutEndDistance = 500;
+		float fadeoutStartDistance = 300;
+		float fadeoutEndDistance = 400;
 	};
 }
 
