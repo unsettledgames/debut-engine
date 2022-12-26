@@ -74,9 +74,9 @@ namespace Debut
 		Ref<FrameBuffer> m_SceneFrameBuffer;
 		Ref<FrameBuffer> m_DebugFrameBuffer;
 		Ref<RenderTexture> m_RenderTexture;
+		Ref<RenderTexture> m_DebugTexture;
 
 		Ref<Shader> m_FullscreenShader;
-		Ref<Shader> m_TranparentFullscreenShader;
 		float fps;
 	};
 }

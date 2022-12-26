@@ -257,9 +257,6 @@ namespace Debut
 	void Renderer3D::EndScene()
 	{
 		Flush();
-
-		if (Renderer::GetConfig().RenderWireframe)
-			RendererDebug::EndScene();
 	}
 
 	void Renderer3D::BeginShadow(Ref<ShadowMap> shadowMap, SceneCamera& camera)

@@ -158,8 +158,6 @@ namespace Debut
 				m_NextBuffer = m_DownscaledBuffers[0][0];
 				break;
 			}
-
-			
 		}
 	}
 
@@ -217,5 +215,16 @@ namespace Debut
 
 		shader->Unbind();
 		m_VertexArray->Unbind();
+	}
+
+	void RenderTexture::DrawOverlay(Ref<FrameBuffer> under, Ref<FrameBuffer> above, Ref<Shader> shader)
+	{
+		DBT_PROFILE_SCOPE("Fullscreen::Draw");
+
+		m_Target->SetSourceBuffer(above);
+
+		under->Bind();
+		m_Target->Draw(shader);
+		under->Unbind();
 	}
 }

@@ -589,7 +589,7 @@ namespace Debut
 	{
 		DBT_PROFILE_SCOPE("Debutant::RendererSetup");
 		frameBuffer->Bind();
-		RenderCommand::SetClearColor(glm::vec4(0.1, 0.1, 0.2, 1));
+		RenderCommand::SetClearColor(glm::vec4(0.2, 0.2, 0.4, 1));
 		RenderCommand::Clear();
 		frameBuffer->Unbind();
 

@@ -26,13 +26,6 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
-*   BUGS
-*   - Don't apply post processing to debug layer
-    GENERAL BUGS:
-    - 2D rendering's fucked up again, probably something about inverse view matrix
-*/
-
-/*
 *   OPTIMIZATION AND IMPROVEMENTS
 *   - Important lights: find the lights that, at the moment, are important. The nearest to the camera? Always consider the 
 *       directional light(s?), I wonder if there's some cheap way to check if the shadows produced by a light will be visible 

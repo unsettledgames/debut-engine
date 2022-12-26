@@ -52,8 +52,8 @@ namespace Debut
         m_DebugFrameBuffer = FrameBuffer::Create(debugFbSpecs);
 
         m_RenderTexture = RenderTexture::Create(sceneFbSpecs.Width, sceneFbSpecs.Height, m_SceneFrameBuffer, RenderTextureMode::Color);
+        m_DebugTexture = RenderTexture::Create(debugFbSpecs.Width, debugFbSpecs.Height, m_DebugFrameBuffer, RenderTextureMode::Color);
         m_FullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\fullscreenquad.glsl");
-        m_TranparentFullscreenShader = AssetManager::Request<Shader>("assets\\shaders\\transparentquad.glsl");
 
         m_EditorCamera = EditorCamera(glm::radians(30.0f), 16.0f / 9.0f, 0.1f, 1000.0f);
     }
@@ -91,18 +91,20 @@ namespace Debut
 
         // Render debug on a different buffer so it isn't affected by post processing
         m_DebugFrameBuffer->Bind();
-        RenderCommand::SetClearColor(glm::vec4(0, 0, 0, 0));
-        RenderCommand::Clear();
+        {
+            RenderCommand::SetClearColor(glm::vec4(0, 0, 0, 0));
+            RenderCommand::Clear();
 
-        if (sceneState == SceneManager::SceneState::Edit)
-            DrawCollider(points, labels);
-        if (Renderer::GetConfig().RenderColliders)
-            activeScene->RenderColliders(activeCamera, glm::inverse(activeCamera.GetView()));
+            if (sceneState == SceneManager::SceneState::Edit)
+                DrawCollider(points, labels);
+            if (Renderer::GetConfig().RenderColliders)
+                activeScene->RenderColliders(activeCamera, glm::inverse(activeCamera.GetView()));
 
-        RendererDebug::EndScene();
+            RendererDebug::EndScene();
 
-        if (sceneState == SceneManager::SceneState::Edit)
-            SelectCollider(points, labels);
+            if (sceneState == SceneManager::SceneState::Edit)
+                SelectCollider(points, labels);
+        }
         m_DebugFrameBuffer->Unbind();
 
         Ref<PostProcessingStack> postProcessing = activeScene->GetPostProcessingStack();
@@ -110,7 +112,7 @@ namespace Debut
         // The scene frame buffer now contains the whole scene. Render the frame buffer to a texture.
         m_RenderTexture->Draw(m_SceneFrameBuffer, m_FullscreenShader, postProcessing);
         // Render debug data
-        m_RenderTexture->Draw(m_DebugFrameBuffer, m_TranparentFullscreenShader, nullptr);
+        m_RenderTexture->DrawOverlay(m_RenderTexture->GetTopFrameBuffer(), m_DebugFrameBuffer, m_FullscreenShader);
     }
 
 	void ViewportPanel::OnImGuiRender()
@@ -222,6 +224,8 @@ namespace Debut
                 m_ViewportSize = glm::vec2(viewportSize.x, viewportSize.y);
 
                 m_RenderTexture->Resize(m_ViewportSize.x, m_ViewportSize.y);
+                m_DebugTexture->Resize(m_ViewportSize.x, m_ViewportSize.y);
+
                 m_SceneFrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
                 m_DebugFrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
 
