@@ -47,7 +47,7 @@ namespace Debut
 		void RenderingSetup(Ref<FrameBuffer> target);
 		void Rendering2D(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
 		void Rendering3D(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
-		void RenderingDebug(SceneCamera& camera, const glm::mat4& cameraTransform, Ref<FrameBuffer> target);
+		void RenderColliders(SceneCamera& camera, const glm::mat4& cameraTransform);
 
 		Entity CreateEmptyEntity();
 		Entity CreateEmptyEntity(UUID id);

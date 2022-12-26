@@ -118,9 +118,6 @@ namespace Debut
 
 		RenderCommand::EnableCulling();
 		RenderCommand::CullBack();
-
-		if (Renderer::GetConfig().RenderWireframe)
-			RendererDebug::BeginScene(camera);
 	}
 
 	void Renderer3D::DrawModel(const MeshRendererComponent& meshComponent, const glm::mat4& transform, int entityID)

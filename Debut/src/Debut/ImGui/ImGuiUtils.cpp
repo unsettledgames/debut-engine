@@ -50,7 +50,7 @@ namespace Debut
 		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
 
-		ImGui::Text(label.c_str());
+		ImGui::Text(label.substr(0, label.find("#")).c_str());
 		ImGui::PopItemWidth();
 		ImGui::NextColumn();
 
@@ -78,7 +78,7 @@ namespace Debut
 		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
 
-		ImGui::Text(label.c_str());
+		ImGui::Text(label.substr(0, label.find("#")).c_str());
 		ImGui::PopItemWidth();
 		ImGui::NextColumn();
 
@@ -111,7 +111,7 @@ namespace Debut
 		ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0,0 });
 
-		ImGui::Text(label.c_str());
+		ImGui::Text(label.substr(0, label.find("#")).c_str());
 		ImGui::PopItemWidth();
 		ImGui::NextColumn();
 
@@ -147,7 +147,7 @@ namespace Debut
 
 		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 
-		ImGui::Text(label.c_str());
+		ImGui::Text(label.substr(0, label.find("#")).c_str());
 		ImGui::PopItemWidth();
 		ImGui::NextColumn();
 
@@ -168,13 +168,14 @@ namespace Debut
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[1];
+		std::string idStr = id;
 
 		ImGui::PushID(id);
 
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, columnWidth);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
-		ImGui::Text(id);
+		ImGui::Text(idStr.substr(0, idStr.find("#")).c_str());
 		ImGui::NextColumn();
 
 		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
@@ -221,6 +222,7 @@ namespace Debut
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[1];
+		std::string idStr(id);
 
 		ImGui::PushID(id);
 
@@ -228,7 +230,7 @@ namespace Debut
 		ImGui::SetColumnWidth(0, columnWidth);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
 
-		ImGui::Text(id);
+		ImGui::Text(idStr.substr(0, idStr.find("#")).c_str());
 		ImGui::NextColumn();
 
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
@@ -291,6 +293,7 @@ namespace Debut
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		auto boldFont = io.Fonts->Fonts[1];
+		std::string idStr(id);
 
 		ImGui::PushID(id);
 
@@ -298,7 +301,7 @@ namespace Debut
 
 		ImGuiUtils::StartColumns(3, { columnWidth, vecColumnSize, vecColumnSize });
 
-		ImGui::Text(id);
+		ImGui::Text(idStr.substr(0, idStr.find("#")).c_str());
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
 
 		ImGui::NextColumn();
@@ -421,7 +424,7 @@ namespace Debut
 		ImGui::PushID(label.c_str());
 		ImGuiUtils::StartColumns(2, { 120, 280 });
 
-		ImGui::Text(label.c_str());
+		ImGui::Text(label.substr(0, label.find("#")).c_str());
 		ImGui::SameLine();
 		ImGui::NextColumn();
 
@@ -476,7 +479,7 @@ namespace Debut
 		auto boldFont = io.Fonts->Fonts[1];
 
 		ImGui::PushFont(boldFont);
-		ImGui::Text(label.c_str());
+		ImGui::Text(label.substr(0, label.find("#")).c_str());
 		ImGui::PopFont();
 	}
 
@@ -485,9 +488,10 @@ namespace Debut
 		bool changed = false;
 		ImGuiUtils::ResetColumns();
 		ImGuiUtils::StartColumns(2, { 100, 400});
+		std::string label(id);
 		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 		ImGui::PushID(id);
-		ImGui::Text(id);
+		ImGui::Text(label.substr(0, label.find("#")).c_str());
 		ImGui::PopItemWidth();
 
 		ImGui::NextColumn();

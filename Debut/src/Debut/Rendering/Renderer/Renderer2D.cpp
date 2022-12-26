@@ -103,9 +103,6 @@ namespace Debut
 		s_Data.TextureShader->Unbind();
 
 		StartBatch();
-
-		if (Renderer::GetConfig().RenderWireframe)
-			RendererDebug::BeginScene(camera);
 	}
 
 	void Renderer2D::EndScene()

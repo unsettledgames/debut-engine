@@ -755,7 +755,7 @@ namespace Debut
 			ImGui::SameLine();
 
 			static char buffer[256];
-			ss.str();
+			ss.str("");
 			ss << "###" << i;
 			memset(buffer, 0, 256);
 			memcpy(buffer, volume.Name.c_str(), volume.Name.length());
@@ -786,35 +786,39 @@ namespace Debut
 			{
 				if (prop.second.Name.compare("u_Texture") == 0)
 					continue;
+				ss.str("");
+				ss << "##" << i;
+				std::string name = prop.second.Name + ss.str();
+
 				switch (prop.second.Type)
 				{
 				case ShaderDataType::Float:
-					ImGuiUtils::DragFloat(prop.second.Name, &std::get<float>(prop.second.Data), 0.02f);
+					ImGuiUtils::DragFloat(name, &std::get<float>(prop.second.Data), 0.02f);
 					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
 				case ShaderDataType::Float2:
 				{
 					glm::vec2& vec = std::get<glm::vec2>(prop.second.Data);
-					ImGuiUtils::RGBVec2(prop.second.Name.c_str(), { "X", "Y" }, { &vec.x, &vec.y });
+					ImGuiUtils::RGBVec2(name.c_str(), {"X", "Y"}, {&vec.x, &vec.y});
 					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
 				}
 				case ShaderDataType::Float3:
 				{
 					glm::vec3& vec = std::get<glm::vec3>(prop.second.Data);
-					ImGuiUtils::RGBVec3(prop.second.Name.c_str(), { "X", "Y", "Z" }, { &vec.x, &vec.y, &vec.z });
+					ImGuiUtils::RGBVec3(name.c_str(), {"X", "Y", "Z"}, {&vec.x, &vec.y, &vec.z});
 					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
 				}
 				case ShaderDataType::Float4:
 				{
 					glm::vec4& vec = std::get<glm::vec4>(prop.second.Data);
-					ImGuiUtils::RGBVec4(prop.second.Name.c_str(), { "X", "Y", "Z", "W" }, { &vec.x, &vec.y, &vec.z, &vec.w });
+					ImGuiUtils::RGBVec4(name.c_str(), { "X", "Y", "Z", "W" }, { &vec.x, &vec.y, &vec.z, &vec.w });
 					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
 				}
 				case ShaderDataType::Bool:
-					ImGui::Checkbox(prop.second.Name.c_str(), &std::get<bool>(prop.second.Data));
+					ImGui::Checkbox(name.c_str(), &std::get<bool>(prop.second.Data));
 					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
 				case ShaderDataType::Sampler2D:
@@ -830,7 +834,7 @@ namespace Debut
 
 					// Texture preview button
 					std::stringstream ss;
-					ss << "Texture" << rendererID << prop.second.Name;
+					ss << "Texture" << rendererID << name;
 					Ref<Texture2D> newTexture = ImGuiUtils::ImageDragDestination<Texture2D>(rendererID, { 80, 80 }, ss.str().c_str());
 					if (newTexture != nullptr)
 					{
@@ -847,7 +851,7 @@ namespace Debut
 					break;
 				}
 				case ShaderDataType::Int:
-					ImGuiUtils::DragInt(prop.second.Name, &std::get<int>(prop.second.Data), 0.1f);
+					ImGuiUtils::DragInt(name, &std::get<int>(prop.second.Data), 0.1f);
 					config.Volumes[i].Properties[prop.second.Name].Data = prop.second.Data;
 					break;
 				}

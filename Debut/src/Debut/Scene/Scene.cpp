@@ -152,7 +152,6 @@ namespace Debut
 	}
 
 	//TODO: OnComponentRemove, delete bodies
-
 	Entity Scene::GetPrimaryCameraEntity()
 	{
 		auto view = m_Registry.view<CameraComponent>();
@@ -182,9 +181,6 @@ namespace Debut
 
 		Rendering3D(camera, cameraTransform, target);
 		Rendering2D(camera, cameraTransform, target);
-
-		if (Renderer::GetConfig().RenderColliders)
-			RenderingDebug(camera, cameraTransform, target);
 	}
 	
 
@@ -270,9 +266,6 @@ namespace Debut
 			m_PostProcessingStack = AssetManager::Request<PostProcessingStack>(cameraComp.PostProcessing);
 			Rendering3D(*mainCamera, cameraTransform, target);
 			Rendering2D(*mainCamera, cameraTransform, target);
-
-			if (Renderer::GetConfig().RenderColliders)
-				RenderingDebug(*mainCamera, cameraTransform, target);
 		}
 	}
 
@@ -534,70 +527,62 @@ namespace Debut
 		target->Unbind();
 	}
 
-	void Scene::RenderingDebug(SceneCamera& camera, const glm::mat4& cameraView, Ref<FrameBuffer> target)
+	void Scene::RenderColliders(SceneCamera& camera, const glm::mat4& cameraView)
 	{
-		target->Bind();
-
-		RendererDebug::BeginScene(camera);
+		DBT_PROFILE_SCOPE("RenderingDebug");
+		// 3D Physics colliders
+		auto rigidbody3DGroup = m_Registry.view<Rigidbody3DComponent>();
+		for (auto entity : rigidbody3DGroup)
 		{
-			DBT_PROFILE_SCOPE("RenderingDebug");
-			// 3D Physics colliders
-			auto rigidbody3DGroup = m_Registry.view<Rigidbody3DComponent>();
-			for (auto entity : rigidbody3DGroup)
+			Entity e = { entity, this };
+			auto& objTransform = e.Transform();
+
+			if (e.HasComponent<BoxCollider3DComponent>())
 			{
-				Entity e = { entity, this };
-				auto& objTransform = e.Transform();
-
-				if (e.HasComponent<BoxCollider3DComponent>())
-				{
-					auto& collider = e.GetComponent<BoxCollider3DComponent>();
-					RendererDebug::DrawBox(collider.Size, collider.Offset, objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-				}
-				else if (e.HasComponent<SphereCollider3DComponent>())
-				{
-					glm::vec3 trans, rot, scale;
-					glm::mat4 objTransformMat = objTransform.GetTransform();
-					MathUtils::DecomposeTransform(objTransformMat, trans, rot, scale);
-
-					auto& collider = e.GetComponent<SphereCollider3DComponent>();
-					RendererDebug::DrawSphere(collider.Radius, collider.Offset, rot, scale, glm::inverse(cameraView), objTransformMat);
-				}
-				else if (e.HasComponent<MeshCollider3DComponent>())
-				{
-					auto& collider = e.GetComponent<MeshCollider3DComponent>();
-					RendererDebug::DrawMesh(collider.Mesh, collider.Offset, objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-				}
+				auto& collider = e.GetComponent<BoxCollider3DComponent>();
+				RendererDebug::DrawBox(collider.Size, collider.Offset, objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 			}
-
-			// 2D Physics colliders
-			auto rigidbody2DGroup = m_Registry.view<Rigidbody2DComponent>();
-			for (auto entity : rigidbody2DGroup)
+			else if (e.HasComponent<SphereCollider3DComponent>())
 			{
-				Entity e = { entity, this };
-				auto& objTransform = e.Transform();
+				glm::vec3 trans, rot, scale;
+				glm::mat4 objTransformMat = objTransform.GetTransform();
+				MathUtils::DecomposeTransform(objTransformMat, trans, rot, scale);
 
-				if (e.HasComponent<BoxCollider2DComponent>())
-				{
-					auto& collider = e.GetComponent<BoxCollider2DComponent>();
-					RendererDebug::DrawRect(objTransform.GetTransform(), collider.Size, collider.Offset, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-				}
-				else if (e.HasComponent<CircleCollider2DComponent>())
-				{
-					auto& collider = e.GetComponent<CircleCollider2DComponent>();
-					RendererDebug::DrawCircle(collider.Radius, glm::vec3(collider.Offset, objTransform.Translation.z),
-						objTransform.GetTransform(), 40);
-				}
-				else if (e.HasComponent<PolygonCollider2DComponent>())
-				{
-					auto& collider = e.GetComponent<PolygonCollider2DComponent>();
-					RendererDebug::DrawPolygon(collider.GetTriangles(), glm::vec3(collider.Offset, objTransform.Translation.z),
-						objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-				}
+				auto& collider = e.GetComponent<SphereCollider3DComponent>();
+				RendererDebug::DrawSphere(collider.Radius, collider.Offset, rot, scale, glm::inverse(cameraView), objTransformMat);
+			}
+			else if (e.HasComponent<MeshCollider3DComponent>())
+			{
+				auto& collider = e.GetComponent<MeshCollider3DComponent>();
+				RendererDebug::DrawMesh(collider.Mesh, collider.Offset, objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 			}
 		}
-		RendererDebug::EndScene();
 
-		target->Unbind();
+		// 2D Physics colliders
+		auto rigidbody2DGroup = m_Registry.view<Rigidbody2DComponent>();
+		for (auto entity : rigidbody2DGroup)
+		{
+			Entity e = { entity, this };
+			auto& objTransform = e.Transform();
+
+			if (e.HasComponent<BoxCollider2DComponent>())
+			{
+				auto& collider = e.GetComponent<BoxCollider2DComponent>();
+				RendererDebug::DrawRect(objTransform.GetTransform(), collider.Size, collider.Offset, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+			}
+			else if (e.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& collider = e.GetComponent<CircleCollider2DComponent>();
+				RendererDebug::DrawCircle(collider.Radius, glm::vec3(collider.Offset, objTransform.Translation.z),
+					objTransform.GetTransform(), 40);
+			}
+			else if (e.HasComponent<PolygonCollider2DComponent>())
+			{
+				auto& collider = e.GetComponent<PolygonCollider2DComponent>();
+				RendererDebug::DrawPolygon(collider.GetTriangles(), glm::vec3(collider.Offset, objTransform.Translation.z),
+					objTransform.GetTransform(), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+			}
+		}
 	}
 
 	void Scene::RenderingSetup(Ref<FrameBuffer> frameBuffer)

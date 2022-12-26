@@ -93,7 +93,7 @@ namespace Debut
 
 		for (auto& volume : postProcessing->GetVolumes())
 		{
-			if (volume.RuntimeShader == nullptr)
+			if (volume.RuntimeShader == nullptr || !volume.Enabled)
 				continue;
 			props.clear();
 			props = volume.Properties;

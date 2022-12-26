@@ -34,7 +34,8 @@ namespace Debut
 
 		void OnImGuiRender();
 		void DrawTopBar(ImVec2& menuSize);
-		void DrawCollider();
+		void DrawCollider(std::vector<glm::vec3>& points, std::vector<std::string>& labels);
+		void SelectCollider(std::vector<glm::vec3> points, std::vector<std::string> labels);
 
 		glm::vec2 GetFrameBufferCoords();
 
@@ -71,10 +72,11 @@ namespace Debut
 		DebutantLayer* m_ParentLayer;
 		// Scene rendering
 		Ref<FrameBuffer> m_SceneFrameBuffer;
-		Ref<FrameBuffer> m_TextureFrameBuffer;
+		Ref<FrameBuffer> m_DebugFrameBuffer;
 		Ref<RenderTexture> m_RenderTexture;
 
 		Ref<Shader> m_FullscreenShader;
+		Ref<Shader> m_TranparentFullscreenShader;
 		float fps;
 	};
 }

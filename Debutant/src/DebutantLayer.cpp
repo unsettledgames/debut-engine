@@ -26,9 +26,6 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
-*   POST PROCESSING
-*   - Editing parameters for hydenthical effects edits all of them at once
-* 
 *   BUGS
 *   - Don't apply post processing to debug layer
     GENERAL BUGS:
@@ -36,17 +33,6 @@
 */
 
 /*
-*   CURRENT: POST PROCESSING
-*   
-*   - Post processing is stuff that happens on the final screen quad when everything's been rendered. There could be many effects,
-*       they're usually organized in a stack, whose order is used to determine the order in which effect are applied.
-*       A post-processing effect is usually a full-screen shader that is applied in a pass. Sometimes, post-processing effects
-*       can be a bit more complex (bloom, motion-blur), but apparently it still looks like it's possible to have them in a single
-*       pass without additional architecture.
-*   - Each volume is basically a shader with some parameters, which is a Material. That means I can let users create their own
-*       shader + Material and use it as a post processing volume. In addition, I can provide some default volumes they can use
-*       (bloom, color correction, chromatic aberration etc)
-*   
 *   OPTIMIZATION AND IMPROVEMENTS
 *   - Important lights: find the lights that, at the moment, are important. The nearest to the camera? Always consider the 
 *       directional light(s?), I wonder if there's some cheap way to check if the shadows produced by a light will be visible 
@@ -56,18 +42,22 @@
 *       approach might not be optimal for a generic use. What if multiple shadow maps depending on level of importance?
 *   -  Gaussian blur on the shadow maps?
 * 
-*   QOL:
+*   REFACTORING:
 *       - Review AssetManager and its data flow. Add a proper Asset class from which stuff inherits, establish a flow used
-*           for ALL assets.
-*       - Render camera frustum
+*           for ALL assets. 
+*       - Review PostProcessing. Who should apply an effect? The RenderTexture or something else?
+*       - Custom events, propagated starting from the Application: in this way we can avoid pointers to other classes
+*           (e.g. DebutantLayer* in ViewportPanel, which I really don't like at the moment)
 *       - Find a better way to update entity selection: if it's selected or destroyed somewhere, it must be selected 
 *           or destroyed everywhere
+* 
+*   QOL:
+*       
+*       - Render camera frustum
 *       - Highlight selected entity in scene hierarchy when it's selected in the viewport
 *       - Render Light directions and gizmos, same for camera
 *       - Move Texture, Shader, Material and SubTexture2D to Resources folder
 *       - Change way of rendering DepthMap (use Depth mode of RenderTexture)
-*       - Custom events, propagated starting from the Application: in this way we can avoid pointers to other classes
-*           (e.g. DebutantLayer* in ViewportPanel, which I really don't like at the moment)
 *       - Drop skybox to set it in the current scene
 *       
         - Lighting settings:
