@@ -39,6 +39,8 @@ namespace Debut
 		void AddDragSource(const std::filesystem::path& path);
 
 		void CBDeleteFile(const std::string& path);
+		void CBReloadFileSystem();
+
 		std::string CBChooseFileName(const std::string& type, const std::string& defaultFilename);
 		void DeleteModel(Ref<Model> model, std::vector<Debut::UUID> deletedIds);
 

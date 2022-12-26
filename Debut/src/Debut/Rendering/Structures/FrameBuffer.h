@@ -45,7 +45,12 @@ namespace Debut
 		uint32_t Samples = 1;
 
 		bool SwapChainTarget = false;
+		bool Valid = true;
 		FrameBufferAttachmentSpecification Attachments;
+
+		FrameBufferSpecifications(bool valid) : Valid(valid) {}
+		FrameBufferSpecifications() = default;
+		FrameBufferSpecifications(const FrameBufferSpecifications&) = default;
 	};
 
 	class FrameBuffer

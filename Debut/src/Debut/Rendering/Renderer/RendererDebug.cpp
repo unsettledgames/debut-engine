@@ -16,7 +16,7 @@ namespace Debut
 
 	void RendererDebug::Init()
 	{
-		RenderCommand::SetLineWidth(0.05f);
+		RenderCommand::SetLineWidth(1.0f);
 		RenderCommand::SetPointSize(12.0f);
 
 		BufferLayout layout = {

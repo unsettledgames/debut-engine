@@ -15,11 +15,12 @@ namespace Debut
 	class Texture2D;
 	class PhysicsMaterial2D;
 	class PhysicsMaterial3D;
-	class Mesh;
 	class Shader;
 	class Material;
-	class Skybox;
+	class Mesh;
 	class Model;
+	class Skybox;
+	class PostProcessingStack;
 
 	class AssetManager
 	{
@@ -110,6 +111,7 @@ namespace Debut
 		static AssetCache<std::string, Ref<Skybox>> s_SkyboxCache;
 		static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
 		static AssetCache<std::string, Ref<PhysicsMaterial3D>> s_PhysicsMaterial3DCache;
+		static AssetCache<std::string, Ref<PostProcessingStack>> s_PostProcessingStackCache;
 		
 	};
 }
