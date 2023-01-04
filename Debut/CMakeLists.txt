@@ -98,6 +98,17 @@ target_link_libraries(Debut
 	PUBLIC assimp
 	PUBLIC Jolt
 	PRIVATE lz4_static
+	
+	PRIVATE ${CMAKE_SOURCE_DIR}/Debut/vendor/mono/lib/eglib.lib
+	PRIVATE ${CMAKE_SOURCE_DIR}/Debut/vendor/mono/lib/libgcmonosgen.lib
+	PRIVATE ${CMAKE_SOURCE_DIR}/Debut/vendor/mono/lib/libmini-sgen.lib
+	PRIVATE ${CMAKE_SOURCE_DIR}/Debut/vendor/mono/lib/libmonoruntime-sgen.lib
+	PRIVATE ${CMAKE_SOURCE_DIR}/Debut/vendor/mono/lib/libmono-static-sgen.lib
+	PRIVATE ${CMAKE_SOURCE_DIR}/Debut/vendor/mono/lib/libmonoutils.lib
+	PRIVATE ${CMAKE_SOURCE_DIR}/Debut/vendor/mono/lib/mono-2.0-sgen.lib
+	PRIVATE ${CMAKE_SOURCE_DIR}/Debut/vendor/mono/lib/MonoPosixHelper.lib
+	PRIVATE ${CMAKE_SOURCE_DIR}/Debut/vendor/mono/bin/mono-2.0-sgen.lib
+	PRIVATE ${CMAKE_SOURCE_DIR}/Debut/vendor/mono/bin/MonoPosixHelper.lib
 )
 
 IF(WINDOWS_BUILD)
@@ -120,6 +131,7 @@ target_include_directories(Debut
 	PUBLIC vendor/jolt-physics/Jolt/
 	PRIVATE vendor/lz4/lib
 	PRIVATE vendor/other
+	PRIVATE vendor/mono/include
 )
 
 # Keep the project structure
