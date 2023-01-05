@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include <Debut/Core/Application.h>
+#include <Debut/Scripting/ScriptEngine.h>
 #include <Debut/Core/Window.h>
 #include <Debut/ImGui/ImGuiLayer.h>
 #include <Debut/Core/Input.h>
@@ -22,6 +23,7 @@ namespace Debut
 		m_Window->SetEventCallback(DBT_BIND(Application::OnEvent));
 
 		Renderer::Init();
+		ScriptEngine::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		m_LayerStack.PushOverlay(m_ImGuiLayer);

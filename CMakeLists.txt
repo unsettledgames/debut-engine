@@ -10,3 +10,4 @@ project(DebutEngine VERSION 1.0.0)
 
 # Include dependencies
 add_subdirectory(Debutant Debutant/Build)
+add_subdirectory(DebutScripting DebutScripting/Build)

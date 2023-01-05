@@ -95,6 +95,10 @@ target_link_libraries(Debut
 	PUBLIC spdlog
 	PUBLIC yaml-cpp
 	PUBLIC Dwmapi.dll
+	PRIVATE Bcrypt.lib
+	PRIVATE Version.lib
+	PRIVATE Ws2_32.lib
+	PRIVATE Winmm.lib
 	PUBLIC assimp
 	PUBLIC Jolt
 	PRIVATE lz4_static
