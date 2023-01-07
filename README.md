@@ -32,9 +32,6 @@ TODO List:
     - Capsule and cylinder colliders, joints
     - The cool stuff that Jolt apparently supports
   - Triggers
-- Scripting
-  - Lua
-  - C#
 - VFX
   - Particle systems
 - Rendering
