@@ -78,6 +78,42 @@ namespace Debut
         }
     }
 
+    MonoClass* GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName, const char* className)
+    {
+        MonoImage* image = mono_assembly_get_image(assembly);
+        MonoClass* klass = mono_class_from_name(image, namespaceName, className);
+
+        if (klass == nullptr)
+        {
+            // Log error here
+            return nullptr;
+        }
+
+        return klass;
+    }
+
+    void TestMethods()
+    {
+        MonoClass* testClass = GetClassInAssembly(s_Data.CoreAssembly, "", "Test");
+        MonoObject* classInstance = mono_object_new(s_Data.AppDomain, testClass);
+        mono_runtime_object_init(classInstance);
+
+        // Test print method
+        MonoMethod* printMethod = mono_class_get_method_from_name(testClass, "Print", 0);
+        MonoObject* exception = nullptr;
+        mono_runtime_invoke(printMethod, classInstance, nullptr, &exception);
+        
+        // Test set float method
+        float value = 32.0f;
+        void* params = { &value };
+        MonoMethod* setFloatMethod = mono_class_get_method_from_name(testClass, "SetFloat", 1);
+        mono_runtime_invoke(setFloatMethod, classInstance, &params, &exception);
+        mono_runtime_invoke(printMethod, classInstance, nullptr, &exception);
+
+        // Test get float method
+
+    }
+
 	void ScriptEngine::Init()
 	{
 		mono_set_assemblies_path("../../../Resources/Mono/lib/4.5");
@@ -99,13 +135,21 @@ namespace Debut
         // Load the assembly
         std::string assemblyPath = "../../../Resources/Mono/Debut";
 #ifdef DBT_DEBUG
-        assemblyPath += "/Debug/";
+        assemblyPath += "/Debug/DebutScriptingd.dll";
 #else
-        assemblyPath += "/Release/";
+        assemblyPath += "/Release/DebutScripting.dll";
 #endif
-        assemblyPath += "DebutScripting.dll";
 
         s_Data.CoreAssembly = LoadCSharpAssembly(assemblyPath);
         PrintAssemblyTypes(s_Data.CoreAssembly);
+        TestMethods();
 	}
+
+    void ScriptEngine::Shutdown()
+    {
+        mono_jit_cleanup(s_Data.RootDomain);
+
+        s_Data.RootDomain = nullptr;
+        s_Data.AppDomain = nullptr;
+    }
 }

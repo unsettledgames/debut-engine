@@ -74,6 +74,7 @@ namespace Debut
 
 	void Application::Close()
 	{
+		ScriptEngine::Shutdown();
 		m_Running = false;
 	}
 
@@ -96,7 +97,7 @@ namespace Debut
 
 	bool Application::OnWindowClosed(WindowCloseEvent& e)
 	{
-		m_Running = false;
+		Close();
 		return true;
 	}
 

@@ -43,6 +43,7 @@
 *           (e.g. DebutantLayer* in ViewportPanel, which I really don't like at the moment)
 *       - Find a better way to update entity selection: if it's selected or destroyed somewhere, it must be selected 
 *           or destroyed everywhere
+*       - Is the Owner field in components really necessary?
 * 
 *   QOL:
 *       
