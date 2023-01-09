@@ -21,6 +21,7 @@ namespace Debut
 	class Model;
 	class Skybox;
 	class PostProcessingStack;
+	class ScriptMetadata;
 
 	class AssetManager
 	{
@@ -36,6 +37,7 @@ namespace Debut
 		static void Submit(Ref<Mesh> asset);
 		static void Submit(Ref<Material> asset);
 		static void Submit(Ref<Model> model);
+		static void Submit(Ref<ScriptMetadata> model);
 
 		template <typename T>
 		static void Remove(UUID id) {}
@@ -112,6 +114,7 @@ namespace Debut
 		static AssetCache<std::string, Ref<PhysicsMaterial2D>> s_PhysicsMaterial2DCache;
 		static AssetCache<std::string, Ref<PhysicsMaterial3D>> s_PhysicsMaterial3DCache;
 		static AssetCache<std::string, Ref<PostProcessingStack>> s_PostProcessingStackCache;
+		static AssetCache<std::string, Ref<ScriptMetadata>> s_ScriptCache;
 		
 	};
 }

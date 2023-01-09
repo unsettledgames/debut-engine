@@ -4,6 +4,7 @@
 
 #include <Debut/Rendering/Resources/Mesh.h>
 #include <Debut/Rendering/Material.h>
+#include <Debut/Scripting/ScriptMetadata.h>
 #include <Debut/Scene/Components.h>
 #include <Debut/AssetManager/AssetManager.h>
 
@@ -404,6 +405,23 @@ namespace Debut
 				ImGui::Checkbox("Cast shadows", &component.CastShadows);
 
 				component.Position = entity.Transform().Translation;
+			});
+
+		DrawComponent<ScriptComponent>("Script", entity, [&](auto& component)
+			{
+				Ref<ScriptMetadata> script = AssetManager::Request<ScriptMetadata>(component.Script);
+				std::string name = "Class:";
+
+				if (script != nullptr)
+					name = script->GetName();
+
+				UUID scriptID = ImGuiUtils::DragDestination(name, ".cs", component.Script);
+				if (scriptID != 0)
+				{
+					script = AssetManager::Request<ScriptMetadata>(scriptID);
+					component.ClassName = script->GetName();
+					component.Script = script->GetID();
+				}
 			});
 	}
 }

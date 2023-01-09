@@ -305,7 +305,12 @@ namespace Debut
 			mesh->SetPositions(positions);
 			mesh->SetIndices(indices);
 			mesh->SaveSettings(positions, colors, normals, tangents, bitangents, texcoords, indices);
+
+			uint32_t fileSize = std::filesystem::file_size(ss.str());
+			Log.CoreInfo("Mesh file size: {0}", fileSize);
 			mesh->Load(ss.str());
+
+			
 
 			ProgressPanel::CompleteTask("meshimport");
 		}

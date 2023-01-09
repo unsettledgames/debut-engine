@@ -592,4 +592,13 @@ namespace Debut
 			DestroyScript = [](NativeScriptComponent* nsc) {delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};
+
+	struct ScriptComponent
+	{
+		UUID Owner;
+		UUID Script;
+		std::string ClassName;
+
+		ScriptComponent() = default;
+	};
 }

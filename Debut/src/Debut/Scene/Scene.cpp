@@ -123,6 +123,12 @@ namespace Debut
 	template<>
 	void Scene::OnComponentAdded(PointLightComponent& dl, Entity entity) {}
 
+	template <>
+	void Scene::OnComponentAdded(ScriptComponent& sc, Entity entity)
+	{
+		// Instantiate script etc etc
+	}
+
 	template <typename Component>
 	static void CopyComponent(entt::registry& dst, const entt::registry& src, const std::unordered_map<UUID, entt::entity> enttMap)
 	{

@@ -12,6 +12,7 @@
 #include <Debut/Rendering/Resources/Model.h>
 #include <Debut/Rendering/Resources/Skybox.h>
 #include <Debut/Rendering/Resources/PostProcessing.h>
+#include <Debut/Scripting/ScriptMetadata.h>
 
 /*
 	TODO:
@@ -36,6 +37,7 @@ namespace Debut
 	AssetCache<std::string, Ref<PhysicsMaterial2D>> AssetManager::s_PhysicsMaterial2DCache;
 	AssetCache<std::string, Ref<PhysicsMaterial3D>> AssetManager::s_PhysicsMaterial3DCache;
 	AssetCache<std::string, Ref<PostProcessingStack>> AssetManager::s_PostProcessingStackCache;
+	AssetCache<std::string, Ref<ScriptMetadata>> AssetManager::s_ScriptCache;
 
 	// Declare the template types, used to enable forward declaring in the .h file
 	template Ref<Mesh> AssetManager::Request<Mesh>(UUID id);
@@ -48,6 +50,7 @@ namespace Debut
 	template Ref<PhysicsMaterial2D> AssetManager::Request<PhysicsMaterial2D>(UUID id);
 	template Ref<PhysicsMaterial3D> AssetManager::Request<PhysicsMaterial3D>(UUID id);
 	template Ref<PostProcessingStack> AssetManager::Request<PostProcessingStack>(UUID id);
+	template Ref<ScriptMetadata> AssetManager::Request<ScriptMetadata>(UUID id);
 
 	void AssetManager::Init(const std::string& projectDir)
 	{
@@ -206,6 +209,10 @@ namespace Debut
 	{
 		s_ModelCache.Put(model->GetPath(), model);
 		AddAssociationToFile(model->GetID(), model->GetPath());
+	}
+	void AssetManager::Submit(Ref<ScriptMetadata> script)
+	{
+		s_ScriptCache.Put(script->GetName(), script);
 	}
 
 	// ASSET REQUESTS
@@ -393,6 +400,24 @@ namespace Debut
 
 		// Update the asset map if the entry wasn't there
 		s_PostProcessingStackCache.Put(id, toAdd);
+		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
+		{
+			s_AssetMap[toAdd->GetID()] = id;
+			AssetManager::AddAssociationToFile(toAdd->GetID(), id);
+		}
+
+		return toAdd;
+	}
+	
+	template<>
+	Ref<ScriptMetadata> AssetManager::Request<ScriptMetadata>(const std::string& id, const std::string& metaFile)
+	{
+		if (s_ScriptCache.Has(id))
+			return s_ScriptCache.Get(id);
+
+		Ref<ScriptMetadata> toAdd = CreateRef<ScriptMetadata>(id, metaFile);
+		s_ScriptCache.Put(id, toAdd);
+
 		if (s_AssetMap.find(toAdd->GetID()) == s_AssetMap.end())
 		{
 			s_AssetMap[toAdd->GetID()] = id;

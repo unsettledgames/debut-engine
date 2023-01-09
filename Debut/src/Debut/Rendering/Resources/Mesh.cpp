@@ -79,7 +79,7 @@ namespace Debut
 		size_t decompressedSize;
 
 		while (string.compare("") == 0 || string.compare(" ") == 0)
-			std::getline(file, string);	
+			std::getline(file, string);
 		std::getline(file, compressedString);
 		std::getline(file, hasCompressedStr);
 
@@ -89,18 +89,7 @@ namespace Debut
 		if (compressedSize == 0)
 			return;
 
-		file.read(reinterpret_cast<char*>(buffer.data()), compressedSize);
-		if (file)
-			Log.CoreInfo("Read successful");
-		else
-		{
-			Log.CoreInfo("Read unsuccessful (read {0})", file.gcount());
-			Log.CoreInfo("Open? {0}", file.is_open());
-			Log.CoreInfo("Good? {0}", file.good());
-			Log.CoreInfo("Eof? {0}", file.eof());
-			Log.CoreInfo("Fail? {0}", file.fail());
-			Log.CoreInfo("Bad? {0}", file.bad());
-		}
+		file.read((char*)buffer.data(), compressedSize);
 
 		if (compressed)
 		{
@@ -226,7 +215,7 @@ namespace Debut
 
 	void Mesh::Load(const std::string& path)
 	{
-		std::ifstream file(path);
+		std::ifstream file(path, std::ios::binary | std::ios::in);
 		Load(file);
 	}
 

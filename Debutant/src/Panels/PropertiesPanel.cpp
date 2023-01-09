@@ -17,6 +17,7 @@
 #include <Debut/Physics/PhysicsMaterial3D.h>
 #include <Debut/Physics/PhysicsMaterial2D.h>
 #include <Debut/Rendering/Texture.h>
+#include <Debut/Scripting/ScriptMetadata.h>
 
 /**
 	TODO:
@@ -80,6 +81,10 @@ namespace Debut
 			else if (m_AssetType == AssetType::Model)
 			{
 				DrawModelProperties();
+			}
+			else if (m_AssetType == AssetType::ScriptMetadata)
+			{
+				DrawScriptMetadataProperties();
 			}
 		}
 
@@ -890,6 +895,16 @@ namespace Debut
 			stack->SaveSettings(m_AssetPath.string(), config);
 	}
 
+	void PropertiesPanel::DrawScriptMetadataProperties()
+	{
+		Ref<ScriptMetadata> script = AssetManager::Request<ScriptMetadata>(m_AssetPath.string());
+		std::string name = "Script not found";
+
+		if (script != nullptr)
+			name = script->GetName();
+		ImGuiUtils::BoldText(name);
+	}
+
 	void PropertiesPanel::SetAsset(std::filesystem::path path, std::filesystem::path metaPath, AssetType assetType)
 	{
 		if (std::filesystem::is_directory(path))
@@ -917,5 +932,7 @@ namespace Debut
 			m_AssetType = AssetType::Skybox;
 		else if (path.extension() == ".postps")
 			m_AssetType = AssetType::PostProcessingStack;
+		else if (path.extension() == ".cs")
+			m_AssetType = AssetType::ScriptMetadata;
 	}
 }

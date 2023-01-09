@@ -77,6 +77,8 @@ namespace Debut
 					ImGui::EndMenu();
 				}
 
+				ret |= DrawAddReplaceComponentEntry<ScriptComponent, T>("Script", replace);
+
 				ImGui::EndPopup();
 			}
 

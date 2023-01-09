@@ -26,15 +26,18 @@
 #include <glm/gtx/matrix_operation.hpp>
 
 /*
-*   OPTIMIZATION AND IMPROVEMENTS
-*   - Important lights: find the lights that, at the moment, are important. The nearest to the camera? Always consider the 
-*       directional light(s?), I wonder if there's some cheap way to check if the shadows produced by a light will be visible 
-*       in the scnee without actually rendering the scene. I don't think so.
-*   - A fast approach to the above issue would consist in reserving higher resolution maps to important lights and smaller
-*       maps to ones that aren't. Also keep in mind that what Doom 2016 is a very specific game with very specific needs, their
-*       approach might not be optimal for a generic use. What if multiple shadow maps depending on level of importance?
-*   -  Gaussian blur on the shadow maps?
-* 
+*   After scripting:
+*       - Definitely fix bugs, one at a time
+*       - Review materials and rendering. Review how lights are passed and applied. Review specular lights. Sometimes textures
+*           mess up (they aren't unbinded). Enabling textureless mode changes the transforms
+*       - Review shadows: they probably don't use the exact model transform (try with the cake)
+*       - Error checking. 
+*   BUGS:
+*       - Don't zoom the viewport while scrolling on other panels...
+*       - Model importing quite broken
+*       - Improve material system: correctly detect textures, don't use textures that shouldn't be used, automatically set 
+*           diffuse and right parameters (sepcular maps) to enable a decent default rendering, hide shadowmaps, keep a certain
+*           order in the default material. Would be nice to have stuff in declaration order.
 *   REFACTORING:
 *       - Review AssetManager and its data flow. Add a proper Asset class from which stuff inherits, establish a flow used
 *           for ALL assets. 
@@ -46,7 +49,7 @@
 *       - Is the Owner field in components really necessary?
 * 
 *   QOL:
-*       
+*       - Can't assing stuff without importing it first (clicking on it)
 *       - Render camera frustum
 *       - Highlight selected entity in scene hierarchy when it's selected in the viewport
 *       - Render Light directions and gizmos, same for camera
@@ -63,6 +66,7 @@
 *           - Movement data
 *       - The debug renderer should probably only used in a DebugLayer since it kinda behaves as such
 *       - Implement rendering modes in 2D too
+*       - Add inspector / properties panel locking
         - Mesh properties in properties panel?
 *
 * 
@@ -76,8 +80,13 @@
         - MeshColliders load a whole mesh when only vertices and triangles are needed. Specify flags to know what parts
             to load
         - Materials: Probably time to get rid of YAML and use a binary, compressed format instead
-
-    - Add inspector / properties panel locking
+    - Important lights: find the lights that, at the moment, are important. The nearest to the camera? Always consider the
+*       directional light(s?), I wonder if there's some cheap way to check if the shadows produced by a light will be visible
+*       in the scnee without actually rendering the scene. I don't think so.
+*   - A fast approach to the above issue would consist in reserving higher resolution maps to important lights and smaller
+*       maps to ones that aren't. Also keep in mind that what Doom 2016 is a very specific game with very specific needs, their
+*       approach might not be optimal for a generic use. What if multiple shadow maps depending on level of importance?
+*   -  Gaussian blur on the shadow maps?
     - Make editor robust to association file deletion / editing
     - Asset renaming
     - Custom memory allocator to keep track of used memory
