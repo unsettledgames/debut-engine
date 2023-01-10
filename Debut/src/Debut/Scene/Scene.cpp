@@ -640,6 +640,7 @@ namespace Debut
 		CopyComponentIfExists<MeshRendererComponent>(duplicate, entity);
 		CopyComponentIfExists<DirectionalLightComponent>(duplicate, entity);
 		CopyComponentIfExists<PointLightComponent>(duplicate, entity);
+		CopyComponentIfExists<ScriptComponent>(duplicate, entity);
 		
 		auto& transform = entity.Transform();
 		duplicate.Transform().SetParent(parent);
@@ -764,6 +765,7 @@ namespace Debut
 		CopyComponent<MeshRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<DirectionalLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 		CopyComponent<PointLightComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent<ScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		// Restore transforms
 		auto transformView = dstSceneRegistry.view<TransformComponent>();

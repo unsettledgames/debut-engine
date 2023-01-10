@@ -187,6 +187,12 @@ namespace Debut
 		out << YAML::Key << "Radius" << YAML::Value << c.Radius;
 	}
 
+	static void SerializeComponent(const ScriptComponent& sc, YAML::Emitter& out)
+	{
+		out << YAML::Key << "Script" << YAML::Value << sc.Script;
+		out << YAML::Key << "Name" << YAML::Value << sc.ClassName;
+	}
+
 	template <typename T>
 	static void DeserializeComponent(Entity e, YAML::Node& in, Ref<Scene> scene = nullptr)
 	{
@@ -402,6 +408,16 @@ namespace Debut
 		dl.Radius = in["Radius"].as<float>();
 	}
 
+	template<>
+	static void DeserializeComponent<ScriptComponent>(Entity e, YAML::Node& in, Ref<Scene> scene)
+	{
+		if (!in)
+			return;
+		ScriptComponent& sc = e.AddComponent<ScriptComponent>();
+		sc.Script = in["Script"].as<uint64_t>();
+		sc.ClassName = in["Name"].as<std::string>();
+	}
+
 	void SceneSerializer::SerializeEntity(EntitySceneNode& node, YAML::Emitter& out)
 	{
 		Entity entity = node.EntityData;
@@ -428,6 +444,8 @@ namespace Debut
 
 		SerializeComponent<DirectionalLightComponent>(entity, "DirectionalLightComponent", out);
 		SerializeComponent<PointLightComponent>(entity, "PointLightComponent", out);
+
+		SerializeComponent<ScriptComponent>(entity, "ScriptComponent", out);
 
 		out << YAML::Key << "Children" << YAML::Value << YAML::BeginSeq;
 		for (uint32_t i = 0; i < node.Children.size(); i++)
@@ -537,6 +555,8 @@ namespace Debut
 
 		DeserializeComponent<DirectionalLightComponent>(entity, yamlEntity["DirectionalLightComponent"]);
 		DeserializeComponent<PointLightComponent>(entity, yamlEntity["PointLightComponent"]);
+
+		DeserializeComponent<ScriptComponent>(entity, yamlEntity["ScriptComponent"]);
 
 		auto children = yamlEntity["Children"];
 		for (auto child : children)
