@@ -1,25 +1,39 @@
 using System;
 
-public class Test
+namespace Debut
 {
-    public float FloatVar = -1;
-
-    public Test()
+    public class Test
     {
-        FloatVar = 69420.0f;
-    }
+        public float FloatVar = -1;
 
-    public void SetFloat(float v) 
-    { 
-        FloatVar = v; 
-    }
-    public float GetFloat() 
-    { 
-        return FloatVar; 
-    }
+        void OnStart()
+        {
+            Console.WriteLine("OnStart called");
+        }
 
-    public void Print() 
-    { 
-        Console.WriteLine("Hello C#! Float value: {0}", FloatVar);
+        void OnUpdate(float ts)
+        {
+            Console.WriteLine("Timestep: {0}", ts);
+        }
+
+        public Test()
+        {
+            FloatVar = 69420.0f;
+        }
+
+        public void SetFloat(float v)
+        {
+            FloatVar = v;
+        }
+        public float GetFloat()
+        {
+            return FloatVar;
+        }
+
+        public void Print()
+        {
+            Console.WriteLine("Hello C#! Float value: {0}", FloatVar);
+        }
     }
 }
+

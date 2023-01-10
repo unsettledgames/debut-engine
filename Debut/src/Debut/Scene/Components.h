@@ -600,5 +600,6 @@ namespace Debut
 		std::string ClassName;
 
 		ScriptComponent() = default;
+		ScriptComponent(uint64_t script, const std::string& name) : Script(script), ClassName(name) {}
 	};
 }

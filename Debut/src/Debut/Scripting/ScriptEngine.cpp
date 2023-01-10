@@ -1,20 +1,21 @@
 #include <Debut/dbtpch.h>
-#include <Debut/Core/Core.h>
 #include <Debut/Scripting/ScriptEngine.h>
+
+#include <Debut/Core/Core.h>
+#include <Debut/Scene/Components.h>
+#include <Debut/Scene/Entity.h>
+
+#include <Debut/Scripting/ScriptClass.h>
+#include <Debut/Scripting/ScriptInstance.h>
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 
+// TODO: add support for multiple scripts in same entity
+
 namespace Debut
 {
-    struct ScriptEngineData
-    {
-        MonoDomain* RootDomain;
-        MonoDomain* AppDomain;
-        MonoAssembly* CoreAssembly;
-    };
-
-    ScriptEngineData s_Data;
+    ScriptEngineData ScriptEngine::s_Data;
 
     char* ReadBytes(const std::string& filepath, uint32_t* outSize)
     {
@@ -78,42 +79,6 @@ namespace Debut
         }
     }
 
-    MonoClass* GetClassInAssembly(MonoAssembly* assembly, const char* namespaceName, const char* className)
-    {
-        MonoImage* image = mono_assembly_get_image(assembly);
-        MonoClass* klass = mono_class_from_name(image, namespaceName, className);
-
-        if (klass == nullptr)
-        {
-            // Log error here
-            return nullptr;
-        }
-
-        return klass;
-    }
-
-    void TestMethods()
-    {
-        MonoClass* testClass = GetClassInAssembly(s_Data.CoreAssembly, "", "Test");
-        MonoObject* classInstance = mono_object_new(s_Data.AppDomain, testClass);
-        mono_runtime_object_init(classInstance);
-
-        // Test print method
-        MonoMethod* printMethod = mono_class_get_method_from_name(testClass, "Print", 0);
-        MonoObject* exception = nullptr;
-        mono_runtime_invoke(printMethod, classInstance, nullptr, &exception);
-        
-        // Test set float method
-        float value = 32.0f;
-        void* params = { &value };
-        MonoMethod* setFloatMethod = mono_class_get_method_from_name(testClass, "SetFloat", 1);
-        mono_runtime_invoke(setFloatMethod, classInstance, &params, &exception);
-        mono_runtime_invoke(printMethod, classInstance, nullptr, &exception);
-
-        // Test get float method
-
-    }
-
 	void ScriptEngine::Init()
 	{
 		mono_set_assemblies_path("../../../Resources/Mono/lib/4.5");
@@ -142,7 +107,7 @@ namespace Debut
 
         s_Data.CoreAssembly = LoadCSharpAssembly(assemblyPath);
         PrintAssemblyTypes(s_Data.CoreAssembly);
-        TestMethods();
+        //TestMethods();
 	}
 
     void ScriptEngine::Shutdown()
@@ -152,4 +117,35 @@ namespace Debut
         s_Data.RootDomain = nullptr;
         s_Data.AppDomain = nullptr;
     }
+
+    void ScriptEngine::Instantiate(ScriptComponent& script, Entity& entity)
+    {
+        Ref<ScriptClass> scriptClass = CreateRef<ScriptClass>(script.ClassName);
+        Ref<ScriptInstance> scriptInstance = CreateRef<ScriptInstance>(scriptClass);
+
+        s_Data.ScriptInstances[entity] = scriptInstance;
+    }
+
+    void ScriptEngine::CallOnStart()
+    {
+        // Call OnStart on every instance
+        for (auto& entt : s_Data.ScriptInstances)
+            entt.second->InvokeOnStart();
+    }
+
+    void ScriptEngine::CallOnUpdate(float ts)
+    {
+        for (auto& entt : s_Data.ScriptInstances)
+            entt.second->InvokeOnUpdate(ts);
+    }
+
+    /*
+    
+    // Class name -> MonoClass
+        std::unordered_map<std::string, MonoClass*> Classes;
+        // Class name -> MonoMethods
+        std::unordered_map<std::string, std::unordered_map<std::string, MonoMethod*>> ClassMethods;
+        // Entity -> (classname -> instance)
+        std::unordered_map<uint32_t, MonoObject*> ClassInstances;
+    */
 }

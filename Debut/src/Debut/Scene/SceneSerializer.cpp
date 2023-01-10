@@ -413,9 +413,9 @@ namespace Debut
 	{
 		if (!in)
 			return;
-		ScriptComponent& sc = e.AddComponent<ScriptComponent>();
-		sc.Script = in["Script"].as<uint64_t>();
-		sc.ClassName = in["Name"].as<std::string>();
+		uint64_t script = in["Script"].as<uint64_t>();
+		std::string name = in["Name"].as<std::string>();
+		ScriptComponent& sc = e.AddComponent<ScriptComponent>(script, name);
 	}
 
 	void SceneSerializer::SerializeEntity(EntitySceneNode& node, YAML::Emitter& out)

@@ -19,6 +19,9 @@
 #include <Debut/Rendering/Structures/Frustum.h>
 #include <Debut/Utils/MathUtils.h>
 
+#include <Debut/Scripting/ScriptEngine.h>
+#include <Debut/Scripting/ScriptMetadata.h>
+
 #include "box2d/b2_world.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_polygon_shape.h"
@@ -126,7 +129,12 @@ namespace Debut
 	template <>
 	void Scene::OnComponentAdded(ScriptComponent& sc, Entity entity)
 	{
+		Ref<ScriptMetadata> scriptData = AssetManager::Request<ScriptMetadata>(sc.Script);
+		if (scriptData == nullptr)
+			return;
+		sc.ClassName = scriptData->GetName().substr(0, scriptData->GetName().find_first_of("."));
 		// Instantiate script etc etc
+		ScriptEngine::Instantiate(sc, entity);
 	}
 
 	template <typename Component>
@@ -199,6 +207,7 @@ namespace Debut
 		// Update scripts
 		{
 			DBT_PROFILE_SCOPE("Scene: Script Update");
+			// TODO: remove native scripting
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 				{
 					if (!nsc.Instance)
@@ -209,6 +218,11 @@ namespace Debut
 					}
 
 					nsc.Instance->OnUpdate(ts);
+				});
+
+			m_Registry.view<ScriptComponent>().each([=](auto entity, auto& sc)
+				{
+					ScriptEngine::CallOnUpdate(ts);
 				});
 		}
 
@@ -296,6 +310,9 @@ namespace Debut
 
 		auto rigidbodyView2D = m_Registry.view<Rigidbody2DComponent>();
 		auto rigidbodyView3D = m_Registry.view<Rigidbody3DComponent>();
+		auto scriptView = m_Registry.view<ScriptComponent>();
+
+		ScriptEngine::CallOnStart();
 
 		// Create 2D Rigidbodies
 		for (auto e : rigidbodyView2D)
