@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Debut/Core/Core.h>
-#include <Debut/Scripting/ScriptClass.h>
+#include <Debut/Core/UUID.h>
 
 extern "C" 
 {
@@ -11,19 +11,21 @@ extern "C"
 
 namespace Debut
 {
+	class UUID;
+	class ScriptClass;
+
 	class ScriptInstance
 	{
 	public:
-		ScriptInstance(Ref<ScriptClass> klass);
+		ScriptInstance(Ref<ScriptClass> klass, UUID& entityID);
 
 		void InvokeOnStart();
 		void InvokeOnUpdate(float ts);
 
 	private:
 		Ref<ScriptClass> m_Class;
+		UUID m_EntityID;
 		
 		MonoObject* m_Object;
-		MonoMethod* m_OnStartMethod;
-		MonoMethod* m_OnUpdateMethod;
 	};
 }

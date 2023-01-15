@@ -23,5 +23,6 @@ namespace Debut
         m_Class = klass;
         m_OnStart = mono_class_get_method_from_name(klass, "OnStart", 0);
         m_OnUpdate = mono_class_get_method_from_name(klass, "OnUpdate", 1);
+        m_Constructor = mono_class_get_method_from_name(ScriptEngine::s_Data.EntityClass, ".ctor", 1);
 	}
 }

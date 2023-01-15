@@ -5,6 +5,7 @@
 #include <Debut/Scene/Components.h>
 #include <Debut/Scene/Entity.h>
 
+#include <Debut/Scripting/ScriptGlue.h>
 #include <Debut/Scripting/ScriptClass.h>
 #include <Debut/Scripting/ScriptInstance.h>
 
@@ -16,6 +17,7 @@
 namespace Debut
 {
     ScriptEngineData ScriptEngine::s_Data;
+    Scene* ScriptEngine::s_Context;
 
     char* ReadBytes(const std::string& filepath, uint32_t* outSize)
     {
@@ -81,6 +83,7 @@ namespace Debut
 
 	void ScriptEngine::Init()
 	{
+        DBT_PROFILE_FUNCTION();
 		mono_set_assemblies_path("../../../Resources/Mono/lib/4.5");
 
         MonoDomain* rootDomain = mono_jit_init("DebutScriptRuntime");
@@ -106,8 +109,12 @@ namespace Debut
 #endif
 
         s_Data.CoreAssembly = LoadCSharpAssembly(assemblyPath);
+        s_Data.CoreImage = mono_assembly_get_image(s_Data.CoreAssembly);
         PrintAssemblyTypes(s_Data.CoreAssembly);
-        //TestMethods();
+
+        s_Data.EntityClass = mono_class_from_name(ScriptEngine::s_Data.CoreImage, "Debut", "Entity");
+
+        ScriptGlue::RegisterFunctions();
 	}
 
     void ScriptEngine::Shutdown()
@@ -121,7 +128,7 @@ namespace Debut
     void ScriptEngine::Instantiate(ScriptComponent& script, Entity& entity)
     {
         Ref<ScriptClass> scriptClass = CreateRef<ScriptClass>(script.ClassName);
-        Ref<ScriptInstance> scriptInstance = CreateRef<ScriptInstance>(scriptClass);
+        Ref<ScriptInstance> scriptInstance = CreateRef<ScriptInstance>(scriptClass, (UUID)entity.ID());
 
         s_Data.ScriptInstances[entity] = scriptInstance;
     }
@@ -138,14 +145,4 @@ namespace Debut
         for (auto& entt : s_Data.ScriptInstances)
             entt.second->InvokeOnUpdate(ts);
     }
-
-    /*
-    
-    // Class name -> MonoClass
-        std::unordered_map<std::string, MonoClass*> Classes;
-        // Class name -> MonoMethods
-        std::unordered_map<std::string, std::unordered_map<std::string, MonoMethod*>> ClassMethods;
-        // Entity -> (classname -> instance)
-        std::unordered_map<uint32_t, MonoObject*> ClassInstances;
-    */
 }

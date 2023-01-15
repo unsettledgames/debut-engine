@@ -25,5 +25,6 @@ namespace Debut
 
 		MonoMethod* m_OnStart;
 		MonoMethod* m_OnUpdate;
+		MonoMethod* m_Constructor;
 	};
 }

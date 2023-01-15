@@ -108,9 +108,9 @@ namespace Debut
 			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
 			
 			// Apply the parent matrix
-			return worldMatrix * (glm::translate(transform, Translation) 
-				* rotation 
-				* glm::scale(glm::mat4(1.0f), Scale));
+			return worldMatrix * (glm::translate(transform, Translation)
+				* (rotation 
+				* glm::scale(glm::mat4(1.0f), Scale)));
 		}
 
 		glm::mat4 GetLocalTransform()
@@ -121,8 +121,8 @@ namespace Debut
 
 			// Apply the parent matrix
 			return (glm::translate(transform, Translation)
-				* rotation
-				* glm::scale(glm::mat4(1.0f), Scale));
+				* (rotation
+				* glm::scale(glm::mat4(1.0f), Scale)));
 		}
 
 		void SetParent(Entity newParent) 
@@ -152,6 +152,39 @@ namespace Debut
 			Rotation = glm::eulerAngles(rotation);
 
 			Parent = newParent;
+		}
+		
+		inline void SetTranslation(const glm::vec3& trans)
+		{
+			if (Parent)
+			{
+				TransformComponent& parentTransform = Parent.Transform();
+				Translation = glm::inverse(parentTransform.GetTransform()) * glm::vec4(trans, 0.0f);
+			}
+			else
+				Translation = trans;
+		}
+
+		inline void SetEulerRotation(const glm::vec3& rot)
+		{
+			if (Parent)
+				Rotation = glm::inverse(Parent.Transform().GetTransform()) * glm::vec4(rot, 0.0f);
+			else
+				Rotation = rot;
+		}
+
+		inline void SetScale(const glm::vec3& scale)
+		{
+			if (Parent)
+				Scale = glm::inverse(Parent.Transform().GetTransform()) * glm::vec4(scale, 1.0f);
+			else
+				Scale = scale;
+		}
+
+		inline glm::vec3 GetTranslation()
+		{
+			if (Parent) return glm::vec3(Parent.Transform().GetTransform() * glm::vec4(Translation, 0.0));
+			return Translation;
 		}
 	};
 

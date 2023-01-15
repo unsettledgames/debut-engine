@@ -47,6 +47,7 @@
 *       - Find a better way to update entity selection: if it's selected or destroyed somewhere, it must be selected 
 *           or destroyed everywhere
 *       - Is the Owner field in components really necessary?
+*       - Move components into their own headers, editing Components.h is a nightmare
 * 
 *   QOL:
 *       - Can't assing stuff without importing it first (clicking on it)
@@ -108,6 +109,7 @@ namespace Debut
         m_ContentBrowser.SetPropertiesPanel(&m_PropertiesPanel);
 
         AssetManager::Init(".");
+        OnOpenScene("assets\\scenes\\Scripting.debut");
     }
 
     void DebutantLayer::OnDetach()

@@ -5,6 +5,7 @@ extern "C"
 	typedef struct _MonoDomain MonoDomain;
 	typedef struct _MonoImage MonoImage;
 	typedef struct _MonoAssembly MonoAssembly;
+	typedef struct _MonoClass MonoClass;
 }
 
 namespace Debut
@@ -12,6 +13,7 @@ namespace Debut
 	struct ScriptComponent;
 	
 	class Entity;
+	class Scene;
 	class ScriptClass;
 	class ScriptInstance;
 
@@ -22,6 +24,8 @@ namespace Debut
 
 		MonoImage* CoreImage;
 		MonoAssembly* CoreAssembly;
+
+		MonoClass* EntityClass;
 
 		// Class name -> ScriptClass
 		std::unordered_map <std::string, Ref<ScriptClass>> Classes;
@@ -43,8 +47,12 @@ namespace Debut
 		static void CallOnStart();
 		static void CallOnUpdate(float ts);
 
+		inline static Scene* GetContext() { return s_Context; }
+		inline static void SetContext(Scene* scene) { s_Context = scene; }
+
 	private:
 		static ScriptEngineData s_Data;
+		static Scene* s_Context;
 
 	};
 }

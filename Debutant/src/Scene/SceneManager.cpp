@@ -3,6 +3,7 @@
 #include <Debut/Scene/Entity.h>
 #include <Debut/Scene/Components.h>
 #include <Debut/Scene/SceneSerializer.h>
+#include <Debut/Scripting/ScriptEngine.h>
 
 #include <Debut/Utils/PlatformUtils.h>
 #include <Debut/Utils/CppUtils.h>
@@ -26,6 +27,8 @@ namespace Debut
 
         m_RuntimeScene->OnRuntimeStart();
         m_ActiveScene = m_RuntimeScene;
+
+        ScriptEngine::SetContext(m_ActiveScene.get());
     }
 
     void SceneManager::OnSceneStop()
@@ -36,6 +39,8 @@ namespace Debut
         m_RuntimeScene = nullptr;
         m_ActiveScene = m_EditorScene;
         m_ActiveScene->OnEditorStart();
+
+        ScriptEngine::SetContext(m_ActiveScene.get());
     }
 
     void SceneManager::NewScene(const glm::vec2& viewportSize)
@@ -59,6 +64,8 @@ namespace Debut
         m_ActiveScene = m_EditorScene;
         m_RuntimeScene = nullptr;
         m_ScenePath = "";
+
+        ScriptEngine::SetContext(m_ActiveScene.get());
     }
 
     EntitySceneNode* SceneManager::OpenScene(const std::filesystem::path& path, YAML::Node& additionalData)
@@ -79,6 +86,8 @@ namespace Debut
 
         m_ScenePath = path.string();
         m_ActiveScene = m_EditorScene;
+
+        ScriptEngine::SetContext(m_ActiveScene.get());
 
         return sceneHierarchy;
     }
