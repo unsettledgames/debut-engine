@@ -167,25 +167,56 @@ namespace Debut
 
 		inline void SetEulerRotation(const glm::vec3& rot)
 		{
+			glm::vec3 transformedRotation = rot;
+
 			if (Parent)
-				Rotation = glm::inverse(Parent.Transform().GetTransform()) * glm::vec4(rot, 0.0f);
-			else
-				Rotation = rot;
+			{
+				glm::vec3 parentRotation = Parent.Transform().GetRotation();
+				glm::inverse(glm::eulerAngleXYZ(parentRotation.x, parentRotation.y, parentRotation.z))* glm::vec4(transformedRotation, 0.0f);
+			}
+
+			Rotation = transformedRotation;
 		}
 
 		inline void SetScale(const glm::vec3& scale)
 		{
 			if (Parent)
-				Scale = glm::inverse(Parent.Transform().GetTransform()) * glm::vec4(scale, 1.0f);
+				Scale = scale / Parent.Transform().GetScale();
 			else
 				Scale = scale;
 		}
 
+		// BUG HERE FIX, don't multiply by the translation, just create a translation matrix
 		inline glm::vec3 GetTranslation()
 		{
 			if (Parent) return glm::vec3(Parent.Transform().GetTransform() * glm::vec4(Translation, 0.0));
 			return Translation;
 		}
+
+		inline glm::vec3 GetRotation()
+		{
+			glm::vec3 transformedRotation = Rotation;
+
+			if (Parent)
+			{
+				glm::vec3 parentRotation = Parent.Transform().GetRotation();
+				glm::eulerAngleXYZ(parentRotation.x, parentRotation.y, parentRotation.z)* glm::vec4(transformedRotation, 0.0f);
+			}
+
+			return transformedRotation;
+		}
+
+		inline glm::vec3 GetScale()
+		{
+			glm::vec3 transformedScale = Scale;
+			if (Parent)
+				transformedScale *= Parent.Transform().GetScale();
+			return transformedScale;
+		}
+
+		inline glm::vec3 GetLocalTranslation() { return Translation; }
+		inline glm::vec3 GetLocalRotation() { return Rotation; }
+		inline glm::vec3 GetLocalScale() { return Scale; }
 	};
 
 	struct CameraComponent

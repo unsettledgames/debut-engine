@@ -17,7 +17,7 @@ namespace Debut
 
         public Vector3 Rotation
         {
-            get 
+            get
             { 
                 Core.TransformComponent_GetEulerRotation(Entity.ID, out Vector3 ret);
                 return ret;

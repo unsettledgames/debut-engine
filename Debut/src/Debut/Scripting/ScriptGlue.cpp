@@ -12,6 +12,7 @@
 #include "mono/metadata/reflection.h"
 
 #include <glm/glm.hpp>
+#include <glm/gtx/matrix_operation.hpp>
 
 namespace Debut
 {
@@ -67,7 +68,7 @@ namespace Debut
 		Entity e = Entity::s_ExistingEntities[entity];
 		TransformComponent& tc = e.GetComponent<TransformComponent>();
 
-		out = tc.GetTransform() * glm::vec4(tc.Rotation, 0.0f);
+		out = tc.GetRotation();
 	}
 
 	static void TransformComponent_SetEulerRotation(uint64_t entity, glm::vec3& in)
@@ -75,7 +76,8 @@ namespace Debut
 		Scene* scene = ScriptEngine::GetContext();
 		Entity e = Entity::s_ExistingEntities[entity];
 		TransformComponent& tc = e.GetComponent<TransformComponent>();
-		tc.SetEulerRotation(in);
+
+		tc.Rotation = in;
 	}
 
 	static void TransformComponent_GetScale(uint64_t entity, glm::vec3& out)

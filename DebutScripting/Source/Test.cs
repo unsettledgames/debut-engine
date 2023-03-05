@@ -18,17 +18,34 @@ namespace Debut
         {
             Vector3 translation = Vector3.Zero;
             Vector3 rotation = Vector3.Zero;
+            bool update = false;
 
             if (Input.IsKeyDown(KeyCode.DBT_KEY_A))
-                translation.x -= ts;
+            {
+                rotation.x -= ts;
+                update = true;
+            }
             if (Input.IsKeyDown(KeyCode.DBT_KEY_D))
-                translation.x += ts;
+            {
+                rotation.x += ts;
+                update = true;
+            }
             if (Input.IsKeyDown(KeyCode.DBT_KEY_W))
-                translation.y += ts;
-            if(Input.IsKeyDown(KeyCode.DBT_KEY_S))
-                translation.y -= ts;
+            {
+                rotation.y += ts;
+                update = true;
+            }
+            if (Input.IsKeyDown(KeyCode.DBT_KEY_S))
+            {
+                rotation.y -= ts;
+                update = true;
+            }
 
-            m_Transform.Translation += translation * 2.0f;
+            if (update)
+            {
+                m_Transform.Translation += translation * 2.0f;
+                m_Transform.Rotation = m_Transform.Rotation + rotation * 2.0f;
+            }
         }
 
         public Test()
