@@ -186,6 +186,10 @@ namespace Debut
 				Scale = scale;
 		}
 
+		inline void SetLocalTranslation(const glm::vec3 translation) { Translation = translation; }
+		inline void SetLocalRotation(const glm::vec3 rotation) { Rotation = rotation; }
+		inline void SetLocalScale(const glm::vec3 scale) { Scale = scale; }
+
 		// BUG HERE FIX, don't multiply by the translation, just create a translation matrix
 		inline glm::vec3 GetTranslation()
 		{

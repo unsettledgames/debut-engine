@@ -11,8 +11,8 @@ namespace Debut
 {
 	ScriptClass::ScriptClass(const std::string& name) : m_ClassName(name)
 	{
-        MonoImage* image = mono_assembly_get_image(ScriptEngine::s_Data.CoreAssembly);
-        MonoClass* klass = mono_class_from_name(image, "Debut", name.c_str());
+        MonoImage* image = ScriptEngine::s_Data.AppImage;
+        MonoClass* klass = mono_class_from_name(image, "", name.c_str());
 
         if (klass == nullptr)
         {

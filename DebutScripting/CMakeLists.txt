@@ -9,7 +9,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources/Mono/Debut)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Resources/Mono/Debut)
 
 file(GLOB_RECURSE DBT_SCRIPT_SOURCES
-     	"Source/*.cs"
+     	"Core/*.cs"
 )
 
 add_library(DebutScripting SHARED ${DBT_SCRIPT_SOURCES})

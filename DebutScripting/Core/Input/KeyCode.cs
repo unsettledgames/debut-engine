@@ -1,6 +1,6 @@
 namespace Debut
 {
-    enum KeyCode
+    public enum KeyCode
     {
         /* Printable keys (glfw3.h)*/
             DBT_KEY_SPACE              = 32,

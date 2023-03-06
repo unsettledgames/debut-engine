@@ -15,6 +15,19 @@ namespace Debut
             }
         }
 
+        public Vector3 LocalTranslation
+        {
+            get
+            {
+                Core.TransformComponent_GetLocalTranslation(Entity.ID, out Vector3 ret);
+                return ret;
+            }
+            set
+            {
+                Core.TransformComponent_SetLocalTranslation(Entity.ID, ref value);
+            }
+        }
+
         public Vector3 Rotation
         {
             get

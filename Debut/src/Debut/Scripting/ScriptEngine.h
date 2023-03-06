@@ -23,7 +23,10 @@ namespace Debut
 		MonoDomain* AppDomain;
 
 		MonoImage* CoreImage;
+		MonoImage* AppImage;
+
 		MonoAssembly* CoreAssembly;
+		MonoAssembly* AppAssembly;
 
 		MonoClass* EntityClass;
 

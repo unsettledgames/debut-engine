@@ -14,6 +14,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/matrix_operation.hpp>
 
+#define GetEntity(entityName)	Scene* scene = ScriptEngine::GetContext(); \
+								Entity e = Entity::s_ExistingEntities[entity]
+
 namespace Debut
 {
 
@@ -46,26 +49,21 @@ namespace Debut
 
 	static void TransformComponent_GetTranslation(uint64_t entity, glm::vec3& out)
 	{
-		Scene* scene = ScriptEngine::GetContext();
-		Entity e = Entity::s_ExistingEntities[entity];
-		
+		GetEntity(e);
 		TransformComponent& tc = e.GetComponent<TransformComponent>();
 		out = tc.GetTranslation();
 	}
 
 	static void TransformComponent_SetTranslation(uint64_t entity, glm::vec3& in)
 	{
-		Scene* scene = ScriptEngine::GetContext();
-		Entity e = Entity::s_ExistingEntities[entity];
-		
+		GetEntity(e);
 		TransformComponent& tc = e.GetComponent<TransformComponent>();
 		tc.SetTranslation(in);
 	}
 
 	static void TransformComponent_GetEulerRotation(uint64_t entity, glm::vec3& out)
 	{
-		Scene* scene = ScriptEngine::GetContext();
-		Entity e = Entity::s_ExistingEntities[entity];
+		GetEntity(e);
 		TransformComponent& tc = e.GetComponent<TransformComponent>();
 
 		out = tc.GetRotation();
@@ -73,28 +71,40 @@ namespace Debut
 
 	static void TransformComponent_SetEulerRotation(uint64_t entity, glm::vec3& in)
 	{
-		Scene* scene = ScriptEngine::GetContext();
-		Entity e = Entity::s_ExistingEntities[entity];
+		GetEntity(e);
 		TransformComponent& tc = e.GetComponent<TransformComponent>();
 
-		tc.Rotation = in;
+		tc.SetEulerRotation(in);
 	}
 
 	static void TransformComponent_GetScale(uint64_t entity, glm::vec3& out)
 	{
-		Scene* scene = ScriptEngine::GetContext();
-		Entity e = Entity::s_ExistingEntities[entity];
+		GetEntity(e);
 		TransformComponent& tc = e.GetComponent<TransformComponent>();
 
-		out = tc.GetTransform() * glm::vec4(tc.Scale, 0.0f);
+		out = tc.GetScale();
 	}
 
 	static void TransformComponent_SetScale(uint64_t entity, glm::vec3& in)
 	{
-		Scene* scene = ScriptEngine::GetContext();
-		Entity e = Entity::s_ExistingEntities[entity];
+		GetEntity(e);
 		TransformComponent& tc = e.GetComponent<TransformComponent>();
 		tc.SetScale(in);
+	}
+
+	static void TransformComponent_GetLocalTranslation(uint64_t entity, glm::vec3& out)
+	{
+		GetEntity(e);
+		TransformComponent& tc = e.GetComponent<TransformComponent>();
+
+		out = tc.GetLocalTranslation();
+	}
+
+	static void TransformComponent_SetLocalTranslation(uint64_t entity, glm::vec3& in)
+	{
+		GetEntity(e);
+		TransformComponent& tc = e.GetComponent<TransformComponent>();
+		tc.SetLocalTranslation(in);
 	}
 
 #pragma endregion TransformComponent
@@ -112,5 +122,10 @@ namespace Debut
 		mono_add_internal_call("Debut.Core::" "TransformComponent_SetEulerRotation", TransformComponent_SetEulerRotation);
 		mono_add_internal_call("Debut.Core::" "TransformComponent_GetScale", TransformComponent_GetScale);
 		mono_add_internal_call("Debut.Core::" "TransformComponent_SetScale", TransformComponent_SetScale);
+		mono_add_internal_call("Debut.Core::" "TransformComponent_GetLocalTranslation", TransformComponent_GetLocalTranslation);
+		mono_add_internal_call("Debut.Core::" "TransformComponent_SetLocalTranslation", TransformComponent_SetLocalTranslation);
+
+
+
 	}
 }

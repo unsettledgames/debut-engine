@@ -102,14 +102,20 @@ namespace Debut
 
         // Load the assembly
         std::string assemblyPath = "../../../Resources/Mono/Debut";
+        std::string corePath, appPath;
 #ifdef DBT_DEBUG
-        assemblyPath += "/Debug/DebutScriptingd.dll";
+        corePath = assemblyPath + "/Debug/DebutScriptingd.dll";
+        appPath = "../../../Game/Build/Debug/TestGame.dll";
 #else
-        assemblyPath += "/Release/DebutScripting.dll";
+        corePath = assemblyPath + "/Release/DebutScripting.dll";
+        appPath = "../../../Game/Build/Debug/TestGame.dll";
 #endif
 
-        s_Data.CoreAssembly = LoadCSharpAssembly(assemblyPath);
+        s_Data.CoreAssembly = LoadCSharpAssembly(corePath);
+        s_Data.AppAssembly = LoadCSharpAssembly(appPath);
+
         s_Data.CoreImage = mono_assembly_get_image(s_Data.CoreAssembly);
+        s_Data.AppImage = mono_assembly_get_image(s_Data.AppAssembly);
         PrintAssemblyTypes(s_Data.CoreAssembly);
 
         s_Data.EntityClass = mono_class_from_name(ScriptEngine::s_Data.CoreImage, "Debut", "Entity");
